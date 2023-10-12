@@ -1,6 +1,6 @@
 export default function Socials() {
   return (
-    <div className="mb-[1.67vw] flex items-center child:transition-all child-hover:text-primary-500 child-hover:duration-300">
+    <div className="mb-[1.67vw] flex space-x-2 items-center child:transition-all child-hover:text-primary-500 child-hover:duration-300">
       <a target="" rel="noreferrer" href="https://x.com/datagutt">
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -84,7 +84,7 @@ export default function Hero() {
             </span>
           </div>
         </h1>
-        <p className="w-1/2 font-light text-center mb-[1.67vw]">
+        <p className="md:w-1/2 font-light text-center mb-[1.67vw]">
           A full-stack web developer from Norway.
         </p>
         <Socials />
@@ -94,7 +94,7 @@ export default function Hero() {
       </div>
       <div
         ref={elementRef}
-        className="absolute h-full w-full md:w-[135vw] md:h-[135vw] bottom-0 translate-y-[20vw] z-10 left-1/2 -translate-x-1/2"
+        className="absolute h-full w-full md:w-[135vw] md:h-[135vw] bottom-0 md:translate-y-[20vw] z-10 left-1/2 -translate-x-1/2"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black to-primary-600"></div>
       </div>
