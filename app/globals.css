@@ -12,12 +12,6 @@
   }
 }
 @layer base {
-  html {
-    @media screen and (max-width: theme("screens.sm")) {
-      font-size: 20px;
-    }
-  }
-
   body,
   html {
     padding: 0;
