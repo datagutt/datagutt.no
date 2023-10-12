@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Portfolio from "@/components/Portfolio";
 import ScrollText from "@/components/ScrollText";
+import {ClientLogger} from "@/components/client-logger";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
         <Portfolio />
       </main>
       <Footer />
+      <ClientLogger />
     </>
   );
 }

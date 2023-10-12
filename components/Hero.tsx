@@ -8,7 +8,6 @@ import Socials from "./Socials";
 export default function Hero() {
   const containerRef = useRef(null);
   const elementRef = useRef(null);
-  const comp = useRef(); // create a ref for the root level element (for scoping)
 
   gsap.registerPlugin(ScrollTrigger);
 
