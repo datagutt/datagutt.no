@@ -4,38 +4,11 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Image from "next/image";
 import { useRef, useEffect } from "react";
 import Socials from "./Socials";
+import FlowField from "./FlowField";
 
 export default function Hero() {
-  const containerRef = useRef(null);
-  const elementRef = useRef(null);
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  useEffect(() => {
-    let ctx = gsap.context((self) => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      });
-
-      tl.to(elementRef.current, {
-        yPercent: 4,
-        ease: "none",
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      ref={containerRef}
-      className="w-screen h-screen flex items-center justify-center relative mb-[15vw] bg-black"
-    >
+    <section className="w-screen h-screen flex items-center justify-center relative mb-[15vw] bg-black">
       <div className="z-40 flex flex-col items-center row">
         <Image
           src="/images/avatar.png"
@@ -88,15 +61,8 @@ export default function Hero() {
         </p>
         <Socials />
       </div>
-      <div className="absolute inset-0 z-20 mix-blend-overlay fade-out-div">
-        <div className="w-full h-full bg-pattern"></div>
-      </div>
-      <div
-        ref={elementRef}
-        className="absolute h-full w-full md:w-[135vw] md:h-[135vw] bottom-0 md:translate-y-[20vw] z-10 left-1/2 -translate-x-1/2"
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-primary-600"></div>
-      </div>
+      <FlowField className="absolute z-10 w-full h-full" />
+      <div className="absolute bottom-0 left-0 right-0 top-0 z-20 bg-gradient-to-b from-transparent pointer-events-none to-black via-transparent"></div>
     </section>
   );
 }
