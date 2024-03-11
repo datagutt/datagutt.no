@@ -36,7 +36,7 @@ export const projects: Project[] = [
     description:
       "Guac is a fully-featured live streaming platform. Yes, that includes everything from live streaming, VODs and clips to a chat with custom emotes and moderation tools.",
     image: "/images/projects/guac.png",
-    link: "https://givetip.to",
+    link: "https://guac.tv",
     width: 480,
     height: 288,
   },
