@@ -5,7 +5,7 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} Thomas Lekanger
             </p>
 			<p className="w-screen text-center absolute left-1/2 -translate-x-1/2 translate-y-1/2 font-light uppercase bottom-[3.34vw] md:bottom-[1.67vw] text-[2.66vw] md:text-[1.33vw]">
-				<a href="https://github.com/datagutt/datagutt" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-200 duration-300">
+				<a href="https://github.com/datagutt/datagutt.no" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-200 duration-300">
 					Peek at the source code
 				</a>
 			</p>
