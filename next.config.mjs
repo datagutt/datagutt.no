@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   productionBrowserSourceMaps: true,
+  experimental: {
+    ppr: true,
+    dynamicIO: true,
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
