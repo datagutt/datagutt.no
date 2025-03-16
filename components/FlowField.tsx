@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react";
 import { randomInt, TAU, randomElement } from "@/app/utils/math";
 import { mkSimplexNoise, SimplexNoise } from "@spissvinkel/simplex-noise";

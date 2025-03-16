@@ -1,4 +1,7 @@
-export default function Footer() {
+import {connection} from "next/server"
+
+export default async function Footer() {
+    await connection()
     return (
         <footer className="bg-black pt-[3.33vw] pb-[15vw] relative overflow-hidden">
             <p className="w-screen text-center absolute left-1/2 -translate-x-1/2 translate-y-1/2 font-bit text-[6.66vw] md:text-[3.33vw] uppercase bottom-[8.88vw] md:bottom-[4.44vw]">
