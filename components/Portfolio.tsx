@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { projects } from "../data/projects";
 import Link from "next/link";
 

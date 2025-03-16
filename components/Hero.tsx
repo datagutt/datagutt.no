@@ -1,7 +1,7 @@
 "use client";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useRef, useEffect } from "react";
 import Socials from "./Socials";
 import FlowField from "./FlowField";
