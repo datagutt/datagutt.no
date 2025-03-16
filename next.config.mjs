@@ -125,7 +125,6 @@ const nextConfig = {
     nodeMiddleware: false,
 
     viewTransition: true,
-
   },
 };
 

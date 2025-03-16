@@ -1,12 +1,10 @@
-"use client";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Image from "next/legacy/image";
-import { useRef, useEffect } from "react";
+import Image from "next/image";
 import Socials from "./Socials";
 import FlowField from "./FlowField";
+import { connection } from "next/server";
 
-export default function Hero() {
+export default async function Hero() {
+  await connection();
   return (
     <section className="w-screen h-screen flex items-center justify-center relative mb-[15vw] bg-black">
       <div className="z-40 flex flex-col items-center row">

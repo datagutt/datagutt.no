@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { randomInt, TAU, randomElement } from "@/app/utils/math";
 import { mkSimplexNoise, SimplexNoise } from "@spissvinkel/simplex-noise";
@@ -93,10 +93,10 @@ interface FlowFieldProps {
 const FlowField = ({ style, className, color }: FlowFieldProps) => {
   const canvasHolder = React.useRef<HTMLDivElement>(
     null,
-  ) as React.MutableRefObject<HTMLDivElement>;
+  ) as React.RefObject<HTMLDivElement>;
   const canvas = React.useRef<HTMLCanvasElement>(
     null,
-  ) as React.MutableRefObject<HTMLCanvasElement>;
+  ) as React.RefObject<HTMLCanvasElement>;
   const tickTimeoutId = React.useRef<number | undefined>(undefined);
 
   const canvasNoise = () => {

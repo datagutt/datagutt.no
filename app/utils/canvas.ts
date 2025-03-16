@@ -1,3 +1,4 @@
+"use client";
 import { TAU } from "./math";
 
 export const setupCanvas = (canvas: HTMLCanvasElement) => {
