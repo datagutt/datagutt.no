@@ -13,6 +13,7 @@
   "dependencies": {
     "@spissvinkel/simplex-noise": "^1.0.1",
     "@tailwindcss/typography": "^0.5.10",
+    "babel-plugin-react-compiler": "19.0.0-beta-bafa41b-20250307",
     "gsap": "^3.12.5",
     "next": "15.3.0-canary.10",
     "next-themes": "^0.2.1",
@@ -21,6 +22,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@builder.io/partytown": "^0.10.3",
     "@types/node": "^20.11.19",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
