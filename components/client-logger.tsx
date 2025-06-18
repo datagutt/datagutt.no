@@ -3,7 +3,7 @@ const msg = `
 Hi,
 I left source maps on for this project, so you can see the source code.
 You can also see the source code on GitHub:
-https://github.com/datagutt/datagutt
+https://github.com/datagutt/datagutt.no
 I hope you enjoy it!
 `.trim();
 const logStyles = [
