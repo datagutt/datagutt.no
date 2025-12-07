@@ -78,7 +78,6 @@ const nextConfig = {
      * Enables source maps generation for the server production bundle.
      */
     serverSourceMaps: true,
-    useWasmBinary: true,
     /**
      * Use lightningcss instead of postcss-loader
      */
