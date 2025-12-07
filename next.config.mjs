@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   productionBrowserSourceMaps: true,
+  cacheComponents: true,
   experimental: {
     multiZoneDraftMode: true,
     appNavFailHandling: true,
@@ -64,11 +65,6 @@ const nextConfig = {
      * - `true`: Enables Webpack memory optimizations.
      */
     webpackMemoryOptimizations: true,
-    /**
-     * Enables experimental Partial Prerendering feature of Next.js.
-     * Using this feature will enable the `react@experimental` for the `app` directory.
-     */
-    ppr: true,
     /**
      * Enables experimental taint APIs in React.
      * Using this feature will enable the `react@experimental` for the `app` directory.
