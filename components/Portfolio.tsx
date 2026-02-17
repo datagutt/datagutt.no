@@ -55,8 +55,8 @@ export default function Portfolio() {
 	}, []);
 
 	return (
-		<section ref={sectionRef} className="py-20 px-6 md:px-12 lg:px-20">
-			<div ref={headingRef} className="mb-10 md:mb-14">
+		<section ref={sectionRef} className="py-12 md:py-20 row">
+			<div ref={headingRef} className="mb-8 md:mb-10">
 				<h2 className="font-pixel-line text-4xl md:text-5xl lg:text-6xl mb-2">
 					Portfolio
 				</h2>

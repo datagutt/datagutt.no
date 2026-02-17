@@ -17,7 +17,6 @@ export default function ScrollText() {
 		).matches;
 
 		const ctx = gsap.context(() => {
-			// Fade-in on scroll entry
 			if (!prefersReduced) {
 				gsap.from(containerRef.current, {
 					opacity: 0,
@@ -32,11 +31,11 @@ export default function ScrollText() {
 			}
 
 			gsap.set(firstLineRef.current, {
-				xPercent: 75,
+				xPercent: 50,
 			});
 
 			gsap.set(secondLineRef.current, {
-				xPercent: -75,
+				xPercent: -50,
 			});
 
 			const tl = gsap.timeline({
@@ -49,12 +48,12 @@ export default function ScrollText() {
 			});
 
 			tl.to(firstLineRef.current, {
-				xPercent: 0,
+				xPercent: -20,
 			});
 			tl.to(
 				secondLineRef.current,
 				{
-					xPercent: 0,
+					xPercent: 20,
 				},
 				"<",
 			);
@@ -64,18 +63,22 @@ export default function ScrollText() {
 	}, []);
 
 	return (
-		<section ref={containerRef} className="relative h-screen" id="scroll-text">
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[170vw] text-[12vw] leading-[0.8] uppercase z-40">
+		<section
+			ref={containerRef}
+			className="relative py-16 md:py-24 overflow-hidden"
+			id="scroll-text"
+		>
+			<div className="w-[150vw] -ml-[25vw] text-[8vw] md:text-[6vw] leading-[0.9] uppercase text-primary-700/40">
 				<div
 					ref={firstLineRef}
-					className="span font-pixel-grid"
+					className="font-pixel-grid"
 					style={{ willChange: "transform" }}
 				>
 					CHECK OUT MY PORTFOLIO
 				</div>
 				<div
 					ref={secondLineRef}
-					className="span font-pixel-triangle"
+					className="font-pixel-triangle"
 					style={{ willChange: "transform" }}
 				>
 					CHECK OUT MY PORTFOLIO

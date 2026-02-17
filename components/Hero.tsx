@@ -10,9 +10,9 @@ export default function Hero() {
 	const [burstActive, setBurstActive] = useState(false);
 	const avatarRef = useRef<HTMLImageElement>(null);
 	const greetingRef = useRef<HTMLDivElement>(null);
-	const nameRef = useRef<HTMLDivElement>(null);
 	const descRef = useRef<HTMLParagraphElement>(null);
 	const socialsRef = useRef<HTMLDivElement>(null);
+	const scrollRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const prefersReduced = window.matchMedia(
@@ -20,6 +20,8 @@ export default function Hero() {
 		).matches;
 		if (prefersReduced) return;
 
+		// Entrance timeline — "Thomas" is handled by CSS .stack animation,
+		// so we skip it here to avoid conflicts
 		const tl = gsap.timeline({ delay: 0.2 });
 
 		tl.from(avatarRef.current, {
@@ -38,16 +40,7 @@ export default function Hero() {
 				},
 				"-=0.3"
 			)
-			.from(
-				nameRef.current,
-				{
-					y: 30,
-					opacity: 0,
-					duration: 0.6,
-					ease: "power3.out",
-				},
-				"-=0.2"
-			)
+			// small gap for the CSS stack/glitch animation to play (~0.5s)
 			.from(
 				descRef.current,
 				{
@@ -56,7 +49,7 @@ export default function Hero() {
 					duration: 0.4,
 					ease: "power2.out",
 				},
-				"-=0.2"
+				">0.3"
 			)
 			.from(
 				socialsRef.current,
@@ -67,21 +60,40 @@ export default function Hero() {
 					ease: "power2.out",
 				},
 				"-=0.1"
+			)
+			.from(
+				scrollRef.current,
+				{
+					opacity: 0,
+					duration: 0.6,
+					ease: "power2.out",
+				},
+				"-=0.1"
 			);
+
+		// Scroll indicator bounce
+		const bounce = gsap.to(scrollRef.current, {
+			y: 8,
+			duration: 1.2,
+			ease: "power1.inOut",
+			repeat: -1,
+			yoyo: true,
+			delay: tl.duration() + 0.2,
+		});
 
 		return () => {
 			tl.kill();
+			bounce.kill();
 		};
 	}, []);
 
 	const handleAvatarEnter = () => {
 		setBurstActive(true);
-		// Reset after animation completes so it can be re-triggered
 		setTimeout(() => setBurstActive(false), 1000);
 	};
 
 	return (
-		<section className="w-screen h-screen flex items-center justify-center relative mb-[15vw] bg-black">
+		<section className="w-screen h-screen flex items-center justify-center relative bg-black">
 			<div className="z-40 flex flex-col items-center row">
 				<Image
 					ref={avatarRef}
@@ -101,7 +113,6 @@ export default function Hero() {
 						Hello, I&apos;m
 					</div>
 					<div
-						ref={nameRef}
 						className="stack font-pixel-line text-[7vw] transform-gpu"
 						style={
 							{
@@ -153,6 +164,22 @@ export default function Hero() {
 				className="absolute z-10 w-full h-full"
 			/>
 			<div className="absolute bottom-0 left-0 right-0 top-0 z-20 bg-gradient-to-b from-transparent pointer-events-none to-black via-transparent"></div>
+			{/* Scroll indicator */}
+			<div
+				ref={scrollRef}
+				className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1 text-primary-500/80"
+			>
+				<span className="font-pixel text-xs uppercase tracking-widest">Scroll</span>
+				<svg
+					className="w-5 h-5"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					strokeWidth={2}
+				>
+					<path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+				</svg>
+			</div>
 		</section>
 	);
 }
