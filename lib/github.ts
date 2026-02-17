@@ -17,14 +17,37 @@ export type GitHubStats = {
   years_coding: number;
 };
 
+export type ContributionDay = {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+};
+
 export async function getTopRepos(count = 6): Promise<GitHubRepo[]> {
   try {
     const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=stars&per_page=${count}&direction=desc`,
+      `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`,
       { next: { revalidate: 3600 } },
     );
     if (!res.ok) return [];
-    return res.json();
+    const repos: GitHubRepo[] = await res.json();
+    return repos
+      .sort((a, b) => b.stargazers_count - a.stargazers_count)
+      .slice(0, count);
+  } catch {
+    return [];
+  }
+}
+
+export async function getContributions(): Promise<ContributionDay[]> {
+  try {
+    const res = await fetch(
+      `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`,
+      { next: { revalidate: 3600 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.contributions ?? [];
   } catch {
     return [];
   }
