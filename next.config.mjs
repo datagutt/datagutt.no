@@ -2,11 +2,11 @@
 const nextConfig = {
   productionBrowserSourceMaps: true,
   cacheComponents: true,
+  reactCompiler: true,
   experimental: {
     multiZoneDraftMode: true,
     appNavFailHandling: true,
     prerenderEarlyExit: true,
-    appDocumentPreloading: true,
     preloadEntriesOnStart: true,
     clientRouterFilter: true,
     clientRouterFilterRedirects: true,
@@ -83,28 +83,13 @@ const nextConfig = {
      */
     useLightningcss: false,
     /**
-     * Enables early import feature for app router modules
-     */
-    useEarlyImport: true,
-    /**
      * Enables `fetch` requests to be proxied to the experimental test proxy server
      */
     testProxy: true,
     /**
-     * Enable experimental React compiler optimization.
-     * Configuration accepts partial config object to the compiler, if provided
-     * compiler will be enabled.
-     */
-    reactCompiler: true,
-    /**
      * Allows previously fetched data to be re-used when editing server components.
      */
     serverComponentsHmrCache: true,
-    /**
-     * When enabled will cause IO in App Router to be excluded from prerenders
-     * unless explicitly cached.
-     */
-    dynamicIO: true,
     /**
      * This config allows you to enable the experimental navigation API `forbidden` and `unauthorized`.
      */
@@ -117,7 +102,6 @@ const nextConfig = {
 
     //clientSegmentCache: true,
 
-    nodeMiddleware: false,
 
     viewTransition: true,
   },
