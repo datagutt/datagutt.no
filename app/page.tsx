@@ -19,7 +19,7 @@ export default function Home() {
 	return (
 		<>
 			<main className="relative z-[10]">
-				<Suspense fallback={null}>
+				<Suspense fallback={<div className="w-screen h-screen bg-black" />}>
 					<DynamicHero />
 				</Suspense>
 				<ScrollText />
