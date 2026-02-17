@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { setupCanvas } from "../app/utils/canvas";
+import { setupCanvas } from "../../app/utils/canvas";
+import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 14;
 const GAP = 2;
@@ -60,6 +61,7 @@ export default function PixelCanvas({
   const animRef = useRef(0);
   const burstRef = useRef({ intensity: 0 });
   const burstTweenRef = useRef<gsap.core.Tween | null>(null);
+  const resizeKey = useResizeKey(canvasRef);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -310,18 +312,12 @@ export default function PixelCanvas({
 
     animRef.current = requestAnimationFrame(draw);
 
-    const onResize = () => {
-      setupCanvas(canvas);
-    };
-    window.addEventListener("resize", onResize);
-
     return () => {
       cancelAnimationFrame(animRef.current);
       target.removeEventListener("mousemove", onMove);
       target.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("resize", onResize);
     };
-  }, [mouseContainerRef]);
+  }, [mouseContainerRef, resizeKey]);
 
   // Burst effect
   useEffect(() => {

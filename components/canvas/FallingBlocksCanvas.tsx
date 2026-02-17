@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { setupCanvas } from "../../app/utils/canvas";
+import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 20;
 const GAP = 2;
@@ -89,6 +90,7 @@ type Props = {
 export default function FallingBlocksCanvas({ mouseContainerRef, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef(0);
+  const resizeKey = useResizeKey(canvasRef);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -298,16 +300,12 @@ export default function FallingBlocksCanvas({ mouseContainerRef, className }: Pr
 
     animRef.current = requestAnimationFrame(draw);
 
-    const onResize = () => { setupCanvas(canvas); };
-    window.addEventListener("resize", onResize);
-
     return () => {
       cancelAnimationFrame(animRef.current);
       target.removeEventListener("mousemove", onMove);
       target.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("resize", onResize);
     };
-  }, [mouseContainerRef]);
+  }, [mouseContainerRef, resizeKey]);
 
   return (
     <canvas

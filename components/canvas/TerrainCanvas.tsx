@@ -4,6 +4,7 @@ import { mkSimplexNoise } from "@spissvinkel/simplex-noise";
 import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
 import { setupCanvas } from "../../app/utils/canvas";
+import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 10;
 const GAP = 2;
@@ -35,6 +36,7 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const animRef = useRef(0);
 	const offsetRef = useRef({ x: 0, y: 0 });
+	const resizeKey = useResizeKey(canvasRef);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -108,19 +110,13 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 
 		animRef.current = requestAnimationFrame(draw);
 
-		const onResize = () => {
-			setupCanvas(canvas);
-		};
-		window.addEventListener("resize", onResize);
-
 		return () => {
 			cancelAnimationFrame(animRef.current);
 			driftTl.kill();
 			target.removeEventListener("mousemove", onMove);
 			target.removeEventListener("mouseleave", onLeave);
-			window.removeEventListener("resize", onResize);
 		};
-	}, [mouseContainerRef]);
+	}, [mouseContainerRef, resizeKey]);
 
 	return (
 		<canvas
