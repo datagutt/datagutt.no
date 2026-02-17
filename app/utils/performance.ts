@@ -22,7 +22,7 @@ export function getAdaptiveCanvasFrameInterval(prefersReducedMotion: boolean) {
   const cores = nav.hardwareConcurrency ?? 4;
   const memory = nav.deviceMemory ?? 4;
 
-  let fps = 45;
+  let fps = 60;
 
   if (saveData) fps = Math.min(fps, 24);
   if (effectiveType === "slow-2g" || effectiveType === "2g") fps = Math.min(fps, 20);
