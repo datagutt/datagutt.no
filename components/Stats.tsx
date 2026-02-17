@@ -159,8 +159,8 @@ export default function Stats({ stats, contributions }: StatsProps) {
 						theme={calendarTheme}
 						colorScheme="dark"
 						maxLevel={4}
-						hideTotalCount
-						hideColorLegend
+						showTotalCount={false}
+						showColorLegend={false}
 					/>
 				</div>
 			)}
