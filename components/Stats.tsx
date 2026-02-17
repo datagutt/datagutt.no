@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { ActivityCalendar, type ThemeInput } from "react-activity-calendar";
-import "react-activity-calendar/build/tooltips.css";
+import "react-activity-calendar/tooltips.css";
 import type { GitHubStats, ContributionDay } from "../lib/github";
 
 gsap.registerPlugin(ScrollTrigger);
