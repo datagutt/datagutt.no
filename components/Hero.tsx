@@ -3,7 +3,7 @@
 import { gsap } from "gsap";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import PixelGrid from "./PixelGrid";
+import CanvasSwitcher from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
 
 export default function Hero() {
@@ -196,7 +196,7 @@ export default function Hero() {
 					<Socials />
 				</div>
 			</div>
-			<PixelGrid
+			<CanvasSwitcher
 				burstActive={burstActive}
 				mouseContainerRef={sectionRef}
 				className="absolute z-10 w-full h-full"
