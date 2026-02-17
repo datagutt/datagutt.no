@@ -8,6 +8,7 @@ import Socials from "./Socials";
 
 export default function Hero() {
 	const [burstActive, setBurstActive] = useState(false);
+	const sectionRef = useRef<HTMLElement>(null);
 	const avatarRef = useRef<HTMLImageElement>(null);
 	const greetingRef = useRef<HTMLDivElement>(null);
 	const nameRef = useRef<HTMLDivElement>(null);
@@ -123,7 +124,7 @@ export default function Hero() {
 	};
 
 	return (
-		<section className="w-screen h-screen flex items-center justify-center relative bg-black">
+		<section ref={sectionRef} className="w-screen h-screen flex items-center justify-center relative bg-black">
 			<div className="z-40 flex flex-col items-center row">
 				<Image
 					ref={avatarRef}
@@ -193,6 +194,7 @@ export default function Hero() {
 			</div>
 			<PixelGrid
 				burstActive={burstActive}
+				mouseContainerRef={sectionRef}
 				className="absolute z-10 w-full h-full"
 			/>
 			<div className="absolute bottom-0 left-0 right-0 top-0 z-20 bg-gradient-to-b from-transparent pointer-events-none to-black via-transparent"></div>

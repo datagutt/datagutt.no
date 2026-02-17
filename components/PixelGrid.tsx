@@ -34,9 +34,10 @@ function hexToRgb(hex: string): [number, number, number] {
 type PixelGridProps = {
   burstActive?: boolean;
   className?: string;
+  mouseContainerRef?: React.RefObject<HTMLElement | null>;
 };
 
-export default function PixelGrid({ burstActive, className }: PixelGridProps) {
+export default function PixelGrid({ burstActive, className, mouseContainerRef }: PixelGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const waveRef = useRef({ phase: 0 });
@@ -80,7 +81,8 @@ export default function PixelGrid({ burstActive, className }: PixelGridProps) {
     });
     waveTlRef.current = waveTl;
 
-    // Mouse tracking
+    // Mouse tracking — listen on parent container so elements above don't block
+    const mouseTarget = mouseContainerRef?.current ?? canvas;
     const handleMouseMove = (e: MouseEvent) => {
       const r = canvas.getBoundingClientRect();
       mouseRef.current.x = e.clientX - r.left;
@@ -90,8 +92,8 @@ export default function PixelGrid({ burstActive, className }: PixelGridProps) {
       mouseRef.current.x = -1000;
       mouseRef.current.y = -1000;
     };
-    canvas.addEventListener("mousemove", handleMouseMove);
-    canvas.addEventListener("mouseleave", handleMouseLeave);
+    mouseTarget.addEventListener("mousemove", handleMouseMove);
+    mouseTarget.addEventListener("mouseleave", handleMouseLeave);
 
     // Reduced motion check
     const prefersReduced = window.matchMedia(
@@ -170,8 +172,8 @@ export default function PixelGrid({ burstActive, className }: PixelGridProps) {
     return () => {
       cancelAnimationFrame(animRef.current);
       waveTl.kill();
-      canvas.removeEventListener("mousemove", handleMouseMove);
-      canvas.removeEventListener("mouseleave", handleMouseLeave);
+      mouseTarget.removeEventListener("mousemove", handleMouseMove);
+      mouseTarget.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("resize", handleResize);
     };
   }, [initGrid]);
