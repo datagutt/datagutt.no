@@ -105,12 +105,6 @@
   --glitch-translate: -8px;
 }
 
-/* Standalone glitch for project titles */
-.glitch-text {
-  --glitch-translate: 4px;
-  animation: glitch 3s ease infinite 1s alternate-reverse;
-}
-
 @keyframes glitch {
   0% {
     text-shadow:
