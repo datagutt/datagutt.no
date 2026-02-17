@@ -1,4 +1,6 @@
 "use client";
+import { useEffect } from "react";
+
 const msg = `
 Hi,
 I left source maps on for this project, so you can see the source code.
@@ -14,6 +16,15 @@ const logStyles = [
   "padding: 10px",
 ].join(";");
 export function ClientLogger() {
-  console.info(`%c${msg}`, logStyles);
+  useEffect(() => {
+    const run = () => console.info(`%c${msg}`, logStyles);
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(run);
+      return () => window.cancelIdleCallback(id);
+    }
+    const timeout = window.setTimeout(run, 0);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
   return null;
 }
