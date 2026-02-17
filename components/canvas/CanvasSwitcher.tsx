@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PixelCanvas = dynamic(() => import("./PixelCanvas"), { ssr: false });
 const TerrainCanvas = dynamic(() => import("./TerrainCanvas"), { ssr: false });
@@ -37,36 +37,67 @@ export default function CanvasSwitcher({
 	className,
 }: Props) {
 	const [active, setActive] = useState<BgId>(initialBg);
+	const [isPageVisible, setIsPageVisible] = useState(true);
+	const [isInViewport, setIsInViewport] = useState(true);
+
+	useEffect(() => {
+		const onVisibilityChange = () => {
+			setIsPageVisible(document.visibilityState === "visible");
+		};
+
+		onVisibilityChange();
+		document.addEventListener("visibilitychange", onVisibilityChange);
+		return () => {
+			document.removeEventListener("visibilitychange", onVisibilityChange);
+		};
+	}, []);
+
+	useEffect(() => {
+		const target = mouseContainerRef?.current;
+		if (!target || typeof IntersectionObserver === "undefined") return;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				setIsInViewport(entry.isIntersecting);
+			},
+			{ threshold: 0.01 },
+		);
+
+		observer.observe(target);
+		return () => observer.disconnect();
+	}, [mouseContainerRef]);
+
+	const shouldRenderCanvas = isPageVisible && isInViewport;
 
 	return (
 		<>
 			{/* Canvas */}
-			{active === "pixel" && (
+			{shouldRenderCanvas && active === "pixel" && (
 				<PixelCanvas
 					burstActive={burstActive}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{active === "terrain" && (
+			{shouldRenderCanvas && active === "terrain" && (
 				<TerrainCanvas
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{active === "blocks" && (
+			{shouldRenderCanvas && active === "blocks" && (
 				<FallingBlocksCanvas
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{active === "dungeon" && (
+			{shouldRenderCanvas && active === "dungeon" && (
 				<DungeonCanvas
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{active === "starfield" && (
+			{shouldRenderCanvas && active === "starfield" && (
 				<StarfieldCanvas
 					mouseContainerRef={mouseContainerRef}
 					className={className}
