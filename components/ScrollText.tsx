@@ -68,7 +68,7 @@ export default function ScrollText() {
 			className="relative py-16 md:py-24 overflow-hidden"
 			id="scroll-text"
 		>
-			<div className="w-[150vw] -ml-[25vw] text-[8vw] md:text-[6vw] leading-[0.9] uppercase text-primary-700/40">
+			<div className="w-[150vw] -ml-[25vw] text-[8vw] md:text-[6vw] leading-[0.9] uppercase text-primary-700">
 				<div
 					ref={firstLineRef}
 					className="font-pixel-grid"
