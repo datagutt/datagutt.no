@@ -149,17 +149,13 @@ export default function Stats({ stats, contributions }: StatsProps) {
 			{contributions.length > 0 && (
 				<div
 					ref={calendarRef}
-					className="rounded-xl border border-primary-900/40 bg-gradient-to-br from-black to-primary-950/30 p-5 overflow-x-auto"
+					className="w-full"
 				>
-					<h3 className="font-pixel text-primary-500 text-sm uppercase tracking-wider mb-4">
-						Contributions
-					</h3>
 					<ActivityCalendar
 						data={contributions}
 						theme={calendarTheme}
 						colorScheme="dark"
 						maxLevel={4}
-						showTotalCount={false}
 						showColorLegend={false}
 					/>
 				</div>
