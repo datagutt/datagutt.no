@@ -46,7 +46,20 @@ export default function Home() {
 	return (
 		<>
 			<main className="relative z-[10]">
-				<Suspense fallback={<div className="w-screen h-screen bg-black" />}>
+				<Suspense
+				fallback={
+					<section className="w-screen h-screen flex items-end relative bg-black">
+						<div
+							className="absolute inset-0 z-10"
+							style={{
+								backgroundImage:
+									"radial-gradient(rgba(29,198,114,0.03) 1px, transparent 1px)",
+								backgroundSize: "16px 16px",
+							}}
+						/>
+					</section>
+				}
+			>
 					<DynamicHero />
 				</Suspense>
 				<ScrollText />
