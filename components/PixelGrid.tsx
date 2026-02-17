@@ -97,7 +97,7 @@ export default function PixelGrid({
           dirCol: 1, dirRow: 0,
           length: 3 + Math.floor(Math.random() * 6),
           head: 0,
-          speed: 0.3 + Math.random() * 0.4,
+          speed: 0.15 + Math.random() * 0.2,
           color: { r: p.r, g: p.g, b: p.b },
         });
       } else {
@@ -107,7 +107,7 @@ export default function PixelGrid({
           dirCol: 0, dirRow: 1,
           length: 3 + Math.floor(Math.random() * 5),
           head: 0,
-          speed: 0.2 + Math.random() * 0.3,
+          speed: 0.1 + Math.random() * 0.15,
           color: { r: p.r, g: p.g, b: p.b },
         });
       }
@@ -205,8 +205,8 @@ export default function PixelGrid({
         lastMRow = mRow;
       }
 
-      // Game of Life tick every 12 frames
-      if (!prefersReduced && frameCount % 12 === 0) {
+      // Game of Life tick every 24 frames
+      if (!prefersReduced && frameCount % 24 === 0) {
         lifeStep();
       }
 
@@ -239,7 +239,7 @@ export default function PixelGrid({
         }
 
         // Spawn pulses
-        if (frameCount % 30 === 0 && pulses.length < 8) {
+        if (frameCount % 60 === 0 && pulses.length < 6) {
           spawnPulse();
         }
       }
