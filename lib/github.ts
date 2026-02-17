@@ -1,13 +1,18 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
+import { parse } from "node-html-parser";
+
 const GITHUB_USERNAME = "datagutt";
 const YEARS_CODING_SINCE = 2010;
 
-export type GitHubRepo = {
+export type PinnedRepo = {
+  author: string;
   name: string;
-  description: string | null;
-  html_url: string;
-  language: string | null;
-  stargazers_count: number;
-  forks_count: number;
+  description: string;
+  language: string;
+  languageColor: string;
+  stars: number;
+  forks: number;
 };
 
 export type GitHubStats = {
@@ -23,37 +28,74 @@ export type ContributionDay = {
   level: 0 | 1 | 2 | 3 | 4;
 };
 
-export async function getTopRepos(count = 6): Promise<GitHubRepo[]> {
-  try {
-    const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`,
-      { next: { revalidate: 3600 } },
-    );
-    if (!res.ok) return [];
-    const repos: GitHubRepo[] = await res.json();
-    return repos
-      .sort((a, b) => b.stargazers_count - a.stargazers_count)
-      .slice(0, count);
-  } catch {
-    return [];
-  }
+// --- Pinned repos (scraped from GitHub profile) ---
+
+async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
+  const res = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+  });
+  if (!res.ok) return [];
+
+  const html = await res.text();
+  const root = parse(html);
+
+  return root
+    .querySelectorAll(".js-pinned-item-list-item")
+    .map((el) => {
+      const repoPath =
+        el.querySelector("a")?.getAttribute("href")?.split("/") || [];
+      const [, author = "", name = ""] = repoPath;
+
+      const parseMetric = (index: number): number => {
+        try {
+          return (
+            Number(
+              el
+                .querySelectorAll("a.pinned-item-meta")
+                [index]?.text?.replace(/\n/g, "")
+                .trim(),
+            ) || 0
+          );
+        } catch {
+          return 0;
+        }
+      };
+
+      const languageSpan = el.querySelector(
+        "span[itemprop='programmingLanguage']",
+      );
+      const languageColorSpan = languageSpan?.parentNode?.querySelector(
+        ".repo-language-color",
+      );
+
+      return {
+        author,
+        name,
+        description:
+          el
+            .querySelector("p.pinned-item-desc")
+            ?.text?.replace(/\n/g, "")
+            .trim() || "",
+        language: languageSpan?.text || "",
+        languageColor:
+          languageColorSpan
+            ?.getAttribute("style")
+            ?.match(/background-color:\s*([^;]+)/)?.[1] || "",
+        stars: parseMetric(0),
+        forks: parseMetric(1),
+      };
+    });
 }
 
-export async function getContributions(): Promise<ContributionDay[]> {
-  try {
-    const res = await fetch(
-      `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`,
-      { next: { revalidate: 3600 } },
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.contributions ?? [];
-  } catch {
-    return [];
-  }
-}
+const getCachedPinnedRepos = unstable_cache(fetchPinnedRepos, ["pinned-repos"], {
+  revalidate: 3600,
+});
 
-export async function getGitHubStats(): Promise<GitHubStats> {
+export const getPinnedRepos = cache(getCachedPinnedRepos);
+
+// --- GitHub stats ---
+
+async function fetchGitHubStats(): Promise<GitHubStats> {
   const defaults: GitHubStats = {
     public_repos: 0,
     followers: 0,
@@ -64,17 +106,16 @@ export async function getGitHubStats(): Promise<GitHubStats> {
   try {
     const userRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}`,
-      { next: { revalidate: 3600 } },
     );
     if (!userRes.ok) return defaults;
     const user = await userRes.json();
 
-    // Fetch all repos to sum stars
     const reposRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`,
-      { next: { revalidate: 3600 } },
     );
-    const repos: GitHubRepo[] = reposRes.ok ? await reposRes.json() : [];
+    const repos: { stargazers_count: number }[] = reposRes.ok
+      ? await reposRes.json()
+      : [];
     const total_stars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
 
     return {
@@ -87,3 +128,34 @@ export async function getGitHubStats(): Promise<GitHubStats> {
     return defaults;
   }
 }
+
+const getCachedGitHubStats = unstable_cache(
+  fetchGitHubStats,
+  ["github-stats"],
+  { revalidate: 3600 },
+);
+
+export const getGitHubStats = cache(getCachedGitHubStats);
+
+// --- Contributions ---
+
+async function fetchContributions(): Promise<ContributionDay[]> {
+  try {
+    const res = await fetch(
+      `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`,
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.contributions ?? [];
+  } catch {
+    return [];
+  }
+}
+
+const getCachedContributions = unstable_cache(
+  fetchContributions,
+  ["github-contributions"],
+  { revalidate: 3600 },
+);
+
+export const getContributions = cache(getCachedContributions);
