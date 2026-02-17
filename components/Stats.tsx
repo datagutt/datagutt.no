@@ -3,12 +3,14 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
-import type { GitHubStats } from "../lib/github";
+import { ActivityCalendar, type ThemeInput } from "react-activity-calendar";
+import type { GitHubStats, ContributionDay } from "../lib/github";
 
 gsap.registerPlugin(ScrollTrigger);
 
 type StatsProps = {
 	stats: GitHubStats;
+	contributions: ContributionDay[];
 };
 
 const STAT_CONFIG = [
@@ -18,10 +20,15 @@ const STAT_CONFIG = [
 	{ key: "followers" as const, label: "Followers" },
 ];
 
-export default function Stats({ stats }: StatsProps) {
+const calendarTheme: ThemeInput = {
+	dark: ["#161b22", "#042f1c", "#125536", "#12834b", "#1dc672"],
+};
+
+export default function Stats({ stats, contributions }: StatsProps) {
 	const sectionRef = useRef<HTMLElement>(null);
 	const headingRef = useRef<HTMLDivElement>(null);
 	const cardsRef = useRef<HTMLDivElement>(null);
+	const calendarRef = useRef<HTMLDivElement>(null);
 	const numberRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
 	useEffect(() => {
@@ -30,7 +37,6 @@ export default function Stats({ stats }: StatsProps) {
 		).matches;
 
 		if (prefersReduced) {
-			// Just show final values
 			STAT_CONFIG.forEach((s, i) => {
 				const el = numberRefs.current[i];
 				if (el) el.textContent = String(stats[s.key]);
@@ -67,7 +73,20 @@ export default function Stats({ stats }: StatsProps) {
 				});
 			}
 
-			// Animated number counting
+			if (calendarRef.current) {
+				gsap.from(calendarRef.current, {
+					y: 30,
+					opacity: 0,
+					duration: 0.6,
+					ease: "power3.out",
+					scrollTrigger: {
+						trigger: calendarRef.current,
+						start: "top 85%",
+						toggleActions: "play none none none",
+					},
+				});
+			}
+
 			STAT_CONFIG.forEach((s, i) => {
 				const el = numberRefs.current[i];
 				if (!el) return;
@@ -105,7 +124,7 @@ export default function Stats({ stats }: StatsProps) {
 
 			<div
 				ref={cardsRef}
-				className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+				className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8"
 			>
 				{STAT_CONFIG.map((s, i) => (
 					<div
@@ -126,6 +145,25 @@ export default function Stats({ stats }: StatsProps) {
 					</div>
 				))}
 			</div>
+
+			{contributions.length > 0 && (
+				<div
+					ref={calendarRef}
+					className="rounded-xl border border-primary-900/40 bg-gradient-to-br from-black to-primary-950/30 p-5 overflow-x-auto"
+				>
+					<h3 className="font-pixel text-primary-500 text-sm uppercase tracking-wider mb-4">
+						Contributions
+					</h3>
+					<ActivityCalendar
+						data={contributions}
+						theme={calendarTheme}
+						colorScheme="dark"
+						maxLevel={4}
+						hideTotalCount
+						hideColorLegend
+					/>
+				</div>
+			)}
 		</section>
 	);
 }

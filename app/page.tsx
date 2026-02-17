@@ -11,7 +11,7 @@ import Portfolio from "@/components/Portfolio";
 import ScrollText from "@/components/ScrollText";
 import Stats from "@/components/Stats";
 import TechStack from "@/components/TechStack";
-import { getTopRepos, getGitHubStats } from "@/lib/github";
+import { getTopRepos, getGitHubStats, getContributions } from "@/lib/github";
 import type { BgId } from "@/components/canvas/CanvasSwitcher";
 
 const BG_IDS: BgId[] = ["pixel", "terrain", "blocks", "dungeon", "starfield"];
@@ -24,9 +24,10 @@ async function DynamicHero() {
 
 async function GitHubSections() {
 	await connection();
-	const [repos, stats] = await Promise.all([
+	const [repos, stats, contributions] = await Promise.all([
 		getTopRepos(6),
 		getGitHubStats(),
+		getContributions(),
 	]);
 
 	return (
@@ -34,7 +35,7 @@ async function GitHubSections() {
 			<div className="pixel-divider" />
 			<OpenSource repos={repos} />
 			<div className="pixel-divider" />
-			<Stats stats={stats} />
+			<Stats stats={stats} contributions={contributions} />
 		</>
 	);
 }
