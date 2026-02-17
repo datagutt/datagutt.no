@@ -83,6 +83,7 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 			ctx.clearRect(0, 0, w, h);
 			const ox = prefersReduced ? 0 : drift.t * 0.3;
 			const oy = prefersReduced ? 0 : drift.t * 0.15;
+			const mouseRadiusSq = 150 * 150;
 
 			for (let row = 0; row < rows; row++) {
 				for (let col = 0; col < cols; col++) {
@@ -95,9 +96,9 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 					const cy = row * STEP + CELL / 2;
 					const dx = mouse.x - cx;
 					const dy = mouse.y - cy;
-					const dist = Math.sqrt(dx * dx + dy * dy);
-					if (dist < 150) {
-						n += (1 - dist / 150) * 0.5;
+					const distSq = dx * dx + dy * dy;
+					if (distSq < mouseRadiusSq) {
+						n += (1 - distSq / mouseRadiusSq) * 0.5;
 					}
 
 					ctx.fillStyle = bandColor(n);
