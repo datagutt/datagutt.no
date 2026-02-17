@@ -157,6 +157,12 @@ export default function Stats({ stats, contributions }: StatsProps) {
 						colorScheme="dark"
 						maxLevel={4}
 						showColorLegend={false}
+						tooltips={{
+							activity: {
+								text: (activity) =>
+									`${activity.count} contribution${activity.count !== 1 ? "s" : ""} on ${activity.date}`,
+							},
+						}}
 					/>
 				</div>
 			)}
