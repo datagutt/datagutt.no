@@ -4,16 +4,26 @@ import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { setupCanvas } from "../app/utils/canvas";
 
-const CELL_SIZE = 16;
-const GAP = 2;
+const CELL_SIZE = 12;
+const GAP = 3;
 const STEP = CELL_SIZE + GAP;
 
-// Green palette from tailwind config
+// Discrete alpha levels — 8-bit stepped, not smooth
+const ALPHA_LEVELS = [0, 0.04, 0.1, 0.2, 0.4, 0.7, 1.0];
+function quantize(a: number): number {
+  for (let i = ALPHA_LEVELS.length - 1; i >= 0; i--) {
+    if (a >= ALPHA_LEVELS[i]) return ALPHA_LEVELS[i];
+  }
+  return 0;
+}
+
+// Green palette
 const PALETTE = [
-  { color: "#042f1c", weight: 0.6 },  // primary-950
+  { color: "#042f1c", weight: 0.55 }, // primary-950
   { color: "#125536", weight: 0.25 }, // primary-900
-  { color: "#12834b", weight: 0.1 },  // primary-700
-  { color: "#1dc672", weight: 0.05 }, // primary-500
+  { color: "#12834b", weight: 0.12 }, // primary-700
+  { color: "#1dc672", weight: 0.06 }, // primary-500
+  { color: "#46e294", weight: 0.02 }, // primary-400
 ];
 
 function pickColor(): string {
@@ -31,29 +41,39 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
+type Cell = {
+  r: number;
+  g: number;
+  b: number;
+  sparkle: number; // countdown frames
+};
+
 type PixelGridProps = {
   burstActive?: boolean;
   className?: string;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
 };
 
-export default function PixelGrid({ burstActive, className, mouseContainerRef }: PixelGridProps) {
+export default function PixelGrid({
+  burstActive,
+  className,
+  mouseContainerRef,
+}: PixelGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const waveRef = useRef({ phase: 0 });
   const burstRef = useRef({ intensity: 0 });
   const mouseRef = useRef({ x: -1000, y: -1000 });
-  const gridRef = useRef<{ r: number; g: number; b: number }[][]>([]);
-  const waveTlRef = useRef<gsap.core.Timeline | null>(null);
+  const gridRef = useRef<Cell[][]>([]);
   const burstTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const initGrid = useCallback((cols: number, rows: number) => {
-    const grid: { r: number; g: number; b: number }[][] = [];
+    const grid: Cell[][] = [];
     for (let row = 0; row < rows; row++) {
       grid[row] = [];
       for (let col = 0; col < cols; col++) {
         const [r, g, b] = hexToRgb(pickColor());
-        grid[row][col] = { r, g, b };
+        grid[row][col] = { r, g, b, sparkle: 0 };
       }
     }
     return grid;
@@ -76,12 +96,11 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
     const waveTl = gsap.timeline({ repeat: -1 });
     waveTl.to(waveRef.current, {
       phase: Math.PI * 2,
-      duration: 6,
+      duration: 8,
       ease: "none",
     });
-    waveTlRef.current = waveTl;
 
-    // Mouse tracking — listen on parent container so elements above don't block
+    // Mouse tracking
     const mouseTarget = mouseContainerRef?.current ?? canvas;
     const handleMouseMove = (e: MouseEvent) => {
       const r = canvas.getBoundingClientRect();
@@ -95,12 +114,14 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
     mouseTarget.addEventListener("mousemove", handleMouseMove);
     mouseTarget.addEventListener("mouseleave", handleMouseLeave);
 
-    // Reduced motion check
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    // Draw loop
+    // Mouse radius in cells (blocky ring, like roguelike torch)
+    const TORCH_RADIUS = 8; // in cells
+    let frameCount = 0;
+
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
       const grid = gridRef.current;
@@ -111,6 +132,22 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
       const centerX = w / 2;
       const centerY = h / 2;
 
+      // Mouse position in cell coords
+      const mCol = Math.floor(mx / STEP);
+      const mRow = Math.floor(my / STEP);
+
+      // Random sparkles — a few cells flash bright each frame
+      if (!prefersReduced && frameCount % 3 === 0) {
+        const sparkleCount = Math.floor(Math.random() * 3) + 1;
+        for (let i = 0; i < sparkleCount; i++) {
+          const sr = Math.floor(Math.random() * rows);
+          const sc = Math.floor(Math.random() * cols);
+          if (grid[sr]?.[sc]) {
+            grid[sr][sc].sparkle = 8 + Math.floor(Math.random() * 12);
+          }
+        }
+      }
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const cell = grid[row]?.[col];
@@ -119,21 +156,31 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
           const x = col * STEP;
           const y = row * STEP;
 
-          // Base alpha
-          let alpha = 0.15;
+          let alpha = 0.06;
 
           if (!prefersReduced) {
-            // Wave
-            const wave =
-              Math.sin(phase + col * 0.15 + row * 0.08) * 0.25;
-            alpha += wave * 0.5 + 0.125;
+            // Stepped wave — floor to create blocky ripple
+            const waveVal = Math.sin(phase + col * 0.2 + row * 0.12);
+            const steppedWave = Math.floor((waveVal + 1) * 3) / 6; // 0 to 1 in steps
+            alpha += steppedWave * 0.15;
 
-            // Mouse proximity
-            const dx = mx - (x + CELL_SIZE / 2);
-            const dy = my - (y + CELL_SIZE / 2);
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 120) {
-              alpha += (1 - dist / 120) * 0.4;
+            // Torch: Chebyshev distance for square radius
+            const cellDist = Math.max(
+              Math.abs(col - mCol),
+              Math.abs(row - mRow)
+            );
+            if (cellDist <= TORCH_RADIUS) {
+              // Stepped brightness rings
+              if (cellDist <= 2) alpha = 0.7;
+              else if (cellDist <= 4) alpha = 0.4;
+              else if (cellDist <= 6) alpha = 0.2;
+              else alpha = Math.max(alpha, 0.1);
+            }
+
+            // Sparkle
+            if (cell.sparkle > 0) {
+              alpha = Math.max(alpha, 0.8);
+              cell.sparkle--;
             }
 
             // Burst
@@ -141,31 +188,33 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
               const bx = centerX - (x + CELL_SIZE / 2);
               const by = centerY - (y + CELL_SIZE / 2);
               const bDist = Math.sqrt(bx * bx + by * by);
-              const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+              const maxDist = Math.sqrt(
+                centerX * centerX + centerY * centerY
+              );
               alpha += burstI * (1 - bDist / maxDist) * 0.6;
             }
           }
 
-          alpha = Math.max(0, Math.min(1, alpha));
+          alpha = quantize(Math.min(1, alpha));
+          if (alpha <= 0) continue;
+
           ctx.fillStyle = `rgba(${cell.r},${cell.g},${cell.b},${alpha})`;
           ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
         }
       }
 
+      frameCount++;
       animRef.current = requestAnimationFrame(draw);
     };
 
     animRef.current = requestAnimationFrame(draw);
 
-    // Handle resize
     const handleResize = () => {
-      const newCtx = setupCanvas(canvas);
+      setupCanvas(canvas);
       const newRect = canvas.getBoundingClientRect();
       const newCols = Math.ceil(newRect.width / STEP);
       const newRows = Math.ceil(newRect.height / STEP);
       gridRef.current = initGrid(newCols, newRows);
-      // ctx reference is captured in closure but we need to update draw's ctx
-      // Since draw uses the same canvas, setupCanvas already updated it
     };
     window.addEventListener("resize", handleResize);
 
@@ -176,7 +225,7 @@ export default function PixelGrid({ burstActive, className, mouseContainerRef }:
       mouseTarget.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("resize", handleResize);
     };
-  }, [initGrid]);
+  }, [initGrid, mouseContainerRef]);
 
   // Burst effect
   useEffect(() => {
