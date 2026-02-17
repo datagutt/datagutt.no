@@ -45,17 +45,17 @@ type Pulse = {
   color: { r: number; g: number; b: number };
 };
 
-type PixelGridProps = {
+type PixelCanvasProps = {
   burstActive?: boolean;
   className?: string;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
 };
 
-export default function PixelGrid({
+export default function PixelCanvas({
   burstActive,
   className,
   mouseContainerRef,
-}: PixelGridProps) {
+}: PixelCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef(0);
   const burstRef = useRef({ intensity: 0 });
