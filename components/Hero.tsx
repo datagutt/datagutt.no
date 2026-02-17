@@ -10,6 +10,7 @@ export default function Hero() {
 	const [burstActive, setBurstActive] = useState(false);
 	const avatarRef = useRef<HTMLImageElement>(null);
 	const greetingRef = useRef<HTMLDivElement>(null);
+	const nameRef = useRef<HTMLDivElement>(null);
 	const descRef = useRef<HTMLParagraphElement>(null);
 	const socialsRef = useRef<HTMLDivElement>(null);
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -20,8 +21,6 @@ export default function Hero() {
 		).matches;
 		if (prefersReduced) return;
 
-		// Entrance timeline — "Thomas" is handled by CSS .stack animation,
-		// so we skip it here to avoid conflicts
 		const tl = gsap.timeline({ delay: 0.2 });
 
 		tl.from(avatarRef.current, {
@@ -40,7 +39,11 @@ export default function Hero() {
 				},
 				"-=0.3"
 			)
-			// small gap for the CSS stack/glitch animation to play (~0.5s)
+			// Unpause the CSS stack/glitch animation on "Thomas"
+			.call(() => {
+				nameRef.current?.classList.remove("stack-paused");
+			})
+			// Wait for the CSS stack animation to finish (~0.6s)
 			.from(
 				descRef.current,
 				{
@@ -49,7 +52,7 @@ export default function Hero() {
 					duration: 0.4,
 					ease: "power2.out",
 				},
-				">0.3"
+				">0.5"
 			)
 			.from(
 				socialsRef.current,
@@ -113,7 +116,8 @@ export default function Hero() {
 						Hello, I&apos;m
 					</div>
 					<div
-						className="stack font-pixel-line text-[7vw] transform-gpu"
+						ref={nameRef}
+						className="stack stack-paused font-pixel-line text-[7vw] transform-gpu"
 						style={
 							{
 								"--stacks": 3,

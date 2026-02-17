@@ -75,6 +75,11 @@
 }
 
 /* https://codepen.io/aldrie/pen/PojGYLo */
+.stack-paused span {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
 .stack {
   display: grid;
   grid-template-columns: 1fr;
@@ -123,6 +128,12 @@
   100% {
     text-shadow: none;
   }
+}
+
+/* Standalone glitch for project titles */
+.glitch-text {
+  --glitch-translate: 4px;
+  animation: glitch 3s ease infinite 1s alternate-reverse;
 }
 
 @keyframes glitch {
