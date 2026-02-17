@@ -141,6 +141,7 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
       ctx.clearRect(0, 0, w, h);
 
       const time = frameCount * 0.02;
+      const mouseRadiusSq = 120 * 120;
 
       // Stars
       for (let l = 0; l < 3; l++) {
@@ -160,9 +161,9 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
           // Mouse brightens nearby stars
           const dx = mouse.x - star.x;
           const dy = mouse.y - star.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            alpha += (1 - dist / 120) * 0.5;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < mouseRadiusSq) {
+            alpha += (1 - distSq / mouseRadiusSq) * 0.5;
           }
 
           alpha = Math.max(0, Math.min(1, alpha));
@@ -202,8 +203,8 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
               // Mouse proximity
               const dx = mouse.x - drawX;
               const dy = mouse.y - drawY;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              const alpha = dist < 100 ? 0.9 : 0.4;
+              const distSq = dx * dx + dy * dy;
+              const alpha = distSq < 100 * 100 ? 0.9 : 0.4;
 
               ctx.fillStyle = sp.color + alpha + ")";
               ctx.fillRect(drawX, drawY, px - 1, px - 1);
