@@ -48,8 +48,8 @@ export default function Portfolio() {
 	}, [isMobile]);
 
 	return (
-		<section ref={containerRef} className="mb-[120vw] md:mb-[40vw]">
-			<div
+        <section ref={containerRef} className="mb-[120vw] md:mb-[40vw]">
+            <div
 				ref={showcaseRef}
 				className="relative mb-[5vw] z-40 md:w-[125.6vw] md:h-[34.6vw] h-[100vw]"
 			>
@@ -64,12 +64,14 @@ export default function Portfolio() {
 						>
 							<div className="relative w-full h-full md:h-[50vw] lg:h-[17.3vw]">
 								<Image
-									src={project.image}
-									alt={project.name}
-									layout="fill"
-									objectFit="contain"
-									className="rounded-lg h-full w-full"
-								/>
+                                    src={project.image}
+                                    alt={project.name}
+                                    className="rounded-lg h-full w-full"
+                                    fill
+                                    sizes="100vw"
+                                    style={{
+                                        objectFit: "contain"
+                                    }} />
 							</div>
 							<div className="absolute bottom-0 left-0 w-full md:h-1/2 bg-black bg-opacity-50 md:p-4">
 								<h2 className="text-white text-3xl md:text-4xl font-pixel-triangle mb-2">
@@ -83,6 +85,6 @@ export default function Portfolio() {
 					))}
 				</div>
 			</div>
-		</section>
-	);
+        </section>
+    );
 }
