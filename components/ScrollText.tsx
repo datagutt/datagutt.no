@@ -28,6 +28,8 @@ export default function ScrollText() {
 						toggleActions: "play none none none",
 					},
 				});
+			} else {
+				gsap.set(containerRef.current, { opacity: 1 });
 			}
 
 			gsap.set(firstLineRef.current, {
@@ -65,21 +67,21 @@ export default function ScrollText() {
 	return (
 		<section
 			ref={containerRef}
-			className="relative py-16 md:py-24 overflow-hidden"
+			className="relative py-16 md:py-24 overflow-hidden opacity-0"
 			id="scroll-text"
 		>
 			<div className="w-[150vw] -ml-[25vw] text-[8vw] md:text-[6vw] leading-[0.9] uppercase text-primary-700">
 				<div
 					ref={firstLineRef}
 					className="font-pixel-grid"
-					style={{ willChange: "transform" }}
+					style={{ willChange: "transform", transform: "translateX(50%)" }}
 				>
 					CHECK OUT MY PORTFOLIO
 				</div>
 				<div
 					ref={secondLineRef}
 					className="font-pixel-triangle"
-					style={{ willChange: "transform" }}
+					style={{ willChange: "transform", transform: "translateX(-50%)" }}
 				>
 					CHECK OUT MY PORTFOLIO
 				</div>
