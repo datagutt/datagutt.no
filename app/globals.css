@@ -105,6 +105,16 @@
   --glitch-translate: -8px;
 }
 
+/* Faster, more aggressive glitch for 404 page */
+.stack-glitch-fast span {
+  --glitch-translate: 12px;
+  animation: glitch 1s ease infinite 0.5s alternate-reverse;
+}
+
+.stack-glitch-fast span:nth-child(even) {
+  --glitch-translate: -12px;
+}
+
 @keyframes glitch {
   0% {
     text-shadow:
