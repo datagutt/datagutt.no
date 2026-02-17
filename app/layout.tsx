@@ -1,26 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import {
+  GeistPixelSquare,
+  GeistPixelGrid,
+  GeistPixelCircle,
+  GeistPixelTriangle,
+  GeistPixelLine,
+} from "geist/font/pixel";
 import { Providers } from "./providers";
-
-const mondwest = localFont({
-  src: "../fonts/PPMondwest-Regular.otf",
-  display: "swap",
-  variable: "--font-mond",
-});
-
-const neuebit = localFont({
-  src: "../fonts/PPNeueBit-Bold.otf",
-  display: "swap",
-  variable: "--font-bit",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: "datagutt",
@@ -36,7 +24,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${mondwest.variable} ${neuebit.variable} ${inter.variable}`}
+      className={`${GeistSans.variable} ${GeistPixelSquare.variable} ${GeistPixelGrid.variable} ${GeistPixelCircle.variable} ${GeistPixelTriangle.variable} ${GeistPixelLine.variable}`}
     >
       <body>
         <Providers>{children}</Providers>

@@ -12,9 +12,12 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)"],
-        mond: ["var(--font-mond)"],
-        bit: ["var(--font-bit)"],
+        sans: ["var(--font-geist-sans)"],
+        pixel: ["var(--font-geist-pixel-square)"],
+        "pixel-grid": ["var(--font-geist-pixel-grid)"],
+        "pixel-circle": ["var(--font-geist-pixel-circle)"],
+        "pixel-triangle": ["var(--font-geist-pixel-triangle)"],
+        "pixel-line": ["var(--font-geist-pixel-line)"],
       },
       colors: {
         background: "var(--background)",

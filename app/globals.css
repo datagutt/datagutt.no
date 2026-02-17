@@ -6,7 +6,7 @@
   :root {
     --background: theme("colors.black");
     --foreground: hsl(0, 0%, 100%);
-    --base-font-family: var(--font-sans);
+    --base-font-family: var(--font-geist-sans);
   }
   .dark {
   }
