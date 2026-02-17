@@ -40,11 +40,11 @@ export const projects: Project[] = [
     width: 480,
     height: 288,
     poweredBy: [
-      { name: "Node.js" },
+      { name: "Next.js" },
       { name: "React" },
       { name: "Vipps" },
       { name: "Stripe" },
-      { name: "WebSocket" },
+      { name: "Twitch" },
     ],
   },
   {
@@ -58,9 +58,10 @@ export const projects: Project[] = [
     height: 288,
     poweredBy: [
       { name: "Node.js" },
-      { name: "FFmpeg" },
+      { name: "Rust" },
       { name: "SRT" },
-      { name: "React" },
+      { name: "RIST" },
+      { name: "RTMP" },
       { name: "Docker" },
     ],
   },
