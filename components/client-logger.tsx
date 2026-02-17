@@ -18,12 +18,12 @@ const logStyles = [
 export function ClientLogger() {
   useEffect(() => {
     const run = () => console.info(`%c${msg}`, logStyles);
-    if ("requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(run);
-      return () => window.cancelIdleCallback(id);
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(run);
+      return () => cancelIdleCallback(id);
     }
-    const timeout = window.setTimeout(run, 0);
-    return () => window.clearTimeout(timeout);
+    const timeout = setTimeout(run, 0);
+    return () => clearTimeout(timeout);
   }, []);
 
   return null;
