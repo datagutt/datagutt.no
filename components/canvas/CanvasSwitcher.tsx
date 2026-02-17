@@ -3,14 +3,20 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-const PixelCanvas = dynamic(() => import("./PixelCanvas"), { ssr: false });
-const TerrainCanvas = dynamic(() => import("./TerrainCanvas"), { ssr: false });
-const FallingBlocksCanvas = dynamic(() => import("./FallingBlocksCanvas"), {
-	ssr: false,
+const PixelCanvas = dynamic(() => import("./PixelCanvas"), {
+	ssr: false
 });
-const DungeonCanvas = dynamic(() => import("./DungeonCanvas"), { ssr: false });
+const TerrainCanvas = dynamic(() => import("./TerrainCanvas"), {
+	ssr: false
+});
+const FallingBlocksCanvas = dynamic(() => import("./FallingBlocksCanvas"), {
+	ssr: false
+});
+const DungeonCanvas = dynamic(() => import("./DungeonCanvas"), {
+	ssr: false
+});
 const StarfieldCanvas = dynamic(() => import("./StarfieldCanvas"), {
-	ssr: false,
+	ssr: false
 });
 
 const BACKGROUNDS = [
@@ -67,38 +73,43 @@ export default function CanvasSwitcher({
 		return () => observer.disconnect();
 	}, [mouseContainerRef]);
 
-	const shouldRenderCanvas = isPageVisible && isInViewport;
+	const paused = !isPageVisible || !isInViewport;
 
 	return (
 		<>
 			{/* Canvas */}
-			{shouldRenderCanvas && active === "pixel" && (
+			{active === "pixel" && (
 				<PixelCanvas
+					paused={paused}
 					burstActive={burstActive}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{shouldRenderCanvas && active === "terrain" && (
+			{active === "terrain" && (
 				<TerrainCanvas
+					paused={paused}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{shouldRenderCanvas && active === "blocks" && (
+			{active === "blocks" && (
 				<FallingBlocksCanvas
+					paused={paused}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{shouldRenderCanvas && active === "dungeon" && (
+			{active === "dungeon" && (
 				<DungeonCanvas
+					paused={paused}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
 			)}
-			{shouldRenderCanvas && active === "starfield" && (
+			{active === "starfield" && (
 				<StarfieldCanvas
+					paused={paused}
 					mouseContainerRef={mouseContainerRef}
 					className={className}
 				/>
