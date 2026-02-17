@@ -11,12 +11,12 @@ const STEP = CELL + GAP;
 
 // Elevation bands — dark depths to bright peaks
 const BANDS: [number, string][] = [
-  [-1.0, "rgba(4,47,28,0.15)"],   // deep
-  [-0.4, "rgba(18,85,54,0.25)"],  // low
-  [-0.1, "rgba(18,131,75,0.35)"], // mid
-  [0.2, "rgba(29,198,114,0.5)"],  // high
-  [0.5, "rgba(70,226,148,0.65)"], // peak
-  [0.8, "rgba(131,242,186,0.8)"], // snow
+  [-1.0, "rgba(4,47,28,0.10)"],   // deep
+  [-0.4, "rgba(18,85,54,0.18)"],  // low
+  [-0.1, "rgba(18,131,75,0.25)"], // mid
+  [0.2, "rgba(29,198,114,0.35)"],  // high
+  [0.5, "rgba(70,226,148,0.45)"], // peak
+  [0.8, "rgba(131,242,186,0.55)"], // snow
 ];
 
 function bandColor(n: number): string {
