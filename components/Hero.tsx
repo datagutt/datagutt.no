@@ -1,8 +1,8 @@
 "use client";
 
+import { gsap } from "gsap";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 import PixelGrid from "./PixelGrid";
 import Socials from "./Socials";
 
@@ -17,7 +17,7 @@ export default function Hero() {
 
 	useEffect(() => {
 		const prefersReduced = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
+			"(prefers-reduced-motion: reduce)",
 		).matches;
 
 		if (prefersReduced) {
@@ -31,7 +31,7 @@ export default function Hero() {
 					socialsRef.current,
 					scrollRef.current,
 				],
-				{ autoAlpha: 1 }
+				{ autoAlpha: 1 },
 			);
 			nameRef.current?.classList.add("stack-glitch");
 			return;
@@ -44,14 +44,14 @@ export default function Hero() {
 		tl.fromTo(
 			avatarRef.current,
 			{ autoAlpha: 0, scale: 0.6 },
-			{ autoAlpha: 1, scale: 1, duration: 0.7, ease: "back.out(1.7)" }
+			{ autoAlpha: 1, scale: 1, duration: 0.7, ease: "back.out(1.7)" },
 		)
 			// "Hello, I'm"
 			.fromTo(
 				greetingRef.current,
 				{ autoAlpha: 0, y: 20 },
 				{ autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" },
-				"-=0.3"
+				"-=0.3",
 			)
 			// "Thomas" spans — staggered glitch entrance
 			.fromTo(
@@ -66,35 +66,35 @@ export default function Hero() {
 					duration: 0.35,
 					stagger: 0.1,
 					ease: "power4.out",
-				}
+				},
 			)
 			// Flash text-shadow on the name container for glitch feel
 			.fromTo(
 				nameRef.current,
 				{ autoAlpha: 0 },
 				{ autoAlpha: 1, duration: 0.01 },
-				"<"
+				"<",
 			)
 			// Description
 			.fromTo(
 				descRef.current,
 				{ autoAlpha: 0, y: 15 },
 				{ autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
-				"-=0.1"
+				"-=0.1",
 			)
 			// Socials
 			.fromTo(
 				socialsRef.current,
 				{ autoAlpha: 0, y: 10 },
 				{ autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
-				"-=0.1"
+				"-=0.1",
 			)
 			// Scroll indicator
 			.fromTo(
 				scrollRef.current,
 				{ autoAlpha: 0 },
 				{ autoAlpha: 1, duration: 0.6, ease: "power2.out" },
-				"-=0.1"
+				"-=0.1",
 			)
 			// Enable ongoing CSS glitch after entrance
 			.call(() => {
@@ -130,6 +130,7 @@ export default function Hero() {
 					src="/images/avatar.png"
 					width={150}
 					height={150}
+					loading="eager"
 					alt="Avatar"
 					className="gsap-hero rounded-full mb-[1.67vw] cursor-pointer"
 					style={{
@@ -200,7 +201,9 @@ export default function Hero() {
 				ref={scrollRef}
 				className="gsap-hero absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1 text-primary-500/80"
 			>
-				<span className="font-pixel text-xs uppercase tracking-widest">Scroll</span>
+				<span className="font-pixel text-xs uppercase tracking-widest">
+					Scroll
+				</span>
 				<svg
 					className="w-5 h-5"
 					fill="none"
@@ -208,7 +211,11 @@ export default function Hero() {
 					stroke="currentColor"
 					strokeWidth={2}
 				>
-					<path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M19 9l-7 7-7-7"
+					/>
 				</svg>
 			</div>
 		</section>
