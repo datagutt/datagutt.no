@@ -18,8 +18,10 @@ export default function ScrollText() {
 
 		const ctx = gsap.context(() => {
 			if (!prefersReduced) {
-				gsap.from(containerRef.current, {
+				gsap.fromTo(containerRef.current, {
 					opacity: 0,
+				}, {
+					opacity: 1,
 					duration: 0.8,
 					ease: "power2.out",
 					scrollTrigger: {
