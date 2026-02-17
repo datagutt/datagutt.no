@@ -17,20 +17,22 @@ const BACKGROUNDS = [
   { id: "starfield", label: "Starfield" },
 ] as const;
 
-type BgId = (typeof BACKGROUNDS)[number]["id"];
+export type BgId = (typeof BACKGROUNDS)[number]["id"];
 
 type Props = {
+  initialBg?: BgId;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
   burstActive?: boolean;
   className?: string;
 };
 
 export default function CanvasSwitcher({
+  initialBg = "pixel",
   mouseContainerRef,
   burstActive,
   className,
 }: Props) {
-  const [active, setActive] = useState<BgId>("pixel");
+  const [active, setActive] = useState<BgId>(initialBg);
 
   return (
     <>

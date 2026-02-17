@@ -3,10 +3,14 @@
 import { gsap } from "gsap";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import CanvasSwitcher from "./canvas/CanvasSwitcher";
+import CanvasSwitcher, { type BgId } from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
 
-export default function Hero() {
+type HeroProps = {
+	initialBg?: BgId;
+};
+
+export default function Hero({ initialBg }: HeroProps) {
 	const [burstActive, setBurstActive] = useState(false);
 	const sectionRef = useRef<HTMLElement>(null);
 	const avatarRef = useRef<HTMLImageElement>(null);
@@ -197,6 +201,7 @@ export default function Hero() {
 				</div>
 			</div>
 			<CanvasSwitcher
+				initialBg={initialBg}
 				burstActive={burstActive}
 				mouseContainerRef={sectionRef}
 				className="absolute z-10 w-full h-full"

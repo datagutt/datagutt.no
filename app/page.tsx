@@ -5,11 +5,15 @@ import Hero from "@/components/Hero";
 import Portfolio from "@/components/Portfolio";
 import ScrollText from "@/components/ScrollText";
 
+const BG_IDS = ["pixel", "terrain", "blocks", "dungeon", "starfield"] as const;
+
 export default function Home() {
+	const initialBg = BG_IDS[Math.floor(Math.random() * BG_IDS.length)];
+
 	return (
 		<>
 			<main className="relative z-[10]">
-				<Hero />
+				<Hero initialBg={initialBg} />
 				<ScrollText />
 				<Portfolio />
 			</main>
