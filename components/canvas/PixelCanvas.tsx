@@ -19,20 +19,35 @@ const PALETTE = [
   { r: 70, g: 226, b: 148, weight: 0.05 }, // primary-400
 ];
 
-function pickPalette() {
+// Pre-compute color lookup tables — avoids per-frame string allocation
+const ALPHA_STEPS = 100;
+const colorLUT: string[][] = PALETTE.map(p => {
+  const lut: string[] = new Array(ALPHA_STEPS + 1);
+  for (let i = 0; i <= ALPHA_STEPS; i++) {
+    lut[i] = `rgba(${p.r},${p.g},${p.b},${(i / ALPHA_STEPS).toFixed(3)})`;
+  }
+  return lut;
+});
+const highlightLUT: string[] = new Array(ALPHA_STEPS + 1);
+const shadowLUT: string[] = new Array(ALPHA_STEPS + 1);
+for (let i = 0; i <= ALPHA_STEPS; i++) {
+  const a = i / ALPHA_STEPS;
+  highlightLUT[i] = `rgba(255,255,255,${(a * 0.08).toFixed(4)})`;
+  shadowLUT[i] = `rgba(0,0,0,${(a * 0.15).toFixed(4)})`;
+}
+
+function pickPaletteIdx(): number {
   const roll = Math.random();
   let cum = 0;
-  for (const p of PALETTE) {
-    cum += p.weight;
-    if (roll <= cum) return p;
+  for (let i = 0; i < PALETTE.length; i++) {
+    cum += PALETTE[i].weight;
+    if (roll <= cum) return i;
   }
-  return PALETTE[0];
+  return 0;
 }
 
 type Cell = {
-  r: number;
-  g: number;
-  b: number;
+  paletteIdx: number;
   life: number;    // 0 = off, 1 = alive (for Game of Life pockets)
 };
 
@@ -48,12 +63,14 @@ type Pulse = {
 };
 
 type PixelCanvasProps = {
+  paused?: boolean;
   burstActive?: boolean;
   className?: string;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
 };
 
 export default function PixelCanvas({
+  paused = false,
   burstActive,
   className,
   mouseContainerRef,
@@ -62,6 +79,8 @@ export default function PixelCanvas({
   const animRef = useRef(0);
   const burstRef = useRef({ intensity: 0 });
   const burstTweenRef = useRef<gsap.core.Tween | null>(null);
+  const pausedRef = useRef(paused);
+  const drawRef = useRef<((time: number) => void) | null>(null);
   const resizeKey = useResizeKey(canvasRef);
 
   useEffect(() => {
@@ -80,9 +99,8 @@ export default function PixelCanvas({
     for (let row = 0; row < rows; row++) {
       grid[row] = [];
       for (let col = 0; col < cols; col++) {
-        const p = pickPalette();
         grid[row][col] = {
-          r: p.r, g: p.g, b: p.b,
+          paletteIdx: pickPaletteIdx(),
           life: Math.random() < 0.08 ? 1 : 0,
         };
       }
@@ -92,7 +110,7 @@ export default function PixelCanvas({
     const pulses: Pulse[] = [];
     const spawnPulse = () => {
       const horizontal = Math.random() > 0.4;
-      const p = pickPalette();
+      const p = PALETTE[pickPaletteIdx()];
       if (horizontal) {
         pulses.push({
           col: -1,
@@ -136,8 +154,8 @@ export default function PixelCanvas({
     let frameCount = 0;
     let lastFrameTime = 0;
 
-    // Pulse brightness map (col,row -> alpha boost)
-    const pulseMap = new Map<string, number>();
+    // Pulse brightness map — flat array instead of Map<string,number>
+    const pulseArr = new Float32Array(cols * rows);
 
     // Game of Life step (runs on a slow timer)
     const lifeStep = () => {
@@ -193,6 +211,8 @@ export default function PixelCanvas({
     let lastMRow = -1;
 
     const draw = (time: number) => {
+      if (pausedRef.current) return;
+
       if (time - lastFrameTime < FRAME_INTERVAL) {
         animRef.current = requestAnimationFrame(draw);
         return;
@@ -222,7 +242,7 @@ export default function PixelCanvas({
       }
 
       // Update pulses
-      pulseMap.clear();
+      pulseArr.fill(0);
       if (!prefersReduced) {
         for (let i = pulses.length - 1; i >= 0; i--) {
           const p = pulses[i];
@@ -236,8 +256,8 @@ export default function PixelCanvas({
             const r = p.row + p.dirRow * pos;
             if (c >= 0 && c < cols && r >= 0 && r < rows) {
               const fade = 1 - t / p.length;
-              const key = `${c},${r}`;
-              pulseMap.set(key, Math.max(pulseMap.get(key) || 0, fade));
+              const idx = r * cols + c;
+              if (fade > pulseArr[idx]) pulseArr[idx] = fade;
             }
           }
 
@@ -268,8 +288,8 @@ export default function PixelCanvas({
           if (cell.life) alpha = 0.25;
 
           // Pulse glow
-          const pulseVal = pulseMap.get(`${col},${row}`);
-          if (pulseVal) alpha = Math.max(alpha, pulseVal * 0.7);
+          const pulseVal = pulseArr[row * cols + col];
+          if (pulseVal > 0) alpha = Math.max(alpha, pulseVal * 0.7);
 
           // Mouse proximity — diamond shape, blocky rings
           if (!prefersReduced) {
@@ -291,25 +311,24 @@ export default function PixelCanvas({
           alpha = Math.min(1, alpha);
           if (alpha < 0.02) continue;
 
-          const cr = cell.r;
-          const cg = cell.g;
-          const cb = cell.b;
+          const alphaIdx = Math.round(alpha * ALPHA_STEPS);
+          const lut = colorLUT[cell.paletteIdx];
 
           // 3D cell rendering for bright cells
           if (alpha > 0.3) {
             // Main fill
-            ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+            ctx.fillStyle = lut[alphaIdx];
             ctx.fillRect(x, y, CELL, CELL);
             // Top-left highlight
-            ctx.fillStyle = `rgba(255,255,255,${alpha * 0.08})`;
+            ctx.fillStyle = highlightLUT[alphaIdx];
             ctx.fillRect(x, y, CELL, 1);
             ctx.fillRect(x, y, 1, CELL);
             // Bottom-right shadow
-            ctx.fillStyle = `rgba(0,0,0,${alpha * 0.15})`;
+            ctx.fillStyle = shadowLUT[alphaIdx];
             ctx.fillRect(x + CELL - 1, y, 1, CELL);
             ctx.fillRect(x, y + CELL - 1, CELL, 1);
           } else {
-            ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+            ctx.fillStyle = lut[alphaIdx];
             ctx.fillRect(x, y, CELL, CELL);
           }
         }
@@ -319,14 +338,26 @@ export default function PixelCanvas({
       animRef.current = requestAnimationFrame(draw);
     };
 
+    drawRef.current = draw;
+    draw(performance.now()); // sync first frame
     animRef.current = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(animRef.current);
+      drawRef.current = null;
       target.removeEventListener("mousemove", onMove);
       target.removeEventListener("mouseleave", onLeave);
     };
   }, [mouseContainerRef, resizeKey]);
+
+  // Pause / resume
+  useEffect(() => {
+    const wasPaused = pausedRef.current;
+    pausedRef.current = paused;
+    if (!paused && wasPaused && drawRef.current) {
+      animRef.current = requestAnimationFrame(drawRef.current);
+    }
+  }, [paused]);
 
   // Burst effect
   useEffect(() => {

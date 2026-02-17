@@ -29,14 +29,22 @@ function bandColor(n: number): string {
 }
 
 type Props = {
+	paused?: boolean;
 	mouseContainerRef?: React.RefObject<HTMLElement | null>;
 	className?: string;
 };
 
-export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
+export default function TerrainCanvas({
+	paused = false,
+	mouseContainerRef,
+	className,
+}: Props) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const animRef = useRef(0);
 	const offsetRef = useRef({ x: 0, y: 0 });
+	const pausedRef = useRef(paused);
+	const drawRef = useRef<((time: number) => void) | null>(null);
+	const driftTlRef = useRef<gsap.core.Tween | null>(null);
 	const resizeKey = useResizeKey(canvasRef);
 
 	useEffect(() => {
@@ -60,6 +68,7 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 			ease: "none",
 			repeat: -1,
 		});
+		driftTlRef.current = driftTl;
 
 		// Mouse influence
 		const mouse = { x: -1000, y: -1000 };
@@ -83,6 +92,8 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 		let lastFrameTime = 0;
 
 		const draw = (time: number) => {
+			if (pausedRef.current) return;
+
 			if (time - lastFrameTime < FRAME_INTERVAL) {
 				animRef.current = requestAnimationFrame(draw);
 				return;
@@ -118,15 +129,34 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 			animRef.current = requestAnimationFrame(draw);
 		};
 
+		drawRef.current = draw;
+		draw(performance.now()); // sync first frame
 		animRef.current = requestAnimationFrame(draw);
 
 		return () => {
 			cancelAnimationFrame(animRef.current);
+			drawRef.current = null;
+			driftTlRef.current = null;
 			driftTl.kill();
 			target.removeEventListener("mousemove", onMove);
 			target.removeEventListener("mouseleave", onLeave);
 		};
 	}, [mouseContainerRef, resizeKey]);
+
+	// Pause / resume
+	useEffect(() => {
+		const wasPaused = pausedRef.current;
+		pausedRef.current = paused;
+
+		if (paused) {
+			driftTlRef.current?.pause();
+		} else {
+			driftTlRef.current?.resume();
+			if (wasPaused && drawRef.current) {
+				animRef.current = requestAnimationFrame(drawRef.current);
+			}
+		}
+	}, [paused]);
 
 	return (
 		<canvas

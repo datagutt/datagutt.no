@@ -11,7 +11,7 @@ const STEP = CELL + GAP;
 
 type Room = { x: number; y: number; w: number; h: number };
 
-// BFS pathfinding
+// BFS pathfinding with parent-pointer tracking (O(n) vs O(n*L) path accumulation)
 function findPath(
   map: number[][],
   startCol: number,
@@ -21,27 +21,46 @@ function findPath(
   rows: number,
   cols: number
 ): [number, number][] | null {
-  const visited = new Set<string>();
-  const queue: { col: number; row: number; path: [number, number][] }[] = [
-    { col: startCol, row: startRow, path: [[startCol, startRow]] },
-  ];
-  visited.add(`${startCol},${startRow}`);
-  const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+  const size = cols * rows;
+  const visited = new Uint8Array(size);
+  const parent = new Int32Array(size).fill(-1);
+  const toIdx = (c: number, r: number) => r * cols + c;
 
-  while (queue.length > 0) {
-    const cur = queue.shift()!;
-    if (cur.col === endCol && cur.row === endRow) return cur.path;
+  const startIdx = toIdx(startCol, startRow);
+  const endIdx = toIdx(endCol, endRow);
+  visited[startIdx] = 1;
+
+  const queue: [number, number][] = [[startCol, startRow]];
+  let head = 0;
+  const dirs: [number, number][] = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+
+  while (head < queue.length) {
+    const [cc, cr] = queue[head++];
+    if (cc === endCol && cr === endRow) {
+      // Reconstruct path from parent pointers
+      const path: [number, number][] = [];
+      let idx = endIdx;
+      while (idx !== startIdx) {
+        const c = idx % cols;
+        const r = (idx - c) / cols;
+        path.push([c, r]);
+        idx = parent[idx];
+      }
+      path.push([startCol, startRow]);
+      path.reverse();
+      return path;
+    }
 
     for (const [dc, dr] of dirs) {
-      const nc = cur.col + dc;
-      const nr = cur.row + dr;
-      const key = `${nc},${nr}`;
-      if (
-        nc >= 0 && nc < cols && nr >= 0 && nr < rows &&
-        map[nr][nc] === 1 && !visited.has(key)
-      ) {
-        visited.add(key);
-        queue.push({ col: nc, row: nr, path: [...cur.path, [nc, nr]] });
+      const nc = cc + dc;
+      const nr = cr + dr;
+      if (nc >= 0 && nc < cols && nr >= 0 && nr < rows) {
+        const nIdx = toIdx(nc, nr);
+        if (map[nr][nc] === 1 && !visited[nIdx]) {
+          visited[nIdx] = 1;
+          parent[nIdx] = toIdx(cc, cr);
+          queue.push([nc, nr]);
+        }
       }
     }
   }
@@ -92,6 +111,16 @@ function generateDungeon(cols: number, rows: number) {
   return { map, rooms };
 }
 
+// Pre-compute color lookup tables for tile colors
+const TILE_ALPHA_STEPS = 50;
+const floorColors: string[] = new Array(TILE_ALPHA_STEPS + 1);
+const wallColors: string[] = new Array(TILE_ALPHA_STEPS + 1);
+for (let i = 0; i <= TILE_ALPHA_STEPS; i++) {
+  const a = (i / TILE_ALPHA_STEPS).toFixed(3);
+  floorColors[i] = `rgba(29,198,114,${a})`;
+  wallColors[i] = `rgba(4,47,28,${a})`;
+}
+
 type Enemy = {
   col: number;
   row: number;
@@ -101,13 +130,16 @@ type Enemy = {
 };
 
 type Props = {
+  paused?: boolean;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
   className?: string;
 };
 
-export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
+export default function DungeonCanvas({ paused = false, mouseContainerRef, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef(0);
+  const pausedRef = useRef(paused);
+  const drawRef = useRef<((time: number) => void) | null>(null);
   const resizeKey = useResizeKey(canvasRef);
 
   useEffect(() => {
@@ -154,15 +186,19 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
       }
     }
 
-    // Revealed tiles (fog of war)
-    const revealed = new Set<string>();
+    // Revealed tiles (fog of war) — Uint8Array instead of Set<string>
+    const revealed = new Uint8Array(cols * rows);
     const TORCH = 10;
 
     const revealAround = (c: number, r: number) => {
       for (let dy = -TORCH; dy <= TORCH; dy++) {
         for (let dx = -TORCH; dx <= TORCH; dx++) {
           if (Math.max(Math.abs(dx), Math.abs(dy)) <= TORCH) {
-            revealed.add(`${c + dx},${r + dy}`);
+            const rc = c + dx;
+            const rr = r + dy;
+            if (rc >= 0 && rc < cols && rr >= 0 && rr < rows) {
+              revealed[rr * cols + rc] = 1;
+            }
           }
         }
       }
@@ -185,7 +221,9 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
         player.targetRoom = (roomIdx + 1) % rooms.length;
       }
     };
-    navigateToRoom(1);
+
+    // Defer initial pathfinding so first frame draws before BFS runs
+    setTimeout(() => navigateToRoom(1), 0);
 
     // Mouse (separate torch for viewer)
     const mouse = { x: -1000, y: -1000 };
@@ -206,6 +244,8 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
     let flicker = 0;
 
     const draw = (time: number) => {
+      if (pausedRef.current) return;
+
       if (time - lastFrameTime < FRAME_INTERVAL) {
         animRef.current = requestAnimationFrame(draw);
         return;
@@ -265,8 +305,7 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
           const tile = map[row]?.[col] ?? 0;
           const x = col * STEP;
           const y = row * STEP;
-          const key = `${col},${row}`;
-          const isRevealed = revealed.has(key);
+          const isRevealed = revealed[row * cols + col];
 
           // Distance from player (player torch)
           const pDist = Math.max(
@@ -297,11 +336,8 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
             alpha = 0.01;
           }
 
-          if (tile === 1) {
-            ctx.fillStyle = `rgba(29,198,114,${alpha})`;
-          } else {
-            ctx.fillStyle = `rgba(4,47,28,${alpha})`;
-          }
+          const alphaIdx = Math.round(alpha * TILE_ALPHA_STEPS);
+          ctx.fillStyle = tile === 1 ? floorColors[alphaIdx] : wallColors[alphaIdx];
           ctx.fillRect(x, y, CELL, CELL);
         }
       }
@@ -325,7 +361,7 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
           Math.abs(enemy.col - player.col),
           Math.abs(enemy.row - player.row)
         );
-        if (eDist > torchR + 3 && !revealed.has(`${enemy.col},${enemy.row}`)) continue;
+        if (eDist > torchR + 3 && !revealed[enemy.row * cols + enemy.col]) continue;
 
         if (enemy.flash > 0) {
           // Hit flash — red
@@ -369,14 +405,26 @@ export default function DungeonCanvas({ mouseContainerRef, className }: Props) {
       animRef.current = requestAnimationFrame(draw);
     };
 
+    drawRef.current = draw;
+    draw(performance.now()); // sync first frame
     animRef.current = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(animRef.current);
+      drawRef.current = null;
       target.removeEventListener("mousemove", onMove);
       target.removeEventListener("mouseleave", onLeave);
     };
   }, [mouseContainerRef, resizeKey]);
+
+  // Pause / resume
+  useEffect(() => {
+    const wasPaused = pausedRef.current;
+    pausedRef.current = paused;
+    if (!paused && wasPaused && drawRef.current) {
+      animRef.current = requestAnimationFrame(drawRef.current);
+    }
+  }, [paused]);
 
   return (
     <canvas

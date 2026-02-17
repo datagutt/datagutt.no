@@ -69,13 +69,16 @@ const GREENS = [
 ];
 
 type Props = {
+  paused?: boolean;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
   className?: string;
 };
 
-export default function StarfieldCanvas({ mouseContainerRef, className }: Props) {
+export default function StarfieldCanvas({ paused = false, mouseContainerRef, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef(0);
+  const pausedRef = useRef(paused);
+  const drawRef = useRef<((time: number) => void) | null>(null);
   const resizeKey = useResizeKey(canvasRef);
 
   useEffect(() => {
@@ -141,6 +144,8 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
     let frameCount = 0;
 
     const draw = (timestamp: number) => {
+      if (pausedRef.current) return;
+
       if (timestamp - lastFrameTime < FRAME_INTERVAL) {
         animRef.current = requestAnimationFrame(draw);
         return;
@@ -231,14 +236,26 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
       animRef.current = requestAnimationFrame(draw);
     };
 
+    drawRef.current = draw;
+    draw(performance.now()); // sync first frame
     animRef.current = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(animRef.current);
+      drawRef.current = null;
       target.removeEventListener("mousemove", onMove);
       target.removeEventListener("mouseleave", onLeave);
     };
   }, [mouseContainerRef, resizeKey]);
+
+  // Pause / resume
+  useEffect(() => {
+    const wasPaused = pausedRef.current;
+    pausedRef.current = paused;
+    if (!paused && wasPaused && drawRef.current) {
+      animRef.current = requestAnimationFrame(drawRef.current);
+    }
+  }, [paused]);
 
   return (
     <canvas
