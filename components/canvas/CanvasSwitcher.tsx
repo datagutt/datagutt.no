@@ -20,14 +20,14 @@ const BACKGROUNDS = [
 export type BgId = (typeof BACKGROUNDS)[number]["id"];
 
 type Props = {
-  initialBg?: BgId;
+  initialBg: BgId;
   mouseContainerRef?: React.RefObject<HTMLElement | null>;
   burstActive?: boolean;
   className?: string;
 };
 
 export default function CanvasSwitcher({
-  initialBg = "pixel",
+  initialBg,
   mouseContainerRef,
   burstActive,
   className,

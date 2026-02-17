@@ -7,7 +7,7 @@ import CanvasSwitcher, { type BgId } from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
 
 type HeroProps = {
-	initialBg?: BgId;
+	initialBg: BgId;
 };
 
 export default function Hero({ initialBg }: HeroProps) {

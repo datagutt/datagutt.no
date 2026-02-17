@@ -2,13 +2,14 @@ import { connection } from "next/server";
 
 export default async function Footer() {
   await connection();
+  const year = new Date().getFullYear();
   return (
     <footer className="bg-black pt-12 pb-12 relative overflow-hidden">
       <div className="pixel-divider mb-8" />
 
       <div className="flex flex-col items-center gap-3">
         <p className="font-pixel-circle text-sm md:text-base uppercase text-gray-500">
-          &copy; {new Date().getFullYear()} Thomas Lekanger
+          &copy; {year} Thomas Lekanger
         </p>
         <p className="text-sm">
           <span className="font-pixel text-primary-800 mr-2">&gt;_</span>
