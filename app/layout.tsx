@@ -8,7 +8,6 @@ import {
   GeistPixelTriangle,
   GeistPixelLine,
 } from "geist/font/pixel";
-import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "datagutt",
@@ -23,12 +22,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistPixelSquare.variable} ${GeistPixelGrid.variable} ${GeistPixelCircle.variable} ${GeistPixelTriangle.variable} ${GeistPixelLine.variable}`}
     >
-      <body>
-        <Providers>{children}</Providers>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
