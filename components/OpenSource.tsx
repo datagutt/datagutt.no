@@ -3,6 +3,7 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { useNearViewport } from "../hooks/useNearViewport";
 import type { PinnedRepo } from "../lib/github";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -15,8 +16,11 @@ export default function OpenSource({ repos }: OpenSourceProps) {
 	const sectionRef = useRef<HTMLElement>(null);
 	const headingRef = useRef<HTMLDivElement>(null);
 	const gridRef = useRef<HTMLDivElement>(null);
+	const nearViewport = useNearViewport(sectionRef);
 
 	useEffect(() => {
+		if (!nearViewport) return;
+
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
@@ -53,7 +57,7 @@ export default function OpenSource({ repos }: OpenSourceProps) {
 		}, sectionRef);
 
 		return () => ctx.revert();
-	}, []);
+	}, [nearViewport]);
 
 	if (repos.length === 0) return null;
 

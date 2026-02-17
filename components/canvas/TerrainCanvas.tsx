@@ -4,6 +4,7 @@ import { mkSimplexNoise } from "@spissvinkel/simplex-noise";
 import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
 import { setupCanvas } from "../../app/utils/canvas";
+import { getAdaptiveCanvasFrameInterval } from "../../app/utils/performance";
 import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 10;
@@ -78,8 +79,16 @@ export default function TerrainCanvas({ mouseContainerRef, className }: Props) {
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
+		const FRAME_INTERVAL = getAdaptiveCanvasFrameInterval(prefersReduced);
+		let lastFrameTime = 0;
 
-		const draw = () => {
+		const draw = (time: number) => {
+			if (time - lastFrameTime < FRAME_INTERVAL) {
+				animRef.current = requestAnimationFrame(draw);
+				return;
+			}
+			lastFrameTime = time;
+
 			ctx.clearRect(0, 0, w, h);
 			const ox = prefersReduced ? 0 : drift.t * 0.3;
 			const oy = prefersReduced ? 0 : drift.t * 0.15;

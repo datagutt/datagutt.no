@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { setupCanvas } from "../../app/utils/canvas";
+import { getAdaptiveCanvasFrameInterval } from "../../app/utils/performance";
 import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 4;
@@ -135,9 +136,17 @@ export default function StarfieldCanvas({ mouseContainerRef, className }: Props)
     target.addEventListener("mouseleave", onLeave);
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const FRAME_INTERVAL = getAdaptiveCanvasFrameInterval(prefersReduced);
+    let lastFrameTime = 0;
     let frameCount = 0;
 
-    const draw = () => {
+    const draw = (timestamp: number) => {
+      if (timestamp - lastFrameTime < FRAME_INTERVAL) {
+        animRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp;
+
       ctx.clearRect(0, 0, w, h);
 
       const time = frameCount * 0.02;

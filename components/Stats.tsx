@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { ActivityCalendar, type ThemeInput } from "react-activity-calendar";
 import "react-activity-calendar/tooltips.css";
+import { useNearViewport } from "../hooks/useNearViewport";
 import type { GitHubStats, ContributionDay } from "../lib/github";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -31,8 +32,11 @@ export default function Stats({ stats, contributions }: StatsProps) {
 	const cardsRef = useRef<HTMLDivElement>(null);
 	const calendarRef = useRef<HTMLDivElement>(null);
 	const numberRefs = useRef<(HTMLSpanElement | null)[]>([]);
+	const nearViewport = useNearViewport(sectionRef);
 
 	useEffect(() => {
+		if (!nearViewport) return;
+
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
@@ -110,7 +114,7 @@ export default function Stats({ stats, contributions }: StatsProps) {
 		}, sectionRef);
 
 		return () => ctx.revert();
-	}, [stats]);
+	}, [stats, nearViewport]);
 
 	return (
 		<section ref={sectionRef} className="py-12 md:py-20 row">

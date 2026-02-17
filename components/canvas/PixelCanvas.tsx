@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { setupCanvas } from "../../app/utils/canvas";
+import { getAdaptiveCanvasFrameInterval } from "../../app/utils/performance";
 import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 14;
@@ -131,7 +132,9 @@ export default function PixelCanvas({
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
+    const FRAME_INTERVAL = getAdaptiveCanvasFrameInterval(prefersReduced);
     let frameCount = 0;
+    let lastFrameTime = 0;
 
     // Pulse brightness map (col,row -> alpha boost)
     const pulseMap = new Map<string, number>();
@@ -189,7 +192,13 @@ export default function PixelCanvas({
     let lastMCol = -1;
     let lastMRow = -1;
 
-    const draw = () => {
+    const draw = (time: number) => {
+      if (time - lastFrameTime < FRAME_INTERVAL) {
+        animRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = time;
+
       ctx.clearRect(0, 0, w, h);
 
       const mCol = Math.floor(mouse.x / STEP);

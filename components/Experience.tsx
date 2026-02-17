@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { useDeferredInit } from "../hooks/useDeferredInit";
+import { useNearViewport } from "../hooks/useNearViewport";
 import { experience } from "../data/experience";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,9 +15,10 @@ export default function Experience() {
 	const lineRef = useRef<HTMLDivElement>(null);
 	const entriesRef = useRef<HTMLDivElement>(null);
 	const ready = useDeferredInit();
+	const nearViewport = useNearViewport(sectionRef);
 
 	useEffect(() => {
-		if (!ready) return;
+		if (!ready || !nearViewport) return;
 
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
@@ -68,7 +70,7 @@ export default function Experience() {
 		}, sectionRef);
 
 		return () => ctx.revert();
-	}, [ready]);
+	}, [ready, nearViewport]);
 
 	return (
 		<section ref={sectionRef} className="py-12 md:py-20 row">

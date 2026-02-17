@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { useDeferredInit } from "../hooks/useDeferredInit";
+import { useNearViewport } from "../hooks/useNearViewport";
 import { projects } from "../data/projects";
 import ProjectCard from "./ProjectCard";
 
@@ -14,9 +15,10 @@ export default function Portfolio() {
 	const headingRef = useRef<HTMLDivElement>(null);
 	const gridRef = useRef<HTMLDivElement>(null);
 	const ready = useDeferredInit();
+	const nearViewport = useNearViewport(sectionRef);
 
 	useEffect(() => {
-		if (!ready) return;
+		if (!ready || !nearViewport) return;
 
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)"
@@ -56,7 +58,7 @@ export default function Portfolio() {
 		}, sectionRef);
 
 		return () => ctx.revert();
-	}, [ready]);
+	}, [ready, nearViewport]);
 
 	return (
 		<section ref={sectionRef} className="py-12 md:py-20 row">

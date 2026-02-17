@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { setupCanvas } from "../../app/utils/canvas";
+import { getAdaptiveCanvasFrameInterval } from "../../app/utils/performance";
 import { useResizeKey } from "../../hooks/useResizeKey";
 
 const CELL = 20;
@@ -184,6 +185,8 @@ export default function FallingBlocksCanvas({ mouseContainerRef, className }: Pr
     target.addEventListener("mouseleave", onLeave);
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const FRAME_INTERVAL = getAdaptiveCanvasFrameInterval(prefersReduced);
+    let lastFrameTime = 0;
     let frameCount = 0;
 
     const drawCell = (x: number, y: number, colorIdx: number, glow: boolean) => {
@@ -202,7 +205,13 @@ export default function FallingBlocksCanvas({ mouseContainerRef, className }: Pr
       ctx.fillRect(x + 1, y + CELL - 2, CELL - 1, 2);
     };
 
-    const draw = () => {
+    const draw = (time: number) => {
+      if (time - lastFrameTime < FRAME_INTERVAL) {
+        animRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = time;
+
       ctx.clearRect(0, 0, w, h);
 
       // Draw faint grid lines
