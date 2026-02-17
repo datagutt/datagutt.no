@@ -83,15 +83,15 @@ export default function ProjectCard({
 			onMouseLeave={handleMouseLeave}
 		>
 			{/* Image */}
-			<div className="relative aspect-video w-full overflow-hidden">
+			<div className="relative aspect-video w-full overflow-hidden bg-primary-950/20 flex items-center justify-center">
 				<Image
 					src={image}
 					alt={name}
 					fill
 					sizes="(max-width: 768px) 100vw, 50vw"
-					className="object-cover"
+					className="object-contain p-8"
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+				<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 			</div>
 
 			{/* Content */}
