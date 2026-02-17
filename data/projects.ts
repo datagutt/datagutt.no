@@ -1,3 +1,7 @@
+type TechTag = {
+  name: string;
+};
+
 type Project = {
   id: string;
   name: string;
@@ -6,9 +10,8 @@ type Project = {
   width?: number;
   height?: number;
   link?: string;
+  poweredBy?: TechTag[];
 };
-
-/* TODO: Add screenshots and a powered by icon-list */
 
 export const projects: Project[] = [
   {
@@ -19,6 +22,13 @@ export const projects: Project[] = [
     link: "https://datagutt.no",
     width: 480,
     height: 288,
+    poweredBy: [
+      { name: "Next.js" },
+      { name: "React" },
+      { name: "GSAP" },
+      { name: "Tailwind" },
+      { name: "Geist" },
+    ],
   },
   {
     id: "2",
@@ -29,6 +39,13 @@ export const projects: Project[] = [
     link: "https://donate.chat",
     width: 480,
     height: 288,
+    poweredBy: [
+      { name: "Next.js" },
+      { name: "React" },
+      { name: "Vipps" },
+      { name: "Stripe" },
+      { name: "Twitch" },
+    ],
   },
   {
     id: "3",
@@ -39,6 +56,14 @@ export const projects: Project[] = [
     link: "https://irlserver.com",
     width: 480,
     height: 288,
+    poweredBy: [
+      { name: "Node.js" },
+      { name: "Rust" },
+      { name: "SRT" },
+      { name: "RIST" },
+      { name: "RTMP" },
+      { name: "Docker" },
+    ],
   },
   {
     id: "4",
@@ -49,5 +74,12 @@ export const projects: Project[] = [
     link: "https://guac.tv",
     width: 480,
     height: 288,
+    poweredBy: [
+      { name: "Next.js" },
+      { name: "React" },
+      { name: "Node.js" },
+      { name: "FFmpeg" },
+      { name: "WebSocket" },
+    ],
   },
 ];
