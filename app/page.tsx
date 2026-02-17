@@ -1,18 +1,20 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
+import dynamic from "next/dynamic";
 import { ClientLogger } from "@/components/client-logger";
-import About from "@/components/About";
-import Contact from "@/components/Contact";
-import Experience from "@/components/Experience";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import OpenSource from "@/components/OpenSource";
-import Portfolio from "@/components/Portfolio";
-import ScrollText from "@/components/ScrollText";
 import Stats from "@/components/Stats";
-import TechStack from "@/components/TechStack";
 import { getPinnedRepos, getGitHubStats, getContributions } from "@/lib/github";
 import type { BgId } from "@/components/canvas/CanvasSwitcher";
+
+const ScrollText = dynamic(() => import("@/components/ScrollText"));
+const Portfolio = dynamic(() => import("@/components/Portfolio"));
+const About = dynamic(() => import("@/components/About"));
+const TechStack = dynamic(() => import("@/components/TechStack"));
+const Experience = dynamic(() => import("@/components/Experience"));
+const Contact = dynamic(() => import("@/components/Contact"));
 
 const BG_IDS: BgId[] = ["pixel", "terrain", "blocks", "dungeon", "starfield"];
 
