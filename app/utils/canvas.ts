@@ -2,14 +2,15 @@
 import { TAU } from "./math";
 
 export const setupCanvas = (canvas: HTMLCanvasElement) => {
-  const dpr = window.devicePixelRatio || 1;
+  // Cap DPR to reduce fill-rate pressure on high-density displays.
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width * dpr;
   canvas.height = rect.height * dpr;
 
   const ctx = canvas.getContext("2d")!;
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   return ctx;
 };
