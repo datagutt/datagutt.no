@@ -25,7 +25,7 @@ export const projects: Project[] = [
     name: "Donate.chat",
     description:
       "Development of payment solutions for live streamers and influencers, including support for Vipps and card payments, as well as integrations with platforms such as Twitch, YouTube, Streamelements and Streamlabs.",
-    image: "/images/projects/givetip.webp",
+    image: "/images/projects/donate.png",
     link: "https://donate.chat",
     width: 480,
     height: 288,
