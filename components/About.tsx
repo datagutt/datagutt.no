@@ -3,6 +3,7 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { useDeferredInit } from "../hooks/useDeferredInit";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,8 +18,11 @@ export default function About() {
 	const sectionRef = useRef<HTMLElement>(null);
 	const headingRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
+	const ready = useDeferredInit();
 
 	useEffect(() => {
+		if (!ready) return;
+
 		const prefersReduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
@@ -55,7 +59,7 @@ export default function About() {
 		}, sectionRef);
 
 		return () => ctx.revert();
-	}, []);
+	}, [ready]);
 
 	return (
 		<section ref={sectionRef} className="py-12 md:py-20 row">
