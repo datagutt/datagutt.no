@@ -22,21 +22,11 @@ export const projects: Project[] = [
   },
   {
     id: "2",
-    name: "GiveTip.to",
+    name: "Donate.chat",
     description:
-      "GiveTip streamlines Norwegian donations for streamers, supporting Vipps and providing alerts on platforms like Twitch and YouTube through StreamElements and StreamLabs integrations.",
+      "Development of payment solutions for live streamers and influencers, including support for Vipps and card payments, as well as integrations with platforms such as Twitch, YouTube, Streamelements and Streamlabs.",
     image: "/images/projects/givetip.webp",
-    link: "https://givetip.to",
-    width: 480,
-    height: 288,
-  },
-  {
-    id: "3",
-    name: "Guac.tv",
-    description:
-      "Guac is a fully-featured live streaming platform. Yes, that includes everything from live streaming, VODs and clips to a chat with custom emotes and moderation tools.",
-    image: "/images/projects/guac.png",
-    link: "https://guac.tv",
+    link: "https://donate.chat",
     width: 480,
     height: 288,
   },
@@ -44,9 +34,19 @@ export const projects: Project[] = [
     id: "4",
     name: "IRLServer",
     description:
-      "IRLServer is a system for streaming IRL content. It includes a web interface for managing your stream, server software for streaming and automatic scene switching.",
+      "Simplifying IRL streaming by providing software and services that allow for stable live streams from anywhere in the world by bonding multiple network connections.",
     image: "/images/projects/irlserver.webp",
     link: "https://irlserver.com",
+    width: 480,
+    height: 288,
+  },
+  {
+    id: "3",
+    name: "Guac.tv",
+    description:
+      "Guac is a fully-featured live streaming platform. Including everything from live streaming, VODs and clips to a chat with custom emotes and moderation tools.",
+    image: "/images/projects/guac.png",
+    link: "https://guac.tv",
     width: 480,
     height: 288,
   },
