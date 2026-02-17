@@ -36,6 +36,44 @@
     @apply max-w-[75vw] w-full mx-auto;
   }
 }
+
+/* Project details expand base state */
+.project-details {
+  height: 0;
+  overflow: hidden;
+}
+
+/* Pixel divider */
+.pixel-divider {
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    #12834b 0px,
+    #12834b 8px,
+    transparent 8px,
+    transparent 12px
+  );
+  opacity: 0.3;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #125536;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #12834b;
+}
+
 /* https://codepen.io/aldrie/pen/PojGYLo */
 .stack {
   display: grid;

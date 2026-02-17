@@ -5,16 +5,12 @@ import Hero from "@/components/Hero";
 import Portfolio from "@/components/Portfolio";
 import ScrollText from "@/components/ScrollText";
 
-export default async function Home() {
+export default function Home() {
 	return (
 		<>
 			<main className="relative z-[10]">
-				<Suspense fallback={null}>
-					<Hero />
-				</Suspense>
-				<Suspense fallback={null}>
-					<ScrollText />
-				</Suspense>
+				<Hero />
+				<ScrollText />
 				<Portfolio />
 			</main>
 			<Suspense fallback={null}>

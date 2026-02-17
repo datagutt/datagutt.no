@@ -4,15 +4,33 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function ScrollText() {
 	const containerRef = useRef(null);
 	const firstLineRef = useRef(null);
 	const secondLineRef = useRef(null);
 
-	gsap.registerPlugin(ScrollTrigger);
-
 	useEffect(() => {
-		const ctx = gsap.context((self) => {
+		const prefersReduced = window.matchMedia(
+			"(prefers-reduced-motion: reduce)"
+		).matches;
+
+		const ctx = gsap.context(() => {
+			// Fade-in on scroll entry
+			if (!prefersReduced) {
+				gsap.from(containerRef.current, {
+					opacity: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: containerRef.current,
+						start: "top 85%",
+						toggleActions: "play none none none",
+					},
+				});
+			}
+
 			gsap.set(firstLineRef.current, {
 				xPercent: 75,
 			});
@@ -47,17 +65,17 @@ export default function ScrollText() {
 
 	return (
 		<section ref={containerRef} className="relative h-screen" id="scroll-text">
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[170vw] font-pixel-grid text-[12vw] leading-[0.8] uppercase z-40">
+			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[170vw] text-[12vw] leading-[0.8] uppercase z-40">
 				<div
 					ref={firstLineRef}
-					className="span"
+					className="span font-pixel-grid"
 					style={{ willChange: "transform" }}
 				>
 					CHECK OUT MY PORTFOLIO
 				</div>
 				<div
 					ref={secondLineRef}
-					className="span"
+					className="span font-pixel-triangle"
 					style={{ willChange: "transform" }}
 				>
 					CHECK OUT MY PORTFOLIO

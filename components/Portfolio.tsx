@@ -2,89 +2,85 @@
 
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { projects } from "../data/projects";
+import ProjectCard from "./ProjectCard";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Portfolio() {
-	const containerRef = useRef(null);
-	const showcaseRef = useRef(null);
-	const [isMobile, setIsMobile] = useState(false);
-	useEffect(() => {
-		if (window.innerWidth < 768) {
-			setIsMobile(true);
-		} else {
-			setIsMobile(false);
-		}
-	}, []);
-
-	gsap.registerPlugin(ScrollTrigger);
+	const sectionRef = useRef<HTMLElement>(null);
+	const headingRef = useRef<HTMLDivElement>(null);
+	const gridRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const ctx = gsap.context((self) => {
-			gsap.set(showcaseRef.current, {
-				xPercent: 50,
-			});
+		const prefersReduced = window.matchMedia(
+			"(prefers-reduced-motion: reduce)"
+		).matches;
+		if (prefersReduced) return;
 
-			const tl = gsap.timeline({
+		const ctx = gsap.context(() => {
+			// Heading entrance
+			gsap.from(headingRef.current, {
+				y: 30,
+				opacity: 0,
+				duration: 0.6,
+				ease: "power3.out",
 				scrollTrigger: {
-					trigger: containerRef.current,
-					start: isMobile ? "top center" : "top bottom",
-					end: "bottom top",
-					scrub: 0.5,
+					trigger: headingRef.current,
+					start: "top 80%",
+					toggleActions: "play none none none",
 				},
 			});
-			tl.to(
-				showcaseRef.current,
-				{
-					xPercent: -50,
-				},
-				"<",
-			);
-		}, containerRef);
+
+			// Cards stagger entrance
+			const cards = gridRef.current?.children;
+			if (cards && cards.length > 0) {
+				gsap.from(cards, {
+					y: 60,
+					opacity: 0,
+					duration: 0.6,
+					stagger: 0.15,
+					ease: "power3.out",
+					scrollTrigger: {
+						trigger: gridRef.current,
+						start: "top 70%",
+						toggleActions: "play none none none",
+					},
+				});
+			}
+		}, sectionRef);
 
 		return () => ctx.revert();
-	}, [isMobile]);
+	}, []);
 
 	return (
-        <section ref={containerRef} className="mb-[120vw] md:mb-[40vw]">
-            <div
-				ref={showcaseRef}
-				className="relative mb-[5vw] z-40 md:w-[125.6vw] md:h-[34.6vw] h-[100vw]"
-			>
-				<div className="grid md:flex w-full h-full gap-4 md:gap-8 grid-cols-2 md:grid-cols-none">
-					{projects.map((project) => (
-						<Link
-							key={project.id}
-							href={project.link ?? "#"}
-							target="_blank"
-							passHref
-							className="relative w-full h-full"
-						>
-							<div className="relative w-full h-full md:h-[50vw] lg:h-[17.3vw]">
-								<Image
-                                    src={project.image}
-                                    alt={project.name}
-                                    className="rounded-lg h-full w-full"
-                                    fill
-                                    sizes="100vw"
-                                    style={{
-                                        objectFit: "contain"
-                                    }} />
-							</div>
-							<div className="absolute bottom-0 left-0 w-full md:h-1/2 bg-black bg-opacity-50 md:p-4">
-								<h2 className="text-white text-3xl md:text-4xl font-pixel-triangle mb-2">
-									{project.name}
-								</h2>
-								<p className="text-white text-sm md:text-base font-light hidden md:block">
-									{project.description}
-								</p>
-							</div>
-						</Link>
-					))}
-				</div>
+		<section ref={sectionRef} className="py-20 px-6 md:px-12 lg:px-20">
+			<div ref={headingRef} className="mb-10 md:mb-14">
+				<h2 className="font-pixel-line text-4xl md:text-5xl lg:text-6xl mb-2">
+					Portfolio
+				</h2>
+				<p className="font-pixel text-primary-700 text-sm md:text-base uppercase tracking-wider">
+					Selected work
+				</p>
 			</div>
-        </section>
-    );
+
+			<div
+				ref={gridRef}
+				className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
+			>
+				{projects.map((project, i) => (
+					<ProjectCard
+						key={project.id}
+						name={project.name}
+						description={project.description}
+						image={project.image}
+						link={project.link}
+						poweredBy={project.poweredBy}
+						index={i}
+					/>
+				))}
+			</div>
+		</section>
+	);
 }
