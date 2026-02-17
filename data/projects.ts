@@ -31,7 +31,7 @@ export const projects: Project[] = [
     height: 288,
   },
   {
-    id: "4",
+    id: "3",
     name: "IRLServer",
     description:
       "Simplifying IRL streaming by providing software and services that allow for stable live streams from anywhere in the world by bonding multiple network connections.",
@@ -41,7 +41,7 @@ export const projects: Project[] = [
     height: 288,
   },
   {
-    id: "3",
+    id: "4",
     name: "Guac.tv",
     description:
       "Guac is a fully-featured live streaming platform. Including everything from live streaming, VODs and clips to a chat with custom emotes and moderation tools.",
