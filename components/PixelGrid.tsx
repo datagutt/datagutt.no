@@ -1,51 +1,48 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { setupCanvas } from "../app/utils/canvas";
 
-const CELL_SIZE = 12;
-const GAP = 3;
-const STEP = CELL_SIZE + GAP;
+const CELL = 14;
+const GAP = 2;
+const STEP = CELL + GAP;
 
-// Discrete alpha levels — 8-bit stepped, not smooth
-const ALPHA_LEVELS = [0, 0.04, 0.1, 0.2, 0.4, 0.7, 1.0];
-function quantize(a: number): number {
-  for (let i = ALPHA_LEVELS.length - 1; i >= 0; i--) {
-    if (a >= ALPHA_LEVELS[i]) return ALPHA_LEVELS[i];
-  }
-  return 0;
-}
-
-// Green palette
+// Green palette with RGB values for fast rendering
 const PALETTE = [
-  { color: "#042f1c", weight: 0.55 }, // primary-950
-  { color: "#125536", weight: 0.25 }, // primary-900
-  { color: "#12834b", weight: 0.12 }, // primary-700
-  { color: "#1dc672", weight: 0.06 }, // primary-500
-  { color: "#46e294", weight: 0.02 }, // primary-400
+  { r: 4, g: 47, b: 28, weight: 0.45 },   // primary-950
+  { r: 18, g: 85, b: 54, weight: 0.25 },   // primary-900
+  { r: 18, g: 131, b: 75, weight: 0.15 },  // primary-700
+  { r: 29, g: 198, b: 114, weight: 0.10 }, // primary-500
+  { r: 70, g: 226, b: 148, weight: 0.05 }, // primary-400
 ];
 
-function pickColor(): string {
-  const r = Math.random();
-  let cumulative = 0;
+function pickPalette() {
+  const roll = Math.random();
+  let cum = 0;
   for (const p of PALETTE) {
-    cumulative += p.weight;
-    if (r <= cumulative) return p.color;
+    cum += p.weight;
+    if (roll <= cum) return p;
   }
-  return PALETTE[0].color;
-}
-
-function hexToRgb(hex: string): [number, number, number] {
-  const n = parseInt(hex.slice(1), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  return PALETTE[0];
 }
 
 type Cell = {
   r: number;
   g: number;
   b: number;
-  sparkle: number; // countdown frames
+  life: number;    // 0 = off, 1 = alive (for Game of Life pockets)
+};
+
+type Pulse = {
+  col: number;
+  row: number;
+  dirCol: number;
+  dirRow: number;
+  length: number;
+  head: number; // position along the line
+  speed: number;
+  color: { r: number; g: number; b: number };
 };
 
 type PixelGridProps = {
@@ -60,24 +57,9 @@ export default function PixelGrid({
   mouseContainerRef,
 }: PixelGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animRef = useRef<number>(0);
-  const waveRef = useRef({ phase: 0 });
+  const animRef = useRef(0);
   const burstRef = useRef({ intensity: 0 });
-  const mouseRef = useRef({ x: -1000, y: -1000 });
-  const gridRef = useRef<Cell[][]>([]);
   const burstTweenRef = useRef<gsap.core.Tween | null>(null);
-
-  const initGrid = useCallback((cols: number, rows: number) => {
-    const grid: Cell[][] = [];
-    for (let row = 0; row < rows; row++) {
-      grid[row] = [];
-      for (let col = 0; col < cols; col++) {
-        const [r, g, b] = hexToRgb(pickColor());
-        grid[row][col] = { r, g, b, sparkle: 0 };
-      }
-    }
-    return grid;
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -90,116 +72,235 @@ export default function PixelGrid({
     const cols = Math.ceil(w / STEP);
     const rows = Math.ceil(h / STEP);
 
-    gridRef.current = initGrid(cols, rows);
+    // Init grid
+    const grid: Cell[][] = [];
+    for (let row = 0; row < rows; row++) {
+      grid[row] = [];
+      for (let col = 0; col < cols; col++) {
+        const p = pickPalette();
+        grid[row][col] = {
+          r: p.r, g: p.g, b: p.b,
+          life: Math.random() < 0.08 ? 1 : 0,
+        };
+      }
+    }
 
-    // Wave animation
-    const waveTl = gsap.timeline({ repeat: -1 });
-    waveTl.to(waveRef.current, {
-      phase: Math.PI * 2,
-      duration: 8,
-      ease: "none",
-    });
+    // Data pulses — lines of bright cells traveling across the grid
+    const pulses: Pulse[] = [];
+    const spawnPulse = () => {
+      const horizontal = Math.random() > 0.4;
+      const p = pickPalette();
+      if (horizontal) {
+        pulses.push({
+          col: -1,
+          row: Math.floor(Math.random() * rows),
+          dirCol: 1, dirRow: 0,
+          length: 3 + Math.floor(Math.random() * 6),
+          head: 0,
+          speed: 0.3 + Math.random() * 0.4,
+          color: { r: p.r, g: p.g, b: p.b },
+        });
+      } else {
+        pulses.push({
+          col: Math.floor(Math.random() * cols),
+          row: -1,
+          dirCol: 0, dirRow: 1,
+          length: 3 + Math.floor(Math.random() * 5),
+          head: 0,
+          speed: 0.2 + Math.random() * 0.3,
+          color: { r: p.r, g: p.g, b: p.b },
+        });
+      }
+    };
 
-    // Mouse tracking
-    const mouseTarget = mouseContainerRef?.current ?? canvas;
-    const handleMouseMove = (e: MouseEvent) => {
+    // Mouse
+    const mouse = { x: -1000, y: -1000 };
+    const target = mouseContainerRef?.current ?? canvas;
+    const onMove = (e: MouseEvent) => {
       const r = canvas.getBoundingClientRect();
-      mouseRef.current.x = e.clientX - r.left;
-      mouseRef.current.y = e.clientY - r.top;
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
     };
-    const handleMouseLeave = () => {
-      mouseRef.current.x = -1000;
-      mouseRef.current.y = -1000;
-    };
-    mouseTarget.addEventListener("mousemove", handleMouseMove);
-    mouseTarget.addEventListener("mouseleave", handleMouseLeave);
+    const onLeave = () => { mouse.x = -1000; mouse.y = -1000; };
+    target.addEventListener("mousemove", onMove);
+    target.addEventListener("mouseleave", onLeave);
 
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    // Mouse radius in cells (blocky ring, like roguelike torch)
-    const TORCH_RADIUS = 8; // in cells
     let frameCount = 0;
 
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      const grid = gridRef.current;
-      const { phase } = waveRef.current;
-      const { intensity: burstI } = burstRef.current;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      const centerX = w / 2;
-      const centerY = h / 2;
+    // Pulse brightness map (col,row -> alpha boost)
+    const pulseMap = new Map<string, number>();
 
-      // Mouse position in cell coords
-      const mCol = Math.floor(mx / STEP);
-      const mRow = Math.floor(my / STEP);
-
-      // Random sparkles — a few cells flash bright each frame
-      if (!prefersReduced && frameCount % 3 === 0) {
-        const sparkleCount = Math.floor(Math.random() * 3) + 1;
-        for (let i = 0; i < sparkleCount; i++) {
-          const sr = Math.floor(Math.random() * rows);
-          const sc = Math.floor(Math.random() * cols);
-          if (grid[sr]?.[sc]) {
-            grid[sr][sc].sparkle = 8 + Math.floor(Math.random() * 12);
+    // Game of Life step (runs on a slow timer)
+    const lifeStep = () => {
+      const next: number[][] = [];
+      for (let r = 0; r < rows; r++) {
+        next[r] = [];
+        for (let c = 0; c < cols; c++) {
+          let neighbors = 0;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              if (dr === 0 && dc === 0) continue;
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                neighbors += grid[nr][nc].life;
+              }
+            }
           }
+          const alive = grid[r][c].life;
+          if (alive && (neighbors === 2 || neighbors === 3)) next[r][c] = 1;
+          else if (!alive && neighbors === 3) next[r][c] = 1;
+          else next[r][c] = 0;
+        }
+      }
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          grid[r][c].life = next[r][c];
         }
       }
 
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          const cell = grid[row]?.[col];
-          if (!cell) continue;
+      // Seed a few random cells to keep it alive
+      for (let i = 0; i < 5; i++) {
+        const r = Math.floor(Math.random() * rows);
+        const c = Math.floor(Math.random() * cols);
+        grid[r][c].life = 1;
+      }
+    };
 
-          const x = col * STEP;
-          const y = row * STEP;
+    // Seed life near mouse
+    const seedLife = (mCol: number, mRow: number) => {
+      for (let dr = -2; dr <= 2; dr++) {
+        for (let dc = -2; dc <= 2; dc++) {
+          const r = mRow + dr;
+          const c = mCol + dc;
+          if (r >= 0 && r < rows && c >= 0 && c < cols && Math.random() < 0.3) {
+            grid[r][c].life = 1;
+          }
+        }
+      }
+    };
 
-          let alpha = 0.06;
+    let lastMCol = -1;
+    let lastMRow = -1;
 
-          if (!prefersReduced) {
-            // Stepped wave — floor to create blocky ripple
-            const waveVal = Math.sin(phase + col * 0.2 + row * 0.12);
-            const steppedWave = Math.floor((waveVal + 1) * 3) / 6; // 0 to 1 in steps
-            alpha += steppedWave * 0.15;
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
 
-            // Torch: Chebyshev distance for square radius
-            const cellDist = Math.max(
-              Math.abs(col - mCol),
-              Math.abs(row - mRow)
-            );
-            if (cellDist <= TORCH_RADIUS) {
-              // Stepped brightness rings
-              if (cellDist <= 2) alpha = 0.7;
-              else if (cellDist <= 4) alpha = 0.4;
-              else if (cellDist <= 6) alpha = 0.2;
-              else alpha = Math.max(alpha, 0.1);
-            }
+      const mCol = Math.floor(mouse.x / STEP);
+      const mRow = Math.floor(mouse.y / STEP);
+      const { intensity: burstI } = burstRef.current;
+      const centerX = w / 2;
+      const centerY = h / 2;
 
-            // Sparkle
-            if (cell.sparkle > 0) {
-              alpha = Math.max(alpha, 0.8);
-              cell.sparkle--;
-            }
+      // Seed life when mouse moves to a new cell
+      if (!prefersReduced && (mCol !== lastMCol || mRow !== lastMRow)) {
+        if (mCol >= 0 && mCol < cols && mRow >= 0 && mRow < rows) {
+          seedLife(mCol, mRow);
+        }
+        lastMCol = mCol;
+        lastMRow = mRow;
+      }
 
-            // Burst
-            if (burstI > 0) {
-              const bx = centerX - (x + CELL_SIZE / 2);
-              const by = centerY - (y + CELL_SIZE / 2);
-              const bDist = Math.sqrt(bx * bx + by * by);
-              const maxDist = Math.sqrt(
-                centerX * centerX + centerY * centerY
-              );
-              alpha += burstI * (1 - bDist / maxDist) * 0.6;
+      // Game of Life tick every 12 frames
+      if (!prefersReduced && frameCount % 12 === 0) {
+        lifeStep();
+      }
+
+      // Update pulses
+      pulseMap.clear();
+      if (!prefersReduced) {
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const p = pulses[i];
+          p.head += p.speed;
+
+          const headPos = Math.floor(p.head);
+          // Mark cells in the pulse tail
+          for (let t = 0; t < p.length; t++) {
+            const pos = headPos - t;
+            const c = p.col + p.dirCol * pos;
+            const r = p.row + p.dirRow * pos;
+            if (c >= 0 && c < cols && r >= 0 && r < rows) {
+              const fade = 1 - t / p.length;
+              const key = `${c},${r}`;
+              pulseMap.set(key, Math.max(pulseMap.get(key) || 0, fade));
             }
           }
 
-          alpha = quantize(Math.min(1, alpha));
-          if (alpha <= 0) continue;
+          // Remove if fully off-screen
+          const headC = p.col + p.dirCol * headPos;
+          const headR = p.row + p.dirRow * headPos;
+          if (headC > cols + p.length || headR > rows + p.length) {
+            pulses.splice(i, 1);
+          }
+        }
 
-          ctx.fillStyle = `rgba(${cell.r},${cell.g},${cell.b},${alpha})`;
-          ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+        // Spawn pulses
+        if (frameCount % 30 === 0 && pulses.length < 8) {
+          spawnPulse();
+        }
+      }
+
+      // Draw cells
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const cell = grid[row][col];
+          const x = col * STEP;
+          const y = row * STEP;
+
+          let alpha = 0.03;
+
+          // Life glow
+          if (cell.life) alpha = 0.25;
+
+          // Pulse glow
+          const pulseVal = pulseMap.get(`${col},${row}`);
+          if (pulseVal) alpha = Math.max(alpha, pulseVal * 0.7);
+
+          // Mouse proximity — diamond shape, blocky rings
+          if (!prefersReduced) {
+            const cellDist = Math.abs(col - mCol) + Math.abs(row - mRow); // Manhattan
+            if (cellDist <= 3) alpha = Math.max(alpha, 0.6);
+            else if (cellDist <= 6) alpha = Math.max(alpha, 0.3);
+            else if (cellDist <= 10) alpha = Math.max(alpha, 0.12);
+          }
+
+          // Burst
+          if (burstI > 0) {
+            const bx = centerX - (x + CELL / 2);
+            const by = centerY - (y + CELL / 2);
+            const bDist = Math.sqrt(bx * bx + by * by);
+            const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+            alpha = Math.max(alpha, burstI * (1 - bDist / maxDist) * 0.7);
+          }
+
+          alpha = Math.min(1, alpha);
+          if (alpha < 0.02) continue;
+
+          const cr = cell.r;
+          const cg = cell.g;
+          const cb = cell.b;
+
+          // 3D cell rendering for bright cells
+          if (alpha > 0.3) {
+            // Main fill
+            ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+            ctx.fillRect(x, y, CELL, CELL);
+            // Top-left highlight
+            ctx.fillStyle = `rgba(255,255,255,${alpha * 0.08})`;
+            ctx.fillRect(x, y, CELL, 1);
+            ctx.fillRect(x, y, 1, CELL);
+            // Bottom-right shadow
+            ctx.fillStyle = `rgba(0,0,0,${alpha * 0.15})`;
+            ctx.fillRect(x + CELL - 1, y, 1, CELL);
+            ctx.fillRect(x, y + CELL - 1, CELL, 1);
+          } else {
+            ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+            ctx.fillRect(x, y, CELL, CELL);
+          }
         }
       }
 
@@ -209,23 +310,18 @@ export default function PixelGrid({
 
     animRef.current = requestAnimationFrame(draw);
 
-    const handleResize = () => {
+    const onResize = () => {
       setupCanvas(canvas);
-      const newRect = canvas.getBoundingClientRect();
-      const newCols = Math.ceil(newRect.width / STEP);
-      const newRows = Math.ceil(newRect.height / STEP);
-      gridRef.current = initGrid(newCols, newRows);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(animRef.current);
-      waveTl.kill();
-      mouseTarget.removeEventListener("mousemove", handleMouseMove);
-      mouseTarget.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("resize", handleResize);
+      target.removeEventListener("mousemove", onMove);
+      target.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("resize", onResize);
     };
-  }, [initGrid, mouseContainerRef]);
+  }, [mouseContainerRef]);
 
   // Burst effect
   useEffect(() => {
