@@ -96,7 +96,7 @@ export default function ProjectCard({
 
 			{/* Content */}
 			<div className="p-5">
-				<h3 className={`${fontClass} text-2xl md:text-3xl mb-2`}>
+				<h3 className={`${fontClass} text-2xl md:text-3xl mb-2 glitch-text`}>
 					{link ? (
 						<Link
 							href={link}
