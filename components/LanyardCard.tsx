@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useLanyard, type LanyardData } from "react-use-lanyard";
 import {
@@ -19,6 +19,22 @@ export default function LanyardCard({ className = "" }: Props) {
 	const reducedMotion = usePrefersReducedMotion();
 	const userId = getDiscordId();
 	const { loading, status } = useLanyard({ userId, socket: true });
+	const cardRef = useRef<HTMLDivElement>(null);
+	const enteredRef = useRef(false);
+
+	useEffect(() => {
+		if (loading || !status || !cardRef.current || enteredRef.current) return;
+		enteredRef.current = true;
+		if (reducedMotion) {
+			gsap.set(cardRef.current, { autoAlpha: 1, y: 0 });
+			return;
+		}
+		gsap.fromTo(
+			cardRef.current,
+			{ autoAlpha: 0, y: 8 },
+			{ autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" },
+		);
+	}, [loading, status, reducedMotion]);
 
 	if (loading || !status) return null;
 
@@ -43,7 +59,9 @@ export default function LanyardCard({ className = "" }: Props) {
 
 	return (
 		<div
+			ref={cardRef}
 			data-no-reactions
+			style={{ opacity: 0, visibility: "hidden" }}
 			className={`rounded-xl border border-primary-700/50 bg-gradient-to-br from-black to-primary-950/30 p-3 transition-colors duration-200 hover:border-primary-600/60 ${className}`}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}

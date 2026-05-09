@@ -200,8 +200,8 @@ export default function Hero({ initialBg }: HeroProps) {
 				<div ref={socialsRef} className="gsap-hero">
 					<Socials />
 				</div>
-				<LanyardCard className="mt-6 max-w-sm w-full md:w-auto md:min-w-[280px]" />
 			</div>
+			<LanyardCard className="absolute bottom-28 right-8 md:bottom-32 md:right-16 lg:right-24 z-40 w-[18rem] max-w-[calc(100vw-4rem)] hidden md:block" />
 			<CanvasSwitcher
 				initialBg={initialBg}
 				burstActive={burstActive}
