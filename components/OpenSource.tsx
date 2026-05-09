@@ -62,7 +62,7 @@ export default function OpenSource({ repos }: OpenSourceProps) {
 	if (repos.length === 0) return null;
 
 	return (
-		<section ref={sectionRef} className="py-12 md:py-20 row">
+		<section ref={sectionRef} id="opensource" className="py-12 md:py-20 row">
 			<div ref={headingRef} className="mb-8 md:mb-10">
 				<h2 className="font-pixel-line text-4xl md:text-5xl lg:text-6xl mb-2">
 					Open Source

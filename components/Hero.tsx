@@ -3,6 +3,7 @@
 import { gsap } from "gsap";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { getPrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import CanvasSwitcher, { type BgId } from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
 
@@ -21,11 +22,7 @@ export default function Hero({ initialBg }: HeroProps) {
 	const scrollRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const prefersReduced = window.matchMedia(
-			"(prefers-reduced-motion: reduce)",
-		).matches;
-
-		if (prefersReduced) {
+		if (getPrefersReducedMotion()) {
 			gsap.set(
 				[
 					avatarRef.current,
@@ -123,6 +120,7 @@ export default function Hero({ initialBg }: HeroProps) {
 	return (
 		<section
 			ref={sectionRef}
+			id="hero"
 			className="w-screen h-screen flex items-end relative bg-black"
 		>
 			<div className="z-40 flex flex-col items-start px-8 md:px-16 lg:px-24 pb-28 md:pb-32 max-w-4xl">

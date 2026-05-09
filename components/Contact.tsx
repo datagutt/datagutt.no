@@ -58,7 +58,7 @@ export default function Contact() {
 	}, [ready, nearViewport]);
 
 	return (
-		<section ref={sectionRef} className="py-12 md:py-20 row">
+		<section ref={sectionRef} id="contact" className="py-12 md:py-20 row">
 			<div
 				ref={headingRef}
 				className="mb-8 md:mb-10 text-center"

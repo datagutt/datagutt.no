@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
+import { getPrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 const FONT_VARIANTS = [
 	"font-pixel-triangle",
@@ -64,10 +65,7 @@ export default function ProjectCard({
 	}, [expanded]);
 
 	const handleMouseEnter = useCallback(() => {
-		const prefersReduced = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
-		if (prefersReduced) return;
+		if (getPrefersReducedMotion()) return;
 		gsap.to(cardRef.current, { y: -4, duration: 0.25, ease: "power2.out" });
 	}, []);
 

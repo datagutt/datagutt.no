@@ -61,7 +61,7 @@ export default function Portfolio() {
 	}, [ready, nearViewport]);
 
 	return (
-		<section ref={sectionRef} className="py-12 md:py-20 row">
+		<section ref={sectionRef} id="portfolio" className="py-12 md:py-20 row">
 			<div ref={headingRef} className="mb-8 md:mb-10">
 				<h2 className="font-pixel-line text-4xl md:text-5xl lg:text-6xl mb-2">
 					Portfolio
