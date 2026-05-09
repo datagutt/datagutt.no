@@ -116,7 +116,7 @@ export default function CanvasSwitcher({
 			)}
 
 			{/* Switcher pills */}
-			<div className="absolute bottom-8 right-8 z-50 flex gap-1.5">
+			<div className="absolute top-8 right-8 z-50 flex gap-1.5 flex-wrap justify-end max-w-[60vw]">
 				{BACKGROUNDS.map((bg) => (
 					<button
 						key={bg.id}
