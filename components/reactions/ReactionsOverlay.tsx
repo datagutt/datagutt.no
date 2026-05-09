@@ -11,9 +11,21 @@ import type {
 	ReactionType,
 } from "../../lib/reactions/types";
 import ReactionLayer, { type ActiveDrop } from "./ReactionLayer";
+import ReactionPalette from "./ReactionPalette";
+import ReactionSprites from "./sprites";
 
 const LIFETIME_MS = 2000;
+const HOLD_THRESHOLD_MS = 220;
+const MOVE_CANCEL_PX = 8;
 const KILL_SWITCH_KEY = "rx_off";
+
+type PaletteState = {
+	clientX: number;
+	clientY: number;
+	sectionId: ReactionPayload["sectionId"];
+	normalizedX: number;
+	normalizedY: number;
+};
 
 const isInteractive = (target: EventTarget | null): boolean => {
 	if (!(target instanceof Element)) return false;
@@ -32,9 +44,10 @@ export default function ReactionsOverlay() {
 	const reducedMotion = usePrefersReducedMotion();
 	const sid = useSessionId();
 	const [drops, setDrops] = useState<ActiveDrop[]>([]);
+	const [palette, setPalette] = useState<PaletteState | null>(null);
 	const [killed, setKilled] = useState(false);
-	const dropsRef = useRef<ActiveDrop[]>([]);
-	dropsRef.current = drops;
+	const paletteRef = useRef<PaletteState | null>(null);
+	paletteRef.current = palette;
 
 	useEffect(() => {
 		try {
@@ -56,7 +69,7 @@ export default function ReactionsOverlay() {
 
 	const handleRemote = useCallback(
 		(event: ReactionEvent) => {
-			if (sid && event.sid === sid) return; // already drew our own optimistically
+			if (sid && event.sid === sid) return;
 			addDrop({
 				id: event.id,
 				type: event.type,
@@ -86,55 +99,171 @@ export default function ReactionsOverlay() {
 					body: JSON.stringify(payload),
 				});
 			} catch {
-				// silent — drop already shown locally
+				// noop
 			}
 		},
 		[addDrop],
 	);
 
+	const localId = useCallback(() => `local-${crypto.randomUUID()}`, []);
+
+	const dropRipple = useCallback(
+		(p: PaletteState) => {
+			void sendReaction(
+				{
+					sectionId: p.sectionId,
+					normalizedX: p.normalizedX,
+					normalizedY: p.normalizedY,
+					type: "ripple" satisfies ReactionType,
+				},
+				localId(),
+			);
+		},
+		[sendReaction, localId],
+	);
+
+	const handlePick = useCallback(
+		(type: Exclude<ReactionType, "ripple">) => {
+			const anchor = paletteRef.current;
+			setPalette(null);
+			if (!anchor) return;
+			void sendReaction(
+				{
+					sectionId: anchor.sectionId,
+					normalizedX: anchor.normalizedX,
+					normalizedY: anchor.normalizedY,
+					type,
+				},
+				localId(),
+			);
+		},
+		[sendReaction, localId],
+	);
+
 	useEffect(() => {
 		if (killed) return;
+
+		let pressedAt = 0;
+		let pressedXY: { x: number; y: number } | null = null;
+		let pendingAnchor: PaletteState | null = null;
+		let holdTimer: number | null = null;
+		let holdFired = false;
+
+		const clearHold = () => {
+			if (holdTimer !== null) {
+				window.clearTimeout(holdTimer);
+				holdTimer = null;
+			}
+		};
 
 		const onPointerDown = (e: PointerEvent) => {
 			if (e.button !== 0) return;
 			if (isInteractive(e.target)) return;
+			if (paletteRef.current) return;
+			if (reducedMotion) {
+				const located = findClosestSection(e.clientX, e.clientY);
+				if (located) {
+					dropRipple({
+						clientX: e.clientX,
+						clientY: e.clientY,
+						sectionId: located.sectionId,
+						normalizedX: located.normalizedX,
+						normalizedY: located.normalizedY,
+					});
+				}
+				return;
+			}
 
 			const located = findClosestSection(e.clientX, e.clientY);
 			if (!located) return;
 
-			const id =
-				typeof crypto !== "undefined" && "randomUUID" in crypto
-					? `local-${crypto.randomUUID()}`
-					: `local-${Date.now()}-${Math.random()}`;
+			pressedAt = performance.now();
+			pressedXY = { x: e.clientX, y: e.clientY };
+			holdFired = false;
+			pendingAnchor = {
+				clientX: e.clientX,
+				clientY: e.clientY,
+				sectionId: located.sectionId,
+				normalizedX: located.normalizedX,
+				normalizedY: located.normalizedY,
+			};
 
-			void sendReaction(
-				{
-					sectionId: located.sectionId,
-					normalizedX: located.normalizedX,
-					normalizedY: located.normalizedY,
-					type: "ripple" satisfies ReactionType,
-				},
-				id,
-			);
+			holdTimer = window.setTimeout(() => {
+				holdFired = true;
+				holdTimer = null;
+				if (pendingAnchor) setPalette(pendingAnchor);
+			}, HOLD_THRESHOLD_MS);
+		};
+
+		const onPointerMove = (e: PointerEvent) => {
+			if (!pressedXY || holdTimer === null) return;
+			const dx = e.clientX - pressedXY.x;
+			const dy = e.clientY - pressedXY.y;
+			if (dx * dx + dy * dy > MOVE_CANCEL_PX * MOVE_CANCEL_PX) {
+				clearHold();
+				pendingAnchor = null;
+				pressedXY = null;
+			}
+		};
+
+		const onPointerUp = () => {
+			if (pendingAnchor && !holdFired && performance.now() - pressedAt < HOLD_THRESHOLD_MS) {
+				dropRipple(pendingAnchor);
+			}
+			clearHold();
+			pendingAnchor = null;
+			pressedXY = null;
+		};
+
+		const onPointerCancel = () => {
+			clearHold();
+			pendingAnchor = null;
+			pressedXY = null;
+		};
+
+		const onContextMenu = (e: Event) => {
+			if (holdFired) e.preventDefault();
 		};
 
 		window.addEventListener("pointerdown", onPointerDown, { capture: true });
+		window.addEventListener("pointermove", onPointerMove, { passive: true });
+		window.addEventListener("pointerup", onPointerUp, { passive: true });
+		window.addEventListener("pointercancel", onPointerCancel, {
+			passive: true,
+		});
+		window.addEventListener("contextmenu", onContextMenu);
 		return () => {
+			clearHold();
 			window.removeEventListener("pointerdown", onPointerDown, {
 				capture: true,
 			});
+			window.removeEventListener("pointermove", onPointerMove);
+			window.removeEventListener("pointerup", onPointerUp);
+			window.removeEventListener("pointercancel", onPointerCancel);
+			window.removeEventListener("contextmenu", onContextMenu);
 		};
-	}, [killed, sendReaction]);
+	}, [killed, reducedMotion, dropRipple]);
 
 	if (killed) return null;
 
 	return (
-		<div
-			role="presentation"
-			aria-hidden="true"
-			className="pointer-events-none fixed inset-0 z-[60]"
-		>
-			<ReactionLayer drops={drops} reducedMotion={reducedMotion} />
-		</div>
+		<>
+			<ReactionSprites />
+			<div
+				role="presentation"
+				aria-hidden="true"
+				className="pointer-events-none fixed inset-0 z-[60]"
+			>
+				<ReactionLayer drops={drops} reducedMotion={reducedMotion} />
+				{palette && (
+					<ReactionPalette
+						x={palette.clientX}
+						y={palette.clientY}
+						onPick={handlePick}
+						onClose={() => setPalette(null)}
+					/>
+				)}
+			</div>
+		</>
 	);
 }

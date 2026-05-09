@@ -193,3 +193,18 @@
 .rx-anim-fade {
   animation: rx-anim-fade 1.6s ease-in-out both;
 }
+
+@keyframes rx-palette-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.rx-palette-chip {
+  animation: rx-palette-in 0.18s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
