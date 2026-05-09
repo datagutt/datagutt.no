@@ -160,5 +160,3 @@ const getCachedContributions = unstable_cache(
 );
 
 export const getContributions = cache(getCachedContributions);
-
-export const getContributions = cache(getCachedContributions);
