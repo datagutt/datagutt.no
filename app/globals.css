@@ -133,3 +133,63 @@
     transform: none;
   }
 }
+
+/* Reactions overlay sprite animations */
+@keyframes rx-anim-ripple {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.2);
+  }
+}
+
+@keyframes rx-anim-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) translateY(0);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15) translateY(-2px);
+  }
+  35% {
+    transform: translate(-50%, -50%) scale(0.95) translateY(-2px);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateY(-12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9) translateY(-32px);
+  }
+}
+
+@keyframes rx-anim-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  20%,
+  70% {
+    opacity: 0.85;
+  }
+}
+
+.rx-anim-ripple {
+  animation: rx-anim-ripple 1.6s ease-out both;
+}
+
+.rx-anim-pop {
+  animation: rx-anim-pop 1.8s ease-out both;
+}
+
+.rx-anim-fade {
+  animation: rx-anim-fade 1.6s ease-in-out both;
+}

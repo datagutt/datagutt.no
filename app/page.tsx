@@ -15,6 +15,10 @@ const About = dynamic(() => import("@/components/About"));
 const TechStack = dynamic(() => import("@/components/TechStack"));
 const Experience = dynamic(() => import("@/components/Experience"));
 const Contact = dynamic(() => import("@/components/Contact"));
+const ReactionsOverlay = dynamic(
+	() => import("@/components/reactions/ReactionsOverlay"),
+	{ ssr: false },
+);
 
 const BG_IDS: BgId[] = ["pixel", "terrain", "blocks", "dungeon", "starfield"];
 
@@ -79,6 +83,7 @@ export default function Home() {
 			<Suspense fallback={null}>
 				<Footer />
 			</Suspense>
+			<ReactionsOverlay />
 			<ClientLogger />
 		</>
 	);
