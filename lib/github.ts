@@ -1,6 +1,7 @@
-import { cache } from "react";
+import { unstable_cache } from
 import { unstable_cache } from "next/cache";
 import { parse } from "node-html-parser";
+import {cache} from "react";
 
 const GITHUB_USERNAME = "datagutt";
 const YEARS_CODING_SINCE = 2010;
@@ -39,57 +40,59 @@ async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
   const html = await res.text();
   const root = parse(html);
 
-  return root
-    .querySelectorAll(".js-pinned-item-list-item")
-    .map((el) => {
-      const repoPath =
-        el.querySelector("a")?.getAttribute("href")?.split("/") || [];
-      const [, author = "", name = ""] = repoPath;
+  return root.querySelectorAll(".js-pinned-item-list-item").map((el) => {
+    const repoPath =
+      el.querySelector("a")?.getAttribute("href")?.split("/") || [];
+    const [, author = "", name = ""] = repoPath;
 
-      const parseMetric = (index: number): number => {
-        try {
-          return (
-            Number(
-              el
-                .querySelectorAll("a.pinned-item-meta")
-                [index]?.text?.replace(/\n/g, "")
-                .trim(),
-            ) || 0
-          );
-        } catch {
-          return 0;
-        }
-      };
+    const parseMetric = (index: number): number => {
+      try {
+        return (
+          Number(
+            el
+              .querySelectorAll("a.pinned-item-meta")
+              [index]?.text?.replace(/\n/g, "")
+              .trim(),
+          ) || 0
+        );
+      } catch {
+        return 0;
+      }
+    };
 
-      const languageSpan = el.querySelector(
-        "span[itemprop='programmingLanguage']",
-      );
-      const languageColorSpan = languageSpan?.parentNode?.querySelector(
-        ".repo-language-color",
-      );
+    const languageSpan = el.querySelector(
+      "span[itemprop='programmingLanguage']",
+    );
+    const languageColorSpan = languageSpan?.parentNode?.querySelector(
+      ".repo-language-color",
+    );
 
-      return {
-        author,
-        name,
-        description:
-          el
-            .querySelector("p.pinned-item-desc")
-            ?.text?.replace(/\n/g, "")
-            .trim() || "",
-        language: languageSpan?.text || "",
-        languageColor:
-          languageColorSpan
-            ?.getAttribute("style")
-            ?.match(/background-color:\s*([^;]+)/)?.[1] || "",
-        stars: parseMetric(0),
-        forks: parseMetric(1),
-      };
-    });
+    return {
+      author,
+      name,
+      description:
+        el
+          .querySelector("p.pinned-item-desc")
+          ?.text?.replace(/\n/g, "")
+          .trim() || "",
+      language: languageSpan?.text || "",
+      languageColor:
+        languageColorSpan
+          ?.getAttribute("style")
+          ?.match(/background-color:\s*([^;]+)/)?.[1] || "",
+      stars: parseMetric(0),
+      forks: parseMetric(1),
+    };
+  });
 }
 
-const getCachedPinnedRepos = unstable_cache(fetchPinnedRepos, ["pinned-repos"], {
-  revalidate: 3600,
-});
+const getCachedPinnedRepos = unstable_cache(
+  fetchPinnedRepos,
+  ["pinned-repos"],
+  {
+    revalidate: 3600,
+  },
+);
 
 export const getPinnedRepos = cache(getCachedPinnedRepos);
 
@@ -107,8 +110,7 @@ async function fetchGitHubStats(): Promise<GitHubStats> {
     const userRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}`,
     );
-    if (!userRes.ok) return defaults;
-    const user = await userRes.json();
+    const user = userRes?.ok ? await userRes.json() : {};
 
     const reposRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`,
@@ -157,5 +159,7 @@ const getCachedContributions = unstable_cache(
   ["github-contributions"],
   { revalidate: 3600 },
 );
+
+export const getContributions = cache(getCachedContributions);
 
 export const getContributions = cache(getCachedContributions);
