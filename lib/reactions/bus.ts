@@ -19,8 +19,7 @@ export function subscribe(controller: Controller): () => void {
 	};
 }
 
-export function publish(event: ReactionEvent): void {
-	const chunk = ENCODER.encode(`data: ${JSON.stringify(event)}\n\n`);
+function fanOut(chunk: Uint8Array): void {
 	for (const c of subscribers) {
 		try {
 			c.enqueue(chunk);
@@ -30,13 +29,10 @@ export function publish(event: ReactionEvent): void {
 	}
 }
 
+export function publish(event: ReactionEvent): void {
+	fanOut(ENCODER.encode(`data: ${JSON.stringify(event)}\n\n`));
+}
+
 export function broadcastHeartbeat(): void {
-	const chunk = ENCODER.encode(`:hb\n\n`);
-	for (const c of subscribers) {
-		try {
-			c.enqueue(chunk);
-		} catch {
-			subscribers.delete(c);
-		}
-	}
+	fanOut(ENCODER.encode(`:hb\n\n`));
 }
