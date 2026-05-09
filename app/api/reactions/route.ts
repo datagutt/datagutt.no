@@ -8,9 +8,6 @@ import {
 	type ReactionPayload,
 } from "@/lib/reactions/types";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 const SECTION_SET = new Set<string>(REACTION_SECTION_IDS);
 const TYPE_SET = new Set<string>(REACTION_TYPES);
 

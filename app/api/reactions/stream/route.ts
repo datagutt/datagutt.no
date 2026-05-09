@@ -1,9 +1,6 @@
 import { broadcastHeartbeat, subscribe } from "@/lib/reactions/bus";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 export const maxDuration = 300;
-export const fetchCache = "force-no-store";
 
 const ENCODER = new TextEncoder();
 
