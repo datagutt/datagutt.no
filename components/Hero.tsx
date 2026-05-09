@@ -2,10 +2,13 @@
 
 import { gsap } from "gsap";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { getPrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import CanvasSwitcher, { type BgId } from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
+
+const LanyardCard = dynamic(() => import("./LanyardCard"), { ssr: false });
 
 type HeroProps = {
 	initialBg: BgId;
@@ -197,6 +200,7 @@ export default function Hero({ initialBg }: HeroProps) {
 				<div ref={socialsRef} className="gsap-hero">
 					<Socials />
 				</div>
+				<LanyardCard className="mt-6 max-w-sm w-full md:w-auto md:min-w-[280px]" />
 			</div>
 			<CanvasSwitcher
 				initialBg={initialBg}
