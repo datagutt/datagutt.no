@@ -31,6 +31,5 @@ export type ReactionPayload = {
 
 export type ReactionEvent = ReactionPayload & {
 	id: string;
-	sid: string;
 	t: number;
 };

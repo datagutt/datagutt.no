@@ -69,10 +69,11 @@ Live Discord/Spotify presence card in the hero, right side. Uses `react-use-lany
 
 Canvas-agnostic ephemeral multiplayer reaction layer. Visitors drop a chunky pixel ripple on click; click-and-hold (220ms) opens a radial palette of 8-bit pixel sprites (heart, star, fire, skull, sparkle).
 
-- Transport: SSE only. Client POSTs to `/api/reactions`, server fans out via streaming `/api/reactions/stream` (Node runtime, Fluid Compute, `maxDuration: 300`, 25s heartbeat).
+- Transport: a single bidirectional WebSocket at `/api/reactions/ws` (Node runtime, Fluid Compute, `maxDuration: 300`, 30s server ping). The client sends its reaction over the same socket it receives others on. Built on `experimental_upgradeWebSocket` from `@vercel/functions` (needs the `ws` package). Because `cacheComponents` is enabled, the route handler calls `connection()` before upgrading so it opts out of static prerendering. Local dev needs `vc dev` (Vercel CLI), since `next dev` does not run the WebSocket upgrade.
 - Coordinates normalize to the nearest top-level `<section id>` (hero/portfolio/about/techstack/experience/opensource/stats/contact). Receivers re-project per RAF against their own section rect, so scroll/resize tracks naturally.
-- Single-instance fan-out only. Vercel may run multiple Fluid instances under load; events from instance A won't reach SSE listeners on instance B. Acceptable for ephemeral vibes; upgrade path is Upstash Redis pub/sub if needed.
-- Rate limit: in-process token bucket per `rx_sid` cookie (5 tokens, 1/sec refill). Bucket dies on cold start.
+- The server skips echoing an event back to the connection that sent it (the sender already renders its own drop optimistically), so there is no client side sid filtering. Clients reconnect with exponential backoff on close, and buffer a small outbox of unsent reactions while the socket is down.
+- Single-instance fan-out only. A WebSocket connection is pinned to one Fluid instance, and one instance can host many connections, but two clients pinned to different instances under load will not see each other. Acceptable for ephemeral vibes; upgrade path is Upstash Redis pub/sub if needed.
+- Rate limit: in-process token bucket per WebSocket connection (5 tokens, 1/sec refill). The bucket lives and dies with the connection, so no shared map or GC is needed.
 - Click capture is window-level (`pointerdown` capture phase). Canvas mousemove and other handlers are not affected. Interactive targets and any element with `[data-no-reactions]` are skipped.
 
 #### Kill switch

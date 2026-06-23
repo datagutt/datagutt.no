@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
-import { useReactionsStream } from "../../hooks/useReactionsStream";
-import { useSessionId } from "../../hooks/useSessionId";
+import { useReactionsSocket } from "../../hooks/useReactionsSocket";
 import { findClosestSection } from "../../lib/reactions/sections";
 import type {
 	ReactionEvent,
@@ -42,7 +41,6 @@ const isInteractive = (target: EventTarget | null): boolean => {
 
 export default function ReactionsOverlay() {
 	const reducedMotion = usePrefersReducedMotion();
-	const sid = useSessionId();
 	const [drops, setDrops] = useState<ActiveDrop[]>([]);
 	const [palette, setPalette] = useState<PaletteState | null>(null);
 	const [killed, setKilled] = useState(false);
@@ -69,7 +67,6 @@ export default function ReactionsOverlay() {
 
 	const handleRemote = useCallback(
 		(event: ReactionEvent) => {
-			if (sid && event.sid === sid) return;
 			addDrop({
 				id: event.id,
 				type: event.type,
@@ -78,13 +75,13 @@ export default function ReactionsOverlay() {
 				ny: event.normalizedY,
 			});
 		},
-		[addDrop, sid],
+		[addDrop],
 	);
 
-	useReactionsStream(handleRemote, !killed);
+	const send = useReactionsSocket(handleRemote, !killed);
 
 	const sendReaction = useCallback(
-		async (payload: ReactionPayload, optimisticId: string) => {
+		(payload: ReactionPayload, optimisticId: string) => {
 			addDrop({
 				id: optimisticId,
 				type: payload.type,
@@ -92,24 +89,16 @@ export default function ReactionsOverlay() {
 				nx: payload.normalizedX,
 				ny: payload.normalizedY,
 			});
-			try {
-				await fetch("/api/reactions", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
-				});
-			} catch {
-				// noop
-			}
+			send(payload);
 		},
-		[addDrop],
+		[addDrop, send],
 	);
 
 	const localId = useCallback(() => `local-${crypto.randomUUID()}`, []);
 
 	const dropRipple = useCallback(
 		(p: PaletteState) => {
-			void sendReaction(
+			sendReaction(
 				{
 					sectionId: p.sectionId,
 					normalizedX: p.normalizedX,
@@ -127,7 +116,7 @@ export default function ReactionsOverlay() {
 			const anchor = paletteRef.current;
 			setPalette(null);
 			if (!anchor) return;
-			void sendReaction(
+			sendReaction(
 				{
 					sectionId: anchor.sectionId,
 					normalizedX: anchor.normalizedX,
