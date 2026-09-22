@@ -7,6 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import { getPrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import CanvasSwitcher, { type BgId } from "./canvas/CanvasSwitcher";
 import Socials from "./Socials";
+import { profile } from "@/content/profile";
+
+const [roleHead, ...roleRest] = profile.role.split(" ");
+const roleTail = roleRest.join(" ");
 
 const LanyardCard = dynamic(() => import("./LanyardCard"), { ssr: false });
 
@@ -146,7 +150,7 @@ export default function Hero({ initialBg }: HeroProps) {
 						ref={greetingRef}
 						className="gsap-hero font-pixel text-primary-600 text-sm md:text-base uppercase tracking-wider"
 					>
-						Thomas Lekanger
+						{profile.name}
 					</div>
 				</div>
 				<h1 ref={nameRef} className="gsap-hero leading-[0.9] mb-5">
@@ -165,7 +169,7 @@ export default function Hero({ initialBg }: HeroProps) {
 								} as React.CSSProperties
 							}
 						>
-							Full-stack
+							{roleHead}
 						</span>
 						<span
 							style={
@@ -174,7 +178,7 @@ export default function Hero({ initialBg }: HeroProps) {
 								} as React.CSSProperties
 							}
 						>
-							Full-stack
+							{roleHead}
 						</span>
 						<span
 							style={
@@ -183,19 +187,18 @@ export default function Hero({ initialBg }: HeroProps) {
 								} as React.CSSProperties
 							}
 						>
-							Full-stack
+							{roleHead}
 						</span>
 					</div>
 					<div className="text-[12vw] md:text-[8vw] font-pixel-grid text-primary-500/90 leading-[0.85]">
-						developer
+						{roleTail}
 					</div>
 				</h1>
 				<p
 					ref={descRef}
 					className="gsap-hero font-light text-gray-400 text-base md:text-lg max-w-lg mb-6 leading-relaxed"
 				>
-					Building live streaming tools, payment solutions, and weird
-					side projects from Norway.
+					{profile.tagline}
 				</p>
 				<div ref={socialsRef} className="gsap-hero">
 					<Socials />

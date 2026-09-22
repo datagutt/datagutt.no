@@ -5,15 +5,11 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { useDeferredInit } from "../hooks/useDeferredInit";
 import { useNearViewport } from "../hooks/useNearViewport";
+import { profile } from "@/content/profile";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FACTS = [
-	{ label: "Location", value: "Oslo, Norway" },
-	{ label: "Role", value: "Full-stack Developer" },
-	{ label: "Focus", value: "Streaming & Payments" },
-	{ label: "Side projects", value: "Always shipping" },
-];
+const FACTS = profile.quickFacts;
 
 export default function About() {
 	const sectionRef = useRef<HTMLElement>(null);
@@ -80,16 +76,10 @@ export default function About() {
 			>
 				<div className="space-y-4">
 					<p className="font-light text-gray-300 leading-relaxed">
-						I&apos;m Thomas, a full-stack developer based in Norway.
-						I enjoy building things for the web &mdash; from live
-						streaming infrastructure and payment integrations to
-						weird side projects that keep me up at night.
+						{profile.about[0]}
 					</p>
 					<p className="font-light text-gray-400 leading-relaxed">
-						Most of my work revolves around TypeScript, React, and
-						Node.js, but I also dabble in Rust when performance
-						matters. I care about shipping fast, writing clean code,
-						and making products that people actually want to use.
+						{profile.about[1]}
 					</p>
 				</div>
 

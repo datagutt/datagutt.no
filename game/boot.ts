@@ -8,7 +8,7 @@ import { browserStorage, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
 import type { Facing } from "./world/objects";
-import { PLACES, START_PLACE, placeFromSearch } from "./world/places";
+import { START_PLACE, place, placeFromSearch } from "../content/places";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -19,10 +19,10 @@ export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: 
  */
 export function resolveStart(search: string): { target: WorldTarget; deepLinked: boolean; hasSave: boolean } {
 	const save = loadSave(browserStorage());
-	const place = placeFromSearch(search);
-	if (place) return { target: { ...PLACES[place] }, deepLinked: true, hasSave: save !== null };
+	const linked = placeFromSearch(search);
+	if (linked?.entrance) return { target: { ...linked.entrance }, deepLinked: true, hasSave: save !== null };
 	if (save) return { target: { map: save.map, tile: { x: save.x, y: save.y }, facing: save.facing }, deepLinked: false, hasSave: true };
-	return { target: { ...PLACES[START_PLACE] }, deepLinked: false, hasSave: false };
+	return { target: { ...place(START_PLACE).entrance! }, deepLinked: false, hasSave: false };
 }
 
 export type BootOptions = {

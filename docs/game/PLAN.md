@@ -121,11 +121,12 @@ phone.
 Goal: every piece of site content is reachable through NPC dialogue with portraits, and
 the passport works.
 
-- [ ] **M2.1** `content/` module: `profile.ts` (name, tagline, about paragraphs, quick
+- [x] **M2.1** `content/` module: `profile.ts` (name, tagline, about paragraphs, quick
       facts, email, socials), `projects.ts`, `experience.ts`, `skills.ts`, `places.ts`
       (place ids, names, map positions, stamp ids). Move `data/*.ts` and the copy inlined
       in `Hero`, `About`, `Contact`, `Socials`. *Done when* no copy is left in components
-      and types compile.
+      and types compile. (Projects now have slug ids such as `irlserver`; `places.ts` holds
+      the whole content map, and only places already on a map have an `?at=` entrance.)
 - [ ] **M2.2** WorldState payload: a server function combining `content/` with live
       GitHub data (repos, stats, contributions) into one typed JSON object, embedded in
       `/` as `<script type="application/json">`. `game/` gets the type only. *Done when*

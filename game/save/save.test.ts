@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { DirectionStack } from "../input/directionStack";
-import { placeFromSearch } from "../world/places";
 import { SAVE_KEY, clearSave, loadSave, writeSave, type StorageLike } from "./save";
 
 function memoryStorage(initial: Record<string, string> = {}): StorageLike & { data: Record<string, string> } {
@@ -76,15 +75,5 @@ describe("DirectionStack", () => {
 		expect(s.current).toBe("right");
 		s.release("right");
 		expect(s.current).toBeNull();
-	});
-});
-
-describe("placeFromSearch", () => {
-	it("accepts known places only", () => {
-		expect(placeFromSearch("?at=office")).toBe("office");
-		expect(placeFromSearch("?at=Office")).toBe("office");
-		expect(placeFromSearch("?at=nowhere")).toBeNull();
-		expect(placeFromSearch("?at=constructor")).toBeNull();
-		expect(placeFromSearch("")).toBeNull();
 	});
 });

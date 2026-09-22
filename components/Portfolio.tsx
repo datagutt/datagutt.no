@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { useDeferredInit } from "../hooks/useDeferredInit";
 import { useNearViewport } from "../hooks/useNearViewport";
-import { projects } from "../data/projects";
+import { projects } from "@/content/projects";
 import ProjectCard from "./ProjectCard";
 
 gsap.registerPlugin(ScrollTrigger);

@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { useDeferredInit } from "../hooks/useDeferredInit";
 import { useNearViewport } from "../hooks/useNearViewport";
 import Socials from "./Socials";
+import { profile } from "@/content/profile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,12 +77,11 @@ export default function Contact() {
 				className="flex flex-col items-center text-center"
 			>
 				<p className="font-light text-gray-400 text-base md:text-lg max-w-md mb-6 leading-relaxed">
-					Got a project in mind, want to collaborate, or just want to
-					say hi? My inbox is always open.
+					{profile.contactPitch}
 				</p>
 
 				<a
-					href="mailto:mail@datagutt.no"
+					href={`mailto:${profile.email}`}
 					className="inline-flex items-center gap-2 font-pixel text-sm px-6 py-3 rounded-lg border border-primary-700/50 bg-primary-950/40 text-primary-400 hover:bg-primary-900/40 hover:text-primary-300 transition-colors duration-200 mb-6"
 				>
 					<svg
@@ -97,7 +97,7 @@ export default function Contact() {
 							d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
 						/>
 					</svg>
-					mail@datagutt.no
+					{profile.email}
 				</a>
 
 				<Socials />

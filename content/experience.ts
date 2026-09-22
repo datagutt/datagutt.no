@@ -1,4 +1,4 @@
-type Experience = {
+export type Experience = {
   id: string;
   company: string;
   role: string;

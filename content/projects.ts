@@ -1,8 +1,8 @@
-type TechTag = {
+export type TechTag = {
   name: string;
 };
 
-type Project = {
+export type Project = {
   id: string;
   name: string;
   description?: string;
@@ -13,9 +13,10 @@ type Project = {
   poweredBy?: TechTag[];
 };
 
+/** Stable ids are referenced from dialogue, e.g. project_desc("irlserver"). */
 export const projects: Project[] = [
   {
-    id: "1",
+    id: "portfolio",
     name: "Portfolio",
     description: "My personal portfolio",
     image: "/images/avatar.png",
@@ -31,7 +32,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "2",
+    id: "donate-chat",
     name: "Donate.chat",
     description:
       "Development of payment solutions for live streamers and influencers, including support for Vipps and card payments, as well as integrations with platforms such as Twitch, YouTube, Streamelements and Streamlabs.",
@@ -48,7 +49,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "3",
+    id: "irlserver",
     name: "IRLServer",
     description:
       "Simplifying IRL streaming by providing software and services that allow for stable live streams from anywhere in the world by bonding multiple network connections.",
@@ -66,7 +67,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "4",
+    id: "guac",
     name: "Guac.tv",
     description:
       "Guac is a fully-featured live streaming platform. Including everything from live streaming, VODs and clips to a chat with custom emotes and moderation tools.",

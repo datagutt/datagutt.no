@@ -1,9 +1,10 @@
 import { unstable_cache } from "next/cache";
 import { parse } from "node-html-parser";
 import {cache} from "react";
+import { profile } from "@/content/profile";
 
 const GITHUB_USERNAME = "datagutt";
-const YEARS_CODING_SINCE = 2010;
+const YEARS_CODING_SINCE = profile.codingSince;
 
 export type PinnedRepo = {
   author: string;

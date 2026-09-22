@@ -14,6 +14,9 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.1 done: `content/` holds profile, socials, projects (slug ids), experience, skills
+  and places (the full DESIGN §5 content map, with a test that every project and job has
+  exactly one place). The legacy components read from it too.
 - **M1 is complete** (greybox): walk the town and house with keyboard, gamepad or taps,
   talk to the ferryman and datagutt, read signs, use doors, reload to continue, and
   deep-link with `?at=dock|home|office`. `?debug` shows FPS and exposes
@@ -35,10 +38,10 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.1**: the `content/` module. Move `data/*.ts` plus the copy inlined in `Hero`, `About`,
-`Contact` and `Socials` (now under `app/legacy` usage) into typed modules, and move
-`game/world/places.ts` into `content/places.ts`. Then M2.2 (WorldState payload) and
-M2.3 (Ink pipeline). **M0.11 (Vercel token) stays deferred** until the user asks.
+**M2.2**: the WorldState payload (live GitHub repos, stats and contributions) embedded in
+`/`. Static content no longer needs to travel in it: `game/` imports `content/` directly,
+which is plain TypeScript and allowed by the lint boundary. Then **M2.3** (Ink pipeline).
+**M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
