@@ -72,6 +72,7 @@ export class PreloadScene extends Phaser.Scene {
 		}
 		// One story for the whole game, so visit counts survive map changes and reloads.
 		const saved = loadSave(browserStorage());
+		this.sound.mute = saved?.settings.muted ?? false;
 		const runner = new DialogueRunner(this.cache.json.get("dialogue"), {
 			world: services.world,
 			hasStamp: (place) => (loadSave(browserStorage())?.stamps ?? []).includes(place),

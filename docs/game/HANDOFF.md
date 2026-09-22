@@ -14,6 +14,8 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.6 done: synthesised per-character dialogue blips through Phaser's Web Audio output
+  (read lazily: Phaser swaps its AudioContext on unlock). The saved mute setting applies.
 - M2.5 done: talking portraits for datagutt and the ferryman (portrait generator layers,
   same recolour as the sprite), `# nod` / `# shake` Ink tags.
 - M2.4 done: wood-and-parchment dialogue box (nine-slice of `ui/frame.png`, cropped
@@ -54,8 +56,8 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.6**: per-NPC dialogue blips (synthesised, muted with master mute). Then M2.7 (links
-and actions from dialogue), M2.8 (NPC roster for review). **M0.11 (Vercel token) stays
+**M2.7** (links and actions from dialogue: `# open:<url>`, `# mail` with an in-game
+confirm), then **M2.8** (NPC roster for the user to review). **M0.11 (Vercel token) stays
 deferred** until the user asks.
 
 ## Blockers and things waiting on the user
@@ -100,6 +102,8 @@ deferred** until the user asks.
   fetches fail with "other side closed", suspect config before the network.
 - Anything non-deterministic (`new Date()`, `Math.random()`) must sit inside a
   `'use cache'` scope or behind `connection()`, or `/` fails to prerender.
+- WorldScene.update() returns early while dialogue is open; anything that must run every
+  frame (like the `?debug` readout) goes before that return.
 - Commit after each finished task, not in large batches (user preference).
 - Phaser ships `docs/` and `skills/` inside `node_modules/phaser`. Read those for
   Phaser 4 APIs.

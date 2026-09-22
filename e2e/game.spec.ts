@@ -1,6 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 
-type FjordState = { map: string; tile: { x: number; y: number }; facing: string; moving: boolean; dialogueOpen: boolean };
+type FjordState = {
+	map: string;
+	tile: { x: number; y: number };
+	facing: string;
+	moving: boolean;
+	dialogueOpen: boolean;
+	blips: number;
+	audio: string;
+};
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
 
@@ -42,6 +50,9 @@ test.describe("world", () => {
 			await page.waitForTimeout(250);
 		}
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(false);
+		// Talking makes blips once audio is unlocked (the key presses count as a gesture).
+		const afterTalk = await state(page);
+		if (afterTalk?.audio === "running") expect(afterTalk.blips).toBeGreaterThan(0);
 
 		// And back out through the door.
 		await holdKey(page, "ArrowRight", 250);

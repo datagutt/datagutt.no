@@ -4,6 +4,7 @@ import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, loadSave, writeSave } from "../save/save";
+import { BlipPlayer, shouldBlip, voiceFor } from "../audio/blips";
 import { DialogueBox } from "../ui/DialogueBox";
 import type { DialogueRunner } from "../dialogue/DialogueRunner";
 import { DIALOGUE_KEY } from "./PreloadScene";
@@ -31,6 +32,7 @@ export class WorldScene extends Phaser.Scene {
 	private signs = new Map<string, Sign>();
 	private input2!: InputController;
 	private dialogue!: DialogueBox;
+	private blips!: BlipPlayer;
 	private path: Point[] = [];
 	private pathMarkers: Phaser.GameObjects.Rectangle[] = [];
 	/** What to do when the current path ends (talk to the NPC that was tapped). */
@@ -105,6 +107,11 @@ export class WorldScene extends Phaser.Scene {
 
 		this.input2 = new InputController(this);
 		this.dialogue = new DialogueBox(this);
+		this.blips = new BlipPlayer(() =>
+			this.sound instanceof Phaser.Sound.WebAudioSoundManager
+				? { context: this.sound.context, destination: this.sound.destination }
+				: null,
+		);
 		this.fitCamera();
 		this.cameras.main.startFollow(this.player.sprite, true);
 		this.cameras.main.fadeIn(180, 11, 19, 32);
@@ -137,6 +144,7 @@ export class WorldScene extends Phaser.Scene {
 		const dt = Math.min(delta, 50); // no huge jumps after a stalled tab
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
+		this.updateDebug();
 
 		if (this.transitioning) return;
 		if (this.dialogue.open) {
@@ -163,19 +171,24 @@ export class WorldScene extends Phaser.Scene {
 		this.player.sync();
 		for (const { actor } of this.npcs.values()) actor.sync();
 
-		if (this.debugText) {
-			const p = this.player.mover.tile;
-			this.debugText.setText(`${Math.round(this.game.loop.actualFps)} fps  ${this.target.map} ${p.x},${p.y}`);
-			// Read by e2e tests and dev tooling; only exists with ?debug.
-			(window as unknown as { __fjord?: object }).__fjord = {
-				map: this.target.map,
-				tile: { ...p },
-				facing: this.player.mover.facing,
-				moving: this.player.mover.moving,
-				dialogueOpen: this.dialogue.open,
-				camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
-			};
-		}
+	}
+
+	/** FPS overlay and window.__fjord state, only with ?debug. Runs every frame. */
+	private updateDebug() {
+		if (!this.debugText) return;
+		const p = this.player.mover.tile;
+		this.debugText.setText(`${Math.round(this.game.loop.actualFps)} fps  ${this.target.map} ${p.x},${p.y}`);
+		// Read by e2e tests and dev tooling.
+		(window as unknown as { __fjord?: object }).__fjord = {
+			map: this.target.map,
+			tile: { ...p },
+			facing: this.player.mover.facing,
+			moving: this.player.mover.moving,
+			dialogueOpen: this.dialogue.open,
+			blips: this.blips.played,
+			audio: this.sound instanceof Phaser.Sound.WebAudioSoundManager ? this.sound.context.state : "none",
+			camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
+		};
 	}
 
 	private handleEvents(events: MoverEvent[]) {
@@ -289,7 +302,9 @@ export class WorldScene extends Phaser.Scene {
 				const gesture = beat.tags.includes("nod") ? "nod" : beat.tags.includes("shake") ? "shake" : null;
 				// A `# speaker:` tag means someone else is talking: no portrait for them yet.
 				const portrait = beat.speaker ? null : npc.character;
-				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step, { portrait, gesture });
+				const voice = voiceFor(beat.speaker ? null : npc.character);
+				const onChar = (text: string, i: number) => shouldBlip(text, i, voice.every) && this.blips.play(voice);
+				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step, { portrait, gesture, onChar });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {
 					runner.choose(i);

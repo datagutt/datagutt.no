@@ -19,7 +19,16 @@ const ACCENT = 0x8a3c1a;
 
 type Mode =
 	| { kind: "closed" }
-	| { kind: "text"; pages: string[][]; page: number; revealed: number; timer: number; onDone: () => void; portrait: string | null }
+	| {
+			kind: "text";
+			pages: string[][];
+			page: number;
+			revealed: number;
+			timer: number;
+			onDone: () => void;
+			portrait: string | null;
+			onChar: ((text: string, index: number) => void) | null;
+	  }
 	| { kind: "choices"; choices: string[]; selected: number; onPick: (index: number) => void };
 
 export class DialogueBox {
@@ -73,7 +82,12 @@ export class DialogueBox {
 		text: string,
 		speaker: string | null,
 		onDone: () => void,
-		options: { portrait?: string | null; gesture?: "nod" | "shake" | null } = {},
+		options: {
+			portrait?: string | null;
+			gesture?: "nod" | "shake" | null;
+			/** Called as each character appears (dialogue blips). */
+			onChar?: (text: string, index: number) => void;
+		} = {},
 	): void {
 		const portrait = options.portrait && this.scene.textures.exists(portraitKey(options.portrait)) ? options.portrait : null;
 		const { width } = this.layout(LINES);
@@ -87,6 +101,7 @@ export class DialogueBox {
 			timer: 0,
 			onDone,
 			portrait,
+			onChar: options.onChar ?? null,
 		};
 		this.face.setVisible(Boolean(portrait));
 		if (portrait) {
@@ -165,6 +180,7 @@ export class DialogueBox {
 				m.timer += dtMs;
 				while (m.revealed < full.length && m.timer >= charDelayMs(full, m.revealed)) {
 					m.timer -= charDelayMs(full, m.revealed);
+					m.onChar?.(full, m.revealed);
 					m.revealed++;
 				}
 				this.draw();

@@ -150,8 +150,10 @@ the passport works.
       runs while text types, nod and shake available as Ink tags (`# nod`, `# shake`).
       *Done when* one NPC talks with a moving mouth. (Portraits are recipes in
       `game/assets/manifest.ts`, cropped to 25×25 per frame and shown at 2×.)
-- [ ] **M2.6** Dialogue blips: per-NPC pitch and waveform, one blip per N characters,
-      muted with the master mute. *Done when* two NPCs sound distinct.
+- [x] **M2.6** Dialogue blips: per-NPC pitch and waveform, one blip per N characters,
+      muted with the master mute. *Done when* two NPCs sound distinct. (Voices in
+      `game/audio/blips.ts`; `?debug` counts plays. Whether they sound good is the user's
+      call.)
 - [ ] **M2.7** Links and actions from dialogue: Ink tags `# open:<url>` and
       `# mail` show an in-game confirm ("Open donate.chat in a new tab?"). *Done when*
       every project link and the email work from dialogue.
