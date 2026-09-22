@@ -36,3 +36,12 @@ next-env.d.ts
 .claude/*
 !.claude/settings.json
 !.claude/hooks/
+
+# game: licensed or generated asset output (never commit LimeZu pixels, see docs/game/DESIGN.md §9)
+/public/game/
+/.assets-cache/
+/game/generated/
+
+# test output
+/test-results/
+/playwright-report/

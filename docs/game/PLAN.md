@@ -38,25 +38,27 @@ Issue: see README.md (issue links table).
       repo `datagutt/datagutt-assets` and push. Zips, `.exe` and 32/48 px copies stay
       out (`.gitignore`). *Done when* the private repo exists and a clone is under 300 MB.
       **Needs the user** to approve creating the GitHub repo.
-- [ ] **M0.6** Asset fetch step `scripts/assets/fetch.mjs`: use `ASSETS_DIR` if set
+- [x] **M0.6** Asset fetch step `scripts/assets/fetch.mjs`: use `ASSETS_DIR` if set
       (default `../datagutt-assets`); else if `ASSETS_REPO_TOKEN` is set, shallow-clone
       the private repo into `.assets-cache/`; else placeholder mode with a clear log
       line. *Done when* all three paths are tested locally.
-- [ ] **M0.7** Gitignore licensed output: `public/game/`, `.assets-cache/`,
+- [x] **M0.7** Gitignore licensed output: `public/game/`, `.assets-cache/`,
       `game/generated/`. (The `.claude/` rules were already fixed in M0.3.) *Done when*
       `git status` is clean after a full asset build.
-- [ ] **M0.8** Dependencies: `phaser@^4`, `inkjs`, a texture packer
+- [x] **M0.8** Dependencies: `phaser@^4`, `inkjs`, a texture packer
       (`free-tex-packer-core` or own maxrects), `pngjs` or `sharp` for compositing,
       `vitest`, `@playwright/test`. Verify Phaser 4 API docs from `node_modules` rather
-      than memory. *Done when* `pnpm build` passes with the new deps.
-- [ ] **M0.9** Boundary rule: ESLint `no-restricted-imports` so `game/**` cannot import
+      than memory. *Done when* `pnpm build` passes with the new deps. (Done with phaser,
+      inkjs, pngjs, vitest, Playwright; the packer choice moved to M1.3.)
+- [x] **M0.9** Boundary rule: ESLint `no-restricted-imports` so `game/**` cannot import
       `next`, `react` or `@/app`, `@/components`. *Done when* a deliberate bad import
       fails `pnpm lint`.
-- [ ] **M0.10** Test setup: `pnpm test` (vitest) for pure logic and `pnpm test:e2e`
+- [x] **M0.10** Test setup: `pnpm test` (vitest) for pure logic and `pnpm test:e2e`
       (Playwright) for smoke tests of `/` and `/journal`. *Done when* one trivial test of
       each kind passes.
 - [ ] **M0.11** Vercel: add `ASSETS_REPO_TOKEN` (fine-grained, read-only, single repo)
-      for Preview and Production; wire `prebuild` to run fetch and the asset pipeline.
+      for Preview and Production. (`pnpm build` already runs the fetch step first; pnpm
+      skips `pre*` scripts, so it is chained in `build`. Add the pipeline in M1.3.)
       **Needs the user** to create the token. *Done when* a preview deployment of `game`
       builds with real art.
 
