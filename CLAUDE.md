@@ -45,7 +45,7 @@ All canvases use `app/utils/canvas.ts` for DPI-aware setup and `hooks/useResizeK
 
 ### Data Fetching (lib/github.ts)
 
-Three server-side functions, all cached for 1 hour via `unstable_cache` + React `cache()`:
+Three server-side functions, cached with `'use cache'`: an hour on success, minutes after a failure (a failure is logged as `[github] … failed`). `lib/world-state.ts` combines them into the game's live payload, embedded in `/` as `<script id="world-state">`. Types live in `content/live.ts`:
 
 - `getPinnedRepos()` — Scrapes GitHub profile HTML for pinned repos
 - `getGitHubStats()` — GitHub REST API for user stats + total stars
@@ -61,9 +61,9 @@ GSAP with ScrollTrigger for scroll-based section entrances. All animation code r
 
 Tailwind CSS with dark mode (class strategy). Custom green color palette (`primary-50` through `primary-950`). Custom pixel font families defined in `tailwind.config.ts`. Global styles in `app/globals.css` include glitch effects, pixel dividers, and custom scrollbar.
 
-### Data Files
+### Content
 
-Static data lives in `data/` — `projects.ts`, `experience.ts`, `skills.ts`. Each exports typed arrays used by their respective components.
+All copy lives in `content/`: `profile.ts`, `socials.ts`, `projects.ts` (slug ids), `experience.ts`, `skills.ts`, `places.ts` (the game's content map) and `live.ts` (live data types). The game, the Journal and the legacy components all read from it.
 
 ### Lanyard live status (components/LanyardCard.tsx)
 

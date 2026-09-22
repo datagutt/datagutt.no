@@ -127,10 +127,12 @@ the passport works.
       in `Hero`, `About`, `Contact`, `Socials`. *Done when* no copy is left in components
       and types compile. (Projects now have slug ids such as `irlserver`; `places.ts` holds
       the whole content map, and only places already on a map have an `?at=` entrance.)
-- [ ] **M2.2** WorldState payload: a server function combining `content/` with live
+- [x] **M2.2** WorldState payload: a server function combining `content/` with live
       GitHub data (repos, stats, contributions) into one typed JSON object, embedded in
       `/` as `<script type="application/json">`. `game/` gets the type only. *Done when*
-      the game reads real repo names in a debug log.
+      the game reads real repo names in a debug log. (Static content is imported from
+      `content/` directly; the payload carries only live data. Failed fetches are cached
+      for minutes, not hours.)
 - [ ] **M2.3** Ink pipeline: compile `game/dialogue/*.ink` with the inkjs compiler at
       build time; bind external functions (`project_desc`, `project_link`, `repo_count`,
       `repo_name`, `stat`, `has_stamp`, `lanyard_activity`, …); a validator scans the Ink

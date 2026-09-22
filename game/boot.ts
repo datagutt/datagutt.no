@@ -4,6 +4,8 @@ import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
+import type { WorldState } from "../content/live";
+import { readWorldState } from "./live/worldState";
 import { browserStorage, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
@@ -52,6 +54,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	/** Resolves when the player has asked to start. */
 	startRequested: Promise<void>;
 	start: WorldTarget;
+	/** Live GitHub data embedded by the page; empty in the dev harness. */
+	world: WorldState;
 };
 
 export const SERVICES_KEY = "services";
@@ -68,7 +72,14 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		onReady: options.onReady ?? (() => {}),
 		startRequested,
 		start: target,
+		world: readWorldState(),
 	};
+	if (new URLSearchParams(window.location.search).has("debug")) {
+		console.info(
+			`[game] world state from ${services.world.fetchedAt}: ${services.world.repos.length} repos`,
+			services.world.repos.map((r) => r.name),
+		);
+	}
 
 	const dpr = () => window.devicePixelRatio || 1;
 	const initial = computeViewport(parent.clientWidth, parent.clientHeight, dpr());

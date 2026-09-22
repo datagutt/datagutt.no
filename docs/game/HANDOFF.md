@@ -14,6 +14,9 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.2 done: `lib/world-state.ts` → `<script id="world-state">` in `/` (prerendered,
+  hourly) → `game/live/worldState.ts`. `?debug` logs the repo names. `lib/github.ts` uses
+  `'use cache'`, logs failures as `[github] … failed`, and caches failures for minutes.
 - M2.1 done: `content/` holds profile, socials, projects (slug ids), experience, skills
   and places (the full DESIGN §5 content map, with a test that every project and job has
   exactly one place). The legacy components read from it too.
@@ -38,10 +41,10 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.2**: the WorldState payload (live GitHub repos, stats and contributions) embedded in
-`/`. Static content no longer needs to travel in it: `game/` imports `content/` directly,
-which is plain TypeScript and allowed by the lint boundary. Then **M2.3** (Ink pipeline).
-**M0.11 (Vercel token) stays deferred** until the user asks.
+**M2.3**: Ink pipeline. Compile `game/dialogue/*.ink` with the inkjs compiler at build
+time, bind external functions for content and live data, and add the validator that
+fails the build on unknown ids. **M0.11 (Vercel token) stays deferred** until the user
+asks.
 
 ## Blockers and things waiting on the user
 
@@ -81,6 +84,10 @@ which is plain TypeScript and allowed by the lint boundary. Then **M2.3** (Ink p
   rejects; use sharp.
 - Next allows only one `next dev` per project folder; if one is already running (for
   example the user's), point `E2E_BASE_URL` at it instead of starting another.
+- `experimental.testProxy` in next.config broke every server fetch; it is gone. If server
+  fetches fail with "other side closed", suspect config before the network.
+- Anything non-deterministic (`new Date()`, `Math.random()`) must sit inside a
+  `'use cache'` scope or behind `connection()`, or `/` fails to prerender.
 - Commit after each finished task, not in large batches (user preference).
 - Phaser ships `docs/` and `skills/` inside `node_modules/phaser`. Read those for
   Phaser 4 APIs.
