@@ -5,6 +5,8 @@ import { Actor } from "../entities/Actor";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, loadSave, writeSave } from "../save/save";
 import { DialogueBox } from "../ui/DialogueBox";
+import type { DialogueRunner } from "../dialogue/DialogueRunner";
+import { DIALOGUE_KEY } from "./PreloadScene";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid";
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement";
 import { parseMapObject, type Facing, type MapObject, type TiledObject } from "../world/objects";
@@ -138,7 +140,9 @@ export class WorldScene extends Phaser.Scene {
 
 		if (this.transitioning) return;
 		if (this.dialogue.open) {
-			if (input.interact || input.back || input.taps.length) this.dialogue.advance();
+			if (input.dirPressed) this.dialogue.move(input.dirPressed);
+			if (input.interact || input.back) this.dialogue.advance();
+			for (const tap of input.taps) this.dialogue.tap(tap.screenX, tap.screenY);
 			this.player.sync();
 			return;
 		}
@@ -268,11 +272,32 @@ export class WorldScene extends Phaser.Scene {
 		if (npc) {
 			const toward = directionBetween(p, this.player.mover.tile);
 			if (toward) npc.actor.mover.face(toward);
-			this.dialogue.show(npc.def.text, npc.def.id === "datagutt" ? "Thomas" : capitalise(npc.def.id));
+			this.talk(npc.def);
 			return;
 		}
 		const sign = this.signs.get(tileKey(p));
-		if (sign) this.dialogue.show(sign.text, null);
+		if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
+	}
+
+	/** Play an NPC's Ink knot beat by beat until it ends. */
+	private talk(npc: NpcDef) {
+		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
+		runner.start(npc.dialogue);
+		const step = () => {
+			const beat = runner.next();
+			if (beat.type === "line") {
+				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step);
+			} else if (beat.type === "choices") {
+				this.dialogue.choose(beat.choices, (i) => {
+					runner.choose(i);
+					step();
+				});
+			} else {
+				this.dialogue.close();
+				this.save();
+			}
+		};
+		step();
 	}
 
 	private enterDoor(door: Door) {
@@ -296,12 +321,8 @@ export class WorldScene extends Phaser.Scene {
 			facing: facing as Facing,
 			stamps: previous?.stamps ?? [],
 			flags: previous?.flags ?? {},
-			dialogue: previous?.dialogue ?? {},
+			dialogue: { ...(previous?.dialogue ?? {}), main: (this.registry.get(DIALOGUE_KEY) as DialogueRunner).saveState() },
 			settings: previous?.settings ?? { muted: false, showVisitors: true, reducedMotion: null },
 		});
 	}
-}
-
-function capitalise(s: string): string {
-	return s.charAt(0).toUpperCase() + s.slice(1);
 }

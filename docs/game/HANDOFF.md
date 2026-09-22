@@ -14,6 +14,12 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.3 done: dialogue is Ink in `game/dialogue/ink/` (main.ink INCLUDEs one file per
+  NPC). The build compiles it to `public/game/dialogue/main.json`, generates EXTERNAL
+  declarations from `game/dialogue/externals.ts`, and fails on unknown literal ids or
+  NPC knots. `DialogueRunner` plays knots; visit state is saved as `save.dialogue.main`.
+  Map NPCs now have `name` and `dialogue` (knot) instead of `text`. Drafted knots:
+  ferryman, datagutt (for the user to edit).
 - M2.2 done: `lib/world-state.ts` → `<script id="world-state">` in `/` (prerendered,
   hourly) → `game/live/worldState.ts`. `?debug` logs the repo names. `lib/github.ts` uses
   `'use cache'`, logs failures as `[github] … failed`, and caches failures for minutes.
@@ -41,9 +47,8 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.3**: Ink pipeline. Compile `game/dialogue/*.ink` with the inkjs compiler at build
-time, bind external functions for content and live data, and add the validator that
-fails the build on unknown ids. **M0.11 (Vercel token) stays deferred** until the user
+Finish **M2.4** (LimeZu UI frame for the dialogue box, punctuation pauses), then **M2.5**
+(portraits) and **M2.6** (blips). **M0.11 (Vercel token) stays deferred** until the user
 asks.
 
 ## Blockers and things waiting on the user

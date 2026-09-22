@@ -11,6 +11,7 @@ import { GREYBOX_MAPS } from "../../world/greybox/maps.ts";
 import { GREYBOX_TILES } from "../../world/greybox/tiles.ts";
 import { toTmj } from "../../world/tiled.ts";
 import { buildBitmapFont } from "./font.mjs";
+import { compileDialogue } from "./ink.mjs";
 import { Raster, hex } from "./raster.mjs";
 
 const TILE = 16;
@@ -25,7 +26,7 @@ if (!fs.existsSync(sourceFile)) {
 const source = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
 const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
 
-for (const sub of ["characters", "tilesets", "maps", "fonts"]) {
+for (const sub of ["characters", "tilesets", "maps", "fonts", "dialogue"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
 }
@@ -149,6 +150,17 @@ const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/Ge
 fs.writeFileSync(path.join(outDir, "fonts/pixel.png"), font.png);
 fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
 
+// Ink dialogue, validated against the external registry (fails the build on bad ids).
+const dialogue = compileDialogue("game/dialogue/ink");
+fs.writeFileSync(path.join(outDir, "dialogue/main.json"), dialogue.json);
+for (const spec of GREYBOX_MAPS) {
+	for (const obj of spec.objects) {
+		if (obj.type === "npc" && !dialogue.knots.includes(obj.dialogue)) {
+			throw new Error(`${spec.id}: NPC "${obj.id}" uses dialogue "${obj.dialogue}", which is not a knot. Knots: ${dialogue.knots.join(", ")}`);
+		}
+	}
+}
+
 const manifest = {
 	mode: source.mode,
 	builtAt: new Date().toISOString(),
@@ -156,6 +168,7 @@ const manifest = {
 	maps: GREYBOX_MAPS.map((m) => m.id),
 	tilesets: [tileset.name],
 	fonts: ["pixel"],
+	dialogue: dialogue.files,
 };
 fs.writeFileSync(path.join(outDir, "assets.json"), JSON.stringify(manifest, null, "\t") + "\n");
 console.log(

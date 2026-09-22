@@ -133,15 +133,19 @@ the passport works.
       the game reads real repo names in a debug log. (Static content is imported from
       `content/` directly; the payload carries only live data. Failed fetches are cached
       for minutes, not hours.)
-- [ ] **M2.3** Ink pipeline: compile `game/dialogue/*.ink` with the inkjs compiler at
+- [x] **M2.3** Ink pipeline: compile `game/dialogue/*.ink` with the inkjs compiler at
       build time; bind external functions (`project_desc`, `project_link`, `repo_count`,
       `repo_name`, `stat`, `has_stamp`, `lanyard_activity`, …); a validator scans the Ink
       source for external calls and literal ids and fails the build on unknown ones.
-      *Done when* a typo in an id fails `pnpm build`.
+      *Done when* a typo in an id fails `pnpm build`. (Registry in
+      `game/dialogue/externals.ts`; EXTERNAL lines are generated; NPC `dialogue` knots are
+      checked against the compiled story too.)
 - [ ] **M2.4** Dialogue box: LimeZu UI frame, typewriter text with punctuation pauses,
       skip-to-end on second press, choice menus, `* ` narration style, bitmap pixel font
       (reuse the site's pixel fonts, converted to BMFont). *Done when* long text wraps
-      and pages correctly.
+      and pages correctly. (Partly done: Geist Pixel bitmap font, typewriter, skip, paging
+      and a choice list with keyboard, gamepad and tap. Still to do: LimeZu UI frame and
+      punctuation pauses.)
 - [ ] **M2.5** Portraits: build step composites portrait layers per NPC; talk animation
       runs while text types, nod and shake available as Ink tags (`# nod`, `# shake`).
       *Done when* one NPC talks with a moving mouth.

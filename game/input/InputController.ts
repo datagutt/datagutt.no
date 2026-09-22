@@ -7,13 +7,15 @@ import { DirectionStack } from "./directionStack";
 export type FrameInput = {
 	/** Held direction from keys, d-pad or stick. */
 	dir: Facing | null;
+	/** A direction newly pressed this frame (menus move one step per press). */
+	dirPressed: Facing | null;
 	run: boolean;
 	/** Pressed this frame. */
 	interact: boolean;
 	back: boolean;
 	menu: boolean;
-	/** Taps/clicks this frame, in world coordinates. */
-	taps: { x: number; y: number }[];
+	/** Taps/clicks this frame: world coordinates, plus screen coordinates for UI. */
+	taps: { x: number; y: number; screenX: number; screenY: number }[];
 };
 
 const KEY_DIRS: [string, Facing][] = [
@@ -38,15 +40,19 @@ export class InputController {
 	private interactQueued = false;
 	private backQueued = false;
 	private menuQueued = false;
-	private taps: { x: number; y: number }[] = [];
-	private padPrev = { a: false, b: false, start: false };
+	private taps: FrameInput["taps"] = [];
+	private dirPressedQueued: Facing | null = null;
+	private padPrev: { a: boolean; b: boolean; start: boolean; dir: Facing | null } = { a: false, b: false, start: false, dir: null };
 
 	constructor(private readonly scene: Phaser.Scene) {
 		const kb = scene.input.keyboard;
 		if (kb) {
 			for (const [name, dir] of KEY_DIRS) {
 				const key = kb.addKey(name);
-				key.on("down", () => this.stack.press(dir));
+				key.on("down", () => {
+					this.stack.press(dir);
+					this.dirPressedQueued = dir;
+				});
 				key.on("up", () => this.stack.release(dir));
 				this.keys[name] = key;
 			}
@@ -62,7 +68,7 @@ export class InputController {
 			const dist = Phaser.Math.Distance.Between(p.downX, p.downY, p.upX, p.upY);
 			if (p.getDuration() <= TAP_MAX_MS && dist <= TAP_SLOP) {
 				const world = p.positionToCamera(scene.cameras.main) as Phaser.Math.Vector2;
-				this.taps.push({ x: world.x, y: world.y });
+				this.taps.push({ x: world.x, y: world.y, screenX: p.x, screenY: p.y });
 			}
 		});
 	}
@@ -85,10 +91,13 @@ export class InputController {
 		let interact = this.interactQueued;
 		let back = this.backQueued;
 		let menu = this.menuQueued;
+		let dirPressed = this.dirPressedQueued;
 
 		const pad = this.scene.input.gamepad?.pad1;
 		if (pad) {
-			dir = this.padDirection(pad) ?? dir;
+			const padDir = this.padDirection(pad);
+			if (padDir && padDir !== this.padPrev.dir) dirPressed = padDir;
+			dir = padDir ?? dir;
 			const a = pad.A;
 			const b = pad.B;
 			const start = pad.buttons[9]?.pressed ?? false;
@@ -96,12 +105,13 @@ export class InputController {
 			back ||= b && !this.padPrev.b;
 			menu ||= start && !this.padPrev.start;
 			run ||= b;
-			this.padPrev = { a, b, start };
+			this.padPrev = { a, b, start, dir: padDir };
 		}
 
 		const taps = this.taps;
 		this.taps = [];
 		this.interactQueued = this.backQueued = this.menuQueued = false;
-		return { dir, run, interact, back, menu, taps };
+		this.dirPressedQueued = null;
+		return { dir, dirPressed, run, interact, back, menu, taps };
 	}
 }

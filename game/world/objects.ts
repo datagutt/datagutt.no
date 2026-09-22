@@ -8,7 +8,7 @@ export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
 	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string }
 	| { type: "sign"; x: number; y: number; text: string }
-	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; text: string };
+	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string };
 
 export type TiledProperty = { name: string; type: "string" | "int" | "bool"; value: string | number | boolean };
 
@@ -51,7 +51,7 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 		case "sign":
 			return { type: "sign", x, y, text: str("text") };
 		case "npc":
-			return { type: "npc", id: obj.name || str("id"), character: str("character"), x, y, facing: facing(), text: str("text") };
+			return { type: "npc", id: obj.name || str("id"), character: str("character"), x, y, facing: facing(), name: str("name"), dialogue: str("dialogue") };
 		default:
 			throw new Error(`Unknown map object type "${obj.type}" (object ${obj.id})`);
 	}
@@ -60,13 +60,13 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 /** The reverse of parseMapObject, used by the map build. */
 export function toTiledObject(obj: MapObject, id: number, tileSize: number): TiledObject {
 	const { type, x, y, ...rest } = obj;
-	const name = "id" in rest ? rest.id : "";
+	const objectName = "id" in rest ? rest.id : "";
 	const properties: TiledProperty[] = Object.entries(rest)
 		.filter(([key]) => key !== "id")
 		.map(([key, value]) => ({ name: key, type: "string", value: String(value) }));
 	return {
 		id,
-		name,
+		name: objectName,
 		type,
 		x: x * tileSize,
 		y: y * tileSize,
