@@ -14,13 +14,13 @@ Personal portfolio site for datagutt, built with **Next.js 16.3**, **React 19.3*
 
 ```bash
 pnpm dev          # Start dev server (Turbopack)
-pnpm game:dev     # Standalone game harness at http://localhost:3200/game/dev.html (esbuild, live reload)
+pnpm game:dev     # Standalone game harness at http://localhost:3200/game/dev.html?debug (esbuild, live reload)
+pnpm assets       # Fetch licensed art (or fall back to placeholders) and build public/game/
 pnpm build        # Production build
 pnpm start        # Start production server
 pnpm lint         # ESLint CLI (Next.js config; `next lint` no longer exists in Next 16)
 pnpm test         # Vitest unit tests (*.test.ts / *.test.mjs)
-pnpm test:e2e     # Playwright smoke tests against `next start` (run `pnpm build` first)
-pnpm assets:fetch # Locate licensed game art (../datagutt-assets, ASSETS_DIR or ASSETS_REPO_TOKEN)
+pnpm test:e2e     # Playwright against `next start` (run `pnpm build` first) or E2E_BASE_URL
 pnpm format       # Format with Prettier (includes Tailwind class sorting)
 pnpm format:check # Check formatting
 ```

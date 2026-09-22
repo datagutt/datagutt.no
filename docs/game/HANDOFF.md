@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0, M1.1–M1.2)
+Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 complete)
 
 ## Current state
 
@@ -14,6 +14,15 @@ Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0, M1.1–M
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- **M1 is complete** (greybox): walk the town and house with keyboard, gamepad or taps,
+  talk to the ferryman and datagutt, read signs, use doors, reload to continue, and
+  deep-link with `?at=dock|home|office`. `?debug` shows FPS and exposes
+  `window.__fjord` (map, tile, facing, dialogueOpen, camera) for tests.
+- Asset pipeline: `pnpm assets` = fetch + `scripts/assets/build.mjs` into `public/game/`.
+  Character recipes live in `game/assets/manifest.ts` (datagutt: Body_02, Outfit_14_04,
+  Hairstyle_20_01 recoloured yellow, Glasses_01 recoloured black). Greybox maps are code
+  in `world/greybox/`. In-game text uses Geist Pixel converted to a bitmap font.
+- CI: `.github/workflows/ci.yml` runs lint, tsc, unit tests, a placeholder build and e2e.
 - M1.1 and M1.2 done: `/` is a server-rendered title screen (`components/game/TitleArt.tsx`
   SVG fjord scene, `GameShell.tsx` client host) that boots Phaser behind it; old page at
   `/legacy`; `/journal` is a stub. Game code in `game/` (boot, viewport, Boot/Preload/World
@@ -26,11 +35,10 @@ Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0, M1.1–M
 
 ## Next step
 
-**M1.3**: asset pipeline (`scripts/assets/build.mjs`): pack the sprites and tilesets the
-game uses into `public/game/`, with placeholder output of the same shape. Inspect the
-LimeZu character sheet layout first (`limezu/characters/Spritesheet_animations_GUIDE.png`).
-The user said to focus on local testing: **M0.11 (Vercel token) is deferred** until they
-ask for it.
+**M2.1**: the `content/` module. Move `data/*.ts` plus the copy inlined in `Hero`, `About`,
+`Contact` and `Socials` (now under `app/legacy` usage) into typed modules, and move
+`game/world/places.ts` into `content/places.ts`. Then M2.2 (WorldState payload) and
+M2.3 (Ink pipeline). **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
@@ -64,6 +72,13 @@ ask for it.
   `ss -ltnp | awk '/:3100 /'`.
 - `eslint-config-next` is still 15.2.2 because 16.x needs ESLint 9 flat config; migrate
   when convenient.
+- LimeZu character sheets: 16×32 frames, 56 per row, directions right/up/left/down;
+  rows 0 stand, 1 idle, 2 walk, 3 sleep, 4–5 sit, 6 phone. Some sheets are wider than
+  896 px (Body_01 is 927), so the build crops. Some PNGs have trailing bytes that pngjs
+  rejects; use sharp.
+- Next allows only one `next dev` per project folder; if one is already running (for
+  example the user's), point `E2E_BASE_URL` at it instead of starting another.
+- Commit after each finished task, not in large batches (user preference).
 - Phaser ships `docs/` and `skills/` inside `node_modules/phaser`. Read those for
   Phaser 4 APIs.
 - `jq` is not installed on this machine; hook scripts use plain shell and node.
