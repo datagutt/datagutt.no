@@ -37,7 +37,7 @@ test.describe("world", () => {
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
 
 		// Read through the Ink conversation (lines and a choice) until it closes.
-		for (let i = 0; i < 20 && (await state(page))?.dialogueOpen; i++) {
+		for (let i = 0; i < 40 && (await state(page))?.dialogueOpen; i++) {
 			await page.keyboard.press("e");
 			await page.waitForTimeout(250);
 		}

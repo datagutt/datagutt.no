@@ -23,7 +23,7 @@ beforeAll(() => {
 
 const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, lanyardActivity: () => "offline" };
 
-function lines(runner: DialogueRunner): { lines: string[]; last: Beat } {
+function read(runner: DialogueRunner): { lines: string[]; last: Beat } {
 	const out: string[] = [];
 	for (;;) {
 		const beat = runner.next();
@@ -32,30 +32,46 @@ function lines(runner: DialogueRunner): { lines: string[]; last: Beat } {
 	}
 }
 
+const choicesOf = (beat: Beat) => (beat.type === "choices" ? beat.choices : []);
+
 describe("DialogueRunner", () => {
 	it("fills facts in from content", () => {
 		const runner = new DialogueRunner(json, ctx);
 		runner.start("datagutt");
-		const { lines: said, last } = lines(runner);
+		const { lines: said, last } = read(runner);
 		expect(said[0]).toContain(profile.firstName);
 		expect(said[1]).toBe(profile.about[0]);
-		expect(last.type).toBe("choices");
-		runner.choose(0);
-		const after = lines(runner);
-		expect(after.lines.join(" ")).toContain(projects.find((p) => p.id === "portfolio")!.description!);
-		expect(after.last.type).toBe("end");
+		runner.choose(choicesOf(last).indexOf("What are you working on?"));
+		expect(read(runner).lines.join(" ")).toContain(projects.find((p) => p.id === "portfolio")!.description!);
 	});
 
-	it("remembers visits across a saved state", () => {
+	it("keeps unasked questions available, within a visit and on the next one", () => {
 		const first = new DialogueRunner(json, ctx);
-		first.start("ferryman");
-		const opening = lines(first).lines[0];
-		expect(opening).toMatch(/Welcome ashore/);
+		first.start("datagutt");
+		let beat = read(first).last;
+		expect(choicesOf(beat)).toHaveLength(3);
+		first.choose(0);
+		beat = read(first).last;
+		// Back at the topics: the asked question is gone, the rest remain.
+		expect(choicesOf(beat)).toEqual(["What do you mostly use?", "See you around."]);
 		first.choose(1);
-		lines(first);
+		expect(read(first).last.type).toBe("end");
 
 		const second = new DialogueRunner(json, ctx, first.saveState());
+		second.start("datagutt");
+		const again = read(second);
+		expect(again.lines[0]).not.toContain(profile.about[0]);
+		expect(choicesOf(again.last)).toEqual(["What do you mostly use?", "See you around."]);
+		second.choose(0);
+		expect(read(second).lines).toContain(profile.about[1]);
+	});
+
+	it("greets returning visitors briefly", () => {
+		const first = new DialogueRunner(json, ctx);
+		first.start("ferryman");
+		expect(read(first).lines[0]).toMatch(/Welcome ashore/);
+		const second = new DialogueRunner(json, ctx, first.saveState());
 		second.start("ferryman");
-		expect(lines(second).lines[0]).not.toMatch(/Welcome ashore/);
+		expect(read(second).lines[0]).not.toMatch(/Welcome ashore/);
 	});
 });
