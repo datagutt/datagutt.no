@@ -27,13 +27,13 @@ The portfolio is being rebuilt as a top-down pixel-art game on the `game` branch
 
 | Milestone | Issue |
 |---|---|
-| M0 Foundations and tooling | #TBD |
-| M1 Engine core (greybox) | #TBD |
-| M2 Content, dialogue and UI | #TBD |
-| M3 World generation and art | #TBD |
-| M4 Live systems | #TBD |
-| M5 Atmosphere and polish | #TBD |
-| M6 Journal, accessibility and launch | #TBD |
+| M0 Foundations and tooling | [#3](https://github.com/datagutt/datagutt.no/issues/3) |
+| M1 Engine core (greybox) | [#4](https://github.com/datagutt/datagutt.no/issues/4) |
+| M2 Content, dialogue and UI | [#5](https://github.com/datagutt/datagutt.no/issues/5) |
+| M3 World generation and art | [#6](https://github.com/datagutt/datagutt.no/issues/6) |
+| M4 Live systems | [#7](https://github.com/datagutt/datagutt.no/issues/7) |
+| M5 Atmosphere and polish | [#8](https://github.com/datagutt/datagutt.no/issues/8) |
+| M6 Journal, accessibility and launch | [#9](https://github.com/datagutt/datagutt.no/issues/9) |
 
 ## Things that are easy to get wrong
 

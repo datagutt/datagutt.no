@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Game rebuild in progress (`game` branch)
+
+The site is being rebuilt as a top-down pixel-art game ("Fjord Town"). Before working on it, read `docs/game/README.md` (workflow), `docs/game/HANDOFF.md` (where the last session stopped) and `docs/game/PLAN.md` (tasks). Decisions in `docs/game/DESIGN.md` are settled. The sections below describe the current production site on `master`.
+
 ## Project Overview
 
 Personal portfolio site for datagutt, built with **Next.js 16** (canary), **React 19**, and **TypeScript**. Uses **pnpm** as package manager.

@@ -6,7 +6,8 @@ Last updated: 2026-09-22 (session 1: design grilling and planning)
 
 - Branch `game` created from `master` at `bc7041e`.
 - Design settled in a grilling session; everything is recorded in DESIGN.md.
-- Planning docs, session hooks and milestone issues are in place (M0.1 to M0.4 done).
+- Planning docs, session hooks and milestone issues #3 to #9 are in place (M0.1 to M0.4
+  done). The `game` branch is pushed to origin.
 - No game code yet. The live site on `master` is untouched.
 - The user bought and downloaded LimeZu Modern Exteriors, Modern Interiors (with the
   character generator) and Modern User Interface (with the portrait generator). The zips
