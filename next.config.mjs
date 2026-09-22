@@ -89,10 +89,6 @@ const nextConfig = {
      */
     useLightningcss: false,
     /**
-     * Enables `fetch` requests to be proxied to the experimental test proxy server
-     */
-    testProxy: true,
-    /**
      * Allows previously fetched data to be re-used when editing server components.
      */
     serverComponentsHmrCache: true,
