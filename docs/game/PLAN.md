@@ -31,7 +31,7 @@ Issue: see README.md (issue links table).
       both hooks are in `.claude/settings.json` and pipe-tested.
 - [x] **M0.4** GitHub issues, one per milestone, labelled `game`. *Done when* the issue
       links table in README.md is filled in.
-- [ ] **M0.5** Private assets repo. In `../datagutt-assets`: extract the 16×16 folders
+- [x] **M0.5** Private assets repo. In `../datagutt-assets`: extract the 16×16 folders
       from the Exteriors, Interiors and UI zips plus the character and portrait generator
       layer PNGs into `limezu/{exteriors,interiors,ui,characters,portraits}/`; add
       `LICENSES.md` quoting each pack's licence; `git init`; create the private GitHub
