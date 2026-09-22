@@ -15,16 +15,21 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 	const handleRef = useRef<GameHandle | null>(null);
 	const [phase, setPhase] = useState<Phase>("loading");
 	const [progress, setProgress] = useState(0);
+	const [hasSave, setHasSave] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
 		import("@/game/boot")
 			.then(({ bootGame }) => {
 				if (cancelled || !containerRef.current) return;
-				handleRef.current = bootGame(containerRef.current, {
+				const handle = bootGame(containerRef.current, {
 					onProgress: (p) => setProgress(p),
 					onReady: () => setPhase((current) => (current === "loading" ? "ready" : current)),
 				});
+				handleRef.current = handle;
+				setHasSave(handle.hasSave);
+				// A shared `?at=place` link goes straight into the world.
+				if (handle.deepLinked) setPhase("playing");
 			})
 			.catch((err) => {
 				console.error("[game] failed to load", err);
@@ -77,7 +82,9 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 							{phase === "failed"
 								? "Could not load"
 								: phase === "ready" || playing
-									? "▶ Start"
+									? hasSave
+										? "▶ Continue"
+										: "▶ Start"
 									: `Loading ${Math.round(progress * 100)}%`}
 						</button>
 						<Link

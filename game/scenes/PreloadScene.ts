@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices } from "../boot";
+import { CHARACTERS } from "../assets/manifest";
+import { ANIMS, DIRECTIONS, FRAME_HEIGHT, FRAME_WIDTH, animFrames, animKey, type AnimName } from "../characters/sheet";
 
 /** Loads everything the first map needs, reports progress, then waits for Start. */
 export class PreloadScene extends Phaser.Scene {
@@ -11,13 +13,31 @@ export class PreloadScene extends Phaser.Scene {
 		const services = this.registry.get(SERVICES_KEY) as GameServices;
 		this.load.setBaseURL(services.assetBase);
 		this.load.on(Phaser.Loader.Events.PROGRESS, services.onProgress);
-		// Asset list arrives with the pipeline (PLAN M1.3).
+
+		this.load.image("tiles:greybox", "tilesets/greybox.png");
+		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
+		for (const id of Object.keys(CHARACTERS)) {
+			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
+		}
+		this.load.tilemapTiledJSON(`map:${services.start.map}`, `maps/${services.start.map}.tmj`);
 	}
 
 	create() {
 		const services = this.registry.get(SERVICES_KEY) as GameServices;
+		for (const id of Object.keys(CHARACTERS)) {
+			for (const anim of Object.keys(ANIMS) as AnimName[]) {
+				for (const dir of DIRECTIONS) {
+					this.anims.create({
+						key: animKey(id, anim, dir),
+						frames: this.anims.generateFrameNumbers(`char:${id}`, { frames: animFrames(anim, dir) }),
+						frameRate: ANIMS[anim].frameRate,
+						repeat: ANIMS[anim].repeat,
+					});
+				}
+			}
+		}
 		services.onProgress(1);
 		services.onReady();
-		services.startRequested.then(() => this.scene.start("World"));
+		services.startRequested.then(() => this.scene.start("World", services.start));
 	}
 }

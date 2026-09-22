@@ -4,7 +4,26 @@ import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
+import { browserStorage, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
+import type { Point } from "./world/grid";
+import type { Facing } from "./world/objects";
+import { PLACES, START_PLACE, placeFromSearch } from "./world/places";
+
+/** Where the World scene should put the player. */
+export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
+
+/**
+ * Deep link first (`?at=office`), then the saved position, then the ferry dock.
+ * `deepLinked` lets the page skip the title screen.
+ */
+export function resolveStart(search: string): { target: WorldTarget; deepLinked: boolean; hasSave: boolean } {
+	const save = loadSave(browserStorage());
+	const place = placeFromSearch(search);
+	if (place) return { target: { ...PLACES[place] }, deepLinked: true, hasSave: save !== null };
+	if (save) return { target: { map: save.map, tile: { x: save.x, y: save.y }, facing: save.facing }, deepLinked: false, hasSave: true };
+	return { target: { ...PLACES[START_PLACE] }, deepLinked: false, hasSave: false };
+}
 
 export type BootOptions = {
 	/** URL prefix where the built game assets live. */
@@ -21,6 +40,10 @@ export type GameHandle = {
 	/** Enter the world. Safe to call before loading finishes; it starts when ready. */
 	start(): void;
 	destroy(): void;
+	/** The page was opened with a valid `?at=` link, so the title can be skipped. */
+	deepLinked: boolean;
+	/** A saved game exists (the title shows "Continue"). */
+	hasSave: boolean;
 };
 
 export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
@@ -28,6 +51,7 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	onReady: () => void;
 	/** Resolves when the player has asked to start. */
 	startRequested: Promise<void>;
+	start: WorldTarget;
 };
 
 export const SERVICES_KEY = "services";
@@ -35,13 +59,15 @@ export const SERVICES_KEY = "services";
 export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHandle {
 	let requestStart!: () => void;
 	const startRequested = new Promise<void>((resolve) => (requestStart = resolve));
-	if (options.autoStart) requestStart();
+	const { target, deepLinked, hasSave } = resolveStart(window.location.search);
+	if (options.autoStart || deepLinked) requestStart();
 
 	const services: GameServices = {
 		assetBase: options.assetBase ?? "/game/",
 		onProgress: options.onProgress ?? (() => {}),
 		onReady: options.onReady ?? (() => {}),
 		startRequested,
+		start: target,
 	};
 
 	const dpr = () => window.devicePixelRatio || 1;
@@ -94,6 +120,8 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 
 	return {
 		start: requestStart,
+		deepLinked,
+		hasSave,
 		destroy() {
 			observer.disconnect();
 			dprQuery?.removeEventListener("change", onDprChange);
