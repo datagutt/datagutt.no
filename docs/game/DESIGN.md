@@ -205,7 +205,7 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 
 | Question | Default |
 |---|---|
-| Internal resolution | 16 px tiles, integer zoom chosen so the short screen axis shows at least 11 tiles |
+| Internal resolution | 16 px tiles on a low-res canvas scaled by whole *device* pixels (`game/viewport.ts`): about 12 tiles on a phone's short axis, about 17 on desktops, never fewer than 11 |
 | NPC names and personalities | Claude drafts them in M2 alongside the Ink scripts, user edits |
 | Lanyard activity to NPC location mapping | Coding app → PC in house; Spotify → bench by the fjord with headphones; online idle → wandering town square; offline → asleep in bed; custom status text → speech bubble |
 | Ghost name format | "Traveller from <Norwegian town>", random per session |

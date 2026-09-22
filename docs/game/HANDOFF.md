@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0 tooling)
+Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0, M1.1–M1.2)
 
 ## Current state
 
@@ -14,6 +14,10 @@ Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0 tooling)
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M1.1 and M1.2 done: `/` is a server-rendered title screen (`components/game/TitleArt.tsx`
+  SVG fjord scene, `GameShell.tsx` client host) that boots Phaser behind it; old page at
+  `/legacy`; `/journal` is a stub. Game code in `game/` (boot, viewport, Boot/Preload/World
+  scenes; World is still a test pattern).
 - M0.6 to M0.10 done: `scripts/assets/fetch.mjs` (+ tested `source.mjs`), ignore rules
   for generated/licensed output, deps (phaser 4.2.1, inkjs 2.4.0, pngjs, vitest 5,
   Playwright 1.63, @types/node 24), ESLint boundary for `game/`, `pnpm test` and
@@ -22,8 +26,11 @@ Last updated: 2026-09-22 (session 1: design, planning, assets repo, M0 tooling)
 
 ## Next step
 
-**M0.11** is waiting on the user's token. Meanwhile start **M1.1** (Next.js shell with
-HTML title screen and client-only game mount) and **M1.2** (Phaser config).
+**M1.3**: asset pipeline (`scripts/assets/build.mjs`): pack the sprites and tilesets the
+game uses into `public/game/`, with placeholder output of the same shape. Inspect the
+LimeZu character sheet layout first (`limezu/characters/Spritesheet_animations_GUIDE.png`).
+The user said to focus on local testing: **M0.11 (Vercel token) is deferred** until they
+ask for it.
 
 ## Blockers and things waiting on the user
 
@@ -42,11 +49,21 @@ HTML title screen and client-only game mount) and **M1.2** (Phaser config).
   took several minutes). Run such jobs in the background.
 - The Modern Exteriors licence allows use "in open source projects", but Interiors and UI
   do not, so the public repo still never holds any LimeZu pixels.
-- `next dev` (canary Turbopack) panicked on this repo during M0.10, so Playwright runs
-  against `next start`; run `pnpm build` before `pnpm test:e2e`.
+- Next.js was upgraded from 16.2 canary to **16.3.6** (React 19.3, React Compiler 1.0).
+  Turbopack's on-disk cache fails on `/mnt/c` (fsync EINVAL), which was also the cause of
+  the earlier dev panic; `next.config.mjs` turns that cache off only on WSL-mounted
+  drives. `experimental.viewTransition` no longer exists and was removed.
+- `pnpm test:e2e` runs against `next start` (run `pnpm build` first), or set
+  `E2E_BASE_URL=http://localhost:3100` to test against a running `pnpm dev`.
+- Fast loop for game work: `pnpm game:dev` (esbuild harness, port 3200, live reload).
+  Visual checks: a Playwright screenshot script, then view the PNG. Measure pixel runs
+  with pngjs to prove crispness rather than eyeballing.
 - pnpm does not run `pre*`/`post*` scripts; chain steps inside the script instead.
-- `pkill -f <pattern>` inside a Bash call can match and kill that same shell. Use a
-  pattern that doesn't appear in the command, or kill by PID.
+- `pkill -f <pattern>` (and `ps | grep <pattern>`) inside a Bash call matches that same
+  shell's command line and kills it. Find processes by port instead:
+  `ss -ltnp | awk '/:3100 /'`.
+- `eslint-config-next` is still 15.2.2 because 16.x needs ESLint 9 flat config; migrate
+  when convenient.
 - Phaser ships `docs/` and `skills/` inside `node_modules/phaser`. Read those for
   Phaser 4 APIs.
 - `jq` is not installed on this machine; hook scripts use plain shell and node.

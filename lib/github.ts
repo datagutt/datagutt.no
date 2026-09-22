@@ -31,12 +31,17 @@ export type ContributionDay = {
 // --- Pinned repos (scraped from GitHub profile) ---
 
 async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
-  const res = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
-    headers: { "User-Agent": "Mozilla/5.0" },
-  });
-  if (!res.ok) return [];
-
-  const html = await res.text();
+  let html: string;
+  try {
+    const res = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+    if (!res.ok) return [];
+    html = await res.text();
+  } catch {
+    // Network hiccup: render without pinned repos, like the other fetchers do.
+    return [];
+  }
   const root = parse(html);
 
   return root.querySelectorAll(".js-pinned-item-list-item").map((el) => {

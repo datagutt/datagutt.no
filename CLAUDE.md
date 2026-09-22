@@ -8,12 +8,13 @@ The site is being rebuilt as a top-down pixel-art game ("Fjord Town"). Before wo
 
 ## Project Overview
 
-Personal portfolio site for datagutt, built with **Next.js 16** (canary), **React 19**, and **TypeScript**. Uses **pnpm** as package manager.
+Personal portfolio site for datagutt, built with **Next.js 16.3**, **React 19.3**, and **TypeScript**. Uses **pnpm** as package manager.
 
 ## Commands
 
 ```bash
-pnpm dev          # Start dev server
+pnpm dev          # Start dev server (Turbopack)
+pnpm game:dev     # Standalone game harness at http://localhost:3200/game/dev.html (esbuild, live reload)
 pnpm build        # Production build
 pnpm start        # Start production server
 pnpm lint         # ESLint CLI (Next.js config; `next lint` no longer exists in Next 16)
@@ -99,7 +100,17 @@ localStorage.removeItem("rx_off");   // re-enable
 ## Key Configuration
 
 - **React Compiler** enabled (`babel-plugin-react-compiler`)
-- **View Transitions** enabled experimentally
+- **Turbopack filesystem cache** is disabled when the repo sits on a WSL-mounted Windows drive (`/mnt/...`), where fsync fails
 - **Inline CSS** enabled via Next.js experimental config
 - **Path alias**: `@/*` maps to project root
 - **TypeScript strict mode** enabled
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

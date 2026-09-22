@@ -1,9 +1,15 @@
+// Turbopack's on-disk cache needs fsync, which fails on a Windows drive mounted in WSL
+// (/mnt/c/...). Keep the cache everywhere else, including Vercel.
+const onWslMountedDrive = process.platform === "linux" && process.cwd().startsWith("/mnt/");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   productionBrowserSourceMaps: true,
   cacheComponents: true,
   reactCompiler: true,
   experimental: {
+    turbopackFileSystemCacheForDev: !onWslMountedDrive,
+    turbopackFileSystemCacheForBuild: !onWslMountedDrive,
     multiZoneDraftMode: true,
     appNavFailHandling: true,
     prerenderEarlyExit: true,
@@ -101,9 +107,6 @@ const nextConfig = {
     inlineCss: true,
 
     //clientSegmentCache: true,
-
-
-    viewTransition: true,
   },
 };
 

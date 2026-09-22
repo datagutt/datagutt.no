@@ -67,14 +67,17 @@ Issue: see README.md (issue links table).
 Goal: walk around a greybox town, enter a building, talk to a stub NPC, on desktop and
 phone.
 
-- [ ] **M1.1** Next.js shell: `app/page.tsx` renders the HTML title screen (static,
+- [x] **M1.1** Next.js shell: `app/page.tsx` renders the HTML title screen (static,
       under 50 KB) and a client-only `GameMount` that dynamically imports `game/boot.ts`.
       The old page moves to `app/_legacy/` until M6 so it can be compared. *Done when*
-      `/` shows the title and Start boots Phaser.
-- [ ] **M1.2** Phaser config: WebGL, `pixelArt: true`, `roundPixels`, integer zoom so the
+      `/` shows the title and Start boots Phaser. (Old page lives at `/legacy`, a routable
+      folder rather than `_legacy`, so it can be compared; `/journal` is a stub.)
+- [x] **M1.2** Phaser config: WebGL, `pixelArt: true`, `roundPixels`, integer zoom so the
       short axis shows at least 11 tiles, resize handling, DPR-aware. Scenes: `Boot`,
       `Preload`, `World`, `UI` (overlay), `Cutscene`. *Done when* the canvas is crisp at
-      1×, 2× and 3× DPR with no subpixel shimmer while the camera moves.
+      1×, 2× and 3× DPR with no subpixel shimmer while the camera moves. (Verified by
+      screenshot analysis at DPR 1, 3 and 2.625: 3 colours only, 1-px dots exactly `zoom`
+      device pixels. `UI` and `Cutscene` scenes get added with their features.)
 - [ ] **M1.3** Asset pipeline v1 `scripts/assets/build.mjs`: read the manifest
       `game/assets.manifest.ts` (which sprites and tiles are used), pack atlases into
       `public/game/atlas/*.png|json`, emit a typed key list `game/generated/keys.ts`.

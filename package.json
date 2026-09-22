@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev ",
+    "dev": "next dev",
     "build": "node scripts/assets/fetch.mjs && next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx,.js,.mjs",
@@ -12,24 +12,25 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "assets:fetch": "node scripts/assets/fetch.mjs"
+    "assets:fetch": "node scripts/assets/fetch.mjs",
+    "game:dev": "node scripts/game-dev.mjs"
   },
   "dependencies": {
     "@spissvinkel/simplex-noise": "^1.0.1",
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/functions": "^3.7.3",
-    "babel-plugin-react-compiler": "19.0.0-beta-bafa41b-20250307",
+    "babel-plugin-react-compiler": "1.0.0",
     "critters": "^0.0.25",
     "geist": "^1.7.0",
     "gsap": "^3.13.0",
     "inkjs": "^2.4.0",
-    "next": "16.2.0-canary.48",
+    "next": "16.3.6",
     "next-themes": "^0.2.1",
     "node-html-parser": "^7.0.2",
     "phaser": "^4.2.1",
-    "react": "19.0.0",
+    "react": "19.3.0",
     "react-activity-calendar": "^3.1.1",
-    "react-dom": "19.0.0",
+    "react-dom": "19.3.0",
     "react-use-lanyard": "^0.3.6",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.21.0"
@@ -39,10 +40,11 @@
     "@playwright/test": "^1.63",
     "@types/node": "^24.13.6",
     "@types/pngjs": "^6.0.5",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/ws": "^8.18.1",
     "autoprefixer": "^10.4.22",
+    "esbuild": "^0.28.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.2.2",
     "pngjs": "^7",
@@ -53,11 +55,5 @@
     "typescript": "^5.9.3",
     "vitest": "^5"
   },
-  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.10",
-      "@types/react-dom": "19.0.4"
-    }
-  }
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
 }
