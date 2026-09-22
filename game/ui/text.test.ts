@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paginate, wrapText } from "./text";
+import { charDelayMs, paginate, wrapText } from "./text";
 
 const mono: (t: string) => number = (t) => t.length * 5;
 
@@ -20,5 +20,15 @@ describe("paginate", () => {
 	it("splits into pages and never returns zero pages", () => {
 		expect(paginate(["1", "2", "3"], 2)).toEqual([["1", "2"], ["3"]]);
 		expect(paginate([], 3)).toEqual([[""]]);
+	});
+});
+
+describe("charDelayMs", () => {
+	it("pauses after sentence and clause endings only", () => {
+		const text = "Hei! Yes, 3.5 ok.";
+		expect(charDelayMs(text, 4)).toBeGreaterThan(charDelayMs(text, 2)); // after "!"
+		expect(charDelayMs(text, 9)).toBeGreaterThan(charDelayMs(text, 7)); // after ","
+		expect(charDelayMs(text, 12)).toBe(charDelayMs(text, 2)); // inside "3.5"
+		expect(charDelayMs(text, 4)).toBeGreaterThan(charDelayMs(text, 9)); // full stop beats comma
 	});
 });

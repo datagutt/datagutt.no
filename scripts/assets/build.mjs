@@ -26,7 +26,7 @@ if (!fs.existsSync(sourceFile)) {
 const source = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
 const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
 
-for (const sub of ["characters", "tilesets", "maps", "fonts", "dialogue"]) {
+for (const sub of ["characters", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
 }
@@ -144,6 +144,24 @@ for (const [id, recipe] of Object.entries(CHARACTERS)) {
 for (const spec of GREYBOX_MAPS) {
 	fs.writeFileSync(path.join(outDir, `maps/${spec.id}.tmj`), JSON.stringify(toTmj(spec, tileset)));
 }
+
+// Dialogue frame for a nine-slice: LimeZu's wood-rimmed parchment box (Modern UI style 1),
+// or a drawn stand-in of the same size and palette in placeholder mode.
+const FRAME = { left: 58, top: 129, width: 28, height: 29 };
+async function buildUiFrame() {
+	if (source.mode !== "placeholder") {
+		return sharp(path.join(source.dir, "limezu/ui/Modern_UI_Style_1.png")).extract(FRAME).png().toBuffer();
+	}
+	const img = new Raster(FRAME.width, FRAME.height);
+	const edge = hex("3b2a3a");
+	img.rect(1, 0, FRAME.width - 2, FRAME.height - 1, edge);
+	img.rect(0, 1, FRAME.width, FRAME.height - 3, edge);
+	img.rect(1, 1, FRAME.width - 2, FRAME.height - 4, hex("b8733d"));
+	img.rect(3, 3, FRAME.width - 6, FRAME.height - 8, edge);
+	img.rect(4, 4, FRAME.width - 8, FRAME.height - 10, hex("c4a888"));
+	return img.toPng();
+}
+fs.writeFileSync(path.join(outDir, "ui/frame.png"), await buildUiFrame());
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
 const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");

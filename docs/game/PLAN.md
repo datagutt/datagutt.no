@@ -140,12 +140,12 @@ the passport works.
       *Done when* a typo in an id fails `pnpm build`. (Registry in
       `game/dialogue/externals.ts`; EXTERNAL lines are generated; NPC `dialogue` knots are
       checked against the compiled story too.)
-- [ ] **M2.4** Dialogue box: LimeZu UI frame, typewriter text with punctuation pauses,
+- [x] **M2.4** Dialogue box: LimeZu UI frame, typewriter text with punctuation pauses,
       skip-to-end on second press, choice menus, `* ` narration style, bitmap pixel font
       (reuse the site's pixel fonts, converted to BMFont). *Done when* long text wraps
-      and pages correctly. (Partly done: Geist Pixel bitmap font, typewriter, skip, paging
-      and a choice list with keyboard, gamepad and tap. Still to do: LimeZu UI frame and
-      punctuation pauses.)
+      and pages correctly. (LimeZu Modern UI style 1 wood frame as a nine-slice, drawn
+      stand-in in placeholder mode; Geist Pixel bitmap font; punctuation pauses; choice
+      list with keyboard, gamepad and tap.)
 - [ ] **M2.5** Portraits: build step composites portrait layers per NPC; talk animation
       runs while text types, nod and shake available as Ink tags (`# nod`, `# shake`).
       *Done when* one NPC talks with a moving mouth.

@@ -14,6 +14,11 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.4 done: wood-and-parchment dialogue box (nine-slice of `ui/frame.png`, cropped
+  from LimeZu Modern UI style 1 at 58,129 28×29), name tab, punctuation pauses.
+- NPC dialogue uses the **topics pattern** (see `main.ink`): once-only questions return
+  to a `(topics)` hub, a sticky `+` choice ends. The user reported that the old one-shot
+  choices hid content; never go back to that.
 - M2.3 done: dialogue is Ink in `game/dialogue/ink/` (main.ink INCLUDEs one file per
   NPC). The build compiles it to `public/game/dialogue/main.json`, generates EXTERNAL
   declarations from `game/dialogue/externals.ts`, and fails on unknown literal ids or
@@ -47,9 +52,9 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-Finish **M2.4** (LimeZu UI frame for the dialogue box, punctuation pauses), then **M2.5**
-(portraits) and **M2.6** (blips). **M0.11 (Vercel token) stays deferred** until the user
-asks.
+**M2.5** (portraits: composite from the portrait generator layers, talk animation while
+text types) and **M2.6** (per-NPC dialogue blips). **M0.11 (Vercel token) stays
+deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 

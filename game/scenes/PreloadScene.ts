@@ -20,6 +20,7 @@ export class PreloadScene extends Phaser.Scene {
 
 		this.load.image("tiles:greybox", "tilesets/greybox.png");
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
+		this.load.image("ui:frame", "ui/frame.png");
 		for (const id of Object.keys(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
 		}

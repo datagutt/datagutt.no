@@ -35,3 +35,16 @@ export function paginate(lines: string[], linesPerPage: number): string[][] {
 	for (let i = 0; i < lines.length; i += linesPerPage) pages.push(lines.slice(i, i + linesPerPage));
 	return pages.length ? pages : [[""]];
 }
+
+/** Typewriter pacing: characters per second, with a beat after punctuation. */
+export const BASE_CHAR_MS = 20;
+const PAUSE_AFTER: Record<string, number> = { ".": 220, "!": 220, "?": 220, "…": 320, ",": 110, ";": 110, ":": 110, "—": 140 };
+
+/** How long to wait before revealing character `i` of `text`. */
+export function charDelayMs(text: string, i: number): number {
+	const prev = i > 0 ? text[i - 1] : "";
+	// Only pause at the end of a clause, not inside "3.5" or "...".
+	const next = text[i] ?? "";
+	const pause = PAUSE_AFTER[prev] && (next === " " || next === "\n") ? PAUSE_AFTER[prev] : 0;
+	return BASE_CHAR_MS + pause;
+}
