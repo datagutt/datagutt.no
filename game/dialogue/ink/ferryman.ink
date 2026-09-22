@@ -15,5 +15,5 @@
     If you'd rather read than walk, the Journal has everything in plain text. There's a button for it on the title screen.
     -> topics
 + [Just looking around.]
-    Good. There's plenty to look at. Most of it is his fault.
+    Good. There's plenty to look at. Most of it is his fault. # nod
     -> END

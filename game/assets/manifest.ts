@@ -9,6 +9,11 @@ export type CharacterRecipe = {
 	recolor?: Record<string, string>;
 	/** Main colour of the stand-in sprite drawn in placeholder mode. */
 	placeholder: string;
+	/**
+	 * Dialogue portrait from the portrait generator, relative to limezu/portraits/.
+	 * Same stacking order (skin, eyes, hair, accessories); `recolor` applies here too.
+	 */
+	portrait?: string[];
 };
 
 export const CHARACTERS = {
@@ -35,10 +40,19 @@ export const CHARACTERS = {
 			"Hairstyles/Hairstyle_20_01.png",
 			"Accessories/Accessory_15_Glasses_01.png",
 		],
+		portrait: [
+			"Skins/PG_Skin_2.png",
+			"Eyes/PG_Eyes_01.png",
+			"Hairstyles/PG_Hairstyle_20_1.png",
+			"Accessories/PG_Accessory_15_Glasses_1.png",
+		],
 		recolor: {
 			cc9659: "f7d768",
 			b37b3f: "e6bb3a",
 			ab6736: "c4952a",
+			// Two darker hair shades only the portrait layers use.
+			"9f4c25": "a8791f",
+			"3f271b": "6b4e14",
 			"58616f": "1b1b24",
 		},
 		placeholder: "e6bb3a",
@@ -51,6 +65,13 @@ export const CHARACTERS = {
 			"Hairstyles/Hairstyle_08_05.png",
 			"Accessories/Accessory_11_Beanie_01.png",
 			"Accessories/Accessory_13_Beard_05.png",
+		],
+		portrait: [
+			"Skins/PG_Skin_4.png",
+			"Eyes/PG_Eyes_02.png",
+			"Hairstyles/PG_Hairstyle_08_5.png",
+			"Accessories/PG_Accessory_11_Beanie_1.png",
+			"Accessories/PG_Accessory_13_Beard_5.png",
 		],
 		placeholder: "3d6f8e",
 	},

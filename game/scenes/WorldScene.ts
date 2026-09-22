@@ -286,7 +286,10 @@ export class WorldScene extends Phaser.Scene {
 		const step = () => {
 			const beat = runner.next();
 			if (beat.type === "line") {
-				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step);
+				const gesture = beat.tags.includes("nod") ? "nod" : beat.tags.includes("shake") ? "shake" : null;
+				// A `# speaker:` tag means someone else is talking: no portrait for them yet.
+				const portrait = beat.speaker ? null : npc.character;
+				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step, { portrait, gesture });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {
 					runner.choose(i);

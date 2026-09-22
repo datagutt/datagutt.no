@@ -6,7 +6,18 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { CHARACTERS } from "../../game/assets/manifest.ts";
-import { FRAME_HEIGHT, FRAME_WIDTH, SHEET_COLUMNS, SHEET_ROWS, DIRECTIONS, ANIMS } from "../../game/characters/sheet.ts";
+import {
+	FRAME_HEIGHT,
+	FRAME_WIDTH,
+	SHEET_COLUMNS,
+	SHEET_ROWS,
+	DIRECTIONS,
+	ANIMS,
+	PORTRAIT_ANIMS,
+	PORTRAIT_COLUMNS,
+	PORTRAIT_CROP,
+	PORTRAIT_SOURCE_FRAME,
+} from "../../game/characters/sheet.ts";
 import { GREYBOX_MAPS } from "../../world/greybox/maps.ts";
 import { GREYBOX_TILES } from "../../world/greybox/tiles.ts";
 import { toTmj } from "../../world/tiled.ts";
@@ -26,7 +37,7 @@ if (!fs.existsSync(sourceFile)) {
 const source = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
 const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
 
-for (const sub of ["characters", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
+for (const sub of ["characters", "portraits", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
 }
@@ -131,6 +142,73 @@ async function placeholderCharacter(recipe) {
 	return img.toPng();
 }
 
+// --- Portraits ----------------------------------------------------------------------
+
+const PORTRAIT_ROWS = Object.keys(PORTRAIT_ANIMS).length;
+const P = PORTRAIT_CROP.size;
+
+/** Stack the portrait layers, then crop every frame to the area heads actually use. */
+async function composePortrait(id, recipe) {
+	const dir = path.join(source.dir, "limezu/portraits");
+	const width = PORTRAIT_COLUMNS * PORTRAIT_SOURCE_FRAME;
+	const height = PORTRAIT_ROWS * PORTRAIT_SOURCE_FRAME;
+	const layers = [];
+	for (const layer of recipe.portrait) {
+		const file = path.join(dir, layer);
+		if (!fs.existsSync(file)) throw new Error(`Portrait "${id}": layer ${layer} does not exist in the assets repo`);
+		let buf = await sharp(file).extract({ left: 0, top: 0, width, height }).png().toBuffer();
+		if (recipe.recolor) buf = await recolor(buf, recipe.recolor);
+		layers.push({ input: buf });
+	}
+	const full = await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+		.composite(layers)
+		.png()
+		.toBuffer();
+	const frames = [];
+	for (let row = 0; row < PORTRAIT_ROWS; row++) {
+		for (let col = 0; col < PORTRAIT_COLUMNS; col++) {
+			const input = await sharp(full)
+				.extract({
+					left: col * PORTRAIT_SOURCE_FRAME + PORTRAIT_CROP.x,
+					top: row * PORTRAIT_SOURCE_FRAME + PORTRAIT_CROP.y,
+					width: P,
+					height: P,
+				})
+				.png()
+				.toBuffer();
+			frames.push({ input, left: col * P, top: row * P });
+		}
+	}
+	return sharp({ create: { width: PORTRAIT_COLUMNS * P, height: PORTRAIT_ROWS * P, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+		.composite(frames)
+		.png()
+		.toBuffer();
+}
+
+/** A stand-in face: talking opens and closes the mouth, nodding bobs, shaking sways. */
+async function placeholderPortrait(recipe) {
+	const img = new Raster(PORTRAIT_COLUMNS * P, PORTRAIT_ROWS * P);
+	const skin = hex(recipe.placeholder);
+	const light = [...skin.slice(0, 3).map((c) => Math.min(255, c + 70)), 255];
+	const ink = hex("1b1b24");
+	for (let row = 0; row < PORTRAIT_ROWS; row++) {
+		for (let col = 0; col < PORTRAIT_COLUMNS; col++) {
+			const dx = row === 2 ? [0, -1, -2, -1, 0, 1, 2, 1, 0, 0][col] : 0;
+			const dy = row === 1 ? [0, 1, 2, 1, 0, 1, 2, 1, 0, 0][col] : 0;
+			const ox = col * P + 5 + dx;
+			const oy = row * P + 4 + dy;
+			img.rect(ox, oy, 15, 16, ink);
+			img.rect(ox + 1, oy + 1, 13, 14, light);
+			img.rect(ox + 1, oy + 1, 13, 4, skin);
+			img.rect(ox + 4, oy + 7, 1, 2, ink);
+			img.rect(ox + 10, oy + 7, 1, 2, ink);
+			const open = row === 0 && col % 2 === 1;
+			img.rect(ox + 6, oy + 11, 3, open ? 2 : 1, ink);
+		}
+	}
+	return img.toPng();
+}
+
 // --- Run ---------------------------------------------------------------------------
 
 const started = Date.now();
@@ -139,6 +217,10 @@ const tileset = await buildGreyboxTileset();
 for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(id, recipe);
 	fs.writeFileSync(path.join(outDir, `characters/${id}.png`), png);
+	if (recipe.portrait) {
+		const portrait = source.mode === "placeholder" ? await placeholderPortrait(recipe) : await composePortrait(id, recipe);
+		fs.writeFileSync(path.join(outDir, `portraits/${id}.png`), portrait);
+	}
 }
 
 for (const spec of GREYBOX_MAPS) {
@@ -183,6 +265,7 @@ const manifest = {
 	mode: source.mode,
 	builtAt: new Date().toISOString(),
 	characters: Object.keys(CHARACTERS),
+	portraits: Object.entries(CHARACTERS).flatMap(([id, r]) => (r.portrait ? [id] : [])),
 	maps: GREYBOX_MAPS.map((m) => m.id),
 	tilesets: [tileset.name],
 	fonts: ["pixel"],

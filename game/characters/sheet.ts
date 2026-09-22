@@ -31,3 +31,25 @@ export function animFrames(anim: AnimName, dir: Direction): number[] {
 export function animKey(character: string, anim: AnimName, dir: Direction): string {
 	return `${character}:${anim}:${dir}`;
 }
+
+// --- Portraits ---------------------------------------------------------------------
+// Portrait generator sheets are 10×3 frames of 32×32 (talk, nod, shake). Heads only use
+// the area below, so the build crops every frame to it.
+export const PORTRAIT_CROP = { x: 2, y: 0, size: 25 };
+export const PORTRAIT_SOURCE_FRAME = 32;
+export const PORTRAIT_COLUMNS = 10;
+export const PORTRAIT_ANIMS = {
+	talk: { row: 0, frameRate: 12, repeat: -1 },
+	nod: { row: 1, frameRate: 14, repeat: 0 },
+	shake: { row: 2, frameRate: 14, repeat: 0 },
+} as const;
+export type PortraitAnim = keyof typeof PORTRAIT_ANIMS;
+
+export function portraitFrames(anim: PortraitAnim): number[] {
+	const start = PORTRAIT_ANIMS[anim].row * PORTRAIT_COLUMNS;
+	return Array.from({ length: PORTRAIT_COLUMNS }, (_, i) => start + i);
+}
+
+export function portraitKey(character: string, anim?: PortraitAnim): string {
+	return anim ? `portrait:${character}:${anim}` : `portrait:${character}`;
+}

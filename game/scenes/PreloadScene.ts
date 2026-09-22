@@ -1,7 +1,20 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices } from "../boot";
 import { CHARACTERS } from "../assets/manifest";
-import { ANIMS, DIRECTIONS, FRAME_HEIGHT, FRAME_WIDTH, animFrames, animKey, type AnimName } from "../characters/sheet";
+import {
+	ANIMS,
+	DIRECTIONS,
+	FRAME_HEIGHT,
+	FRAME_WIDTH,
+	PORTRAIT_ANIMS,
+	PORTRAIT_CROP,
+	animFrames,
+	animKey,
+	portraitFrames,
+	portraitKey,
+	type AnimName,
+	type PortraitAnim,
+} from "../characters/sheet";
 import { DialogueRunner } from "../dialogue/DialogueRunner";
 import { browserStorage, loadSave } from "../save/save";
 
@@ -21,8 +34,12 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.image("tiles:greybox", "tilesets/greybox.png");
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
 		this.load.image("ui:frame", "ui/frame.png");
-		for (const id of Object.keys(CHARACTERS)) {
+		for (const [id, recipe] of Object.entries(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
+			if ("portrait" in recipe) {
+				const size = PORTRAIT_CROP.size;
+				this.load.spritesheet(portraitKey(id), `portraits/${id}.png`, { frameWidth: size, frameHeight: size });
+			}
 		}
 		this.load.tilemapTiledJSON(`map:${services.start.map}`, `maps/${services.start.map}.tmj`);
 		this.load.json("dialogue", "dialogue/main.json");
@@ -40,6 +57,17 @@ export class PreloadScene extends Phaser.Scene {
 						repeat: ANIMS[anim].repeat,
 					});
 				}
+			}
+		}
+		for (const [id, recipe] of Object.entries(CHARACTERS)) {
+			if (!("portrait" in recipe)) continue;
+			for (const anim of Object.keys(PORTRAIT_ANIMS) as PortraitAnim[]) {
+				this.anims.create({
+					key: portraitKey(id, anim),
+					frames: this.anims.generateFrameNumbers(portraitKey(id), { frames: portraitFrames(anim) }),
+					frameRate: PORTRAIT_ANIMS[anim].frameRate,
+					repeat: PORTRAIT_ANIMS[anim].repeat,
+				});
 			}
 		}
 		// One story for the whole game, so visit counts survive map changes and reloads.

@@ -5,7 +5,7 @@
 { datagutt > 1:
     {~Back already? The town isn't that big. Yet.|If you find a bug, it's a feature. Probably.|I'd offer you coffee, but the greybox doesn't have any.}
 - else:
-    Oh, hi! I'm {profile("firstName")}. {profile("role")} by trade, {profile("location")} by postcode.
+    Oh, hi! I'm {profile("firstName")}. {profile("role")} by trade, {profile("location")} by postcode. # nod
     {about(0)}
 }
 - (topics)

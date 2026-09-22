@@ -9,7 +9,8 @@
 // the conversation. Unasked questions stay available on later visits, so no fact can be
 // missed by picking the "wrong" option first.
 //
-// Tags: `# speaker: Name` overrides the speaker for a line.
+// Tags: `# speaker: Name` overrides the speaker for a line; `# nod` and `# shake`
+// play that portrait gesture once at the start of the line.
 
 INCLUDE ferryman.ink
 INCLUDE datagutt.ink
