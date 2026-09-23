@@ -27,6 +27,7 @@ import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movemen
 import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects";
 import { addLights } from "../fx/Lights";
 import { DayNight } from "../fx/DayNight";
+import { Weather } from "../fx/Weather";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -50,6 +51,7 @@ export class WorldScene extends Phaser.Scene {
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
 	private thomas!: LiveThomas;
 	private dayNight!: DayNight;
+	private weather: Weather | null = null;
 	private prompt!: Prompt;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
@@ -153,7 +155,9 @@ export class WorldScene extends Phaser.Scene {
 
 		const images = addLights(this, lights, this.progress.reducedMotion);
 		const outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
-		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, this.services.hours);
+		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, this.services.hours, this.services.month);
+		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion) : null;
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.weather?.destroy());
 
 		const spawn = this.target.spawn ? spawns.get(this.target.spawn) : undefined;
 		const startAt = this.target.tile ?? spawn ?? [...spawns.values()][0];
@@ -248,6 +252,7 @@ export class WorldScene extends Phaser.Scene {
 	private onResize(size: Phaser.Structs.Size) {
 		this.cameras.resize(size.width, size.height);
 		this.dayNight.resize(size.width, size.height);
+		this.weather?.resize(size.width, size.height);
 		this.fitCamera();
 		this.dialogue.relayout();
 	}

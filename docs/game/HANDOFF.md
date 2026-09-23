@@ -4,6 +4,12 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.4 season effects done.** `game/fx/Weather.ts`, outdoors only: snow and a pale
+  frost vignette (a camera filter) in winter, pink petals in spring, drifting pollen in
+  summer, tumbling leaves in autumn; tiny baked pixel sprites, screen-space emitters under
+  the time-of-day tint, thinned out and not spinning with reduced motion. June nights stay
+  light (`daylightAt(hours, month)`: a third as dark, paler tint); `services.month`,
+  `?debug&month=`.
 - **M5.10 interaction prompts done.** `game/ui/Prompt.ts` shows "E Talk", "A Enter",
   "Tap Read" (or "Wake" for Thomas asleep) over whatever interact would use
   (`WorldScene.targetAhead`, counters included). The button follows the last input used

@@ -295,7 +295,7 @@ Goal: the Celeste-level feel.
       colour. Low-quality fallback. *Done when* it looks good at night and day.
 - [ ] **M5.3** Aurora shader: animated curtains on the night sky, stronger in winter,
       site-green palette. *Done when* it runs at 60 fps on a mid-range phone.
-- [ ] **M5.4** Season effects: falling snow particles and frost vignette in winter,
+- [x] **M5.4** Season effects: falling snow particles and frost vignette in winter,
       leaves in autumn, pollen in summer, midnight-sun brightness in June. *Done when*
       each season has one particle effect.
 - [ ] **M5.5** Game feel: footstep dust, bump feedback, screen shake on stamps, squash

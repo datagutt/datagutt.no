@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clock, daylightAt, lightFactor, parseTime } from "./dayNight";
+import { clock, daylightAt, lightFactor, monthNow, parseTime } from "./dayNight";
 
 describe("time of day", () => {
 	it("runs from night through dawn, day and dusk", () => {
@@ -10,6 +10,13 @@ describe("time of day", () => {
 		expect(daylightAt(23.99).phase).toBe("night");
 		// Halfway into dusk it is half as dark as dusk's peak.
 		expect(daylightAt(18.25).dark).toBeCloseTo(0.2);
+	});
+
+	it("keeps June nights light", () => {
+		expect(daylightAt(1, 6).dark).toBeCloseTo(0.3);
+		expect(daylightAt(1, 12).dark).toBe(1);
+		expect(monthNow("?debug&month=6", () => new Date(2026, 0, 1))()).toBe(6);
+		expect(monthNow("", () => new Date(2026, 0, 1))()).toBe(1);
 	});
 
 	it("reads ?time= as a phase or a clock time, in debug only", () => {

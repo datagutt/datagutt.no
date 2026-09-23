@@ -29,14 +29,21 @@ const mix = (a: number, b: number, t: number) => {
 	return m(16) | m(8) | m(0);
 };
 
-/** The light at `hours` (0–24, fractional). */
-export function daylightAt(hours: number): Daylight {
+/**
+ * The light at `hours` (0–24, fractional) in `month` (1–12). June nights stay light: the
+ * midnight sun up north, a long pale dusk in the south.
+ */
+export function daylightAt(hours: number, month = 0): Daylight {
 	const h = ((hours % 24) + 24) % 24;
 	const i = KEYS.findIndex((k, n) => h >= k.hour && h < KEYS[n + 1].hour);
 	const [a, b] = [KEYS[i], KEYS[i + 1]];
 	const t = (h - a.hour) / (b.hour - a.hour);
-	return { tint: mix(a.tint, b.tint, t), dark: a.dark + (b.dark - a.dark) * t, phase: phaseAt(h) };
+	const light = { tint: mix(a.tint, b.tint, t), dark: a.dark + (b.dark - a.dark) * t, phase: phaseAt(h) };
+	if (month !== MIDNIGHT_SUN) return light;
+	return { ...light, tint: mix(light.tint, 0xffffff, 0.65), dark: light.dark * 0.3 };
 }
+
+const MIDNIGHT_SUN = 6;
 
 export function phaseAt(hours: number): Phase {
 	if (hours >= 5.5 && hours < 8) return "dawn";
@@ -52,6 +59,13 @@ export function parseTime(value: string | null): number | null {
 	const m = /^(\d{1,2}):(\d{2})$/.exec(value);
 	if (!m || Number(m[1]) > 23 || Number(m[2]) > 59) return null;
 	return Number(m[1]) + Number(m[2]) / 60;
+}
+
+/** The month (1–12) on the visitor's clock, or `?debug&month=`. */
+export function monthNow(search: string, now: () => Date = () => new Date()): () => number {
+	const params = new URLSearchParams(search);
+	const asked = params.has("debug") ? Number(params.get("month")) : NaN;
+	return () => (Number.isInteger(asked) && asked >= 1 && asked <= 12 ? asked : now().getMonth() + 1);
 }
 
 /** Hours on the visitor's clock now, or the fixed debug time. */

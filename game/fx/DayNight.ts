@@ -21,6 +21,7 @@ export class DayNight {
 		private readonly lights: { light: LightObject; image: Phaser.GameObjects.Image }[],
 		outdoors: boolean,
 		private readonly hours: () => number,
+		private readonly month: () => number,
 	) {
 		const cam = scene.cameras.main;
 		this.overlay = outdoors
@@ -41,7 +42,7 @@ export class DayNight {
 	update(timeMs: number, force = false): void {
 		if (!force && timeMs < this.nextAt) return;
 		this.nextAt = timeMs + REFRESH_MS;
-		const light = (this.current = daylightAt(this.hours()));
+		const light = (this.current = daylightAt(this.hours(), this.month()));
 		if (this.overlay) this.overlay.setFillStyle(light.tint).setVisible(light.tint !== 0xffffff);
 		for (const { light: l, image } of this.lights) {
 			if (!l.when) continue;
