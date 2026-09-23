@@ -175,9 +175,11 @@ the passport works.
       the validator's coverage report). (`game/dialogue/coverage.test.ts` checks
       coverage; every conversation is walked to the end in tests with live and empty
       data. Drafts are ready for the user to edit.)
-- [ ] **M2.10** Passport and stamps: stamp on first full conversation with each main
+- [x] **M2.10** Passport and stamps: stamp on first full conversation with each main
       NPC, stamp animation and sound, passport screen in the START menu. *Done when*
-      all stamps can be collected in one run.
+      all stamps can be collected in one run. (Stamps: `game/progress/`; banner and page:
+      `game/ui/Passport.ts`. Enter opens the passport until the START menu wraps it in
+      M2.11; touch devices need that menu's on-screen button.)
 - [ ] **M2.11** START menu: Passport, Journal (opens `/journal`), datagutt's status,
       Settings (volume, mute, show other visitors, reduced motion, shader quality),
       Credits (LimeZu and others). *Done when* navigable by keyboard, gamepad and touch.

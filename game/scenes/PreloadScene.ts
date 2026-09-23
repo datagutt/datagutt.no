@@ -16,6 +16,7 @@ import {
 	type PortraitAnim,
 } from "../characters/sheet";
 import { DialogueRunner } from "../dialogue/DialogueRunner";
+import { Progress, PROGRESS_KEY } from "../progress/Progress";
 import { browserStorage, loadSave } from "../save/save";
 
 export const DIALOGUE_KEY = "dialogue";
@@ -72,10 +73,12 @@ export class PreloadScene extends Phaser.Scene {
 		}
 		// One story for the whole game, so visit counts survive map changes and reloads.
 		const saved = loadSave(browserStorage());
-		this.sound.mute = saved?.settings.muted ?? false;
+		const progress = new Progress(saved);
+		this.registry.set(PROGRESS_KEY, progress);
+		this.sound.mute = progress.settings.muted;
 		const runner = new DialogueRunner(this.cache.json.get("dialogue"), {
 			world: services.world,
-			hasStamp: (place) => (loadSave(browserStorage())?.stamps ?? []).includes(place),
+			hasStamp: (place) => progress.hasStamp(place),
 			lanyardActivity: () => "offline",
 		}, saved?.dialogue.main);
 		this.registry.set(DIALOGUE_KEY, runner);

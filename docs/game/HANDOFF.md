@@ -14,6 +14,10 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.10 done: Fjord Passport. Finishing a conversation with a place's main NPC stamps it
+  (banner, thunk sound, small shake unless reduced motion); Enter shows the passport.
+  Session progress lives in a `Progress` object in the registry (`PROGRESS_KEY`) and the
+  save is written from it.
 - M2.9 done: all 11 NPCs have Ink scripts using the topics pattern; every NPC stands in
   the greybox town near their future building (`TOWN_NPCS` in `world/greybox/maps.ts`),
   so every piece of content is playable now. Names come from the roster.
@@ -66,9 +70,9 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.10**: passport and stamps (stamp on the first full conversation with each place's
-main NPC; stamp animation and sound; passport screen). Then **M2.11** (START menu).
-**M0.11 (Vercel token) stays deferred** until the user asks.
+**M2.11**: START menu (Passport, Journal, datagutt's status, Settings, Credits) with an
+on-screen menu button for touch devices. Then M2 is done and **M3** (world generation
+and art) starts. **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 

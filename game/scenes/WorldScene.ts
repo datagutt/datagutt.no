@@ -3,7 +3,11 @@ import { SERVICES_KEY, type GameServices, type WorldTarget } from "../boot";
 import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
 import { InputController, type FrameInput } from "../input/InputController";
-import { browserStorage, loadSave, writeSave } from "../save/save";
+import { browserStorage, writeSave } from "../save/save";
+import { playPaper, playStamp, type AudioOutput } from "../audio/sfx";
+import { stampForNpc } from "../progress/passport";
+import { PROGRESS_KEY, type Progress } from "../progress/Progress";
+import { PassportPanel, StampToast } from "../ui/Passport";
 import { BlipPlayer, shouldBlip, voiceFor } from "../audio/blips";
 import { DialogueBox } from "../ui/DialogueBox";
 import { LinkOpener } from "../ui/LinkOpener";
@@ -37,6 +41,9 @@ export class WorldScene extends Phaser.Scene {
 	private dialogue!: DialogueBox;
 	private blips!: BlipPlayer;
 	private links!: LinkOpener;
+	private passport!: PassportPanel;
+	private stampToast!: StampToast;
+	private audioOut!: AudioOutput;
 	private path: Point[] = [];
 	private pathMarkers: Phaser.GameObjects.Rectangle[] = [];
 	/** What to do when the current path ends (talk to the NPC that was tapped). */
@@ -118,11 +125,13 @@ export class WorldScene extends Phaser.Scene {
 			return this.dialogue.choiceAt(x, y) === 0;
 		});
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.links.destroy());
-		this.blips = new BlipPlayer(() =>
+		this.audioOut = () =>
 			this.sound instanceof Phaser.Sound.WebAudioSoundManager
 				? { context: this.sound.context, destination: this.sound.destination }
-				: null,
-		);
+				: null;
+		this.blips = new BlipPlayer(this.audioOut);
+		this.passport = new PassportPanel(this);
+		this.stampToast = new StampToast(this);
 		this.fitCamera();
 		this.cameras.main.startFollow(this.player.sprite, true);
 		this.cameras.main.fadeIn(180, 11, 19, 32);
@@ -158,6 +167,17 @@ export class WorldScene extends Phaser.Scene {
 		this.updateDebug();
 
 		if (this.transitioning) return;
+		if (this.passport.open) {
+			if (input.interact || input.back || input.menu || input.taps.length) this.passport.close();
+			this.player.sync();
+			return;
+		}
+		if (input.menu && !this.dialogue.open && !this.player.mover.moving) {
+			this.clearPath();
+			playPaper(this.audioOut);
+			this.passport.show(this.progress.stamps);
+			return;
+		}
 		if (this.dialogue.open) {
 			for (const dir of input.dirPresses) this.dialogue.move(dir);
 			if (input.interact || input.back) this.dialogue.advance();
@@ -199,6 +219,8 @@ export class WorldScene extends Phaser.Scene {
 			choices: this.dialogue.currentChoices,
 			selected: this.dialogue.selectedChoice,
 			blips: this.blips.played,
+			stamps: [...this.progress.stamps],
+			passportOpen: this.passport.open,
 			audio: this.sound instanceof Phaser.Sound.WebAudioSoundManager ? this.sound.context.state : "none",
 			camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
 		};
@@ -327,10 +349,23 @@ export class WorldScene extends Phaser.Scene {
 				});
 			} else {
 				this.dialogue.close();
+				this.finishedTalking(npc.id);
 				this.save();
 			}
 		};
 		step();
+	}
+
+	private get progress(): Progress {
+		return this.registry.get(PROGRESS_KEY) as Progress;
+	}
+
+	/** Finishing a conversation with a place's main NPC stamps the passport. */
+	private finishedTalking(npcId: string) {
+		const result = this.progress.stamp(stampForNpc(npcId));
+		if (!result.newStamp) return;
+		playStamp(this.audioOut);
+		this.stampToast.show(result.newStamp, result.stamps.length, this.progress.reducedMotion);
 	}
 
 	/** "Open github.com?" after a line with a `# link:` tag. */
@@ -354,18 +389,17 @@ export class WorldScene extends Phaser.Scene {
 	}
 
 	private save() {
-		const storage = browserStorage();
-		const previous = loadSave(storage);
 		const { tile, facing } = this.player.mover;
-		writeSave(storage, {
+		const progress = this.progress;
+		writeSave(browserStorage(), {
 			map: this.target.map,
 			x: tile.x,
 			y: tile.y,
 			facing: facing as Facing,
-			stamps: previous?.stamps ?? [],
-			flags: previous?.flags ?? {},
-			dialogue: { ...(previous?.dialogue ?? {}), main: (this.registry.get(DIALOGUE_KEY) as DialogueRunner).saveState() },
-			settings: previous?.settings ?? { muted: false, showVisitors: true, reducedMotion: null },
+			stamps: progress.stamps,
+			flags: progress.flags,
+			dialogue: { main: (this.registry.get(DIALOGUE_KEY) as DialogueRunner).saveState() },
+			settings: progress.settings,
 		});
 	}
 }
