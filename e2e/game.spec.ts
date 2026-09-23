@@ -61,8 +61,16 @@ test.describe("world", () => {
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
 
-		// Read through the Ink conversation (lines and a choice) until it closes.
+		// Read through the Ink conversation until it closes: ask the questions in order,
+		// then say goodbye (the first choice becomes "ask again" once all are asked).
 		for (let i = 0; i < 40 && (await state(page))?.dialogueOpen; i++) {
+			const s = await state(page);
+			if (s?.choices?.[0] === "Can I ask you something again?") {
+				for (let k = s.selected ?? 0; k < s.choices.length - 1; k++) {
+					await page.keyboard.press("ArrowDown");
+					await page.waitForTimeout(60);
+				}
+			}
 			await page.keyboard.press("e");
 			await page.waitForTimeout(250);
 		}
