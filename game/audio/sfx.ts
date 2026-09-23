@@ -57,3 +57,20 @@ export function playPaper(output: AudioOutput): void {
 	src.connect(filter).connect(gain).connect(destination);
 	src.start();
 }
+
+/** A soft click for moving through menus. */
+export function playTick(output: AudioOutput, pitch = 880): void {
+	const out = running(output);
+	if (!out) return;
+	const { context: ctx, destination } = out;
+	const now = ctx.currentTime;
+	const osc = ctx.createOscillator();
+	const gain = ctx.createGain();
+	osc.type = "square";
+	osc.frequency.value = pitch;
+	gain.gain.setValueAtTime(0.03, now);
+	gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+	osc.connect(gain).connect(destination);
+	osc.start(now);
+	osc.stop(now + 0.05);
+}

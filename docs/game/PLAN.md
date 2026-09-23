@@ -180,9 +180,11 @@ the passport works.
       all stamps can be collected in one run. (Stamps: `game/progress/`; banner and page:
       `game/ui/Passport.ts`. Enter opens the passport until the START menu wraps it in
       M2.11; touch devices need that menu's on-screen button.)
-- [ ] **M2.11** START menu: Passport, Journal (opens `/journal`), datagutt's status,
+- [x] **M2.11** START menu: Passport, Journal (opens `/journal`), datagutt's status,
       Settings (volume, mute, show other visitors, reduced motion, shader quality),
       Credits (LimeZu and others). *Done when* navigable by keyboard, gamepad and touch.
+      (On-screen Menu button top-left. "datagutt's status" and "Show other visitors"
+      are added with M4.2 and M4.5; the menu only lists what works.)
 
 ## M3: World generation and art
 
@@ -231,7 +233,7 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       `wss://api.lanyard.rest/socket`, heartbeat, reconnect, typed presence. Discord id
       from WorldState (still `NEXT_PUBLIC_DISCORD_ID` or `DEFAULT_DISCORD_ID`). *Done when*
       presence updates arrive in the game.
-- [ ] **M4.2** datagutt NPC behaviour: a state machine mapping presence to place,
+- [ ] **M4.2** datagutt NPC behaviour (also add "datagutt's status" to the START menu): a state machine mapping presence to place,
       animation and emote (DESIGN open-questions table). Smooth walking between places when
       state changes while the player is watching. Status screen in START menu. *Done when*
       each presence state shows correctly (test with a mocked presence).
@@ -242,7 +244,7 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
 - [ ] **M4.4** Ghost rendering: translucent tinted sprites, interpolated tile-to-tile,
       name on hover or long-press, cap about 20 per map, fade after 30 s idle. *Done when*
       smooth with 20 simulated ghosts on a phone.
-- [ ] **M4.5** Emotes: emote wheel (hold interact or long-press self), bubbles from the
+- [ ] **M4.5** Emotes (also add "Show other visitors" to START menu settings): emote wheel (hold interact or long-press self), bubbles from the
       LimeZu emote sheet, sent to the room. Kill switch `rx_off` and the settings toggle
       disable send and receive. *Done when* emotes appear on both clients.
 - [ ] **M4.6** Remove the old reactions overlay, `useReactionsSocket`, `lib/reactions`

@@ -14,6 +14,8 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.11 done: START menu (Enter, gamepad Start, or the Menu button top-left): Passport,
+  Journal, Settings (sound, reduced motion), Credits (includes the required LimeZu credit).
 - M2.10 done: Fjord Passport. Finishing a conversation with a place's main NPC stamps it
   (banner, thunk sound, small shake unless reduced motion); Enter shows the passport.
   Session progress lives in a `Progress` object in the registry (`PROGRESS_KEY`) and the
@@ -70,9 +72,11 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.11**: START menu (Passport, Journal, datagutt's status, Settings, Credits) with an
-on-screen menu button for touch devices. Then M2 is done and **M3** (world generation
-and art) starts. **M0.11 (Vercel token) stays deferred** until the user asks.
+**M2 is complete.** Next is **M3.1**: the map generator core (layout DSL, deterministic
+RNG, Tiled output with protected `manual_*` layers), growing out of `world/grid.ts` and
+`world/greybox/`. Then M3.2 autotiling with LimeZu Exteriors tiles and M3.3 prefabs.
+Expect a lot of render-and-look iteration (DESIGN §10). **M0.11 (Vercel token) stays
+deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 

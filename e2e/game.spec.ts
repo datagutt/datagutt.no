@@ -12,6 +12,7 @@ type FjordState = {
 	selected: number | null;
 	stamps: string[];
 	passportOpen: boolean;
+	menu: string;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -57,12 +58,16 @@ test.describe("world", () => {
 		// Talking makes blips once audio is unlocked (the key presses count as a gesture).
 		const afterTalk = await state(page);
 		if (afterTalk?.audio === "running") expect(afterTalk.blips).toBeGreaterThan(0);
-		// Finishing datagutt's conversation stamps the passport, and Enter shows it.
+		// Finishing datagutt's conversation stamps the passport; the START menu shows it.
 		expect(afterTalk?.stamps).toContain("home");
 		await page.keyboard.press("Enter");
+		await expect.poll(async () => (await state(page))?.menu).toBe("main");
+		await page.keyboard.press("e"); // Passport is the first item
 		await expect.poll(async () => (await state(page))?.passportOpen).toBe(true);
 		await page.keyboard.press("e");
-		await expect.poll(async () => (await state(page))?.passportOpen).toBe(false);
+		await expect.poll(async () => (await state(page))?.menu).toBe("main");
+		await page.keyboard.press("Enter");
+		await expect.poll(async () => (await state(page))?.menu).toBe("closed");
 
 		// And back out through the door.
 		await holdKey(page, "ArrowRight", 250);

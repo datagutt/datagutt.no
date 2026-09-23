@@ -4,10 +4,11 @@ import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
-import { playPaper, playStamp, type AudioOutput } from "../audio/sfx";
+import { playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
 import { stampForNpc } from "../progress/passport";
 import { PROGRESS_KEY, type Progress } from "../progress/Progress";
-import { PassportPanel, StampToast } from "../ui/Passport";
+import { StampToast } from "../ui/Passport";
+import { MenuButton, StartMenu } from "../ui/StartMenu";
 import { BlipPlayer, shouldBlip, voiceFor } from "../audio/blips";
 import { DialogueBox } from "../ui/DialogueBox";
 import { LinkOpener } from "../ui/LinkOpener";
@@ -41,7 +42,8 @@ export class WorldScene extends Phaser.Scene {
 	private dialogue!: DialogueBox;
 	private blips!: BlipPlayer;
 	private links!: LinkOpener;
-	private passport!: PassportPanel;
+	private menu!: StartMenu;
+	private menuButton!: MenuButton;
 	private stampToast!: StampToast;
 	private audioOut!: AudioOutput;
 	private path: Point[] = [];
@@ -130,7 +132,21 @@ export class WorldScene extends Phaser.Scene {
 				? { context: this.sound.context, destination: this.sound.destination }
 				: null;
 		this.blips = new BlipPlayer(this.audioOut);
-		this.passport = new PassportPanel(this);
+		this.menuButton = new MenuButton(this);
+		this.menu = new StartMenu(this, {
+			stamps: () => this.progress.stamps,
+			settings: () => ({ muted: this.progress.settings.muted, reducedMotion: this.progress.settings.reducedMotion }),
+			changeSettings: (next) => {
+				this.progress.settings = { ...this.progress.settings, ...next };
+				this.sound.mute = next.muted;
+				this.save();
+			},
+			openJournal: () => {
+				this.save();
+				window.location.href = "/journal";
+			},
+			sound: (kind) => (kind === "open" ? playPaper(this.audioOut) : playTick(this.audioOut, kind === "select" ? 660 : 880)),
+		});
 		this.stampToast = new StampToast(this);
 		this.fitCamera();
 		this.cameras.main.startFollow(this.player.sprite, true);
@@ -139,7 +155,7 @@ export class WorldScene extends Phaser.Scene {
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
 
 		if (new URLSearchParams(window.location.search).has("debug")) {
-			this.debugText = this.add.bitmapText(2, 2, "pixel", "").setScrollFactor(0).setDepth(200_000).setTint(0xffd27a);
+			this.debugText = this.add.bitmapText(2, 28, "pixel", "").setScrollFactor(0).setDepth(200_000).setTint(0xffd27a);
 		}
 		this.save();
 	}
@@ -167,15 +183,18 @@ export class WorldScene extends Phaser.Scene {
 		this.updateDebug();
 
 		if (this.transitioning) return;
-		if (this.passport.open) {
-			if (input.interact || input.back || input.menu || input.taps.length) this.passport.close();
+		if (this.menu.open) {
+			this.menu.handle(input);
+			this.menuButton.setVisible(!this.menu.open);
 			this.player.sync();
 			return;
 		}
-		if (input.menu && !this.dialogue.open && !this.player.mover.moving) {
+		const buttonTapped = !this.dialogue.open && input.taps.some((t) => this.menuButton.hit(t.screenX, t.screenY));
+		if ((input.menu || buttonTapped) && !this.dialogue.open && !this.player.mover.moving) {
 			this.clearPath();
-			playPaper(this.audioOut);
-			this.passport.show(this.progress.stamps);
+			this.menu.show();
+			this.menuButton.setVisible(false);
+			this.player.sync();
 			return;
 		}
 		if (this.dialogue.open) {
@@ -220,7 +239,8 @@ export class WorldScene extends Phaser.Scene {
 			selected: this.dialogue.selectedChoice,
 			blips: this.blips.played,
 			stamps: [...this.progress.stamps],
-			passportOpen: this.passport.open,
+			passportOpen: this.menu.currentView === "passport",
+			menu: this.menu.currentView,
 			audio: this.sound instanceof Phaser.Sound.WebAudioSoundManager ? this.sound.context.state : "none",
 			camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
 		};
