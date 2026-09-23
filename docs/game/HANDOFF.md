@@ -163,11 +163,12 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8: the office (waits for Modern Office) and the town hall basement server room ( town hall + basement server
-room; office), moving each NPC indoors as its
-interior lands and wiring its door with `building(..., { link })`. Then the rest
-of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).
-**M0.11 (Vercel token) stays deferred** until the user asks.
+M3.8 has two interiors left: the Nettbureau office (waits for the Modern Office pack;
+Ida is still outside it) and the town hall basement server room (needs rack art; Bjørn
+waits by its door upstairs). Wire each door with `building(..., { link })` when it
+lands. Meanwhile: the rest of M3.6 (reachability from the dock), seasons (M3.9), and
+the live library shelf and farm field (M3.11). **M0.11 (Vercel token) stays deferred**
+until the user asks.
 
 ## Blockers and things waiting on the user
 
