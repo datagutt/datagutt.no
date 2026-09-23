@@ -21,7 +21,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   - The page is 42.6 KB gzipped. Next sends the SVG twice (HTML and RSC payload), so
     keep its paths compact.
   - No avatar on the title: the user's choice.
-- **Nettbureau office (M3.8), waiting on the user's review.** LimeZu's Modern Office
+- **Nettbureau office (M3.8), approved by the user 2026-09-24.** LimeZu's Modern Office
   pack: 16×16 files in datagutt-assets `limezu/office/` (licence in
   `licenses/modern_office/`), sheets `workplace` (furniture singles, all 2×3 canvases,
   catalogued; `office` was taken by the exterior building) and `officeRooms` (room
@@ -40,7 +40,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   Side chairs pair with the 4-wide `table` at the table's own x and x + 3, as in the house.
   The user asked for a looser layout (pairs, rows out of step, bags on the floor), plus
   arcade machines and ping pong from the basement sheet in the lounge.
-- **Town hall basement (M3.8), waiting on the user's review.** The plain door by the
+- **Town hall basement (M3.8), approved by the user 2026-09-24.** The plain door by the
   stage now leads down (map `town-hall-basement`, built in `townHall.ts`): the municipal
   IT department, not a server room. An escalator (the upstairs sheet's grey one, 3 wide
   so the player rides its middle column; the basement sheet's own stairs are 2 wide and

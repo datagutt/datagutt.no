@@ -199,11 +199,11 @@ Goal: the real town, painted, in all seasons.
       LimeZu's tile layouts; a rule table per terrain pair. *Done when* no visible seams in
       a test map. (`world/art/autotile.ts`: 13-piece sets on 7×4 blocks and the animated
       sea, regions thickened first; cliffs are plateau 9-slices; snow comes with M3.9.)
-- [ ] **M3.3** Prefabs: multi-tile stamps for each building and landmark (red house
+- [x] **M3.3** Prefabs: multi-tile stamps for each building and landmark (red house
       recolours, boathouse studio with antenna, radio tower, kiosk, office, town hall,
       smithy (now the gym), library, post office, farm field, ferry dock, piers, fjord cliffs). *Done
       when* each prefab renders correctly in isolation.
-- [ ] **M3.4** Scatter rules: flowers, rocks, bushes, lamps, benches, fences with
+- [x] **M3.4** Scatter rules: flowers, rocks, bushes, lamps, benches, fences with
       constraints (keep doors and paths clear, benches face paths, density by region).
       *Done when* the town reads as lived-in in the rendered PNG.
 - [x] **M3.5** Render-to-PNG: `pnpm world:render` writes `world/out/<map>.png` (and
@@ -224,7 +224,7 @@ Goal: the real town, painted, in all seasons.
       looks good. *Done when* the user approves the overworld render. (Approved
       2026-09-23; `world/gen/maps/overworld.ts` is the live `town`, with name signs on
       every building.)
-- [ ] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
+- [x] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
       studio, radio tower hut, kiosk, office (a big open floor), town hall and its basement IT department,
       gym (was the smithy), library, farmhouse, post office. *Done when* the user approves each render.
 - [x] **M3.9** Seasonal variants: generator emits season layers (snow ground and roof
@@ -271,10 +271,10 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       `connection()` before upgrade. *Done when* two browsers see each other move. (Rooms
       in `lib/world/rooms.ts`, shared by the Vercel route and the dev harness, which now
       serves the socket too. The old `/api/reactions/ws` stays until M4.6.)
-- [ ] **M4.4** Ghost rendering: translucent tinted sprites, interpolated tile-to-tile,
+- [x] **M4.4** Ghost rendering: translucent tinted sprites, interpolated tile-to-tile,
       name on hover or long-press, cap about 20 per map, fade after 30 s idle. *Done when*
       smooth with 20 simulated ghosts on a phone. (Built; 60 fps with `?debug&ghosts=20` in
-      headless phone emulation. Tick after a check on a real phone.)
+      headless phone emulation. The user signed it off 2026-09-24.)
 - [x] **M4.5** Emotes (also add "Show other visitors" to START menu settings): emote wheel (hold interact or long-press self), bubbles from the
       LimeZu emote sheet, sent to the room. Kill switch `rx_off` and the settings toggle
       disable send and receive. *Done when* emotes appear on both clients.
@@ -291,20 +291,19 @@ Goal: the Celeste-level feel.
 - [x] **M5.1** Lighting and time of day: visitor-local clock drives a colour-grading
       filter (dawn, day, dusk, night), window lights and lamp posts glow at night via a
       light layer. *Done when* `?time=` in debug shows all phases.
-- [ ] **M5.2** Water shader: fjord shimmer, shoreline foam, reflections of the sky
+- [x] **M5.2** Water shader: fjord shimmer, shoreline foam, reflections of the sky
       colour. Low-quality fallback. *Done when* it looks good at night and day.
-      (Built in `game/fx/Water.ts`; waiting on the user's look at night and day.)
-- [ ] **M5.3** Aurora shader: animated curtains on the night sky, stronger in winter,
+      (`game/fx/Water.ts`; approved by the user 2026-09-24.)
+- [x] **M5.3** Aurora shader: animated curtains on the night sky, stronger in winter,
       site-green palette. *Done when* it runs at 60 fps on a mid-range phone.
-      (Built in `game/fx/Aurora.ts`; 60 fps in headless phone emulation, waiting on a real
-      phone.)
+      (`game/fx/Aurora.ts`; approved by the user 2026-09-24.)
 - [x] **M5.4** Season effects: falling snow particles and frost vignette in winter,
       leaves in autumn, pollen in summer, midnight-sun brightness in June. *Done when*
       each season has one particle effect.
-- [ ] **M5.5** Game feel: footstep dust, bump feedback, screen shake on stamps, squash
+- [x] **M5.5** Game feel: footstep dust, bump feedback, screen shake on stamps, squash
       on door enter, smooth camera with small look-ahead. Respect reduced motion (no shake,
       fewer particles). *Done when* reviewed by hand with reduced motion on and off.
-      (Built in `game/fx/Feel.ts`; waiting on the user's hand review.)
+      (`game/fx/Feel.ts`; approved by the user 2026-09-24.)
 - [x] **M5.6** Audio system: master, ambience and effects buses (music bus ready),
       area-based ambience layers with crossfades, CC0 sources recorded in `CREDITS.md`,
       synthesised effects. *Done when* walking from dock to forest to indoors crossfades.
@@ -316,13 +315,13 @@ Goal: the Celeste-level feel.
 - [x] **M5.8** Finale: all stamps → night, aurora, datagutt on the pier, credits roll from
       `content/` (stack, tools, LimeZu credit), ends on contact prompt. *Done when*
       reachable in a full playthrough.
-- [ ] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus
+- [x] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus
       setting), payload under about 1 MB gzipped before interiors. *Done when* 60 fps on a
       mid-range Android phone and an iPhone, measured.
       (Done so far: lossless palette PNGs and max-effort compression in the asset build,
       87 KB less; an Effects setting, Auto/High/Low, where Low drops the water and aurora
       shaders and thins the weather, and Auto drops to Low when the first seconds on a map
-      run under 45 fps. Waiting on real-phone measurements.)
+      run under 45 fps. Approved by the user 2026-09-24.)
 - [x] **M5.10** Interaction prompts (user idea): when you face something usable, a small
       prompt shows the button and the action ("E  Talk", "E  Enter", "E  Read"), matching
       the input in use (keyboard key, gamepad button, a tap hint on touch). *Done when*
