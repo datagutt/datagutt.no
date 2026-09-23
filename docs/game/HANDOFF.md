@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator and the live generated town)
+Last updated: 2026-09-23 (session 1: design through M3; interiors, live field and shelf, ask-again dialogue)
 
 ## Current state
 
@@ -182,12 +182,13 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8 has two interiors left: the Nettbureau office (waits for the Modern Office pack;
-Ida is still outside it) and the town hall basement server room (needs rack art; Bjørn
-waits by its door upstairs). Wire each door with `building(..., { link })` when it
-lands. Meanwhile: the rest of M3.6 (reachability from the dock), seasons (M3.9), and
-the live library shelf and farm field (M3.11). **M0.11 (Vercel token) stays deferred**
-until the user asks.
+M3.9 seasons (snow ground and roof caps, autumn foliage from the camping sheet's autumn
+trees, spring flowers; runtime picks the season from the Norwegian date, `?season=` in
+debug), then M3.10 (NPC sprites and datagutt's portrait against the avatar). Two
+interiors wait on art: the Nettbureau office (Modern Office pack) and the town hall
+basement server room (rack art). The e2e passport test picks the goodbye once "ask
+again" appears; keep that in mind when changing dialogue flow. **M0.11 (Vercel token)
+stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
