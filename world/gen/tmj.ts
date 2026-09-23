@@ -62,6 +62,7 @@ export function canvasToTmj(
 	layers.push(tileLayer("collision", [...canvas.collision].map((b) => (b ? gid(COLLISION_ID) : 0)), false));
 	const water = waterCells(canvas);
 	if (water.some(Boolean)) layers.push(tileLayer(WATER_LAYER, water.map((w) => (w === "open" ? gid(COLLISION_ID) : w === "covered" ? gid(CLEAR_ID) : 0)), false));
+	if (canvas.forest.some(Boolean)) layers.push(tileLayer(FOREST_LAYER, [...canvas.forest].map((f) => (f ? gid(COLLISION_ID) : 0)), false));
 
 	for (const obj of canvas.objects) {
 		if (!canvas.inBounds(obj.x, obj.y)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) is outside the map`);
@@ -133,6 +134,8 @@ export function canvasToTmj(
  * the collision tile marks open water, the clear tile sea with something over it.
  */
 export const WATER_LAYER = "water";
+/** Hidden layer marking forest cells for the ambience (game/audio/Ambience.ts). */
+export const FOREST_LAYER = "forest";
 const WATER_SHEETS = new Set(["sea", "seaCorners"]);
 
 /**

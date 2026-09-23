@@ -305,9 +305,11 @@ Goal: the Celeste-level feel.
       on door enter, smooth camera with small look-ahead. Respect reduced motion (no shake,
       fewer particles). *Done when* reviewed by hand with reduced motion on and off.
       (Built in `game/fx/Feel.ts`; waiting on the user's hand review.)
-- [ ] **M5.6** Audio system: master, ambience and effects buses (music bus ready),
+- [x] **M5.6** Audio system: master, ambience and effects buses (music bus ready),
       area-based ambience layers with crossfades, CC0 sources recorded in `CREDITS.md`,
       synthesised effects. *Done when* walking from dock to forest to indoors crossfades.
+      (All synthesised for now, the user's call: `game/audio/Ambience.ts`. The sound design
+      itself still wants the user's ears.)
 - [ ] **M5.7** Ferry intro cutscene: ferry arrival, ferryman gives passport, one line on
       controls and Journal; skippable. *Done when* first visit plays it and returning
       visits do not.

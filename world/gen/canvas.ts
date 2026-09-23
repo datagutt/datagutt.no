@@ -73,6 +73,8 @@ export class MapCanvas {
 	readonly height: number;
 	readonly layers: Record<LayerName, (TileRef | null)[]>;
 	readonly collision: Uint8Array;
+	/** Cells inside a forest, for the ambience (birdsong, wind in the trees). */
+	readonly forest: Uint8Array;
 	readonly objects: MapObject[] = [];
 	/** Every prefab stamped, for checking that none cuts an object in half (cuts.ts). */
 	readonly stamped: Prefab[] = [];
@@ -85,6 +87,7 @@ export class MapCanvas {
 			(TileRef | null)[]
 		>;
 		this.collision = new Uint8Array(width * height);
+		this.forest = new Uint8Array(width * height);
 	}
 
 	inBounds(x: number, y: number): boolean {

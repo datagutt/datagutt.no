@@ -60,7 +60,10 @@ export function forest(c: MapCanvas, region: Region, seed: number, kinds: Prefab
 	const rand = seeded(seed);
 	const used = taken ?? new Region(c.width, c.height);
 	const cells: [number, number][] = [];
-	region.each((x, y) => cells.push([x, y]));
+	region.each((x, y) => {
+		cells.push([x, y]);
+		if (c.inBounds(x, y)) c.forest[y * c.width + x] = 1;
+	});
 	for (const [x, y] of cells) {
 		if (rand() > density) continue;
 		const prefab: Prefab = PREFABS[kinds[Math.floor(rand() * kinds.length)]];

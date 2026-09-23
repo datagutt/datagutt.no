@@ -30,6 +30,9 @@ import { DayNight } from "../fx/DayNight";
 import { Weather } from "../fx/Weather";
 import { Water } from "../fx/Water";
 import { Aurora } from "../fx/Aurora";
+import { Ambience } from "../audio/Ambience";
+import { ambienceMix } from "../audio/mix";
+import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
@@ -43,6 +46,8 @@ type NpcDef = Extract<MapObject, { type: "npc" }>;
 
 const PLAYER_ID = "player";
 const tileKey = (p: Point) => `${p.x},${p.y}`;
+/** Registry key of the game-wide Ambience. */
+const AMBIENCE_KEY = "ambience";
 /** Tap-to-move runs when the path is at least this long. */
 const RUN_PATH_LENGTH = 7;
 
@@ -75,6 +80,10 @@ export class WorldScene extends Phaser.Scene {
 	private menuButton!: MenuButton;
 	private stampToast!: StampToast;
 	private audioOut!: AudioOutput;
+	private ambience!: Ambience;
+	/** Distance fields for the ambience, and when it was last updated. */
+	private surroundings!: { water: Uint16Array; forest: Uint16Array; fires: Point[]; outdoors: boolean };
+	private ambienceAt = 0;
 	private path: Point[] = [];
 	private pathMarkers: Phaser.GameObjects.Rectangle[] = [];
 	/** What to do when the current path ends (talk to the NPC that was tapped). */
@@ -125,8 +134,8 @@ export class WorldScene extends Phaser.Scene {
 			if (!layer) continue;
 			layers.set(layerData.name, layer);
 			const collisionOnly = layerData.name === "collision" || layerData.name === "manual_collision";
-			// The water layer only tells the water shader where the open water is.
-			if (layerData.name === "water") {
+			// Hidden data layers: open water for the water shader, water and forest for the ambience.
+			if (layerData.name === "water" || layerData.name === "forest") {
 				layer.setVisible(false);
 				continue;
 			}
@@ -226,10 +235,18 @@ export class WorldScene extends Phaser.Scene {
 			return this.dialogue.choiceAt(x, y) === 0;
 		});
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.links.destroy());
-		this.audioOut = () =>
-			this.sound instanceof Phaser.Sound.WebAudioSoundManager
-				? { context: this.sound.context, destination: this.sound.destination }
-				: null;
+		// One ambience for the whole game, so it carries on (and crossfades) across maps.
+		let ambience = this.registry.get(AMBIENCE_KEY) as Ambience | undefined;
+		if (!ambience) {
+			const sound = this.sound;
+			ambience = new Ambience(() =>
+				sound instanceof Phaser.Sound.WebAudioSoundManager ? { context: sound.context, destination: sound.destination } : null,
+			);
+			this.registry.set(AMBIENCE_KEY, ambience);
+		}
+		this.ambience = ambience;
+		this.audioOut = ambience.effects;
+		this.surroundings = this.measureSurroundings(map, lights, outdoors);
 		this.blips = new BlipPlayer(this.audioOut);
 		this.menuButton = new MenuButton(this);
 		this.menu = new StartMenu(this, {
@@ -291,6 +308,7 @@ export class WorldScene extends Phaser.Scene {
 		this.dayNight.update(time);
 		this.water?.update();
 		this.aurora?.update(this.dayNight.current.dark);
+		this.updateAmbience(time);
 		this.weather?.update(this.dayNight.current.dark);
 		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open) this.prompt.hide();
 		this.updateDebug();
@@ -353,6 +371,37 @@ export class WorldScene extends Phaser.Scene {
 
 	}
 
+	/** How far the sea, the forest and any fire are from every tile, for the ambience. */
+	private measureSurroundings(map: Phaser.Tilemaps.Tilemap, lights: LightObject[], outdoors: boolean) {
+		const field = (name: string, open?: (t: Phaser.Tilemaps.Tile) => boolean) => {
+			const layer = map.getLayer(name);
+			return distanceField(map.width, map.height, (x, y) => {
+				const tile = layer?.data[y][x];
+				return Boolean(tile && tile.index >= 0 && (!open || open(tile)));
+			});
+		};
+		return {
+			water: field("water", (t) => Boolean(t.properties?.collides)),
+			forest: field("forest"),
+			// Fires are the flickering glows (world/art/lighting.ts GLOWS.fire).
+			fires: lights.filter((l) => l.shape === "glow" && l.flicker).map((l) => ({ x: l.x, y: l.y })),
+			outdoors,
+		};
+	}
+
+	/** A few times a second: the ambience for where the player stands. */
+	private updateAmbience(time: number) {
+		if (time < this.ambienceAt) return;
+		this.ambienceAt = time + 250;
+		const { x, y } = this.player.mover.tile;
+		const s = this.surroundings;
+		const at = (field: Uint16Array) => (field[y * this.mapWidth + x] === FAR ? Infinity : field[y * this.mapWidth + x]);
+		const fire = Math.min(Infinity, ...s.fires.map((f) => Math.abs(f.x - x) + Math.abs(f.y - y)));
+		this.ambience.set(
+			ambienceMix({ outdoors: s.outdoors, water: at(s.water), forest: at(s.forest), fire, dark: this.dayNight.current.dark, season: this.services.season }),
+		);
+	}
+
 	/** Other visitors on or off, from the setting (the rx_off kill switch means no client at all). */
 	private applyVisitors() {
 		const client = this.services.ghosts;
@@ -412,6 +461,7 @@ export class WorldScene extends Phaser.Scene {
 			map: this.target.map,
 			season: this.services.season,
 			daylight: this.dayNight.current,
+			ambience: this.ambience.levels,
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,

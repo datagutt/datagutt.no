@@ -4,6 +4,15 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.6 audio done** (sounds synthesised, the user's choice; recordings may replace
+  layers later). `game/audio/Ambience.ts`: one per game (registry `ambience`), buses
+  master (into Phaser's output, so mute holds), ambience, effects, music. Layers: waves
+  (swelling brown-ish noise), wind (drifting band of noise), gulls and birdsong (scheduled
+  calls), fire (roar plus crackles), room hum; each glides (1.2 s) to the level
+  `game/audio/mix.ts` asks for from distances to open water, forest and fire (distance
+  fields, `game/world/distance.ts`), indoors or out, darkness and season. The generator
+  marks forest cells in a hidden `forest` layer. Effects and blips now go through the
+  effects bus (`ambience.effects`). `window.__fjord.ambience`. CREDITS.md lists sources.
 - **M5.3 aurora built** (waiting on a real-phone fps check; the user approved day and
   night, M5.1). The camera looks straight down, so `game/fx/Aurora.ts` shows what you'd
   glimpse overhead: a screen-space additive shader, a curtain hanging from the top of the
