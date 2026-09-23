@@ -12,6 +12,7 @@ import type { Point } from "./world/grid";
 import type { Facing } from "./world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "./world/season";
+import { LanyardClient, PresenceFeed } from "./net/lanyard";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -63,6 +64,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	world: WorldState;
 	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
 	season: Season;
+	/** Thomas's live Discord presence (Lanyard); empty until the first update. */
+	presence: PresenceFeed;
 };
 
 export const SERVICES_KEY = "services";
@@ -81,13 +84,18 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		start: target,
 		world: readWorldState(),
 		season: resolveSeason(window.location.search),
+		presence: new PresenceFeed(),
 	};
-	if (new URLSearchParams(window.location.search).has("debug")) {
+	const debug = new URLSearchParams(window.location.search).has("debug");
+	if (debug) {
 		console.info(
 			`[game] world state from ${services.world.fetchedAt}: ${services.world.repos.length} repos`,
 			services.world.repos.map((r) => r.name),
 		);
+		services.presence.subscribe((p) => console.info("[game] presence", p));
 	}
+	const lanyard = new LanyardClient(services.world.discordId, (p) => services.presence.set(p));
+	lanyard.start();
 
 	const dpr = () => window.devicePixelRatio || 1;
 	const initial = computeViewport(parent.clientWidth, parent.clientHeight, dpr());
@@ -142,6 +150,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		deepLinked,
 		hasSave,
 		destroy() {
+			lanyard.stop();
 			observer.disconnect();
 			dprQuery?.removeEventListener("change", onDprChange);
 			game.destroy(true);

@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { WorldState } from "@/content/live";
 import { getContributions, getGitHubStats, getPinnedRepos } from "./github";
+import { getDiscordId } from "./lanyard";
 
 /**
  * Live data for the game (docs/game/PLAN.md M2.2). Its explicit lifetime overrides the
@@ -14,5 +15,5 @@ export async function getWorldState(): Promise<WorldState> {
 	const complete = repos.length > 0 && stats.public_repos > 0 && contributions.length > 0;
 	if (complete) cacheLife("hours");
 	else cacheLife("minutes");
-	return { repos, stats, contributions, fetchedAt: new Date().toISOString() };
+	return { repos, stats, contributions, discordId: getDiscordId(), fetchedAt: new Date().toISOString() };
 }

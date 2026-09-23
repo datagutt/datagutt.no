@@ -4,6 +4,16 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M4 started: M4.1 Lanyard client done.** `game/net/lanyard.ts`: `LanyardClient`
+  (hello, subscribe, heartbeat, reconnect with backoff from 1 s to 60 s), `parsePresence`
+  (status, custom status text, Spotify song, other activities), and `PresenceFeed`, which
+  holds the latest presence for anything that subscribes. `bootGame` starts it as
+  `services.presence`; `?debug` logs each update and shows it in `window.__fjord.presence`.
+  The Discord id lives in `content/profile.ts` (`discordId`), goes through WorldState
+  (`lib/world-state.ts`, `NEXT_PUBLIC_DISCORD_ID` still overrides), and falls back to the
+  profile's id in the dev harness. Checked live: presence arrives in the game.
+  - Custom status keeps only the text: Thomas's status is often just a custom Discord
+    emoji, which is a bare name ("catLove"), and the bitmap font has no emoji anyway.
 - **M3.10 characters done.** Every NPC has a walk sheet and a portrait with a look that
   fits their job (recipes and one-line looks in `game/assets/manifest.ts`). Compositing
   moved from `scripts/assets/build.mjs` to `scripts/assets/characters.mjs`.
@@ -215,9 +225,12 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-The rest of M3.8 (interiors), then M3.3 and M3.4 if still open. Two interiors wait on
-art: the Nettbureau office (Modern Office pack) and the town hall basement server room
-(rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
+M4.2: the datagutt NPC's behaviour from `services.presence` (the DESIGN open-questions
+table maps presence to place: coding app to the PC upstairs, Spotify to the fjord bench
+with headphones, online idle to the town square, offline asleep in bed, custom status as
+a speech bubble), plus "datagutt's status" in the START menu. Then M4.3 to M4.6. Still
+open in M3: two interiors wait on art, the Nettbureau office (Modern Office pack) and the
+town hall basement server room (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
 mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user
 asks.
 

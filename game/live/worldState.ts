@@ -11,6 +11,8 @@ export function parseWorldState(json: string | null | undefined): WorldState {
 			repos: Array.isArray(raw.repos) ? raw.repos : [],
 			stats: { ...EMPTY_WORLD_STATE.stats, ...(raw.stats ?? {}) },
 			contributions: Array.isArray(raw.contributions) ? raw.contributions : [],
+			// A Discord id is a snowflake: digits only.
+			discordId: typeof raw.discordId === "string" && /^\d+$/.test(raw.discordId) ? raw.discordId : EMPTY_WORLD_STATE.discordId,
 			fetchedAt: typeof raw.fetchedAt === "string" ? raw.fetchedAt : EMPTY_WORLD_STATE.fetchedAt,
 		};
 	} catch {

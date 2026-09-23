@@ -256,7 +256,7 @@ Goal: the real town, painted, in all seasons.
 
 Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors appear.
 
-- [ ] **M4.1** Lanyard client in `game/net/lanyard.ts`: plain WebSocket to
+- [x] **M4.1** Lanyard client in `game/net/lanyard.ts`: plain WebSocket to
       `wss://api.lanyard.rest/socket`, heartbeat, reconnect, typed presence. Discord id
       from WorldState (still `NEXT_PUBLIC_DISCORD_ID` or `DEFAULT_DISCORD_ID`). *Done when*
       presence updates arrive in the game.

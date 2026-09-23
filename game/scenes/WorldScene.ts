@@ -272,6 +272,7 @@ export class WorldScene extends Phaser.Scene {
 		(window as unknown as { __fjord?: object }).__fjord = {
 			map: this.target.map,
 			season: this.services.season,
+			presence: this.services.presence.current,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,

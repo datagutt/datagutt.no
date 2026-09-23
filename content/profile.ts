@@ -26,4 +26,9 @@ export const profile = {
 	] satisfies QuickFact[],
 	contactPitch: "Got a project in mind, want to collaborate, or just want to say hi? My inbox is always open.",
 	sourceCode: "https://github.com/datagutt/datagutt.no",
+	/**
+	 * Discord user whose Lanyard presence drives the live datagutt NPC. Lanyard only sees
+	 * members of its Discord server. `NEXT_PUBLIC_DISCORD_ID` overrides it (lib/lanyard.ts).
+	 */
+	discordId: "132474831424716800",
 } as const;
