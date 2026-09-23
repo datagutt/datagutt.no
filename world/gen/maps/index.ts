@@ -4,6 +4,7 @@ import { boathouse } from "./boathouse.ts";
 import { house, houseUpstairs } from "./house.ts";
 import { kiosk } from "./kiosk.ts";
 import { library } from "./library.ts";
+import { postOffice } from "./postOffice.ts";
 import { overworld } from "./overworld.ts";
 
 export type GeneratedMap = { id: string; properties?: Record<string, string>; build: () => MapCanvas };
@@ -15,4 +16,5 @@ export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "boathouse", properties: { name: "Boathouse studio" }, build: boathouse },
 	{ id: "library", properties: { name: "Library" }, build: library },
 	{ id: "kiosk", properties: { name: "Kiosk" }, build: kiosk },
+	{ id: "post-office", properties: { name: "Post office" }, build: postOffice },
 ];

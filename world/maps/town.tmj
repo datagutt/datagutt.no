@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 29,
+  "nextobjectid": 30,
   "properties": [
     {
       "name": "name",
@@ -732,6 +732,29 @@
           "id": 4,
           "name": "",
           "type": "door",
+          "x": 656,
+          "y": 896,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "post-office"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "entrance"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "",
+          "type": "door",
           "x": 192,
           "y": 960,
           "width": 16,
@@ -752,7 +775,7 @@
           ]
         },
         {
-          "id": 5,
+          "id": 6,
           "name": "ferry",
           "type": "spawn",
           "x": 800,
@@ -770,7 +793,7 @@
           ]
         },
         {
-          "id": 6,
+          "id": 7,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -788,7 +811,7 @@
           ]
         },
         {
-          "id": 7,
+          "id": 8,
           "name": "office_door",
           "type": "spawn",
           "x": 1152,
@@ -806,7 +829,7 @@
           ]
         },
         {
-          "id": 8,
+          "id": 9,
           "name": "boathouse_door",
           "type": "spawn",
           "x": 192,
@@ -824,7 +847,7 @@
           ]
         },
         {
-          "id": 9,
+          "id": 10,
           "name": "library_door",
           "type": "spawn",
           "x": 560,
@@ -842,7 +865,7 @@
           ]
         },
         {
-          "id": 10,
+          "id": 11,
           "name": "kiosk_door",
           "type": "spawn",
           "x": 944,
@@ -860,7 +883,25 @@
           ]
         },
         {
-          "id": 11,
+          "id": 12,
+          "name": "post_office_door",
+          "type": "spawn",
+          "x": 656,
+          "y": 912,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 13,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -878,7 +919,7 @@
           ]
         },
         {
-          "id": 12,
+          "id": 14,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -896,7 +937,7 @@
           ]
         },
         {
-          "id": 13,
+          "id": 15,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -914,7 +955,7 @@
           ]
         },
         {
-          "id": 14,
+          "id": 16,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -932,7 +973,7 @@
           ]
         },
         {
-          "id": 15,
+          "id": 17,
           "name": "",
           "type": "sign",
           "x": 208,
@@ -950,7 +991,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 18,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -968,7 +1009,7 @@
           ]
         },
         {
-          "id": 17,
+          "id": 19,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -986,7 +1027,7 @@
           ]
         },
         {
-          "id": 18,
+          "id": 20,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -1004,7 +1045,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 21,
           "name": "",
           "type": "sign",
           "x": 1136,
@@ -1022,7 +1063,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 22,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -1040,7 +1081,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 23,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -1058,7 +1099,7 @@
           ]
         },
         {
-          "id": 22,
+          "id": 24,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -1091,7 +1132,7 @@
           ]
         },
         {
-          "id": 23,
+          "id": 25,
           "name": "technician",
           "type": "npc",
           "x": 1328,
@@ -1124,7 +1165,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 26,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -1157,7 +1198,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 27,
           "name": "sysadmin",
           "type": "npc",
           "x": 752,
@@ -1190,7 +1231,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 28,
           "name": "smith",
           "type": "npc",
           "x": 1408,
@@ -1223,7 +1264,7 @@
           ]
         },
         {
-          "id": 27,
+          "id": 29,
           "name": "farmer",
           "type": "npc",
           "x": 320,
@@ -1252,39 +1293,6 @@
               "name": "dialogue",
               "type": "string",
               "value": "farmer"
-            }
-          ]
-        },
-        {
-          "id": 28,
-          "name": "postmaster",
-          "type": "npc",
-          "x": 688,
-          "y": 928,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "character",
-              "type": "string",
-              "value": "postmaster"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "left"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Liv"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "postmaster"
             }
           ]
         }

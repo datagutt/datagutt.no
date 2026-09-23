@@ -57,6 +57,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     the "second fridge", bun rack, a counter across the room (display case, Kroneis
     freezer, till with tip jar) with Randi behind it. Counter talk reaches across up to
     two blocked tiles.
+  - Post office done (`world/gen/maps/postOffice.ts`): Posten-red walls, noticeboard
+    and red letter box (both named in Liv's dialogue), writing desk, parcels behind a
+    service counter, Liv behind it.
   - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
     pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
   - Every building has a notice-board sign with its name and a line of flavour

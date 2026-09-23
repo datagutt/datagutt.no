@@ -77,6 +77,15 @@ export const FURNITURE = {
 	checkout: solid("grocery", 6, 24, 3, 2),
 	openSign: flat("grocery", 1, 49, 1, 2),
 
+	// Post office (post office exterior sheet, plus a counter and a noticeboard).
+	parcelCage: solid("post", 8, 11, 4, 2),
+	parcelStack: solid("post", 5, 13, 2, 2),
+	parcels: solid("post", 3, 13, 2, 2),
+	redLetterBox: solid("post", 8, 13, 1, 2),
+	serviceCounter: solid("grocery", 13, 40, 3, 2),
+	noticeboard: flat("classroom", 0, 6, 2, 1),
+	writingDesk: solid("classroom", 5, 3, 2, 2),
+
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
 	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */
