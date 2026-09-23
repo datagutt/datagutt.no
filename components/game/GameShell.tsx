@@ -2,18 +2,27 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { credits } from "@/content/credits";
 import type { GameHandle } from "@/game/boot";
 
 type Phase = "loading" | "ready" | "playing" | "failed";
+/** Where the title screen is: the "Press start" splash, its menu, or a page off the menu. */
+type Screen = "splash" | "menu" | "confirm" | "credits";
+
+const JOURNAL_LABEL = "Read it as a normal website";
 
 /**
- * Hosts the game canvas behind the server-rendered title screen. The game module
- * starts downloading as soon as the page is interactive; Start enters the world.
+ * Hosts the game canvas behind the server-rendered title screen (docs/game/PLAN.md M5.11).
+ * The game module starts downloading as soon as the page is interactive. "Press start"
+ * opens the menu straight away; picking a way in waits for loading to finish.
  */
 export function GameShell({ titleArt }: { titleArt: ReactNode }) {
+	const rootRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const menuRef = useRef<HTMLDivElement>(null);
 	const handleRef = useRef<GameHandle | null>(null);
 	const [phase, setPhase] = useState<Phase>("loading");
+	const [screen, setScreen] = useState<Screen>("splash");
 	const [progress, setProgress] = useState(0);
 	const [hasSave, setHasSave] = useState(false);
 
@@ -42,63 +51,169 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		};
 	}, []);
 
-	const start = () => {
-		handleRef.current?.start();
+	const playing = phase === "playing";
+
+	// The splash takes any key; the menu moves its cursor with the arrow keys and goes back
+	// with Escape. Buttons do the rest, so Tab and Enter work as on any page.
+	useEffect(() => {
+		if (playing) return;
+		const onKey = (e: KeyboardEvent) => {
+			if (e.metaKey || e.ctrlKey || e.altKey) return;
+			if (screen === "splash") {
+				if (e.key === "Tab") return;
+				e.preventDefault();
+				setScreen("menu");
+				return;
+			}
+			if (e.key === "Escape") {
+				e.preventDefault();
+				setScreen(screen === "menu" ? "splash" : "menu");
+				return;
+			}
+			if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+			const items = [...(menuRef.current?.querySelectorAll<HTMLElement>("[data-menu-item]") ?? [])];
+			if (!items.length) return;
+			e.preventDefault();
+			const at = items.indexOf(document.activeElement as HTMLElement);
+			const step = e.key === "ArrowDown" ? 1 : -1;
+			items[(at + step + items.length) % items.length].focus();
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [playing, screen]);
+
+	// Each page of the menu starts with its first item under the cursor, and the cursor
+	// moves onto Continue once loading finishes if it isn't somewhere in the menu already.
+	useEffect(() => {
+		const menu = menuRef.current;
+		if (screen === "splash" || !menu || menu.contains(document.activeElement)) return;
+		menu.querySelector<HTMLElement>("[data-menu-item]:not(:disabled)")?.focus();
+	}, [screen, hasSave, phase]);
+
+	// Parallax: the backdrop's layers lean away from the pointer (TitleArt.tsx).
+	useEffect(() => {
+		const root = rootRef.current;
+		if (playing || !root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const onMove = (e: PointerEvent) => {
+			if (e.pointerType !== "mouse") return;
+			root.style.setProperty("--title-x", ((0.5 - e.clientX / window.innerWidth) * 2).toFixed(3));
+			root.style.setProperty("--title-y", ((0.5 - e.clientY / window.innerHeight) * 2).toFixed(3));
+		};
+		window.addEventListener("pointermove", onMove);
+		return () => window.removeEventListener("pointermove", onMove);
+	}, [playing]);
+
+	const enter = (fresh: boolean) => {
+		handleRef.current?.start({ fresh });
 		setPhase("playing");
 	};
 
-	const playing = phase === "playing";
+	const ready = phase === "ready";
+	const loadingLabel = phase === "failed" ? "Could not load" : `Loading ${Math.round(progress * 100)}%`;
 
 	return (
-		<div className="fixed inset-0 overflow-hidden bg-[#0b1320]">
+		<div ref={rootRef} className="fixed inset-0 overflow-hidden bg-[#3f7fe0]">
 			<div
 				ref={containerRef}
 				className="absolute inset-0"
 				role="application"
-				aria-label="Fjord Town, a game version of datagutt's portfolio. The Journal link has the same content as plain text."
+				aria-label="Fjord Town, a game version of datagutt's portfolio. The normal website has the same content as plain text."
 			/>
 
 			<div
 				className={`absolute inset-0 transition-opacity duration-700 ${playing ? "pointer-events-none opacity-0" : "opacity-100"}`}
 				aria-hidden={playing}
+				onClick={screen === "splash" ? () => setScreen("menu") : undefined}
 			>
 				{titleArt}
-				<div className="absolute inset-0 flex flex-col items-center justify-center gap-8 px-4 pb-[18vh] text-center">
-					<div>
-						<h1 className="font-pixel text-5xl uppercase tracking-[0.2em] text-[#e8f5e9] drop-shadow-[0_3px_0_#0b1320] sm:text-7xl">
-							datagutt
-						</h1>
-						<p className="mt-3 font-pixel text-sm uppercase tracking-widest text-primary-300 sm:text-base">
-							A portfolio you can walk around in
-						</p>
-					</div>
-					<div className="flex flex-col items-center gap-3 sm:flex-row">
+				<div className="absolute inset-x-0 top-[9vh] flex flex-col items-center px-4 text-center">
+					<h1 className="title-logo font-pixel text-6xl uppercase tracking-[0.12em] text-[#fff4d6] sm:text-8xl">datagutt</h1>
+					<p className="mt-4 border-2 border-[#1b2440] bg-[#e8505b] px-4 py-1 font-pixel text-base uppercase tracking-[0.3em] text-[#fff4d6] shadow-[3px_3px_0_#1b2440] sm:text-lg">
+						Fjord Town
+					</p>
+				</div>
+
+				<div className="absolute inset-x-0 bottom-[12vh] flex flex-col items-center px-4">
+					{screen === "splash" && (
 						<button
 							type="button"
-							onClick={start}
-							disabled={phase !== "ready"}
-							className="min-w-48 border-2 border-[#e8f5e9] bg-primary-700 px-6 py-3 font-pixel text-lg uppercase tracking-wider text-[#e8f5e9] shadow-[4px_4px_0_#0b1320] transition-transform enabled:hover:-translate-y-0.5 enabled:active:translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
+							onClick={(e) => {
+								e.stopPropagation();
+								setScreen("menu");
+							}}
+							className="title-blink font-pixel text-xl uppercase tracking-[0.25em] text-[#fff4d6] [text-shadow:2px_2px_0_#1b2440,-2px_-2px_0_#1b2440,2px_-2px_0_#1b2440,-2px_2px_0_#1b2440,4px_4px_0_#1b2440] sm:text-3xl"
 						>
-							{phase === "failed"
-								? "Could not load"
-								: phase === "ready" || playing
-									? hasSave
-										? "▶ Continue"
-										: "▶ Start"
-									: `Loading ${Math.round(progress * 100)}%`}
+							Press start
 						</button>
-						<Link
-							href="/journal"
-							className="min-w-48 border-2 border-[#e8f5e9]/70 bg-[#0b1320]/70 px-6 py-3 font-pixel text-lg uppercase tracking-wider text-[#e8f5e9] shadow-[4px_4px_0_#0b1320] transition-transform hover:-translate-y-0.5"
+					)}
+
+					{screen !== "splash" && (
+						<div
+							ref={menuRef}
+							className="w-full max-w-sm border-2 border-[#fff4d6] bg-[#1b2440]/90 p-3 shadow-[4px_4px_0_#0b1320]"
 						>
-							Journal
-						</Link>
-					</div>
+							{screen === "menu" && (
+								<nav aria-label="Title menu">
+									<ul className="flex flex-col">
+										{hasSave && (
+											<MenuItem disabled={!ready} onClick={() => enter(false)}>
+												{ready ? "Continue" : loadingLabel}
+											</MenuItem>
+										)}
+										<MenuItem disabled={!ready} onClick={() => (hasSave ? setScreen("confirm") : enter(false))}>
+											{ready || hasSave ? "New game" : loadingLabel}
+										</MenuItem>
+										<MenuItem onClick={() => setScreen("credits")}>Credits</MenuItem>
+										<MenuItem href="/journal">{JOURNAL_LABEL}</MenuItem>
+									</ul>
+								</nav>
+							)}
+
+							{screen === "confirm" && (
+								<div role="alertdialog" aria-labelledby="title-confirm" className="flex flex-col gap-3">
+									<p id="title-confirm" className="px-2 pt-1 font-pixel text-sm leading-relaxed text-[#fff4d6]">
+										Start a new game? Your passport stamps and progress will be forgotten.
+									</p>
+									<ul className="flex flex-col">
+										<MenuItem onClick={() => setScreen("menu")}>Keep my save</MenuItem>
+										<MenuItem onClick={() => enter(true)}>Start over</MenuItem>
+									</ul>
+								</div>
+							)}
+
+							{screen === "credits" && (
+								<div className="flex flex-col gap-2">
+									<div className="max-h-[40vh] overflow-y-auto px-2 pt-1 text-center font-pixel text-xs leading-relaxed text-[#fff4d6]">
+										<p className="text-sm text-[#7ee0a8]">{credits.title}</p>
+										<p>{credits.byline}</p>
+										{credits.sections.map((section) => (
+											<div key={section.heading} className="mt-3">
+												<p className="text-[#7ee0a8]">{section.heading}</p>
+												{section.lines.map((line) => (
+													<p key={line}>{line}</p>
+												))}
+											</div>
+										))}
+										<p className="mt-3 text-[#7ee0a8]">{credits.thanks}</p>
+									</div>
+									<ul className="flex flex-col">
+										<MenuItem onClick={() => setScreen("menu")}>Back</MenuItem>
+									</ul>
+								</div>
+							)}
+						</div>
+					)}
+
 					{phase === "failed" && (
-						<p className="max-w-sm font-sans text-sm text-[#e8f5e9]">
-							The game could not start in this browser. Everything is in the Journal.
+						<p className="mt-4 max-w-sm bg-[#1b2440]/90 p-3 font-sans text-sm text-[#fff4d6]">
+							The game could not start in this browser. Everything is on the <Link href="/journal" className="underline">normal website</Link>.
 						</p>
 					)}
+					<noscript>
+						<p className="mt-4 max-w-sm bg-[#1b2440]/90 p-3 font-sans text-sm text-[#fff4d6]">
+							The game needs JavaScript. Everything is on the <a href="/journal" className="underline">normal website</a>.
+						</p>
+					</noscript>
 				</div>
 			</div>
 
@@ -111,5 +226,31 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 				</Link>
 			)}
 		</div>
+	);
+}
+
+/** One line of the menu, with a pixel cursor while it is hovered or focused. */
+function MenuItem({ children, onClick, href, disabled }: { children: ReactNode; onClick?: () => void; href?: string; disabled?: boolean }) {
+	const className =
+		"group flex w-full items-center gap-2 px-2 py-2 text-left font-pixel text-base uppercase tracking-wider text-[#fff4d6] outline-none hover:bg-[#fff4d6]/10 focus-visible:bg-[#fff4d6]/10 disabled:cursor-wait disabled:opacity-60 sm:text-lg";
+	const cursor = (
+		<span aria-hidden="true" className="w-4 text-[#ffd166] opacity-0 group-hover:opacity-100 group-focus:opacity-100">
+			▶
+		</span>
+	);
+	return (
+		<li>
+			{href ? (
+				<Link href={href} data-menu-item className={className}>
+					{cursor}
+					{children}
+				</Link>
+			) : (
+				<button type="button" data-menu-item onClick={onClick} disabled={disabled} className={className}>
+					{cursor}
+					{children}
+				</button>
+			)}
+		</li>
 	);
 }

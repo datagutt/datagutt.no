@@ -166,9 +166,11 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 
 ## 16. First 10 seconds
 
-1. Server-rendered HTML title screen (under 50 KB): fjord at dusk, logo, **Start** and
-   **Journal**.
-2. Phaser, atlases, Ink and the first map stream in behind it. Start shows progress.
+1. Server-rendered HTML title screen (under 50 KB): a summer day on the fjord, the
+   waterfront drawn from the game's own tiles, the logo and **Press start**. Press start
+   opens a menu: Continue, New game, Credits and "Read it as a normal website" (the
+   Journal). The user chose this in M5.11.
+2. Phaser, atlases, Ink and the first map stream in behind it. The menu shows progress.
 3. First visit: skippable ferry arrival (about 10 s). Returning visit: Continue or New
    game.
 4. `?at=<place>` deep links skip the title and spawn outside that place.

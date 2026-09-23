@@ -6,15 +6,16 @@ function collectPageErrors(page: Page) {
 	return errors;
 }
 
-test("title screen boots the game and Start enters the world", async ({ page }) => {
+test("title screen boots the game, and New game from its menu enters the world", async ({ page }) => {
 	const errors = collectPageErrors(page);
 	const response = await page.goto("/");
 	expect(response?.status()).toBeLessThan(400);
 
 	await expect(page.getByRole("heading", { name: "datagutt" })).toBeVisible();
-	await expect(page.getByRole("link", { name: "Journal" })).toBeVisible();
+	await page.getByRole("button", { name: /press start/i }).click();
+	await expect(page.getByRole("link", { name: "Read it as a normal website" })).toBeVisible();
 
-	const start = page.getByRole("button", { name: /start/i });
+	const start = page.getByRole("button", { name: /new game/i });
 	await expect(start).toBeEnabled({ timeout: 30_000 });
 	await expect(page.locator("canvas")).toHaveCount(1);
 

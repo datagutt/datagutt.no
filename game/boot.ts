@@ -6,7 +6,7 @@ import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
 import type { WorldState } from "../content/live";
 import { readWorldState } from "./live/worldState";
-import { browserStorage, loadSave } from "./save/save";
+import { browserStorage, clearSave, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
 import type { Facing } from "./world/objects";
@@ -48,8 +48,12 @@ export type BootOptions = {
 };
 
 export type GameHandle = {
-	/** Enter the world. Safe to call before loading finishes; it starts when ready. */
-	start(): void;
+	/**
+	 * Enter the world. Safe to call before loading finishes; it starts when ready.
+	 * `fresh` is the title's New game: the save is forgotten (settings kept) and the ferry
+	 * brings the player in as on a first visit.
+	 */
+	start(options?: { fresh?: boolean }): void;
 	destroy(): void;
 	/** The page was opened with a valid `?at=` link, so the title can be skipped. */
 	deepLinked: boolean;
@@ -76,6 +80,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	autoLow: boolean;
 	/** No save and no deep link: the ferry intro plays (or `?debug&intro` forces it). */
 	firstVisit: boolean;
+	/** New game over a save: the story loaded from the save is replaced before the world starts. */
+	fresh: boolean;
 	/** Hours on the visitor's clock (0–24), or `?debug&time=<phase|HH:MM>`. */
 	hours: () => number;
 	/** The month on the visitor's clock (1–12), or `?debug&month=`. */
@@ -108,6 +114,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		presence: new PresenceFeed(),
 		finale: false,
 		autoLow: false,
+		fresh: false,
 		firstVisit: (!hasSave && !deepLinked) || (new URLSearchParams(window.location.search).has("debug") && new URLSearchParams(window.location.search).has("intro")),
 		hours: clock(window.location.search),
 		month: monthNow(window.location.search),
@@ -190,7 +197,15 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 	watchDpr();
 
 	return {
-		start: requestStart,
+		start(options) {
+			if (options?.fresh) {
+				clearSave(browserStorage());
+				services.start = { ...place(START_PLACE).entrance! };
+				services.firstVisit = true;
+				services.fresh = true;
+			}
+			requestStart();
+		},
 		deepLinked,
 		hasSave,
 		destroy() {

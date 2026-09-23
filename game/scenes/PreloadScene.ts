@@ -19,7 +19,7 @@ import {
 } from "../characters/sheet";
 import { DialogueRunner } from "../dialogue/DialogueRunner";
 import { Progress, PROGRESS_KEY } from "../progress/Progress";
-import { browserStorage, loadSave } from "../save/save";
+import { browserStorage, loadSave, type SaveData } from "../save/save";
 
 export const DIALOGUE_KEY = "dialogue";
 
@@ -76,18 +76,29 @@ export class PreloadScene extends Phaser.Scene {
 		}
 		// One story for the whole game, so visit counts survive map changes and reloads.
 		const saved = loadSave(browserStorage());
+		this.beginStory(services, saved);
+		this.sound.mute = saved?.settings.muted ?? false;
+
+		services.onProgress(1);
+		services.onReady();
+		services.startRequested.then(() => {
+			// New game over a save: start the story over, but keep the player's settings.
+			if (services.fresh) this.beginStory(services, null);
+			this.scene.start("World", services.start);
+		});
+	}
+
+	/** Progress and dialogue state from a save, or a new story that keeps the current settings. */
+	private beginStory(services: GameServices, saved: SaveData | null) {
+		const settings = saved ? undefined : (this.registry.get(PROGRESS_KEY) as Progress | undefined)?.settings;
 		const progress = new Progress(saved);
+		if (settings) progress.settings = settings;
 		this.registry.set(PROGRESS_KEY, progress);
-		this.sound.mute = progress.settings.muted;
 		const runner = new DialogueRunner(this.cache.json.get("dialogue"), {
 			world: services.world,
 			hasStamp: (place) => progress.hasStamp(place),
 			lanyardActivity: () => nowDoing(services.presence.current),
 		}, saved?.dialogue.main);
 		this.registry.set(DIALOGUE_KEY, runner);
-
-		services.onProgress(1);
-		services.onReady();
-		services.startRequested.then(() => this.scene.start("World", services.start));
 	}
 }

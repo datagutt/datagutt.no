@@ -4,6 +4,23 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **Title screen v2 (M5.11), waiting on the user's review on desktop and phone.**
+  - Backdrop (`components/game/TitleArt.tsx`): a summer day, drawn on a grid of game
+    pixels. A wide screen sees 512×288 (18 tiles tall, like the game); a tall phone sees
+    extra sky above, at about the game's phone zoom. Sky, sun, drifting clouds, gulls,
+    snowy peaks, hills and the fjord's walls are SVG; the waterfront in front (pines,
+    kiosk, hut, lamps, beach, pier, boats) is the game's own tiles, built by `pnpm assets`
+    from `world/gen/title.ts` into `public/game/ui/title.png` (14 KB; nothing painted above
+    the tree line). Placeholder builds skip that image and show the sky alone. Motion is
+    CSS only and stops under reduced motion; the mouse gives parallax.
+  - The daytime sky is on purpose: the tiles are lit by day and looked wrong under dusk.
+  - Flow (`components/game/GameShell.tsx`): Press start (any key, click or tap), then a
+    menu: Continue (with a save), New game, Credits, "Read it as a normal website". New
+    game over a save asks first; `start({ fresh: true })` clears the save, keeps the
+    settings, and plays the ferry intro without a reload (`PreloadScene.beginStory`).
+  - The page is 42.6 KB gzipped. Next sends the SVG twice (HTML and RSC payload), so
+    keep its paths compact.
+  - DESIGN says the original avatar appears on the title screen; v2 doesn't show it yet.
 - **Nettbureau office (M3.8), waiting on the user's review.** LimeZu's Modern Office
   pack: 16×16 files in datagutt-assets `limezu/office/` (licence in
   `licenses/modern_office/`), sheets `workplace` (furniture singles, all 2×3 canvases,

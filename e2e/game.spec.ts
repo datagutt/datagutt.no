@@ -23,6 +23,14 @@ type FjordState = {
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
 
+/** Past "Press start" to the title menu, then pick an item once loading allows it. */
+async function choose(page: Page, item: RegExp) {
+	await page.getByRole("button", { name: /press start/i }).click();
+	const button = page.getByRole("button", { name: item });
+	await expect(button).toBeEnabled({ timeout: 30_000 });
+	await button.click();
+}
+
 async function holdKey(page: Page, key: string, ms: number) {
 	await page.keyboard.down(key);
 	await page.waitForTimeout(ms);
@@ -41,7 +49,7 @@ async function continueAt(page: Page, at: { map: string; x: number; y: number; f
 		[at, stamps] as const,
 	);
 	await page.goto(`/?debug&presence=${presence}`);
-	await page.getByRole("button", { name: /continue/i }).click();
+	await choose(page, /continue/i);
 	await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: at.map, tile: { x: at.x, y: at.y } });
 }
 
@@ -151,7 +159,7 @@ test.describe("world", () => {
 		await page.goto("/?debug&presence=coding");
 		await page.evaluate(() => localStorage.clear());
 		await page.goto("/?debug&presence=coding");
-		await page.getByRole("button", { name: /start/i }).click();
+		await choose(page, /new game/i);
 		await expect.poll(async () => (await state(page))?.intro, { timeout: 30_000 }).toBe(true);
 		// Skip the crossing: Arne's welcome comes straight away.
 		await page.keyboard.press("e");
@@ -164,9 +172,29 @@ test.describe("world", () => {
 		expect((await state(page))?.dialogueOpen).toBe(false);
 
 		await page.goto("/?debug&presence=coding");
-		await page.getByRole("button", { name: /continue/i }).click();
+		await choose(page, /continue/i);
 		await expect.poll(async () => (await state(page))?.map, { timeout: 30_000 }).toBe("town");
 		expect((await state(page))?.intro).toBe(false);
+	});
+
+	test("new game over a save asks first, then starts over on the ferry", async ({ page }) => {
+		await page.goto("/?debug&presence=coding");
+		await page.evaluate(() =>
+			localStorage.setItem(
+				"fjordtown.save",
+				JSON.stringify({ version: 1, map: "town", x: 45, y: 26, facing: "up", stamps: ["library"], flags: { intro: true }, dialogue: {}, settings: { muted: true } }),
+			),
+		);
+		await page.goto("/?debug&presence=coding");
+		await choose(page, /new game/i);
+		await expect(page.getByText(/progress will be forgotten/i)).toBeVisible();
+		await page.getByRole("button", { name: /keep my save/i }).click();
+		await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+
+		await page.getByRole("button", { name: /new game/i }).click();
+		await page.getByRole("button", { name: /start over/i }).click();
+		await expect.poll(async () => (await state(page))?.intro, { timeout: 30_000 }).toBe(true);
+		expect((await state(page))?.stamps).toEqual([]);
 	});
 
 	test("the last stamp leads to the finale: the pier at night, credits, then contact", async ({ page }) => {
@@ -220,8 +248,7 @@ test.describe("world", () => {
 		expect(moved?.tile).not.toEqual({ x: 71, y: 37 });
 
 		await page.goto("/?debug");
-		await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled({ timeout: 30_000 });
-		await page.getByRole("button", { name: /continue/i }).click();
+		await choose(page, /continue/i);
 		await expect.poll(() => state(page)).toMatchObject({ map: "town", tile: moved!.tile });
 	});
 

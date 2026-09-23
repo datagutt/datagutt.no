@@ -9,6 +9,10 @@ import { CHARACTERS } from "../../game/assets/manifest.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
+import { TileRegistry } from "../../world/gen/registry.ts";
+import { renderTmj } from "../../world/gen/render.ts";
+import { titleScene } from "../../world/gen/title.ts";
+import { canvasToTmj } from "../../world/gen/tmj.ts";
 import { composeCharacter, composePortrait, placeholderCharacter, placeholderPortrait } from "./characters.mjs";
 import { buildBitmapFont } from "./font.mjs";
 import { compileDialogue } from "./ink.mjs";
@@ -108,6 +112,14 @@ async function buildEmotes() {
 	return img.toPng();
 }
 fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await shrinkPng(await buildEmotes()));
+
+// The title screen's waterfront (world/gen/title.ts), drawn from the same sheets as the
+// maps. Placeholder builds have no sheets to draw it from; the title shows its sky alone.
+if (source.mode !== "placeholder") {
+	const titleTiles = new TileRegistry(registry);
+	const tmj = canvasToTmj("title", titleScene(), titleTiles);
+	fs.writeFileSync(path.join(outDir, "ui/title.png"), await shrinkPng(await renderTmj(tmj, titleTiles.tiles, new SheetCache(source.dir))));
+}
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
 const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");

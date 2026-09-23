@@ -133,3 +133,40 @@
     transform: none;
   }
 }
+
+/* Title screen (components/game/GameShell.tsx): the logo's chunky shadow is a navy
+   outline plus a stepped drop, all in whole pixels. */
+.title-logo {
+  text-shadow:
+    3px 0 0 #1b2440,
+    -3px 0 0 #1b2440,
+    0 3px 0 #1b2440,
+    0 -3px 0 #1b2440,
+    3px 3px 0 #1b2440,
+    -3px 3px 0 #1b2440,
+    3px -3px 0 #1b2440,
+    -3px -3px 0 #1b2440,
+    6px 6px 0 #1b2440,
+    9px 9px 0 #0b1320;
+}
+
+.title-blink {
+  animation: title-blink 1.2s steps(1) infinite;
+}
+
+@keyframes title-blink {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-blink {
+    animation: none;
+  }
+}
