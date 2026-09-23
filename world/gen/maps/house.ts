@@ -1,8 +1,8 @@
 // datagutt's house (places: home), two floors with their own look.
 //
 // Downstairs, a warm wood-panelled cabin room: kitchen corner with a dining table, a TV
-// lounge (two sofas turned toward the TV), the wood stove, stairs up, and the scale
-// model of Fjord Town by the door (the Portfolio project, i.e. this game).
+// lounge (two sofas turned toward the TV), the wood stove, stairs up, and a scale model
+// of the house itself by the door.
 // Upstairs, cooler and more personal: Thomas at one long desk with three computers, the
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
 import { FURNITURE as F } from "../../art/furniture.ts";
@@ -44,7 +44,7 @@ export function house(): MapCanvas {
 	c.add({ type: "spawn", id: "stairs", x: 16, y: 5, facing: "down" });
 
 	exitDoor(c, r, 10, { toMap: "town", toSpawn: "house_door" });
-	c.add({ type: "sign", x: 15, y: 9, text: "* A scale model of Fjord Town. Tiny you is standing in it. Best not to think about it." });
+	c.add({ type: "sign", x: 15, y: 9, text: "* A scale model of this very house. There's a tiny you inside it, reading a tiny sign. Best not to think about it." });
 	c.add({ type: "sign", x: 2, y: 3, text: "* The stove. Spotless. It has never been used, and it knows it." });
 	c.add({ type: "sign", x: 9, y: 3, text: "* The TV is paused on a speedrun. Someone is about to clip through a wall." });
 	return c;

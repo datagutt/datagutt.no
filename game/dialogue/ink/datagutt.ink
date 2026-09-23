@@ -30,7 +30,7 @@
 
 = answer_1
     Right now? This town. {project_desc("portfolio")}, except you can walk around in it.
-    The little model on the table is the whole town. You're standing in it, which makes this a bit meta.
+    Everyone you meet here is part of it, me included. You're walking around inside my portfolio, which makes this a bit meta.
     ->->
 
 = answer_2
