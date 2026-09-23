@@ -13,6 +13,8 @@ describe("map objects", () => {
 			{ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" },
 			{ type: "light", shape: "glow", x: 7, y: 8, radius: 2.5, color: "ffae62", intensity: 0.5, flicker: true },
 			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4 },
+			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4, when: "day" },
+			{ type: "light", shape: "glow", x: 7, y: 8, radius: 2.5, color: "ffd08a", intensity: 0.7, flicker: false, when: "night" },
 		];
 		for (const obj of objects) expect(roundTrip(obj)).toEqual(obj);
 	});

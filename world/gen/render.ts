@@ -52,7 +52,8 @@ export async function renderTmj(
 		.filter((l) => l.type === "objectgroup")
 		.flatMap((l) => (l.objects as TiledObject[]).map((o) => parseMapObject(o, T)));
 	for (const light of objects) {
-		if (light.type !== "light") continue;
+		// Renders show the map by day: lamps and porch lights stay off.
+		if (light.type !== "light" || light.when === "night") continue;
 		const [r, g, b] = hexRgb(light.color);
 		const box =
 			light.shape === "glow"

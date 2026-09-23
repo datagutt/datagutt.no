@@ -12,6 +12,7 @@ import type { Point } from "./world/grid";
 import type { Facing } from "./world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "./world/season";
+import { clock } from "./world/dayNight";
 import { LanyardClient, PresenceFeed } from "./net/lanyard";
 import { MOCK_PRESENCES } from "./live/datagutt";
 import { GhostClient, ghostsDisabled, worldSocketUrl } from "./net/ghosts";
@@ -66,6 +67,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	world: WorldState;
 	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
 	season: Season;
+	/** Hours on the visitor's clock (0–24), or `?debug&time=<phase|HH:MM>`. */
+	hours: () => number;
 	/** Thomas's live Discord presence (Lanyard); empty until the first update. */
 	presence: PresenceFeed;
 	/**
@@ -92,6 +95,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		world: readWorldState(),
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
+		hours: clock(window.location.search),
 		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
 	};
 	const debug = new URLSearchParams(window.location.search).has("debug");

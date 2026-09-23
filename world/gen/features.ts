@@ -2,6 +2,7 @@
 import type { MapObject } from "../../game/world/objects.ts";
 import { variant } from "../art/autotile.ts";
 import { DECALS, DOOR, FENCE, PIER, PLATEAU } from "../art/palette.ts";
+import { glow, NIGHT_LIGHTS } from "../art/lighting.ts";
 import { PREFABS, type PrefabId } from "../art/prefabs.ts";
 import { single } from "../art/singles.ts";
 import { seeded } from "./random.ts";
@@ -114,6 +115,8 @@ export function building(
 	const door = { x: x + prefab.door[0], y: y + prefab.door[1] };
 	if (options.addDoor) c.put("below", door.x, door.y - 1, DOOR[0]).put("below", door.x, door.y, DOOR[1]);
 	if (options.link) c.add({ type: "door", x: door.x, y: door.y, ...options.link } satisfies MapObject);
+	// Every front door has a light over it after dark.
+	c.add(glow(door.x, door.y - 1, NIGHT_LIGHTS.porch));
 	if (options.closed) {
 		// No interior (yet): the door stays shut, says why, and a CLOSED sign hangs by it.
 		c.block(door.x, door.y).add({ type: "sign", x: door.x, y: door.y, text: options.closed });

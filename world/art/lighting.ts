@@ -45,7 +45,15 @@ export function glow(x: number, y: number, kind: Glow): LightObject {
 	return { type: "light", shape: "glow", x, y, ...kind };
 }
 
-/** Daylight from a window falling onto the floor below it: w×h tiles from (x, y). */
+/** Daylight from a window falling onto the floor below it: w×h tiles from (x, y). Gone at night. */
 export function windowLight(x: number, y: number, w = 2, h = 3): LightObject {
-	return { type: "light", shape: "beam", x, y, w, h, color: "fff0d2", intensity: 0.4 };
+	return { type: "light", shape: "beam", x, y, w, h, color: "fff0d2", intensity: 0.4, when: "day" };
 }
+
+/** Lights outdoors that only come on after dark (game/world/dayNight.ts). */
+export const NIGHT_LIGHTS = {
+	/** The head of a street lamp. */
+	streetLamp: { radius: 2.6, color: "ffd08a", intensity: 0.75, flicker: false, when: "night" },
+	/** A porch light over a front door. */
+	porch: { radius: 1.8, color: "ffc070", intensity: 0.6, flicker: false, when: "night" },
+} satisfies Record<string, Glow>;

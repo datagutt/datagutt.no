@@ -27,11 +27,13 @@ export type MapObject =
 /**
  * A light, drawn additively over the map and characters (game/fx/Lights.ts). A glow is
  * centred on its tile with a radius in tiles; a beam covers w×h tiles from its tile.
- * `color` is rrggbb, `intensity` 0..1.
+ * `color` is rrggbb, `intensity` 0..1. `when` ties it to the visitor's clock: "day" for
+ * daylight through a window, "night" for street lamps and porch lights; always on without.
  */
 export type LightObject =
-	| { type: "light"; shape: "glow"; x: number; y: number; radius: number; color: string; intensity: number; flicker: boolean }
-	| { type: "light"; shape: "beam"; x: number; y: number; w: number; h: number; color: string; intensity: number };
+	| { type: "light"; shape: "glow"; x: number; y: number; radius: number; color: string; intensity: number; flicker: boolean; when?: LightTime }
+	| { type: "light"; shape: "beam"; x: number; y: number; w: number; h: number; color: string; intensity: number; when?: LightTime };
+export type LightTime = "day" | "night";
 
 export type TiledProperty = { name: string; type: "string" | "int" | "bool"; value: string | number | boolean };
 
@@ -90,8 +92,11 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 				return v;
 			};
 			const shape = str("shape");
-			if (shape === "glow") return { type: "light", shape, x, y, radius: num("radius"), color: str("color"), intensity: num("intensity"), flicker: props.get("flicker") === "true" };
-			if (shape === "beam") return { type: "light", shape, x, y, w: num("w"), h: num("h"), color: str("color"), intensity: num("intensity") };
+			const when = props.get("when");
+			if (when !== undefined && when !== "day" && when !== "night") throw new Error(`light object ${obj.id} has invalid when "${when}"`);
+			const timed = when ? { when: when as LightTime } : {};
+			if (shape === "glow") return { type: "light", shape, x, y, radius: num("radius"), color: str("color"), intensity: num("intensity"), flicker: props.get("flicker") === "true", ...timed };
+			if (shape === "beam") return { type: "light", shape, x, y, w: num("w"), h: num("h"), color: str("color"), intensity: num("intensity"), ...timed };
 			throw new Error(`light object ${obj.id} has unknown shape "${shape}"`);
 		}
 		default:

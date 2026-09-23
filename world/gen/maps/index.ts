@@ -11,7 +11,7 @@ import { townHall } from "./townHall.ts";
 import { gym } from "./gym.ts";
 import { overworld } from "./overworld.ts";
 
-/** `outdoor` maps change with the seasons (game/world/season.ts). */
+/** `outdoor` maps change with the seasons (game/world/season.ts) and the time of day (game/fx/DayNight.ts). */
 export type GeneratedMap = { id: string; properties?: Record<string, string>; outdoor?: boolean; build: () => MapCanvas };
 
 export const GENERATED_MAPS: GeneratedMap[] = [

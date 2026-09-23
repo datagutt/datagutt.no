@@ -288,7 +288,7 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
 
 Goal: the Celeste-level feel.
 
-- [ ] **M5.1** Lighting and time of day: visitor-local clock drives a colour-grading
+- [x] **M5.1** Lighting and time of day: visitor-local clock drives a colour-grading
       filter (dawn, day, dusk, night), window lights and lamp posts glow at night via a
       light layer. *Done when* `?time=` in debug shows all phases.
 - [ ] **M5.2** Water shader: fjord shimmer, shoreline foam, reflections of the sky

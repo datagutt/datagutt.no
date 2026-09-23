@@ -253,6 +253,11 @@
               "name": "intensity",
               "type": "string",
               "value": "0.4"
+            },
+            {
+              "name": "when",
+              "type": "string",
+              "value": "day"
             }
           ]
         },

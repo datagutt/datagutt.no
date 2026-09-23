@@ -7,6 +7,7 @@ import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "../../../game/world/objects.ts";
 import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
 import { refKey } from "../registry.ts";
+import { glow, NIGHT_LIGHTS } from "../../art/lighting.ts";
 import { PREFABS } from "../../art/prefabs.ts";
 import { variant } from "../../art/autotile.ts";
 import { MapCanvas } from "../canvas.ts";
@@ -101,9 +102,10 @@ export function overworld(): MapCanvas {
 	// --- Town furniture --------------------------------------------------------------------
 	c.stamp(PREFABS.bigFountain, 48, 32);
 	c.stamp(PREFABS.benchLong, 43, 33).stamp(PREFABS.benchLong, 54, 33);
-	for (const [x, y] of [[39, 29], [61, 29], [39, 37], [61, 37]]) c.stamp(PREFABS.lamp, x, y);
-	// Lamps along the south verge of the main road (a lamp's base is its bottom tile).
-	for (const x of [12, 24, 32, 45, 57, 64, 78, 89]) c.stamp(PREFABS.lamp, x, 42);
+	// Lamps round the square and along the south verge of the main road. They light up
+	// after dark from their heads (the prefab's top tile).
+	const lamps = [[39, 29], [61, 29], [39, 37], [61, 37], ...[12, 24, 32, 45, 57, 64, 78, 89].map((x) => [x, 42])];
+	for (const [x, y] of lamps) c.stamp(PREFABS.lamp, x, y).add(glow(x, y, NIGHT_LIGHTS.streetLamp));
 	c.stamp(PREFABS.planter, 41, 26).stamp(PREFABS.planter, 48, 26);
 	c.stamp(PREFABS.bench, HARBOUR_X + 4, shore[HARBOUR_X + 4] - 4);
 	// Where the live datagutt NPC goes out in town (game/live/datagutt.ts): by the harbour

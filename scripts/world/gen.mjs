@@ -56,7 +56,7 @@ for (const map of GENERATED_MAPS) {
 	if (only && map.id !== only) continue;
 	const file = path.join(files.maps, `${map.id}.tmj`);
 	const canvas = map.build();
-	const tmj = canvasToTmj(map.id, canvas, registry, { properties: map.properties, previous: readJson(file), seasons: map.outdoor });
+	const tmj = canvasToTmj(map.id, canvas, registry, { properties: { ...map.properties, ...(map.outdoor ? { outdoor: "true" } : {}) }, previous: readJson(file), seasons: map.outdoor });
 	problems.push(...validateMap(map.id, tmj), ...checkCuts(map.id, canvas.stamped));
 	outputs.set(file, formatTmj(tmj));
 }

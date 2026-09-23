@@ -25,6 +25,7 @@ import { CollisionGrid, directionBetween, neighbour, type Point } from "../world
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement";
 import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects";
 import { addLights } from "../fx/Lights";
+import { DayNight } from "../fx/DayNight";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -47,6 +48,7 @@ export class WorldScene extends Phaser.Scene {
 	private player!: Actor;
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
 	private thomas!: LiveThomas;
+	private dayNight!: DayNight;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -147,7 +149,9 @@ export class WorldScene extends Phaser.Scene {
 			}
 		}
 
-		addLights(this, lights, this.progress.reducedMotion);
+		const images = addLights(this, lights, this.progress.reducedMotion);
+		const outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
+		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, this.services.hours);
 
 		const spawn = this.target.spawn ? spawns.get(this.target.spawn) : undefined;
 		const startAt = this.target.tile ?? spawn ?? [...spawns.values()][0];
@@ -239,6 +243,7 @@ export class WorldScene extends Phaser.Scene {
 
 	private onResize(size: Phaser.Structs.Size) {
 		this.cameras.resize(size.width, size.height);
+		this.dayNight.resize(size.width, size.height);
 		this.fitCamera();
 		this.dialogue.relayout();
 	}
@@ -257,6 +262,7 @@ export class WorldScene extends Phaser.Scene {
 		const dt = Math.min(delta, 50); // no huge jumps after a stalled tab
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
+		this.dayNight.update(time);
 		this.updateDebug();
 
 		if (this.transitioning) return;
@@ -375,6 +381,7 @@ export class WorldScene extends Phaser.Scene {
 		(window as unknown as { __fjord?: object }).__fjord = {
 			map: this.target.map,
 			season: this.services.season,
+			daylight: this.dayNight.current,
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,
