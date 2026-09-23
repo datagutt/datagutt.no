@@ -68,6 +68,15 @@ export const FURNITURE = {
 	chairDarkRight: solid("kitchen", 5, 11, 1, 2),
 	chairDarkLeft: solid("kitchen", 6, 13, 1, 2),
 
+	// Kiosk (grocery sheet).
+	drinksCooler: solid("grocery", 6, 16, 2, 3),
+	steelFridge: solid("grocery", 12, 34, 2, 3),
+	bakeryRack: solid("grocery", 7, 34, 2, 2),
+	productShelf: solid("grocery", 0, 15, 2, 3),
+	displayCounter: solid("grocery", 11, 40, 5, 2),
+	checkout: solid("grocery", 6, 24, 3, 2),
+	openSign: flat("grocery", 1, 49, 1, 2),
+
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
 	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */

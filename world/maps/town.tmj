@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 28,
+  "nextobjectid": 29,
   "properties": [
     {
       "name": "name",
@@ -709,6 +709,29 @@
           "id": 3,
           "name": "",
           "type": "door",
+          "x": 944,
+          "y": 544,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "kiosk"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "entrance"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "door",
           "x": 192,
           "y": 960,
           "width": 16,
@@ -729,7 +752,7 @@
           ]
         },
         {
-          "id": 4,
+          "id": 5,
           "name": "ferry",
           "type": "spawn",
           "x": 800,
@@ -747,7 +770,7 @@
           ]
         },
         {
-          "id": 5,
+          "id": 6,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -765,7 +788,7 @@
           ]
         },
         {
-          "id": 6,
+          "id": 7,
           "name": "office_door",
           "type": "spawn",
           "x": 1152,
@@ -783,7 +806,7 @@
           ]
         },
         {
-          "id": 7,
+          "id": 8,
           "name": "boathouse_door",
           "type": "spawn",
           "x": 192,
@@ -801,7 +824,7 @@
           ]
         },
         {
-          "id": 8,
+          "id": 9,
           "name": "library_door",
           "type": "spawn",
           "x": 560,
@@ -819,7 +842,25 @@
           ]
         },
         {
-          "id": 9,
+          "id": 10,
+          "name": "kiosk_door",
+          "type": "spawn",
+          "x": 944,
+          "y": 560,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 11,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -837,7 +878,7 @@
           ]
         },
         {
-          "id": 10,
+          "id": 12,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -855,7 +896,7 @@
           ]
         },
         {
-          "id": 11,
+          "id": 13,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -873,7 +914,7 @@
           ]
         },
         {
-          "id": 12,
+          "id": 14,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -891,7 +932,7 @@
           ]
         },
         {
-          "id": 13,
+          "id": 15,
           "name": "",
           "type": "sign",
           "x": 208,
@@ -909,7 +950,7 @@
           ]
         },
         {
-          "id": 14,
+          "id": 16,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -927,7 +968,7 @@
           ]
         },
         {
-          "id": 15,
+          "id": 17,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -945,7 +986,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 18,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -963,7 +1004,7 @@
           ]
         },
         {
-          "id": 17,
+          "id": 19,
           "name": "",
           "type": "sign",
           "x": 1136,
@@ -981,7 +1022,7 @@
           ]
         },
         {
-          "id": 18,
+          "id": 20,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -999,7 +1040,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 21,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -1017,7 +1058,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 22,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -1050,7 +1091,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 23,
           "name": "technician",
           "type": "npc",
           "x": 1328,
@@ -1083,40 +1124,7 @@
           ]
         },
         {
-          "id": 22,
-          "name": "shopkeeper",
-          "type": "npc",
-          "x": 928,
-          "y": 560,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "character",
-              "type": "string",
-              "value": "shopkeeper"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "down"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Randi"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "shopkeeper"
-            }
-          ]
-        },
-        {
-          "id": 23,
+          "id": 24,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -1149,7 +1157,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 25,
           "name": "sysadmin",
           "type": "npc",
           "x": 752,
@@ -1182,7 +1190,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 26,
           "name": "smith",
           "type": "npc",
           "x": 1408,
@@ -1215,7 +1223,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 27,
           "name": "farmer",
           "type": "npc",
           "x": 320,
@@ -1248,7 +1256,7 @@
           ]
         },
         {
-          "id": 27,
+          "id": 28,
           "name": "postmaster",
           "type": "npc",
           "x": 688,

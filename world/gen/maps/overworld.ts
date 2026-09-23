@@ -78,7 +78,7 @@ export function overworld(): MapCanvas {
 	building(c, "villaOrange", 6, 29);
 	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
 	building(c, "villaBlue", 26, 29);
-	building(c, "kiosk", 57, 30);
+	const kioskDoor = building(c, "kiosk", 57, 30, { link: { toMap: "kiosk", toSpawn: "entrance" } });
 	building(c, "postOffice", 37, 44);
 	const boathouseDoor = building(c, "boathouse", 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
 	pier(c, 22, shore[22] - 1, shore[22] + 3);
@@ -136,6 +136,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "office_door", x: 72, y: 37, facing: "down" });
 	c.add({ type: "spawn", id: "boathouse_door", ...boathouseDoor, facing: "down" });
 	c.add({ type: "spawn", id: "library_door", ...libraryDoor, facing: "down" });
+	c.add({ type: "spawn", id: "kiosk_door", ...kioskDoor, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
@@ -150,7 +151,6 @@ export function overworld(): MapCanvas {
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("technician", 83, 12, "left"));
-	c.add(npc("shopkeeper", 58, 35, "down"));
 	c.add(npc("coworker", 74, 38, "left"));
 	c.add(npc("sysadmin", 47, 27, "down"));
 	c.add(npc("smith", 88, 37, "left"));
