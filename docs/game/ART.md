@@ -35,3 +35,11 @@ So:
    singles folder for the images inside a prefab's rectangle.
 7. **Room Builder floors and walls are not repeating patterns** (see `interior.ts`):
    floor groups have one plain tile and baked wall shadows; walls have end pieces.
+8. **Collision follows the art.** Without an explicit `collision`, a prefab blocks only
+   tiles its art fills at least a quarter of (the catalogue's coverage). Tall things that
+   stand on the floor take `base: n` so only their bottom rows block and the rest draws
+   over characters walking behind. Leave two-tile aisles; the validator fails if anything
+   can't be reached from the entrance.
+9. **Put doors on the door art.** Check a building's door in a render with `--objects`;
+   several LimeZu buildings have their door off-centre, or two doors.
+

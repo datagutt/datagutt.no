@@ -77,6 +77,14 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
     cabinets for the v1.1 canvases-as-arcade-machines idea; the museum sheet has
     paintings, statues and pillars for the town hall.
+  - **Space and collision** (user: rooms felt too tight): prefabs block only tiles their
+    art covers (catalogue `coverage`, "#" = at least a quarter filled); `single(...,
+    { base: n })` lets tall standing things block only their bottom rows. The validator
+    checks everything is reachable from the entrance/ferry and that signs sit on solid
+    things. Rooms are 16 wide with two-tile aisles; the house stairs were unreachable
+    before this. Doors must sit on the door art (the office's and gym's were a column off).
+  - User ideas queued in PLAN.md: M3.12 closed doors read as closed, M5.10 interaction
+    prompts, M5.11 title screen v2.
   - **Art handling rules are in docs/game/ART.md** (user found half-cut sprites): use
     LimeZu singles via `single(sheet, key)`, pick them from the contact sheets that
     `pnpm world:catalog` writes, and `world:gen` fails on prefabs that cut an object.

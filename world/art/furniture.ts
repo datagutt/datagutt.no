@@ -1,9 +1,18 @@
 // Furniture and indoor props from the LimeZu Interiors theme sheets (PLAN M3.8).
 // Most block their whole footprint; rugs are flat and walkable.
 import type { Prefab } from "../gen/canvas.ts";
-import { flatSingle, single } from "./singles.ts";
+import { flatSingle, sheetCoverage, single } from "./singles.ts";
 
-const solid = (sheet: string, col: number, row: number, w: number, h: number, aboveRows = 0): Prefab => ({ sheet, col, row, w, h, aboveRows });
+/** A piece cut from a sheet; it blocks only where its art is solid (catalogue coverage). */
+const solid = (sheet: string, col: number, row: number, w: number, h: number, aboveRows = 0): Prefab => ({
+	sheet,
+	col,
+	row,
+	w,
+	h,
+	aboveRows,
+	coverage: sheetCoverage(sheet, col, row, w, h),
+});
 const flat = (sheet: string, col: number, row: number, w: number, h: number): Prefab => ({ sheet, col, row, w, h, aboveRows: 0, flat: true, collision: [] });
 
 export const FURNITURE = {

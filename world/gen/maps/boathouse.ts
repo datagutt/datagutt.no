@@ -33,8 +33,9 @@ export function boathouse(): MapCanvas {
 	c.stamp(F.rowboatUp, 3, 6);
 
 	// Fishing corner along the back wall.
-	c.stamp(F.rodRack, 2, 1).stamp(F.tackleBoxBlue, 4, 3).stamp(F.crate, 6, 7);
-	c.stamp(F.tackleBoxYellow, 6, 9);
+	c.stamp(F.rodRack, 2, 1).stamp(F.tackleBoxBlue, 4, 3);
+	// Spare gear stacked by the far wall, clear of the walkway along the slip.
+	c.stamp(F.crate, 16, 7).stamp(F.tackleBoxYellow, 16, 9);
 
 	// The studio: the Guac desk, and the set with lights turned toward the green screen.
 	c.stamp(F.wallMonitor, 8, 1);
@@ -53,7 +54,7 @@ export function boathouse(): MapCanvas {
 	const sunniva = NPCS.find((n) => n.id === "streamer")!;
 	c.add({ type: "npc", id: "streamer", character: "streamer", x: 15, y: 6, facing: "down", name: sunniva.name, dialogue: "streamer" });
 	c.add({ type: "sign", x: 9, y: 6, text: "* The stream preview. Chat is typing faster than anyone can read." });
-	c.add({ type: "sign", x: 7, y: 3, text: "* The ON AIR lamp. It is always on. Sunniva says that's the point." });
+	c.add({ type: "sign", x: 7, y: 2, text: "* The ON AIR lamp. It is always on. Sunniva says that's the point." });
 	c.add({ type: "sign", x: 14, y: 9, text: "* The camera's little red light blinks at you. You are, briefly, content." });
 	return c;
 }

@@ -23,4 +23,18 @@ describe("validateMap", () => {
 		expect(problems).toMatch(/sign at \(1, 1\) can't be reached/);
 		expect(problems).toMatch(/sign at \(4, 4\) shares its tile/);
 	});
+
+	it("reports things walled off from where players arrive, and signs on open floor", () => {
+		const c = new MapCanvas(7, 3);
+		for (let y = 0; y < 3; y++) c.block(3, y); // a wall down the middle
+		c.block(5, 0);
+		c.add({ type: "spawn", id: "entrance", x: 1, y: 1, facing: "up" });
+		c.add({ type: "npc", id: "far", character: "far", x: 5, y: 2, facing: "down", name: "Far", dialogue: "far" });
+		c.add({ type: "sign", x: 0, y: 0, text: "on the floor" });
+		c.add({ type: "sign", x: 5, y: 0, text: "behind the wall" });
+		const problems = validateMap("t", canvasToTmj("t", c, new TileRegistry())).join("\n");
+		expect(problems).toMatch(/npc "far" at \(5, 2\) can't be reached from entrance/);
+		expect(problems).toMatch(/sign at \(5, 0\) can't be reached from entrance/);
+		expect(problems).toMatch(/sign at \(0, 0\) is on open floor/);
+	});
 });

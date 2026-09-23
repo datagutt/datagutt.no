@@ -116,6 +116,31 @@ function detect(sheet, gap = 0) {
 	return boxes;
 }
 
+/**
+ * How much of each 16×16 tile is filled, as one character per tile: "#" at least a
+ * quarter opaque (solid enough to walk into), "+" a little, "." empty. Rows joined with
+ * "/". Metadata only; default collision is derived from it (world/art/singles.ts).
+ */
+function coverage(img, x0 = 0, y0 = 0, w = img.width, h = img.height) {
+	const rows = [];
+	for (let ty = 0; ty < h / T; ty++) {
+		let line = "";
+		for (let tx = 0; tx < w / T; tx++) {
+			let n = 0;
+			for (let py = 0; py < T; py++) {
+				for (let px = 0; px < T; px++) {
+					const x = x0 + tx * T + px;
+					const y = y0 + ty * T + py;
+					if (x < img.width && y < img.height && img.data[(y * img.width + x) * 4 + 3] > 0) n++;
+				}
+			}
+			line += n >= (T * T) / 4 ? "#" : n > 0 ? "+" : ".";
+		}
+		rows.push(line);
+	}
+	return rows.join("/");
+}
+
 const toTiles = (b) => {
 	const col = Math.floor(b.x / T);
 	const row = Math.floor(b.y / T);
@@ -189,7 +214,7 @@ for (const id of ids) {
 			const at = locate(sheet, single);
 			const size = [single.width / T, single.height / T];
 			const tileAligned = at && at.x % T === 0 && at.y % T === 0;
-			singles.push([key, ...size, tileAligned ? at.x / T : null, tileAligned ? at.y / T : null]);
+			singles.push([key, ...size, tileAligned ? at.x / T : null, tileAligned ? at.y / T : null, coverage(single)]);
 			if (at) items.push([key, ...toTiles(opaqueBox(single, at))]);
 			montage.push({ n: key, single });
 		}
@@ -205,8 +230,11 @@ for (const id of ids) {
 		method,
 		// Objects as they appear in the sheet: [key, col, row, w, h] in tiles.
 		objects: items,
-		// Singles: [key, w, h, col, row] in tiles; col/row null when not in the sheet as-is.
+		// Singles: [key, w, h, col, row, coverage] in tiles; col/row null when not in the
+		// sheet as-is; coverage as in coverage() below.
 		...(singles ? { singles } : {}),
+		// The whole sheet's coverage, one string per tile row, for prefabs cut from it.
+		coverage: coverage(sheet).split("/"),
 	};
 	fs.writeFileSync(path.join(outJson, `${id}.json`), JSON.stringify(json).replace(/\],\[/g, "],\n[") + "\n");
 	await contactSheet(id, sheet, items);

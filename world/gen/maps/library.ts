@@ -41,6 +41,6 @@ export function library(): MapCanvas {
 	const solveig = NPCS.find((n) => n.id === "librarian")!;
 	c.add({ type: "npc", id: "librarian", character: "librarian", x: 12, y: 7, facing: "down", name: solveig.name, dialogue: "librarian" });
 	c.add({ type: "sign", x: 12, y: 3, text: "* The featured shelf. Every book on it is one of Thomas's projects, free for anyone to borrow." });
-	c.add({ type: "sign", x: 22, y: 5, text: "* A globe. Someone has drawn a tiny circle around Norway." });
+	c.add({ type: "sign", x: 22, y: 4, text: "* A globe. Someone has drawn a tiny circle around Norway." });
 	return c;
 }

@@ -40,8 +40,8 @@ export function overworld(): MapCanvas {
 		.path([[34, 27], [34, 42]]) // library
 		.path([[45, 26], [45, 30]]) // town hall
 		.path([[66, 18], [66, 42]]) // up to the radio hill
-		.path([[72, 37], [72, 42]]) // office
-		.path([[86, 37], [86, 42]]) // gym
+		.path([[71, 37], [71, 42]]) // office
+		.path([[87, 37], [87, 42]]) // gym
 		.path([[HARBOUR_X, 42], [HARBOUR_X, 62]], 3) // harbour road to the pier
 		.path([[8, 40], [8, 42]]) // villas
 		.path([[18, 40], [18, 42]])
@@ -133,7 +133,7 @@ export function overworld(): MapCanvas {
 	// --- Objects ---------------------------------------------------------------------------
 	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 2, facing: "up" });
 	c.add({ type: "spawn", id: "house_door", x: home.x, y: home.y, facing: "down" });
-	c.add({ type: "spawn", id: "office_door", x: 72, y: 37, facing: "down" });
+	c.add({ type: "spawn", id: "office_door", x: 71, y: 37, facing: "down" });
 	c.add({ type: "spawn", id: "boathouse_door", ...boathouseDoor, facing: "down" });
 	c.add({ type: "spawn", id: "library_door", ...libraryDoor, facing: "down" });
 	c.add({ type: "spawn", id: "kiosk_door", ...kioskDoor, facing: "down" });
@@ -151,7 +151,7 @@ export function overworld(): MapCanvas {
 	sign(c, 60, 35, "Kiosk. Snacks, newspapers and Randi's opinions, all free.");
 	sign(c, 40, 57, "Post Office. Letters for datagutt are delivered by Liv, rain or shine.");
 	sign(c, 10, 61, "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.");
-	sign(c, 71, 37, "Nettbureau. datagutt's day job, since 2021.");
+	sign(c, 69, 37, "Nettbureau. datagutt's day job, since 2021.");
 	sign(c, 85, 37, "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.");
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));

@@ -232,6 +232,11 @@ Goal: the real town, painted, in all seasons.
 - [ ] **M3.11** Library and farm from live data: one book per pinned repo (spine colour
       from the repo's language), contribution field with one tile per day and crop height
       from the level. *Done when* both reflect real data.
+- [ ] **M3.12** Closed buildings read as closed (user idea): a building whose interior
+      doesn't exist yet (the Nettbureau office for now) gets a visibly shut door (a
+      "Stengt / Closed" sign or boarded door) and a line when you try it ("It's locked.
+      A note says: back soon."), instead of a door that silently does nothing. *Done
+      when* every unlinked building door explains itself.
 
 ## M4: Live systems
 
@@ -288,6 +293,16 @@ Goal: the Celeste-level feel.
 - [ ] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus
       setting), payload under about 1 MB gzipped before interiors. *Done when* 60 fps on a
       mid-range Android phone and an iPhone, measured.
+- [ ] **M5.10** Interaction prompts (user idea): when you face something usable, a small
+      prompt shows the button and the action ("E  Talk", "E  Enter", "E  Read"), matching
+      the input in use (keyboard key, gamepad button, a tap hint on touch). *Done when*
+      every NPC, sign and door shows the right prompt on all three inputs.
+- [ ] **M5.11** Title screen v2 (user idea): a pixel-art sky and fjord built from the
+      game's own sprites where possible, with the energy of Sonic, Undertale and Terraria
+      title screens (parallax, drifting clouds, a hint of motion). Logo in a Geist Pixel
+      variant with a chunky drop shadow. "Press start" first, then a menu: Continue, New
+      game, Credits, and a clearly worded way to the plain site (not just "Journal", e.g.
+      "Read it as a normal website"). *Done when* the user approves it on desktop and phone.
 
 ## M6: Journal, accessibility and launch
 

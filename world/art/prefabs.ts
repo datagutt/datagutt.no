@@ -38,13 +38,13 @@ export const PREFABS = {
 	/** Farmhouse: white board-and-batten house whose garage reads as barn doors. */
 	farmhouse: { sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] },
 	/** Red-roofed log cabin: the gym. */
-	logCabin: single("houses", "Post_Apocalyptic_House_1", { aboveRows: 2, door: [7, 8], collision: [...Array(7).fill("#".repeat(12)), "."] }),
+	logCabin: single("houses", "Post_Apocalyptic_House_1", { aboveRows: 2, door: [8, 8], collision: [...Array(7).fill("#".repeat(12)), "."] }),
 	windmill: single("houses", "Post_Apocalyptic_House_Wind_Mill", { aboveRows: 5, collision: [".##."] }),
 	/** LimeZu calls it a windmill without its propeller: a lattice tower. */
 	radioTower: single("houses", "Post_Apocalyptic_House_Wind_Mill_No_Propeller", { aboveRows: 5, collision: [".##."] }),
 	/** The sheet stacks a second storey under the cottage; take only the top one. */
 	kiosk: { sheet: "villas", col: 23, row: 14, w: 4, h: 5, aboveRows: 2, door: [2, 4] },
-	office: { sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [3, 14], collision: [...Array(12).fill("#".repeat(10)), "."] },
+	office: { sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [2, 14], collision: [...Array(12).fill("#".repeat(10)), "."] },
 	postOffice: { sheet: "post", col: 16, row: 4, w: 8, h: 13, aboveRows: 2, door: [4, 12] },
 	townHall: { sheet: "houses", col: 0, row: 208, w: 18, h: 22, aboveRows: 3, door: [3, 21] },
 	library: { sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] },

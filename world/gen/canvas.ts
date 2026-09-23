@@ -36,6 +36,12 @@ export type Prefab = {
 	rowLayers?: LayerName[];
 	/** A deliberate crop of an object (say why); the cut check lets it through. */
 	allowCut?: string;
+	/**
+	 * How much of each tile the art fills ("#" solid, "+" a little, "." empty), rows
+	 * joined by "/", from the catalogue. Without explicit `collision`, only solid tiles
+	 * below `aboveRows` block, so empty margins and wisps don't make rooms tight.
+	 */
+	coverage?: string;
 };
 
 /** Tiled's tile transform flags, as bits of a TileRef's `flip` (and of a gid, shifted up). */
@@ -140,7 +146,10 @@ export class MapCanvas {
 				this.put(layer, x + tx, y + ty, { sheet: prefab.sheet, col: prefab.col + dx, row: prefab.row + dy, ...(t ? { flip: t.flags } : {}) });
 			}
 		}
-		const rows = prefab.collision ?? Array.from({ length: prefab.h - prefab.aboveRows }, () => "#".repeat(prefab.w));
+		const rows =
+			prefab.collision ??
+			prefab.coverage?.split("/").slice(prefab.aboveRows).map((r) => r.replace(/\+/g, ".")) ??
+			Array.from({ length: prefab.h - prefab.aboveRows }, () => "#".repeat(prefab.w));
 		const top = prefab.h - rows.length;
 		rows.forEach((row, dy) =>
 			[...row].forEach((c, dx) => {

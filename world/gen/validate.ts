@@ -37,7 +37,54 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 			problems.push(`${where} is on a blocked tile`);
 		}
 		if ((o.type === "sign" || o.type === "npc") && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
+		// A sign is read from next to it, so it must sit on something solid, not open floor.
+		if (o.type === "sign" && walkable(o.x, o.y)) problems.push(`${where} is on open floor; put it on the thing it describes`);
 		if (o.type === "door" && !walkable(o.x, o.y + 1)) problems.push(`${where} has a blocked tile in front of it`);
+	}
+	problems.push(...checkReachable(id, tmj, objects, walkable, occupied));
+	return problems;
+}
+
+/**
+ * Everything must be reachable on foot from where players arrive (the entrance, or the
+ * ferry in town): doors and spawns themselves, signs from a neighbouring tile, NPCs from
+ * a neighbour or across up to two tiles of counter (as WorldScene talks across counters).
+ */
+function checkReachable(
+	id: string,
+	tmj: Tmj,
+	objects: MapObject[],
+	walkable: (x: number, y: number) => boolean,
+	occupied: Set<string>,
+): string[] {
+	const spawns = objects.filter((o): o is Extract<MapObject, { type: "spawn" }> => o.type === "spawn");
+	const start = spawns.find((s) => s.id === "entrance") ?? spawns.find((s) => s.id === "ferry") ?? spawns[0];
+	if (!start) return [];
+	const open = (x: number, y: number) => walkable(x, y) && !occupied.has(`${x},${y}`);
+	const seen = new Set<string>([`${start.x},${start.y}`]);
+	const queue = [[start.x, start.y]];
+	while (queue.length) {
+		const [x, y] = queue.shift()!;
+		for (const [dx, dy] of NEIGHBOURS) {
+			const nx = x + dx;
+			const ny = y + dy;
+			const key = `${nx},${ny}`;
+			if (seen.has(key) || !open(nx, ny)) continue;
+			seen.add(key);
+			queue.push([nx, ny]);
+		}
+	}
+	const reached = (x: number, y: number) => seen.has(`${x},${y}`);
+	const fromSide = (o: MapObject) => NEIGHBOURS.some(([dx, dy]) => reached(o.x + dx, o.y + dy));
+	const acrossCounter = (o: MapObject) =>
+		NEIGHBOURS.some(([dx, dy]) => [2, 3].some((d) => reached(o.x + dx * d, o.y + dy * d) && !walkable(o.x + dx, o.y + dy)));
+	const problems: string[] = [];
+	for (const o of objects) {
+		if (o.type === "light") continue;
+		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
+		const ok =
+			o.type === "door" || o.type === "spawn" ? reached(o.x, o.y) : o.type === "npc" ? fromSide(o) || acrossCounter(o) : fromSide(o);
+		if (!ok) problems.push(`${where} can't be reached from ${start.id}`);
 	}
 	return problems;
 }

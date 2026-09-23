@@ -6,9 +6,16 @@ import fs from "node:fs";
 import type { LayerName, Prefab } from "../gen/canvas.ts";
 import { DERIVED, type SheetId } from "./sheets.ts";
 
-type SingleRow = [key: string, w: number, h: number, col: number | null, row: number | null];
+type SingleRow = [key: string, w: number, h: number, col: number | null, row: number | null, coverage?: string];
 type ObjectRow = [key: string | number, col: number, row: number, w: number, h: number];
-export type Catalog = { sheet: string; method: "singles" | "detected"; objects: ObjectRow[]; singles?: SingleRow[] };
+export type Catalog = { sheet: string; method: "singles" | "detected"; objects: ObjectRow[]; singles?: SingleRow[]; coverage?: string[] };
+
+/** Coverage of a rectangle cut from a sheet, in the same format as a single's. */
+export function sheetCoverage(sheet: string, col: number, row: number, w: number, h: number): string | undefined {
+	const rows = catalog(DERIVED[sheet]?.from ?? sheet)?.coverage;
+	if (!rows) return undefined;
+	return Array.from({ length: h }, (_, dy) => (rows[row + dy] ?? "").slice(col, col + w).padEnd(w, ".")).join("/");
+}
 
 const cache = new Map<string, Catalog | null>();
 
@@ -23,6 +30,11 @@ export function catalog(sheet: string): Catalog | null {
 export type SingleOptions = {
 	/** Top rows that draw over characters. */
 	aboveRows?: number;
+	/**
+	 * For tall things standing on the floor (a treadmill, a lamp, a tree): only the bottom
+	 * `base` rows block; the rows above draw over characters walking behind.
+	 */
+	base?: number;
 	/** Rows of "#" (blocked) and "." from the bottom up; default: everything below aboveRows. */
 	collision?: string[];
 	flat?: boolean;
@@ -35,11 +47,13 @@ export type SingleOptions = {
  * for exterior singles, its name ("Country_House").
  */
 export function single(sheet: SheetId | keyof typeof DERIVED, key: string | number, options: SingleOptions = {}): Prefab {
-	const base = DERIVED[sheet]?.from ?? sheet;
-	const row = catalog(base)?.singles?.find((s) => s[0] === String(key));
+	const baseSheet = DERIVED[sheet]?.from ?? sheet;
+	const row = catalog(baseSheet)?.singles?.find((s) => s[0] === String(key));
 	if (!row) throw new Error(`Single ${sheet}#${key} is not in the catalogue (world/art/catalog/${sheet}.json)`);
-	const [, w, h] = row;
-	return { sheet: `${sheet}#${key}`, col: 0, row: 0, w, h, aboveRows: options.aboveRows ?? 0, ...options };
+	const [, w, h, , , coverage] = row;
+	const { base, ...rest } = options;
+	const aboveRows = base !== undefined ? Math.max(0, h - base) : (options.aboveRows ?? 0);
+	return { sheet: `${sheet}#${key}`, col: 0, row: 0, w, h, coverage, ...rest, aboveRows };
 }
 
 /** A single that lies flat (rugs, mats): drawn under everything, walkable. */

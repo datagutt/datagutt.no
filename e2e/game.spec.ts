@@ -49,7 +49,7 @@ test.describe("world", () => {
 
 		// Step up onto the door tile, then straight back out.
 		await holdKey(page, "ArrowUp", 300);
-		await expect.poll(() => state(page)).toMatchObject({ map: "house", tile: { x: 9, y: 10 }, facing: "up" });
+		await expect.poll(() => state(page)).toMatchObject({ map: "house", tile: { x: 10, y: 11 }, facing: "up" });
 		await expect.poll(async () => (await state(page))?.moving).toBe(false);
 		await holdKey(page, "ArrowDown", 300);
 		await expect.poll(() => state(page), { timeout: 5_000 }).toMatchObject({ map: "town", tile: { x: 18, y: 40 } });
@@ -84,12 +84,12 @@ test.describe("world", () => {
 
 	test("reloading continues where the player left off", async ({ page }) => {
 		await page.goto("/?at=office&debug");
-		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "town", tile: { x: 72, y: 37 } });
+		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "town", tile: { x: 71, y: 37 } });
 		// Down the office path.
 		await holdKey(page, "ArrowDown", 300);
 		await expect.poll(async () => (await state(page))?.moving).toBe(false);
 		const moved = await state(page);
-		expect(moved?.tile).not.toEqual({ x: 72, y: 37 });
+		expect(moved?.tile).not.toEqual({ x: 71, y: 37 });
 
 		await page.goto("/?debug");
 		await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled({ timeout: 30_000 });
