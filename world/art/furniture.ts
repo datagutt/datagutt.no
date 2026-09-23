@@ -21,7 +21,29 @@ export const FURNITURE = {
 	stove: solid("kitchen", 8, 11, 2, 2),
 	/** A wooden table drawn across the middle of a 4×3 block. */
 	table: { sheet: "generic", col: 0, row: 5, w: 4, h: 3, aboveRows: 0, collision: [".##.", ".##."] },
-	chair: solid("kitchen", 4, 11, 1, 2),
+	/** Kitchen chairs drawn from the side: one faces right, the other left. */
+	chairFacingRight: solid("kitchen", 7, 11, 1, 2),
+	chairFacingLeft: solid("kitchen", 4, 13, 1, 2),
+	/** A low cabinet with a fruit bowl: the kitchen counter. */
+	counter: solid("living", 0, 11, 3, 2),
+	tvCabinet: solid("living", 5, 15, 2, 2),
+	palm: solid("living", 13, 21, 2, 3),
+	/**
+	 * A flat TV standing on its cabinet: the top row hangs on the wall (below the wall-top
+	 * border), the bottom row draws over the cabinet's top.
+	 */
+	tv: { sheet: "bedroom", col: 9, row: 12, w: 2, h: 2, aboveRows: 0, collision: [], rowLayers: ["below", "above"] },
+	/** Side-view sofas (a matching pair); each sprite sits to one side of its 2×4 block. */
+	sofaFacingRight: { sheet: "living", col: 9, row: 32, w: 2, h: 4, aboveRows: 0, collision: ["#.", "#.", "#."] },
+	sofaFacingLeft: { sheet: "living", col: 7, row: 32, w: 2, h: 4, aboveRows: 0, collision: [".#", ".#", ".#"] },
+	/** One long desk with three computers side by side. */
+	deskTriple: solid("classroom", 3, 10, 4, 3),
+	bedHeadboard: solid("bedroom", 9, 0, 2, 4),
+	dresser: solid("bedroom", 12, 9, 3, 3),
+	/** Window with grey-blue curtains, drawn straddling tile edges. */
+	curtainWindow: flat("generic", 8, 45, 3, 3),
+	shelf: solid("classroom", 4, 13, 2, 3),
+	plantTall: solid("living", 12, 0, 1, 3),
 	/** Staircase going up; walk up its middle column. */
 	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
 	/** Stairs going down, seen from above: a railing on three sides around the steps. */

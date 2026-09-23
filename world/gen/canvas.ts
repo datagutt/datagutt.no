@@ -28,6 +28,26 @@ export type Prefab = {
 	flat?: boolean;
 	/** The door tile, relative to the top-left corner. It stays walkable. */
 	door?: [number, number];
+	/** Per-row layers, top to bottom, overriding `aboveRows` and `flat`. */
+	rowLayers?: LayerName[];
+};
+
+/** Tiled's tile transform flags, as bits of a TileRef's `flip` (and of a gid, shifted up). */
+export const FLIP = { H: 1, V: 2, D: 4 } as const;
+
+/**
+ * How a prefab is turned when stamped. Mirroring suits most LimeZu sprites; rotations
+ * only suit flat things seen straight from above (rugs, tables), since the art is drawn
+ * in 3/4 view with light from one side. Prefer a sheet's own pre-drawn orientations.
+ */
+export type Transform = "flipX" | "flipY" | "rot90" | "rot180" | "rot270";
+
+const TRANSFORMS: Record<Transform, { flags: number; at: (dx: number, dy: number, w: number, h: number) => [number, number] }> = {
+	flipX: { flags: FLIP.H, at: (dx, dy, w) => [w - 1 - dx, dy] },
+	flipY: { flags: FLIP.V, at: (dx, dy, _w, h) => [dx, h - 1 - dy] },
+	rot90: { flags: FLIP.D | FLIP.H, at: (dx, dy, _w, h) => [h - 1 - dy, dx] },
+	rot180: { flags: FLIP.H | FLIP.V, at: (dx, dy, w, h) => [w - 1 - dx, h - 1 - dy] },
+	rot270: { flags: FLIP.D | FLIP.V, at: (dx, dy, w) => [dy, w - 1 - dx] },
 };
 
 export class MapCanvas {
@@ -97,18 +117,33 @@ export class MapCanvas {
 		return this;
 	}
 
-	/** Place a prefab with its top-left corner at (x, y). Transparent tiles still overwrite. */
-	stamp(prefab: Prefab, x: number, y: number): this {
+	/**
+	 * Place a prefab with its top-left corner at (x, y), optionally mirrored or rotated.
+	 * Transparent tiles still overwrite.
+	 */
+	stamp(prefab: Prefab, x: number, y: number, transform?: Transform): this {
+		const t = transform ? TRANSFORMS[transform] : null;
+		const place = (dx: number, dy: number): [number, number] => (t ? t.at(dx, dy, prefab.w, prefab.h) : [dx, dy]);
 		for (let dy = 0; dy < prefab.h; dy++) {
-			const layer: LayerName = dy < prefab.aboveRows ? "above" : prefab.flat ? "ground2" : "below";
+			const layer: LayerName = prefab.rowLayers?.[dy] ?? (dy < prefab.aboveRows ? "above" : prefab.flat ? "ground2" : "below");
 			for (let dx = 0; dx < prefab.w; dx++) {
-				this.put(layer, x + dx, y + dy, { sheet: prefab.sheet, col: prefab.col + dx, row: prefab.row + dy });
+				const [tx, ty] = place(dx, dy);
+				this.put(layer, x + tx, y + ty, { sheet: prefab.sheet, col: prefab.col + dx, row: prefab.row + dy, ...(t ? { flip: t.flags } : {}) });
 			}
 		}
 		const rows = prefab.collision ?? Array.from({ length: prefab.h - prefab.aboveRows }, () => "#".repeat(prefab.w));
 		const top = prefab.h - rows.length;
-		rows.forEach((row, dy) => [...row].forEach((c, dx) => c === "#" && this.block(x + dx, y + top + dy)));
-		if (prefab.door) this.block(x + prefab.door[0], y + prefab.door[1], false);
+		rows.forEach((row, dy) =>
+			[...row].forEach((c, dx) => {
+				if (c !== "#") return;
+				const [tx, ty] = place(dx, top + dy);
+				this.block(x + tx, y + ty);
+			}),
+		);
+		if (prefab.door) {
+			const [tx, ty] = place(prefab.door[0], prefab.door[1]);
+			this.block(x + tx, y + ty, false);
+		}
 		return this;
 	}
 

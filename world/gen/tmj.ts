@@ -2,7 +2,7 @@
 // every run; layers named `manual_*` in the previous file are the user's touch-ups in
 // Tiled and are carried over untouched, after the generated layers (DESIGN.md §10).
 import { toTiledObject } from "../../game/world/objects.ts";
-import { LAYERS, type MapCanvas } from "./canvas.ts";
+import { FLIP, LAYERS, type MapCanvas } from "./canvas.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, type TileRegistry } from "./registry.ts";
 
 const TILE = 16;
@@ -10,6 +10,18 @@ export const WORLD_TILESET = "world";
 
 type TmjLayer = { name: string; type: string; width?: number; height?: number; [key: string]: unknown };
 export type Tmj = { width: number; height: number; layers: TmjLayer[]; [key: string]: unknown };
+
+/** Tiled keeps a tile's transform in the top three bits of its gid. */
+export const GID_H = 0x80000000;
+export const GID_V = 0x40000000;
+export const GID_D = 0x20000000;
+const flipBits = (flip: number) => (flip & FLIP.H ? GID_H : 0) + (flip & FLIP.V ? GID_V : 0) + (flip & FLIP.D ? GID_D : 0);
+
+/** Split a gid into its tile id (0 = empty) and TileRef-style flip bits. */
+export function decodeGid(gid: number): { gid: number; flip: number } {
+	const flip = (gid >= GID_H ? FLIP.H : 0) | ((gid % GID_H) >= GID_V ? FLIP.V : 0) | ((gid % GID_V) >= GID_D ? FLIP.D : 0);
+	return { gid: gid % GID_D, flip };
+}
 
 export const isManual = (layer: { name: string }) => layer.name.startsWith("manual_");
 
@@ -36,7 +48,7 @@ export function canvasToTmj(
 	});
 
 	for (const name of LAYERS) {
-		const data = canvas.layers[name].map((ref) => (ref ? gid(registry.id(ref)) : 0));
+		const data = canvas.layers[name].map((ref) => (ref ? gid(registry.id(ref)) + flipBits(ref.flip ?? 0) : 0));
 		layers.push(tileLayer(name, data));
 	}
 	layers.push(tileLayer("collision", [...canvas.collision].map((b) => (b ? gid(COLLISION_ID) : 0)), false));

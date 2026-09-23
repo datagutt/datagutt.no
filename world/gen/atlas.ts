@@ -3,6 +3,7 @@
 import path from "node:path";
 import sharp from "sharp";
 import { DERIVED, SHEETS, type SheetId } from "../art/sheets.ts";
+import { FLIP } from "./canvas.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, parseKey, RESERVED } from "./registry.ts";
 
 const T = 16;
@@ -54,11 +55,20 @@ function recolor(src: Raw, swaps: Record<string, string>): Raw {
 	return { ...src, data };
 }
 
-/** Alpha-composite a 16×16 tile from `src` at pixel (sx, sy) into `dst` at (dx, dy). */
-export function blitTile(src: Raw, sx: number, sy: number, dst: Raw, dx: number, dy: number) {
+/**
+ * Alpha-composite a 16×16 tile from `src` at pixel (sx, sy) into `dst` at (dx, dy).
+ * `flip` uses Tiled's order: transpose (D), then mirror horizontally (H), then vertically (V).
+ */
+export function blitTile(src: Raw, sx: number, sy: number, dst: Raw, dx: number, dy: number, flip = 0) {
 	for (let py = 0; py < T; py++) {
 		for (let px = 0; px < T; px++) {
-			const si = ((sy + py) * src.width + sx + px) * 4;
+			// Undo the transform to find the source pixel for this destination pixel.
+			let ux = px;
+			let uy = py;
+			if (flip & FLIP.V) uy = T - 1 - uy;
+			if (flip & FLIP.H) ux = T - 1 - ux;
+			if (flip & FLIP.D) [ux, uy] = [uy, ux];
+			const si = ((sy + uy) * src.width + sx + ux) * 4;
 			const a = src.data[si + 3] / 255;
 			if (a === 0) continue;
 			const di = ((dy + py) * dst.width + dx + px) * 4;

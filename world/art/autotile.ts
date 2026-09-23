@@ -5,7 +5,11 @@
 // Given which cells belong to a region, pick the piece for each cell. Regions must be at
 // least 2 cells thick everywhere; `thicken` enforces that before tiling.
 
-export type TileRef = { sheet: string; col: number; row: number };
+/**
+ * One tile of a sheet. `flip` holds Tiled's per-tile transform bits (see FLIP in
+ * world/gen/canvas.ts); the same sheet tile keeps one id however it is turned.
+ */
+export type TileRef = { sheet: string; col: number; row: number; flip?: number };
 export type Block = { sheet: string; col: number; row: number };
 
 export type Piece =

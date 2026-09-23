@@ -23,6 +23,13 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     (terrain sets, cobble, plateau 9-slice with stairs, pier, fence, decals, crops),
     `prefabs.ts` (buildings with doors, trees, props). Landscape helpers in
     `world/gen/features.ts` (plateau, pier, forest, fence, meadow, building).
+  - Prefabs can be stamped mirrored or rotated (`stamp(p, x, y, "flipX" | "flipY" |
+    "rot90" | "rot180" | "rot270")`), written as Tiled gid flip bits that Phaser reads.
+    Prefer a sheet's own pre-drawn orientations (lighting stays right); rotate only
+    flat things. `rowLayers` puts individual prefab rows on chosen layers.
+  - Interior design rules from user review: each floor/room gets its own sprite set
+    (walls, floor, furniture), furniture faces different ways (chairs face tables, sofas
+    face the TV), and multi-part setups use joined sprites rather than repeated ones.
   - M3.8 started: datagutt's house has two floors (user request): `house` (living room,
     kitchen, scale model, stairs up) and `house-up` (Thomas at two desks, mini-fridge,
     bed, stairwell down), in `world/gen/maps/house.ts`. Rooms come from

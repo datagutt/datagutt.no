@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { parseMapObject, type TiledObject } from "../../game/world/objects.ts";
 import { blitTile, type SheetCache } from "./atlas.ts";
 import { CLEAR_ID, COLLISION_ID, parseKey } from "./registry.ts";
-import type { Tmj } from "./tmj.ts";
+import { decodeGid, type Tmj } from "./tmj.ts";
 
 const T = 16;
 
@@ -15,7 +15,8 @@ export function collisionOf(tmj: Tmj): Uint8Array {
 	const blocked = new Uint8Array(tmj.width * tmj.height);
 	for (const layer of tmj.layers) {
 		if (!isCollisionLayer(layer.name) || !Array.isArray(layer.data)) continue;
-		(layer.data as number[]).forEach((gid, i) => {
+		(layer.data as number[]).forEach((raw, i) => {
+			const { gid } = decodeGid(raw);
 			if (gid === COLLISION_ID + 1) blocked[i] = 1;
 			if (gid === CLEAR_ID + 1) blocked[i] = 0;
 		});
@@ -36,9 +37,10 @@ export async function renderTmj(
 		if (layer.type !== "tilelayer" || isCollisionLayer(layer.name) || !Array.isArray(layer.data)) continue;
 		const data = layer.data as number[];
 		for (let i = 0; i < data.length; i++) {
-			const ref = data[i] ? parseKey(tiles[data[i] - 1] ?? "") : null;
+			const { gid, flip } = decodeGid(data[i]);
+			const ref = gid ? parseKey(tiles[gid - 1] ?? "") : null;
 			if (!ref) continue;
-			blitTile(await sheets.get(ref.sheet), ref.col * T, ref.row * T, out, (i % tmj.width) * T, Math.floor(i / tmj.width) * T);
+			blitTile(await sheets.get(ref.sheet), ref.col * T, ref.row * T, out, (i % tmj.width) * T, Math.floor(i / tmj.width) * T, flip);
 		}
 	}
 
