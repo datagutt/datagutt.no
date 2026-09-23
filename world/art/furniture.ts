@@ -86,6 +86,16 @@ export const FURNITURE = {
 	noticeboard: flat("classroom", 0, 6, 2, 1),
 	writingDesk: solid("classroom", 5, 3, 2, 2),
 
+	// Smithy: a dark stone fireplace for the forge, racks and tool chests.
+	forge: solid("living", 14, 37, 2, 3),
+	dumbbellRack: solid("gym", 0, 14, 3, 2),
+	weightPlates: solid("gym", 9, 23, 2, 2),
+	toolChest: solid("worksite", 8, 13, 2, 3),
+	toolChestShut: solid("worksite", 8, 11, 2, 2),
+	timber: solid("worksite", 3, 13, 2, 3),
+	rebar: solid("worksite", 6, 13, 2, 3),
+	smallCabinet: solid("living", 3, 11, 2, 2),
+
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
 	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */

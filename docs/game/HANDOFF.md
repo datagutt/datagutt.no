@@ -60,6 +60,12 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Post office done (`world/gen/maps/postOffice.ts`): Posten-red walls, noticeboard
     and red letter box (both named in Liv's dialogue), writing desk, parcels behind a
     service counter, Liv behind it.
+  - Smithy done (`world/gen/maps/smithy.ts`): rustic planks, dark stone, the forge
+    (flickering), one rack or chest per skill category from smith.ink (the heavy rack is
+    a dumbbell rack with iron plates), the till by the door.
+  - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
+    cabinets for the v1.1 canvases-as-arcade-machines idea; the museum sheet has
+    paintings, statues and pillars for the town hall.
   - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
     pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
   - Every building has a notice-board sign with its name and a line of flavour
@@ -152,6 +158,11 @@ of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.
 **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
+
+- The user may buy LimeZu's **Modern Office** pack. The Nettbureau office interior and
+  the town hall's basement server room wait for it (desks, computers, server racks);
+  build the other interiors first. When it lands in datagutt-assets, add its sheets to
+  `world/art/sheets.ts`.
 
 - A fine-grained read-only token for that repo, stored in Vercel as `ASSETS_REPO_TOKEN`
   (M0.11).
