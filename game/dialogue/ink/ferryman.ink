@@ -7,13 +7,28 @@
     Walk with the arrow keys or WASD, or tap where you want to go. Press E, or tap someone, to talk.
 }
 - (topics)
-* [Who's {profile("firstName")}?]
+* [Who's {profile("firstName")}?] -> answer_1 ->
+    -> topics
+* [Is there a quicker way to see everything?] -> answer_2 ->
+    -> topics
++ {CHOICE_COUNT() == 0} [Can I ask you something again?] -> again
++ [Just looking around.] -> goodbye
+
+// Everything asked: ask any question again.
+= again
++ [Who's {profile("firstName")}?] -> answer_1 -> again
++ [Is there a quicker way to see everything?] -> answer_2 -> again
++ [Just looking around.] -> goodbye
+
+= answer_1
     {profile("name")}. {profile("tagline")}
     He'll tell you himself. He likes talking about it. His house is the red one up the road.
-    -> topics
-* [Is there a quicker way to see everything?]
+    ->->
+
+= answer_2
     If you'd rather read than walk, the Journal has everything in plain text. There's a button for it on the title screen.
-    -> topics
-+ [Just looking around.]
+    ->->
+
+= goodbye
     Good. There's plenty to look at. Most of it is his fault. # nod
     -> END

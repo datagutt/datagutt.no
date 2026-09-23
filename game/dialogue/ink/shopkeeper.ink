@@ -7,15 +7,34 @@
     See the tip jar? That's {project_name("donate-chat")}, more or less.
 }
 - (topics)
-* [What's {project_name("donate-chat")}?]
+* [What's {project_name("donate-chat")}?] -> answer_1 ->
+    -> topics
+* [What does it run on?] -> answer_2 ->
+    -> topics
+* [Show me.] -> answer_3 ->
+    -> topics
++ {CHOICE_COUNT() == 0} [Can I ask you something again?] -> again
++ [Ha det!] -> goodbye
+
+// Everything asked: ask any question again.
+= again
++ [What's {project_name("donate-chat")}?] -> answer_1 -> again
++ [What does it run on?] -> answer_2 -> again
++ [Show me.] -> answer_3 -> again
++ [Ha det!] -> goodbye
+
+= answer_1
     {project_desc("donate-chat")}
-    -> topics
-* [What does it run on?]
+    ->->
+
+= answer_2
     {project_tech("donate-chat")}. I mostly care about the Vipps part.
-    -> topics
-* [Show me.]
+    ->->
+
+= answer_3
     Here you go. # link: project donate-chat
-    -> topics
-+ [Ha det!]
+    ->->
+
+= goodbye
     Ha det bra! Tell your streamer friends.
     -> END

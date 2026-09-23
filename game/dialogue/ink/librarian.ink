@@ -10,16 +10,36 @@
 * {repo_count() > 0} [What's on the featured shelf?]
     {repo_count()} books on the featured shelf. Here they are.
     -> shelf(0)
-* {repo_count() == 0} [Why is the featured shelf empty?]
+* {repo_count() == 0} [Why is the featured shelf empty?] -> answer_1 ->
+    -> topics
+* [Why give it all away?] -> answer_2 ->
+    -> topics
+* [Is there more?] -> answer_3 ->
+    -> topics
++ {CHOICE_COUNT() == 0} [Can I ask you something again?] -> again
++ [(Whisper) Thanks.] -> goodbye
+
+// Everything asked: ask any question again.
+= again
++ {repo_count() > 0} [What's on the featured shelf?] -> shelf(0)
++ {repo_count() == 0} [Why is the featured shelf empty?] -> answer_1 -> again
++ [Why give it all away?] -> answer_2 -> again
++ [Is there more?] -> answer_3 -> again
++ [(Whisper) Thanks.] -> goodbye
+
+= answer_1
     (Shh.) The books haven't arrived today. The Journal has the full list.
-    -> topics
-* [Why give it all away?]
+    ->->
+
+= answer_2
     Because someone gave him theirs first. That's how libraries work.
-    -> topics
-* [Is there more?]
+    ->->
+
+= answer_3
     Upstairs. Well, on GitHub. Same thing. # link: social github
-    -> topics
-+ [(Whisper) Thanks.]
+    ->->
+
+= goodbye
     (Shh.) Come back any time.
     -> END
 

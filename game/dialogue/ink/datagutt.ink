@@ -9,16 +9,35 @@
     {about(0)}
 }
 - (topics)
-* [What are you working on?]
+* [What are you working on?] -> answer_1 ->
+    -> topics
+* [What do you mostly use?] -> answer_2 ->
+    -> topics
+* [Where can I find you online?] -> answer_3 ->
+    -> topics
++ {CHOICE_COUNT() == 0} [Can I ask you something again?] -> again
++ [See you around.] -> goodbye
+
+// Everything asked: ask any question again.
+= again
++ [What are you working on?] -> answer_1 -> again
++ [What do you mostly use?] -> answer_2 -> again
++ [Where can I find you online?] -> answer_3 -> again
++ [See you around.] -> goodbye
+
+= answer_1
     Right now? This town. {project_desc("portfolio")}, except you can walk around in it.
     The little model on the table is the whole town. You're standing in it, which makes this a bit meta.
-    -> topics
-* [What do you mostly use?]
+    ->->
+
+= answer_2
     {about(1)}
-    -> topics
-* [Where can I find you online?]
+    ->->
+
+= answer_3
     I'm {profile("handle")} pretty much everywhere. GitHub is where the code lives. # link: social github
-    -> topics
-+ [See you around.]
+    ->->
+
+= goodbye
     Have a look around. Everyone here knows something about me, which is a little embarrassing.
     -> END

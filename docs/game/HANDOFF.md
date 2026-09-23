@@ -143,6 +143,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   same recolour as the sprite), `# nod` / `# shake` Ink tags.
 - M2.4 done: wood-and-parchment dialogue box (nine-slice of `ui/frame.png`, cropped
   from LimeZu Modern UI style 1 at 58,129 28×29), name tab, punctuation pauses.
+- Dialogue can be re-asked (user idea): once every question is used, "Can I ask you
+  something again?" opens an `again` menu of all questions; answers are `answer_n`
+  tunnel stitches. Follow that shape when writing new NPCs (main.ink explains it).
 - NPC dialogue uses the **topics pattern** (see `main.ink`): once-only questions return
   to a `(topics)` hub, a sticky `+` choice ends. The user reported that the old one-shot
   choices hid content; never go back to that.

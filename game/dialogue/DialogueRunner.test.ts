@@ -140,4 +140,28 @@ describe("DialogueRunner", () => {
 		empty.start("featured_shelf");
 		expect(read(empty).lines[0]).toContain("bare today");
 	});
+
+	it("offers every question again once all have been asked", () => {
+		const runner = new DialogueRunner(json, ctx);
+		runner.start("ferryman");
+		let last = read(runner).last;
+		// Ask both questions.
+		for (const q of ["Is there a quicker way to see everything?"]) {
+			runner.choose(choicesOf(last).indexOf(q));
+			last = read(runner).last;
+		}
+		runner.choose(choicesOf(last).findIndex((c) => c.startsWith("Who's")));
+		last = read(runner).last;
+		expect(choicesOf(last)).toEqual(["Can I ask you something again?", "Just looking around."]);
+
+		runner.choose(0);
+		last = read(runner).last;
+		expect(choicesOf(last)).toHaveLength(3);
+		runner.choose(choicesOf(last).indexOf("Is there a quicker way to see everything?"));
+		const again = read(runner);
+		expect(again.lines.join(" ")).toContain("Journal");
+		// Back to the same menu afterwards.
+		expect(choicesOf(again.last)).toHaveLength(3);
+	});
 });
+
