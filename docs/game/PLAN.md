@@ -209,12 +209,16 @@ Goal: the real town, painted, in all seasons.
 - [x] **M3.5** Render-to-PNG: `pnpm world:render` writes `world/out/<map>.png` (and
       per-season variants) for visual review. *Done when* Claude can view every map.
       (`--grid`, `--objects`, `--collision` overlays; seasons arrive with M3.9.)
-- [ ] **M3.6** Validator: doors point at existing maps and spawns, every NPC and stamp
+- [x] **M3.6** Validator: doors point at existing maps and spawns, every NPC and stamp
       id exists, spawn points are walkable, all places are reachable from the dock,
       warns on edits to generated layers. *Done when* in `pnpm build`. (Started:
       `world/gen/validate.ts` runs in `world:gen`/`world:check` and catches objects on
       blocked tiles, unreachable signs and NPCs, blocked door fronts and stacked objects.
-      Door targets and reachability from the dock are still to do.)
+      `pnpm assets` fails on doors to unknown maps or spawns and NPCs without a dialogue
+      knot; every map checks that everything is reachable from where players arrive (the
+      ferry in town, the entrance indoors); `world:check` fails when committed maps are
+      stale, which also catches hand edits to generated layers; `cuts.ts` stops prefabs
+      that slice a sprite.)
 - [x] **M3.7** Overworld: dock and harbour, town square, datagutt's street, hill with
       radio tower, farm field, forest edge, fjord and cliffs. Iterate on renders until it
       looks good. *Done when* the user approves the overworld render. (Approved
@@ -232,11 +236,13 @@ Goal: the real town, painted, in all seasons.
 - [ ] **M3.11** Library and farm from live data: one book per pinned repo (spine colour
       from the repo's language), contribution field with one tile per day and crop height
       from the level. *Done when* both reflect real data.
-- [ ] **M3.12** Closed buildings read as closed (user idea): a building whose interior
+- [x] **M3.12** Closed buildings read as closed (user idea): a building whose interior
       doesn't exist yet (the Nettbureau office for now) gets a visibly shut door (a
       "Stengt / Closed" sign or boarded door) and a line when you try it ("It's locked.
       A note says: back soon."), instead of a door that silently does nothing. *Done
-      when* every unlinked building door explains itself.
+      when* every unlinked building door explains itself. (`building(..., { closed })`:
+      the door stays shut with a line of its own and a CLSD sign beside it; the office and
+      the four townsfolk villas use it.)
 
 ## M4: Live systems
 

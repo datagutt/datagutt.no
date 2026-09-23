@@ -3,6 +3,7 @@ import type { MapObject } from "../../game/world/objects.ts";
 import { variant } from "../art/autotile.ts";
 import { DECALS, DOOR, FENCE, PIER, PLATEAU } from "../art/palette.ts";
 import { PREFABS, type PrefabId } from "../art/prefabs.ts";
+import { single } from "../art/singles.ts";
 import { seeded } from "./random.ts";
 import type { MapCanvas, Prefab } from "./canvas.ts";
 import { noise2, Region } from "./layout.ts";
@@ -105,7 +106,7 @@ export function building(
 	id: PrefabId,
 	x: number,
 	y: number,
-	options: { link?: { toMap: string; toSpawn: string }; addDoor?: boolean } = {},
+	options: { link?: { toMap: string; toSpawn: string }; addDoor?: boolean; closed?: string } = {},
 ): { x: number; y: number } {
 	const prefab = PREFABS[id] as Prefab;
 	c.stamp(prefab, x, y);
@@ -113,8 +114,16 @@ export function building(
 	const door = { x: x + prefab.door[0], y: y + prefab.door[1] };
 	if (options.addDoor) c.put("below", door.x, door.y - 1, DOOR[0]).put("below", door.x, door.y, DOOR[1]);
 	if (options.link) c.add({ type: "door", x: door.x, y: door.y, ...options.link } satisfies MapObject);
+	if (options.closed) {
+		// No interior (yet): the door stays shut, says why, and a CLOSED sign hangs by it.
+		c.block(door.x, door.y).add({ type: "sign", x: door.x, y: door.y, text: options.closed });
+		c.stamp(CLOSED_SIGN, door.x + 1, door.y - 1);
+	}
 	return { x: door.x, y: door.y + 1 };
 }
+
+/** The "CLSD" sign, hung on the wall beside a shut door (over the building's own tiles). */
+const CLOSED_SIGN: Prefab = { ...single("grocery", 1), collision: [], rowLayers: ["above", "above"] };
 
 export { variant };
 

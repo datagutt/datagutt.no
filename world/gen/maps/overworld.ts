@@ -73,17 +73,18 @@ export function overworld(): MapCanvas {
 	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
-	building(c, "office", 69, 22);
+	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
+	building(c, "office", 69, 22, { closed: "Locked. A note on the door says: \"Back soon. Out testing new office furniture.\"" });
 	const gymDoor = building(c, "logCabin", 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
-	building(c, "villaOrange", 6, 29);
+	building(c, "villaOrange", 6, 29, { closed: "Nobody answers. Through the window: a very tidy living room, and a cat judging you." });
 	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
-	building(c, "villaBlue", 26, 29);
+	building(c, "villaBlue", 26, 29, { closed: "Nobody's home. A note says the neighbours are out on the fjord." });
 	const kioskDoor = building(c, "kiosk", 57, 30, { link: { toMap: "kiosk", toSpawn: "entrance" } });
 	const postDoor = building(c, "postOffice", 37, 44, { link: { toMap: "post-office", toSpawn: "entrance" } });
 	const boathouseDoor = building(c, "boathouse", 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
 	pier(c, 22, shore[22] - 1, shore[22] + 3);
-	building(c, "villaPurple", 64, 45);
-	building(c, "villaBrown", 76, 45);
+	building(c, "villaPurple", 64, 45, { closed: "You knock. Somewhere inside, a radio is playing. Nobody comes." });
+	building(c, "villaBrown", 76, 45, { closed: "Locked. There's a pair of skis leaning by the door, waiting for winter." });
 
 	// --- Harbour -------------------------------------------------------------------------
 	const pierTop = shore[HARBOUR_X] - 1;
