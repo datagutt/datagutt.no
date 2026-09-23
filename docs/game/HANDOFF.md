@@ -4,6 +4,16 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M4.6 cleanup done: M4 is complete except M4.4's real-phone check.** The reactions
+  overlay (`components/reactions`, `hooks/useReactionsSocket.ts`, `lib/reactions`,
+  `/api/reactions/ws`, the `rx-*` CSS), the Lanyard card and `react-use-lanyard` are
+  gone; `/legacy` keeps its other sections. `lib/lanyard.ts` only resolves the Discord id.
+  CLAUDE.md's "Live systems (game)" section replaces the old card and overlay notes.
+  - A stale `.next/dev/types` from an old `next dev` run can still import the deleted
+    route and fail `pnpm build`'s type check; delete that folder (it is generated).
+  - Thomas no longer points at the model on the table in "What are you working on?"
+    (he can be anywhere now), and the model by the door is a scale model of the house,
+    not the town (user).
 - **M4.5 emotes done.** Holding interact for 0.4 s (keys or pad A; a press still
   interacts at once) or a long press on the player opens `game/ui/EmoteWheel.ts`, a ring
   of `GHOST_EMOTES` around the head: arrows move round it, interact picks, back or a tap
@@ -276,14 +286,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-Tick M4.4 once the user has seen `?debug&ghosts=20` run smoothly on a real phone. Then
-M4.6: remove the old reactions overlay, `/api/reactions/ws`, `lib/reactions`,
-`useReactionsSocket` and `react-use-lanyard`, and update CLAUDE.md's architecture notes
-(they still describe the reactions overlay and the Lanyard card). Still
-open in M3: two interiors wait on art, the Nettbureau office (Modern Office pack) and the
-town hall basement server room (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
-mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user
-asks.
+M4 is done apart from ticking M4.4, which needs the user to see `?debug&ghosts=20` run
+smoothly on a real phone (`pnpm game:dev`, open it on the phone over the LAN). Next is
+M5 (atmosphere and polish; M5.10 interaction prompts and M5.11 title screen v2 are the
+user's own ideas). Still open in M3: two interiors wait on art, the Nettbureau office
+(Modern Office pack) and the town hall basement server room (rack art). The e2e passport
+test picks the goodbye once "ask again" appears; keep that in mind when changing dialogue
+flow. **M0.11 (Vercel token) stays deferred** until the user asks, and ghosts can only be
+tried on a Vercel deployment or with `pnpm game:dev`.
 
 ## Blockers and things waiting on the user
 

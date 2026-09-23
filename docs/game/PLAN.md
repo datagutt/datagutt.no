@@ -280,7 +280,7 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       disable send and receive. *Done when* emotes appear on both clients.
       (Hold interact about 0.4 s, or a long press on the player; `game/ui/EmoteWheel.ts`.
       "Other visitors" in Settings starts or stops the socket; `rx_off` means no client.)
-- [ ] **M4.6** Remove the old reactions overlay, `useReactionsSocket`, `lib/reactions`
+- [x] **M4.6** Remove the old reactions overlay, `useReactionsSocket`, `lib/reactions`
       pieces that are no longer used, and `react-use-lanyard`. *Done when* no dead code is
       left and the build passes.
 

@@ -38,7 +38,6 @@
     "react": "19.3.0",
     "react-activity-calendar": "^3.1.1",
     "react-dom": "19.3.0",
-    "react-use-lanyard": "^0.3.6",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.21.0"
   },

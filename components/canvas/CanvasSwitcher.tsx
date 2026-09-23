@@ -117,7 +117,6 @@ export default function CanvasSwitcher({
 
 			{/* Switcher pills */}
 			<div
-				data-no-reactions
 				className="absolute top-6 right-6 z-50 flex gap-1.5 flex-wrap justify-end max-w-[60vw] p-2 rounded-lg bg-gradient-to-bl from-black/60 via-black/30 to-black/10 backdrop-blur-[2px] border border-primary-900/20"
 			>
 				{BACKGROUNDS.map((bg) => (

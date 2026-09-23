@@ -151,8 +151,8 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
   real time, with emote bubbles. No chat.
 - Presence is sent only on tile change. One room per map. At most about 20 ghosts
   drawn per map. Ghosts fade after 30 s idle. Random names such as "Traveller from Bergen".
-- Transport stays on the existing Vercel WebSocket route (`/api/reactions/ws`, to be
-  renamed). The single-instance fan-out limit is accepted; upgrade path is Upstash Redis
+- Transport is a Vercel WebSocket route (`/api/world/ws`, which replaced the reactions
+  route). The single-instance fan-out limit is accepted; upgrade path is Upstash Redis
   pub/sub or a Cloudflare Durable Object per room.
 - Kill switch `rx_off` stays, plus a "Show other visitors" setting.
 

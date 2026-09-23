@@ -12,7 +12,6 @@ import { profile } from "@/content/profile";
 const [roleHead, ...roleRest] = profile.role.split(" ");
 const roleTail = roleRest.join(" ");
 
-const LanyardCard = dynamic(() => import("./LanyardCard"), { ssr: false });
 
 type HeroProps = {
 	initialBg: BgId;
@@ -204,7 +203,6 @@ export default function Hero({ initialBg }: HeroProps) {
 					<Socials />
 				</div>
 			</div>
-			<LanyardCard className="absolute bottom-28 right-8 md:bottom-32 md:right-16 lg:right-24 z-40 w-[18rem] max-w-[calc(100vw-4rem)] hidden md:block" />
 			<CanvasSwitcher
 				initialBg={initialBg}
 				burstActive={burstActive}

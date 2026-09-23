@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import OpenSource from "@/components/OpenSource";
 import Stats from "@/components/Stats";
-import ReactionsOverlay from "@/components/reactions/ReactionsOverlay";
 import { getPinnedRepos, getGitHubStats, getContributions } from "@/lib/github";
 import type { BgId } from "@/components/canvas/CanvasSwitcher";
 
@@ -80,7 +79,6 @@ export default function Home() {
 			<Suspense fallback={null}>
 				<Footer />
 			</Suspense>
-			<ReactionsOverlay />
 			<ClientLogger />
 		</>
 	);
