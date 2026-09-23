@@ -14,11 +14,18 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   by `floorPatch` carpets and a glass wall across the middle. Six coworkers with one
   random line each (`game/dialogue/ink/office.ink`, recipes in the manifest with
   `portrait: false`); they are not in the NPCS roster, so they give no stamp.
+  Desks are built the way LimeZu's own office designs build them (`officeDesk`): a desk
+  top cut from the sheet, a computer set laid over it, a chair seen from behind. The
+  Modern Office singles 323 and 328 are printer desks, not computers (`printerDesk`).
+  The user asked for a looser layout (pairs, rows out of step, bags on the floor), plus
+  arcade machines and ping pong from the basement sheet in the lounge.
 - **Town hall basement (M3.8), waiting on the user's review.** The plain door by the
   stage now leads down (map `town-hall-basement`, built in `townHall.ts`): the municipal
-  IT department, not a server room. Racks along the back wall (Modern Office's dark
-  cabinets, `serverRack`), a row of printers, the helpdesk, and Fido the server in the
-  corner. Bjørn moved down there. One e2e run of three had a single failure that did not
+  IT department, not a server room. An escalator (the upstairs sheet's grey one, 3 wide
+  so the player rides its middle column; the basement sheet's own stairs are 2 wide and
+  would put the player half a tile off) with a sign about the IT budget. Racks and
+  printers along the back wall (Modern Office's dark cabinets, `serverRack`), the
+  helpdesk, and Fido the server in the corner. Bjørn moved down there. One e2e run of three had a single failure that did not
   come back; watch for a flaky test.
 - **M5.9 performance pass, first half** (the real-phone measuring is the user's).
   - Payload for a first visit, gzipped: the game chunk (Phaser and the game) about

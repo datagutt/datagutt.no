@@ -7,6 +7,7 @@ import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
 import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
+import { officeDesk } from "./office.ts";
 import { exitDoor, floorPatch, FLOORS, room, WALLS } from "../interior.ts";
 
 export function townHall(): MapCanvas {
@@ -40,49 +41,43 @@ export function townHall(): MapCanvas {
 }
 
 /**
- * The municipal IT department in the basement: grey walls, dark carpet, no windows. Racks
- * humming along the back wall, a row of printers (the real job), the helpdesk, and Fido,
- * the server in the corner.
+ * The municipal IT department in the basement: grey walls, dark carpet, no windows, and
+ * an escalator down from the hall. Racks humming along the back wall with the printers
+ * (the real job) between them, the helpdesk, and Fido, the server in the corner.
  */
 export function townHallBasement(): MapCanvas {
-	const c = new MapCanvas(24, 14);
-	const r = { x: 2, y: 1, w: 20, h: 11 };
+	const c = new MapCanvas(28, 14);
+	const r = { x: 2, y: 1, w: 24, h: 11 };
 	room(c, r, { wall: WALLS.officeGrey, floor: FLOORS.carpetDark });
-	floorPatch(c, { x: 14, y: 3, w: 8, h: 4 }, FLOORS.carpetGrey);
+	floorPatch(c, { x: 14, y: 3, w: 6, h: 3 }, FLOORS.carpetGrey);
 
-	// Stairs up in the back-left corner; the second step is the door back up.
-	c.stamp(F.stairsUp, 2, 1);
+	// The escalator in the back-left corner; its second step is the door back up.
+	c.stamp(F.escalatorUp, 2, 1);
 	c.block(3, 2, false).add({ type: "door", x: 3, y: 2, toMap: "town-hall", toSpawn: "basement" });
-	c.add({ type: "spawn", id: "stairs", x: 3, y: 5, facing: "down" });
+	c.add({ type: "spawn", id: "stairs", x: 3, y: 6, facing: "down" });
 
-	// Back wall: the racks, the ticket board, and Fido alone in the corner.
+	// Back wall: the racks, the printers on their own patch of carpet, the ticket board,
+	// the water cooler, and Fido alone in the corner.
 	c.stamp(F.serverRackLow, 6, 1).stamp(F.serverRack, 8, 1).stamp(F.serverRack, 10, 1).stamp(F.serverRackLow, 12, 1);
 	for (const x of [7, 9, 11, 13]) c.add(glow(x, 3, GLOWS.greenSpill));
-	c.stamp(F.whiteboardChart, 15, 0).stamp(F.waterCooler, 18, 1);
-	c.stamp(F.serverRack, 20, 1);
-	c.add(glow(21, 3, GLOWS.greenSpill));
+	c.stamp(F.printerBig, 14, 1).stamp(F.printer, 16, 1).stamp(F.printerBig, 18, 1);
+	c.stamp(F.whiteboardChart, 20, 0).stamp(F.waterCooler, 22, 1);
+	c.stamp(F.serverRack, 24, 1);
+	c.add(glow(25, 3, GLOWS.greenSpill));
 
-	// The printers, in a row along the right, on their own carpet.
-	c.stamp(F.printerBig, 14, 4).stamp(F.printer, 16, 4).stamp(F.printerBig, 18, 4);
-
-	// The helpdesk: two rows of workstations.
-	for (const [x, y] of [
-		[4, 8],
-		[7, 8],
-		[10, 8],
-		[15, 9],
-		[18, 9],
-	]) {
-		c.stamp(F.officeChair, x + 1, y - 2).stamp(F.workstation, x, y);
-		shadowUnder(c, F.workstation, x, y, true);
-		c.add(glow(x, y + 1, GLOWS.screen));
-	}
-	c.stamp(F.plantTall, 2, 9);
+	// The helpdesk.
+	officeDesk(c, 5, 7, F.deskGrey, F.setupPhone);
+	officeDesk(c, 8, 7, F.deskGrey, F.setupDual);
+	officeDesk(c, 13, 8, F.deskStriped, F.setupPrinter, F.chairBackOrange);
+	officeDesk(c, 19, 7, F.deskGrey, F.setupLamp);
+	officeDesk(c, 22, 8, F.deskGrey, F.setupPhone);
+	c.stamp(F.backpackGrey, 11, 8).stamp(F.plantTall, 2, 9);
 
 	const bjorn = NPCS.find((n) => n.id === "sysadmin")!;
-	c.add({ type: "npc", id: "sysadmin", character: "sysadmin", x: 13, y: 7, facing: "down", name: bjorn.name, dialogue: "sysadmin" });
-	c.add({ type: "sign", x: 16, y: 2, text: "* The ticket board. OPEN: 4012. Under it, in marker: \"most of them are the printer\"." });
-	c.add({ type: "sign", x: 21, y: 3, text: "* A server with a name tag: FIDO. A dog biscuit sits on top of it. Best not to touch." });
-	c.add({ type: "sign", x: 17, y: 6, text: "* The printers. One of them says PC LOAD LETTER. Nobody knows what that means." });
+	c.add({ type: "npc", id: "sysadmin", character: "sysadmin", x: 16, y: 6, facing: "down", name: bjorn.name, dialogue: "sysadmin" });
+	c.add({ type: "sign", x: 4, y: 4, text: "* An escalator. The council spent the IT budget for 2019 on it. It only goes up." });
+	c.add({ type: "sign", x: 17, y: 3, text: "* The printers. One of them says PC LOAD LETTER. Nobody knows what that means." });
+	c.add({ type: "sign", x: 21, y: 2, text: "* The ticket board. OPEN: 4012. Under it, in marker: \"most of them are the printer\"." });
+	c.add({ type: "sign", x: 25, y: 3, text: "* A server with a name tag: FIDO. A dog biscuit sits on top of it. Best not to touch." });
 	return c;
 }

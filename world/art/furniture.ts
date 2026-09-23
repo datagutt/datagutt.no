@@ -155,6 +155,8 @@ export const FURNITURE = {
 	rowboatUp: single("vehicles", "Boat_1_Down_1", { collision: [] }),
 	/** Staircase going up; walk up its middle column. */
 	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
+	/** A grey escalator going up, with a landing plate at its foot; ride up its middle column. */
+	escalatorUp: { sheet: "upstairs", col: 0, row: 22, w: 3, h: 5, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#", "..."] },
 	/** Stairs going down, seen from above: a railing on three sides around the steps. */
 	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
 	/**
@@ -167,9 +169,31 @@ export const FURNITURE = {
 	stairwellPostLeft: { sheet: "upstairs", col: 9, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
 	stairwellPostRight: { sheet: "upstairs", col: 11, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
 	// Modern Office pack (the Nettbureau office). Its singles are all 2×3 canvases.
-	/** A desk with a monitor, a printer and papers, seen from the chair's side. */
-	workstation: single("workplace", 323),
-	workstationPale: single("workplace", 328),
+	/** A desk with a printer, a fax and papers, seen from the chair's side. */
+	printerDesk: single("workplace", 323),
+	printerDeskPale: single("workplace", 328),
+	// LimeZu's office desks are built in layers: a desk top, a computer set laid on it (no
+	// collision of its own) and a chair pulled up in front, seen from behind. `officeDesk`
+	// in world/gen/maps/office.ts puts them together.
+	deskTan: solid("workplace", 7, 28, 3, 2),
+	deskGrey: solid("workplace", 10, 28, 3, 2),
+	deskStriped: solid("workplace", 7, 30, 3, 2),
+	deskLilac: solid("workplace", 1, 30, 3, 2),
+	deskWeave: solid("workplace", 4, 30, 3, 2),
+	/** Computer sets for a desk top: a phone and one screen, two screens, a lamp, and so on. */
+	setupPhone: { sheet: "workplace", col: 7, row: 26, w: 3, h: 2, aboveRows: 0, collision: [] },
+	setupDual: { sheet: "workplace", col: 10, row: 26, w: 3, h: 2, aboveRows: 0, collision: [] },
+	setupLamp: { sheet: "workplace", col: 13, row: 26, w: 3, h: 2, aboveRows: 0, collision: [] },
+	setupDualPhoto: { sheet: "workplace", col: 13, row: 28, w: 3, h: 2, aboveRows: 0, collision: [] },
+	setupPrinter: { sheet: "workplace", col: 10, row: 30, w: 3, h: 2, aboveRows: 0, collision: [] },
+	chairBack: solid("workplace", 2, 8, 1, 2),
+	chairBackOrange: solid("workplace", 2, 10, 1, 2),
+	backpackBlue: single("workplace", 329),
+	backpackRed: single("workplace", 331),
+	backpackGrey: single("workplace", 333),
+	backpackTan: single("workplace", 335),
+	/** An espresso machine on a counter, cups and a grinder beside it. */
+	coffeeBar: single("workplace", 320),
 	officeChair: single("workplace", 112),
 	whiteboard: single("workplace", 170, { collision: [] }),
 	whiteboardChart: single("workplace", 171, { collision: [] }),
@@ -184,6 +208,9 @@ export const FURNITURE = {
 	beanBagBlue: single("workplace", 196),
 	beanBagYellow: single("workplace", 199),
 	loungeSofa: single("workplace", 205),
+	pingPong: single("basement", 241),
+	arcade: single("basement", 218),
+	arcadeRed: single("basement", 219),
 	loungeSofaWide: single("workplace", 200),
 	/** A white desk run and its corner, for reception. */
 	deskRun: single("workplace", 263),
