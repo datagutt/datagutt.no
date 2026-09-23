@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { credits } from "./credits";
 import { experience } from "./experience";
 import { places, placeFromSearch } from "./places";
 import { projects } from "./projects";
@@ -31,6 +32,14 @@ describe("content", () => {
 			const ids = list.map((x) => x.id);
 			expect(new Set(ids).size).toBe(ids.length);
 		}
+	});
+});
+
+describe("credits", () => {
+	// The art licence requires crediting LimeZu wherever the credits show (START menu,
+	// finale roll, Journal footer: all read this module).
+	it("credit LimeZu for the art", () => {
+		expect(credits.sections.find((s) => s.heading === "Art")?.lines.join(" ")).toMatch(/LimeZu/);
 	});
 });
 

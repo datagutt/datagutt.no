@@ -357,8 +357,10 @@ Goal: ship v1 to production.
       the game; entering the game focuses it; the game stops capturing keys and ignores
       them while a page control has focus. e2e/a11y.spec.ts plays by keyboard alone and
       runs axe on the title.)
-- [ ] **M6.4** Credits: LimeZu attribution (required) in the START menu, the finale and
+- [x] **M6.4** Credits: LimeZu attribution (required) in the START menu, the finale and
       the Journal footer; CC0 audio sources. *Done when* visible in all three.
+      (All three read `content/credits.ts`; a test keeps the LimeZu line. No recordings are
+      used yet, so there are no CC0 sources to list; CREDITS.md says where they go.)
 - [ ] **M6.5** Remove the legacy site: `app/_legacy/`, old section components, canvases
       that were not ported, GSAP if unused, `data/`. Update `CLAUDE.md` to describe the new
       architecture. *Done when* no references remain and `pnpm build` passes.
