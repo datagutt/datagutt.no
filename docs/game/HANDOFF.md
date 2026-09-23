@@ -49,6 +49,10 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     with a rowboat running in under the bottom wall, fishing gear, the Guac desk, and the
     set (green screen, mirrored softboxes, camera). Sunniva moved in; the town door is
     wired (`boathouse_door` spawn).
+  - Library done (`world/gen/maps/library.ts`): teal walls, herringbone parquet,
+    bookcases (`bookcase(kind, wood)`), end-on aisle shelves, reading tables, globe,
+    lit featured shelf (for M3.11), Solveig behind a reception desk. Talking works
+    across counters (Pokémon style): a blocked, empty tile ahead with an NPC behind it.
   - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
     pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
   - Every building has a notice-board sign with its name and a line of flavour
@@ -134,7 +138,7 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8: the remaining interiors (library: classroom sheet shelves; kiosk: grocery; town hall + basement server
+M3.8: the remaining interiors (kiosk: grocery; town hall + basement server
 room; office; smithy; farmhouse; post office; radio hut), moving each NPC indoors as its
 interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).

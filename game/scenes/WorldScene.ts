@@ -349,7 +349,13 @@ export class WorldScene extends Phaser.Scene {
 	}
 
 	private interactAhead() {
-		this.interactWith(neighbour(this.player.mover.tile, this.player.mover.facing));
+		const { tile, facing } = this.player.mover;
+		const ahead = neighbour(tile, facing);
+		// Across a counter, Pokémon style: a blocked tile with nothing on it, and someone
+		// standing right behind it.
+		const beyond = neighbour(ahead, facing);
+		const counter = !this.npcAt(ahead) && !this.signs.has(tileKey(ahead)) && !this.grid.isWalkable(ahead.x, ahead.y, PLAYER_ID);
+		this.interactWith(counter && this.npcAt(beyond) ? beyond : ahead);
 	}
 
 	private interactWith(p: Point) {

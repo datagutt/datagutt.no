@@ -59,6 +59,15 @@ export const FURNITURE = {
 	tackleBoxYellow: solid("fishing", 0, 6, 2, 2),
 	rodRack: solid("fishing", 7, 12, 2, 3),
 	crate: solid("fishing", 4, 5, 2, 2),
+	// Library.
+	/** A long bookcase seen end-on: stand several in a row to make aisles. */
+	aisleShelf: solid("classroom", 12, 22, 1, 4),
+	globe: solid("classroom", 13, 1, 1, 2),
+	/** A reception desk seen from the front; talk across it. */
+	receptionDesk: solid("conference", 0, 4, 5, 1),
+	chairDarkRight: solid("kitchen", 5, 11, 1, 2),
+	chairDarkLeft: solid("kitchen", 6, 13, 1, 2),
+
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
 	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */
@@ -67,3 +76,12 @@ export const FURNITURE = {
 	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 3, aboveRows: 0, collision: ["#.#", "#.#", "#.#"] },
 	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 3, aboveRows: 3, collision: [] },
 } satisfies Record<string, Prefab>;
+
+/**
+ * Library bookcases against a wall, three tiles tall: 3 or 2 wide (two 2-wide designs),
+ * in three woods (the classroom sheet's rows 13, 16 and 19).
+ */
+export function bookcase(kind: "wide" | "narrow" | "narrow2", wood: 0 | 1 | 2 = 0): Prefab {
+	const col = { wide: 0, narrow: 4, narrow2: 6 }[kind];
+	return solid("classroom", col, 13 + wood * 3, kind === "wide" ? 3 : 2, 3);
+}

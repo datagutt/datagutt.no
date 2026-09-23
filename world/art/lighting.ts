@@ -19,6 +19,7 @@ type Glow = Omit<Extract<LightObject, { shape: "glow" }>, "x" | "y" | "type" | "
 export const GLOWS = {
 	fire: { radius: 2.5, color: "ffae62", intensity: 0.5, flicker: true },
 	lamp: { radius: 2, color: "ffd08a", intensity: 0.45, flicker: false },
+	readingLamp: { radius: 2.4, color: "ffd08a", intensity: 0.2, flicker: false },
 	screen: { radius: 1.6, color: "78b4ff", intensity: 0.35, flicker: false },
 	onAir: { radius: 1.2, color: "ff4038", intensity: 0.55, flicker: false },
 	studio: { radius: 3, color: "fff4e0", intensity: 0.3, flicker: false },
