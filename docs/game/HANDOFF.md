@@ -13,8 +13,13 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   Customer service, reception (Ida) by the door, Growth and a lounge, departments marked
   by `floorPatch` carpets and a glass wall across the middle. Six coworkers with one
   random line each (`game/dialogue/ink/office.ink`, recipes in the manifest with
-  `portrait: false`); they are not in the NPCS roster, so they give no stamp. Next: the
-  town hall basement becomes an IT department (the user's idea) instead of a server room.
+  `portrait: false`); they are not in the NPCS roster, so they give no stamp.
+- **Town hall basement (M3.8), waiting on the user's review.** The plain door by the
+  stage now leads down (map `town-hall-basement`, built in `townHall.ts`): the municipal
+  IT department, not a server room. Racks along the back wall (Modern Office's dark
+  cabinets, `serverRack`), a row of printers, the helpdesk, and Fido the server in the
+  corner. Bjørn moved down there. One e2e run of three had a single failure that did not
+  come back; watch for a flaky test.
 - **M5.9 performance pass, first half** (the real-phone measuring is the user's).
   - Payload for a first visit, gzipped: the game chunk (Phaser and the game) about
     417 KB, the world atlas about 290 KB, sprites about 100 KB, the town map 25 KB, plus
@@ -386,9 +391,8 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 M4 is done apart from ticking M4.4, which needs the user to see `?debug&ghosts=20` run
 smoothly on a real phone (`pnpm game:dev`, open it on the phone over the LAN). Next is
 M5 (atmosphere and polish; M5.10 interaction prompts and M5.11 title screen v2 are the
-user's own ideas). Still open in M3: the user's review of the Nettbureau office, and the
-town hall basement, now an IT department (desks and screens from Modern Office, so no
-rack art is needed). The e2e passport
+user's own ideas). Still open in M3: the user's review of the Nettbureau office and the
+town hall basement IT department. The e2e passport
 test picks the goodbye once "ask again" appears; keep that in mind when changing dialogue
 flow. **M0.11 (Vercel token) stays deferred** until the user asks, and ghosts can only be
 tried on a Vercel deployment or with `pnpm game:dev`.

@@ -48,7 +48,7 @@ export function office(): MapCanvas {
 
 	// Back wall: dev's whiteboards, the neon sign over the middle, product's charts, the
 	// kitchen's fridge, water cooler and vending machines.
-	c.stamp(F.whiteboardChart, 3, 0).stamp(F.whiteboard, 6, 0).stamp(F.lockers, 13, 1).stamp(F.plantTall, 16, 1);
+	c.stamp(F.whiteboardChart, 3, 0).stamp(F.whiteboard, 6, 0).stamp(F.serverRack, 13, 1).stamp(F.plantTall, 16, 1);
 	c.stamp(F.posterFaces, 18, 0);
 	c.add(glow(18, 1, GLOWS.neon));
 	c.stamp(F.whiteboardPie, 22, 0).stamp(F.whiteboard, 25, 0).stamp(F.plantTall, 28, 1);

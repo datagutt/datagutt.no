@@ -1,4 +1,4 @@
-// Bjørn, town hall (by the basement door, for now): Indre Østfold Data IKS.
+// Bjørn, in the town hall basement (the municipal IT department): Indre Østfold Data IKS.
 === sysadmin ===
 { sysadmin > 1:
     {~Have you tried turning it off and on again?|The server in the corner is called Fido. After my dog. Not the other way round.|Close the door behind you. The servers like it cold.}

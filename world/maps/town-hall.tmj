@@ -201,7 +201,7 @@
       "data": [
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-        0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+        0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,
         0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,
         0,1,0,0,1,1,0,1,1,0,0,0,0,0,1,1,0,1,1,0,0,0,1,0,
         0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
@@ -306,41 +306,8 @@
         },
         {
           "id": 4,
-          "name": "sysadmin",
-          "type": "npc",
-          "x": 288,
-          "y": 48,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "character",
-              "type": "string",
-              "value": "sysadmin"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "down"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Bjørn"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "sysadmin"
-            }
-          ]
-        },
-        {
-          "id": 5,
           "name": "",
-          "type": "sign",
+          "type": "door",
           "x": 304,
           "y": 32,
           "width": 16,
@@ -349,9 +316,32 @@
           "visible": true,
           "properties": [
             {
-              "name": "text",
+              "name": "toMap",
               "type": "string",
-              "value": "* BASEMENT. SERVERS. AUTHORISED PERSONNEL ONLY. The door is humming, and cold to the touch."
+              "value": "town-hall-basement"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "stairs"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "basement",
+          "type": "spawn",
+          "x": 304,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
             }
           ]
         },

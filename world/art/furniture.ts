@@ -176,7 +176,11 @@ export const FURNITURE = {
 	whiteboardPie: single("workplace", 172, { collision: [] }),
 	waterCooler: single("workplace", 173),
 	vendingMachine: single("workplace", 175),
-	lockers: single("workplace", 176),
+	/** A tall dark cabinet of drive bays: a server rack. */
+	serverRack: single("workplace", 176),
+	serverRackLow: single("workplace", 174),
+	printer: single("workplace", 177),
+	printerBig: single("workplace", 178),
 	beanBagBlue: single("workplace", 196),
 	beanBagYellow: single("workplace", 199),
 	loungeSofa: single("workplace", 205),
