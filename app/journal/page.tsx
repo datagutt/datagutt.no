@@ -10,10 +10,15 @@ import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { skillCategories } from "@/content/skills";
 import { socials } from "@/content/socials";
+import { OG_IMAGE } from "@/lib/site";
+
+const description = `Everything in Fjord Town written down: ${profile.name}'s projects, work, skills and contact details, as a normal web page.`;
 
 export const metadata: Metadata = {
-	title: "Journal · datagutt",
-	description: `Everything in Fjord Town written down: ${profile.name}'s projects, work, skills and contact details, as a normal web page.`,
+	title: "Journal",
+	description,
+	alternates: { canonical: "/journal" },
+	openGraph: { title: "Journal · datagutt", description, url: "/journal", images: [OG_IMAGE] },
 };
 
 const CONTENTS = [

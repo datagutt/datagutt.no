@@ -33,3 +33,20 @@ test("journal and legacy pages render", async ({ page }) => {
 	}
 	expect(errors).toEqual([]);
 });
+
+test("link previews, canonical links and the sitemap are in place", async ({ page, request }) => {
+	for (const [path, title] of [
+		["/", "datagutt · Fjord Town"],
+		["/journal", "Journal · datagutt"],
+	] as const) {
+		await page.goto(path);
+		await expect(page).toHaveTitle(title);
+		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `https://datagutt.no${path === "/" ? "" : path}`);
+		await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://datagutt.no/game/og.png");
+		await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+	}
+	const sitemap = await (await request.get("/sitemap.xml")).text();
+	expect(sitemap).toContain("<loc>https://datagutt.no/</loc>");
+	expect(sitemap).toContain("<loc>https://datagutt.no/journal</loc>");
+	expect((await request.get("/game/og.png")).status()).toBe(200);
+});

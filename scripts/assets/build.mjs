@@ -15,6 +15,7 @@ import { titleScene } from "../../world/gen/title.ts";
 import { canvasToTmj } from "../../world/gen/tmj.ts";
 import { composeCharacter, composePortrait, placeholderCharacter, placeholderPortrait } from "./characters.mjs";
 import { buildBitmapFont } from "./font.mjs";
+import { buildOgImage } from "./og.mjs";
 import { compileDialogue } from "./ink.mjs";
 import { Raster, hex } from "./raster.mjs";
 import { shrinkPng } from "./png.mjs";
@@ -113,18 +114,23 @@ async function buildEmotes() {
 }
 fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await shrinkPng(await buildEmotes()));
 
-// The title screen's waterfront (world/gen/title.ts), drawn from the same sheets as the
-// maps. Placeholder builds have no sheets to draw it from; the title shows its sky alone.
+// The title screen's waterfront (world/gen/title.ts) and the link-preview image, drawn
+// from the same sheets as the maps. Placeholder builds have no sheets to draw them from:
+// the title shows its sky alone and link previews go without a picture.
+let waterfront = null;
+fs.rmSync(path.join(outDir, "og.png"), { force: true });
 if (source.mode !== "placeholder") {
 	const titleTiles = new TileRegistry(registry);
 	const tmj = canvasToTmj("title", titleScene(), titleTiles);
-	fs.writeFileSync(path.join(outDir, "ui/title.png"), await shrinkPng(await renderTmj(tmj, titleTiles.tiles, new SheetCache(source.dir))));
+	waterfront = await renderTmj(tmj, titleTiles.tiles, new SheetCache(source.dir));
+	fs.writeFileSync(path.join(outDir, "ui/title.png"), await shrinkPng(waterfront));
 }
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
 const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");
 fs.writeFileSync(path.join(outDir, "fonts/pixel.png"), font.png);
 fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
+if (waterfront) fs.writeFileSync(path.join(outDir, "og.png"), await shrinkPng(await buildOgImage(waterfront, font)));
 
 // Ink dialogue, validated against the external registry (fails the build on bad ids).
 const dialogue = compileDialogue("game/dialogue/ink");

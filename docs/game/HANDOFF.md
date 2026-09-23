@@ -11,6 +11,10 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   purpose: a streamed boundary lands in a hidden chunk that only JavaScript reveals, and
   the Journal must read with JavaScript off (e2e checks it, plus axe). Every place in
   `content/places.ts` now has an entrance (`world/gen/maps/places.test.ts`).
+  M6.2 metadata built (preview check waits for launch). The link-preview image is the
+  title card in miniature, drawn by `scripts/assets/og.mjs` from the same shapes as the
+  title SVG (`components/game/titleScene.ts`, shared so the two never drift) and the
+  game's pixel font; placeholder builds have none.
 - **Title screen v2 (M5.11), approved by the user 2026-09-24.**
   - Backdrop (`components/game/TitleArt.tsx`): a summer day, drawn on a grid of game
     pixels. A wide screen sees 512×288 (18 tiles tall, like the game); a tall phone sees

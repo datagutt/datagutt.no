@@ -346,6 +346,9 @@ Goal: ship v1 to production.
 - [ ] **M6.2** Metadata: titles, descriptions, Open Graph image (a render of the town),
       sitemap with `/` and `/journal`, canonical links. *Done when* link previews look
       right on Bluesky and Discord.
+      (Built: `lib/site.ts`, `app/sitemap.ts`, `app/robots.ts`, and a preview image drawn
+      by `pnpm assets` as a small title card, `scripts/assets/og.mjs`. Check Bluesky and
+      Discord once live, at M6.7.)
 - [ ] **M6.3** Accessibility of the game shell: canvas has an accessible name pointing to
       the Journal, the title screen is fully keyboard operable, reduced motion honoured,
       focus is never trapped. *Done when* a screen-reader pass reaches the Journal in one

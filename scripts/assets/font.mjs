@@ -54,7 +54,7 @@ const SAMPLE_PHASE = 0.25;
 /**
  * @param {string} woff2Path
  * @param {number} unit font units per output pixel
- * @returns {Promise<{ png: Buffer, xml: string, lineHeight: number }>}
+ * @returns {Promise<{ png: Buffer, xml: string, lineHeight: number, glyphs: Map<string, { advance: number, bits: [number, number][] }> }>}
  */
 export async function buildBitmapFont(woff2Path, unit, face) {
 	const ttf = await wawoff.decompress(fs.readFileSync(woff2Path));
@@ -121,5 +121,5 @@ export async function buildBitmapFont(woff2Path, unit, face) {
 	</chars>
 </font>
 `;
-	return { png: await img.toPng(), xml, lineHeight };
+	return { png: await img.toPng(), xml, lineHeight, glyphs: new Map(glyphs.map((g) => [g.ch, { advance: g.advance, bits: g.bits }])) };
 }
