@@ -4,6 +4,16 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.8 finale done.** The stamp that fills the passport shows its toast, then
+  `finale_note` (a note from Thomas) and a fade to the town's `finale` spawn with
+  `services.finale` on: the clock fixed at night, the aurora at full strength whatever
+  the season, and Thomas held at the `datagutt-pier` spot (`LiveThomas` takes a fixed
+  `Doing`, whose `dialogue` is `datagutt_finale`). Talking plays his goodbye, then
+  `game/ui/CreditsRoll.ts` rolls `content/credits.ts` (also the START menu's Credits now;
+  the portfolio's stack in `content/projects.ts` is the game's), then `datagutt_contact`
+  ends on the email link. The save flag `finale` stops it replaying; the night lasts
+  until the next map. `?debug&finale` starts there; e2e covers the whole chain from the
+  last stamp.
 - **M5.7 ferry intro done.** `game/scenes/Intro.ts`, on a first visit (no save, no deep
   link: `services.firstVisit`; `?debug&intro` forces it) arriving at the dock: the
   ferry's tiles (a new `area` map object, id `ferry`, from the generator) are lifted into

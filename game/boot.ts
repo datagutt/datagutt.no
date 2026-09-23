@@ -67,6 +67,11 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	world: WorldState;
 	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
 	season: Season;
+	/**
+	 * The finale is on: night, the aurora, Thomas at the end of the pier. Set once the
+	 * passport is full, or with `?debug&finale`.
+	 */
+	finale: boolean;
 	/** No save and no deep link: the ferry intro plays (or `?debug&intro` forces it). */
 	firstVisit: boolean;
 	/** Hours on the visitor's clock (0–24), or `?debug&time=<phase|HH:MM>`. */
@@ -99,12 +104,18 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		world: readWorldState(),
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
+		finale: false,
 		firstVisit: (!hasSave && !deepLinked) || (new URLSearchParams(window.location.search).has("debug") && new URLSearchParams(window.location.search).has("intro")),
 		hours: clock(window.location.search),
 		month: monthNow(window.location.search),
 		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
 	};
 	const debug = new URLSearchParams(window.location.search).has("debug");
+	if (debug && new URLSearchParams(window.location.search).has("finale")) {
+		services.finale = true;
+		services.start = { map: "town", spawn: "finale" };
+		requestStart();
+	}
 	if (debug) {
 		console.info(
 			`[game] world state from ${services.world.fetchedAt}: ${services.world.repos.length} repos`,

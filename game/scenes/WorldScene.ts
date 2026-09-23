@@ -35,6 +35,7 @@ import { ambienceMix } from "../audio/mix";
 import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
 import { Intro } from "./Intro";
+import { CreditsRoll } from "../ui/CreditsRoll";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -66,6 +67,7 @@ export class WorldScene extends Phaser.Scene {
 	private prompt!: Prompt;
 	private feel!: Feel;
 	private intro: Intro | null = null;
+	private credits: CreditsRoll | null = null;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -179,7 +181,9 @@ export class WorldScene extends Phaser.Scene {
 
 		const images = addLights(this, lights, this.progress.reducedMotion);
 		const outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
-		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, this.services.hours, this.services.month);
+		// The finale is always at night.
+		const hours = this.services.finale ? () => 23 : this.services.hours;
+		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, hours, this.services.month);
 		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion) : null;
 		this.aurora = outdoors ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.aurora?.destroy());
@@ -207,6 +211,7 @@ export class WorldScene extends Phaser.Scene {
 			},
 			this.services.presence,
 			rosterNpc(THOMAS_ID)?.name ?? "Thomas",
+			this.services.finale ? { place: "pier", asleep: false, wanders: false, emote: null, says: null, dialogue: "datagutt_finale" } : null,
 		);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.thomas.destroy());
 
@@ -312,13 +317,18 @@ export class WorldScene extends Phaser.Scene {
 		this.dialogue.update(dt, time);
 		this.dayNight.update(time);
 		this.water?.update();
-		this.aurora?.update(this.dayNight.current.dark);
+		this.aurora?.update(this.dayNight.current.dark, this.services.finale);
 		this.updateAmbience(time);
 		this.weather?.update(this.dayNight.current.dark);
 		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open) this.prompt.hide();
 		this.updateDebug();
 
 		if (this.transitioning) return;
+		if (this.credits && !this.dialogue.open) {
+			this.credits.update(dt, input);
+			this.player.sync();
+			return;
+		}
 		if (this.intro?.active && !this.dialogue.open) {
 			this.intro.update(input);
 			for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
@@ -502,6 +512,8 @@ export class WorldScene extends Phaser.Scene {
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
 			intro: this.intro?.active ?? false,
+			credits: this.credits !== null,
+			finale: this.services.finale,
 			prompt: this.prompt.text,
 			tile: { ...p },
 			facing: this.player.mover.facing,
@@ -694,6 +706,7 @@ export class WorldScene extends Phaser.Scene {
 
 	/** Play an NPC's Ink knot beat by beat until it ends. */
 	private talk(npc: NpcDef) {
+		if (npc.dialogue === "datagutt_finale") return this.playFinale(npc);
 		// Each NPC's own knot has their id. Another knot first (Thomas asleep) only counts
 		// as talking to them if it leads there.
 		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
@@ -749,6 +762,31 @@ export class WorldScene extends Phaser.Scene {
 		playStamp(this.audioOut);
 		this.feel.shake();
 		this.stampToast.show(result.newStamp, result.stamps.length, this.progress.reducedMotion);
+		// The last stamp: once the toast has had its moment, the finale begins.
+		if (result.complete && !this.progress.flags.finale) this.time.delayedCall(1600, () => this.beginFinale());
+	}
+
+	/** A full passport: a note from Thomas, then night falls and he waits on the pier. */
+	private beginFinale() {
+		this.playKnot("finale_note", null, () => {
+			this.services.finale = true;
+			this.goTo({ map: "town", spawn: "finale" });
+		});
+	}
+
+	/** Thomas on the pier: his goodbye, the credits, and how to reach him. */
+	private playFinale(npc: NpcDef) {
+		this.playKnot(npc.dialogue, npc, () => {
+			this.credits = new CreditsRoll(this, this.progress.reducedMotion, () => {
+				this.credits = null;
+				this.playKnot("datagutt_contact", npc, () => {
+					// This night stays until the player moves on; the next map is back to normal.
+					this.progress.flags.finale = true;
+					this.services.finale = false;
+					this.save();
+				});
+			});
+		});
 	}
 
 	/** "Open github.com?" after a line with a `# link:` tag. */
@@ -765,11 +803,15 @@ export class WorldScene extends Phaser.Scene {
 		this.transitioning = true;
 		this.clearPath();
 		this.feel.squash();
+		this.goTo({ map: door.toMap, spawn: door.toSpawn });
+	}
+
+	/** Fade out and restart the scene on another map (or spot). */
+	private goTo(target: WorldTarget, fadeMs = 160) {
+		this.transitioning = true;
 		const cam = this.cameras.main;
-		cam.fadeOut(160, 11, 19, 32);
-		cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-			this.scene.restart({ map: door.toMap, spawn: door.toSpawn } satisfies WorldTarget);
-		});
+		cam.fadeOut(fadeMs, 11, 19, 32);
+		cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.restart(target));
 	}
 
 	private save() {

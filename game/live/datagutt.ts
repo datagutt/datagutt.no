@@ -4,7 +4,7 @@
 import type { Presence } from "../net/lanyard";
 
 /** Places he can be. Each is a `spot` map object named "datagutt-<place>". */
-export type Place = "desk" | "bed" | "fjord" | "square";
+export type Place = "desk" | "bed" | "fjord" | "square" | "pier";
 /** Emote bubbles, from LimeZu's emote sheet (game/ui/Bubbles.ts). */
 export type Emote = "computer" | "music" | "sleep" | "dots";
 
@@ -17,12 +17,14 @@ export type Doing = {
 	emote: Emote | null;
 	/** His custom status, shown in a speech bubble. */
 	says: string | null;
+	/** Ink knot to talk with instead of his own (the finale). */
+	dialogue?: string;
 };
 
 export const spotId = (place: Place) => `datagutt-${place}`;
 
 /** Which map each place is on. world/gen tests check the spots exist there. */
-export const PLACE_MAPS: Record<Place, string> = { desk: "house-up", bed: "house-up", fjord: "town", square: "town" };
+export const PLACE_MAPS: Record<Place, string> = { desk: "house-up", bed: "house-up", fjord: "town", square: "town", pier: "town" };
 
 /**
  * Maps he walks between, by their doors. He is the only NPC who changes maps, so a small
@@ -86,6 +88,7 @@ const WHERE: Record<Place, string> = {
 	bed: "Asleep, upstairs at home.",
 	fjord: "By the fjord, down at the harbour.",
 	square: "Around the town square.",
+	pier: "At the end of the pier, waiting for you.",
 };
 
 /** The START menu's status screen, one line each. */

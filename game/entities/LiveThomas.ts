@@ -57,8 +57,10 @@ export class LiveThomas {
 		private readonly host: LiveHost,
 		feed: PresenceFeed,
 		private readonly name: string,
+		/** Where he is regardless of his presence (the finale's pier). */
+		private readonly fixed: Doing | null = null,
 	) {
-		this.doing = doingFor(feed.current);
+		this.doing = fixed ?? doingFor(feed.current);
 		this.emote = new EmoteBubble(host.scene);
 		this.speech = new SpeechBubble(host.scene);
 		if (PLACE_MAPS[this.doing.place] === host.map) this.appear(this.spot(this.doing)!, this.doing);
@@ -81,6 +83,7 @@ export class LiveThomas {
 	}
 
 	private onPresence(presence: Presence): void {
+		if (this.fixed) return;
 		const next = doingFor(presence);
 		const before = this.doing;
 		this.doing = next;
@@ -113,11 +116,12 @@ export class LiveThomas {
 		// Someone standing on his spot: he takes the free tile next to it.
 		const free = (p: Point) => this.host.grid.occupantAt(p.x, p.y) === undefined;
 		const around = [spot, { x: spot.x, y: spot.y + 1 }, { x: spot.x + 1, y: spot.y }, { x: spot.x - 1, y: spot.y }, { x: spot.x, y: spot.y - 1 }];
-		const tile = around.find((p, i) => free(p) && (i === 0 || this.host.grid.isWalkable(p.x, p.y)));
-		if (!tile) return;
+		const found = around.find((p, i) => free(p) && (i === 0 || this.host.grid.isWalkable(p.x, p.y)));
+		if (!found) return;
+		const tile = { x: found.x, y: found.y };
 		const at = { ...spot, x: tile.x, y: tile.y };
 		const actor = new Actor(this.host.scene, THOMAS_ID, "datagutt", tile, at.facing, NPC_MOVEMENT);
-		this.def = { type: "npc", id: THOMAS_ID, character: "datagutt", x: at.x, y: at.y, facing: at.facing, name: this.name, dialogue: "datagutt" };
+		this.def = { type: "npc", id: THOMAS_ID, character: "datagutt", x: at.x, y: at.y, facing: at.facing, name: this.name, dialogue: doing.dialogue ?? "datagutt" };
 		this.actor = actor;
 		this.host.grid.occupy(at.x, at.y, THOMAS_ID);
 		this.host.addNpc(this.def, actor);

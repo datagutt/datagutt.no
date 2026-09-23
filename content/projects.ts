@@ -26,8 +26,8 @@ export const projects: Project[] = [
     poweredBy: [
       { name: "Next.js" },
       { name: "React" },
-      { name: "GSAP" },
-      { name: "Tailwind" },
+      { name: "Phaser" },
+      { name: "ink" },
       { name: "Geist" },
     ],
   },

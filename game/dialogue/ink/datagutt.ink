@@ -54,3 +54,22 @@
     -> datagutt
 * [Let him sleep.]
     -> END
+
+// The finale (docs/game/PLAN.md M5.8). A full passport: a note, then Thomas at the end of
+// the pier at night, the credits, and last of all how to reach him.
+=== finale_note ===
+\* Your passport is full! Tucked in the back is a note.
+\* "Meet me at the end of the pier tonight. Bring the passport. Thomas"
+-> END
+
+=== datagutt_finale ===
+You made it. Every stamp. # nod
+That's the whole town, really: everything I've built, and the people I built it with.
+Thanks for taking the long way round instead of skimming a page.
+Now look up. That's the best part of living this far north.
+-> END
+
+=== datagutt_contact ===
+{profile("contactPitch")} # link: email
+See you around. The ferry's always late, so there's no rush.
+-> END

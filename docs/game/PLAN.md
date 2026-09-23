@@ -313,7 +313,7 @@ Goal: the Celeste-level feel.
 - [x] **M5.7** Ferry intro cutscene: ferry arrival, ferryman gives passport, one line on
       controls and Journal; skippable. *Done when* first visit plays it and returning
       visits do not.
-- [ ] **M5.8** Finale: all stamps → night, aurora, datagutt on the pier, credits roll from
+- [x] **M5.8** Finale: all stamps → night, aurora, datagutt on the pier, credits roll from
       `content/` (stack, tools, LimeZu credit), ends on contact prompt. *Done when*
       reachable in a full playthrough.
 - [ ] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus

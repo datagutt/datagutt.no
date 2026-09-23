@@ -145,6 +145,9 @@ export function overworld(): MapCanvas {
 
 	// --- Objects ---------------------------------------------------------------------------
 	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 2, facing: "up" });
+	// The finale (game/scenes/Finale.ts): Thomas waits at the end of the pier at night.
+	c.add({ type: "spot", id: "datagutt-pier", x: HARBOUR_X, y: pierEnd - 1, facing: "down" });
+	c.add({ type: "spawn", id: "finale", x: HARBOUR_X, y: pierEnd - 2, facing: "down" });
 	c.add({ type: "spawn", id: "house_door", x: home.x, y: home.y, facing: "down" });
 	c.add({ type: "spawn", id: "office_door", x: 71, y: 37, facing: "down" });
 	c.add({ type: "spawn", id: "boathouse_door", ...boathouseDoor, facing: "down" });

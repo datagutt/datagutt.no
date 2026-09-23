@@ -4,6 +4,7 @@
 import Phaser from "phaser";
 import type { Facing } from "../world/objects";
 import { PassportPanel } from "./Passport";
+import { credits } from "../../content/credits";
 
 const FONT = "pixel";
 const FRAME = "ui:frame";
@@ -27,13 +28,7 @@ export type MenuHooks = {
 
 type View = "closed" | "main" | "passport" | "settings" | "credits" | "status";
 
-const CREDITS = [
-	"Fjord Town, a portfolio by Thomas Lekanger.",
-	"Art: LimeZu (limezu.itch.io): Modern Exteriors, Modern Interiors, Modern User Interface.",
-	"Font: Geist Pixel by Vercel (SIL Open Font License).",
-	"Engine: Phaser 4. Dialogue: ink by inkle.",
-	"Code: GPL-3.0 on GitHub (datagutt/datagutt.no).",
-];
+const CREDITS = [`${credits.title}, ${credits.byline.toLowerCase()}.`, ...credits.sections.map((s) => `${s.heading}: ${s.lines.join(" ")}`)];
 
 export class StartMenu {
 	private view: View = "closed";

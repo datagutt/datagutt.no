@@ -17,6 +17,8 @@ type FjordState = {
 	emoteWheel: boolean;
 	prompt: string | null;
 	intro: boolean;
+	credits: boolean;
+	finale: boolean;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -32,11 +34,11 @@ async function holdKey(page: Page, key: string, ms: number) {
  * `presence` fixes Thomas's Discord presence (game/live/datagutt.ts MOCK_PRESENCES), so
  * where he stands doesn't depend on the real Lanyard feed.
  */
-async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding") {
+async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding", stamps: string[] = []) {
 	await page.goto(`/?debug&presence=${presence}`);
 	await page.evaluate(
-		(save) => localStorage.setItem("fjordtown.save", JSON.stringify({ version: 1, ...save, stamps: [], flags: {}, dialogue: {}, settings: {} })),
-		at,
+		([save, stamps]) => localStorage.setItem("fjordtown.save", JSON.stringify({ version: 1, ...save, stamps, flags: {}, dialogue: {}, settings: {} })),
+		[at, stamps] as const,
 	);
 	await page.goto(`/?debug&presence=${presence}`);
 	await page.getByRole("button", { name: /continue/i }).click();
@@ -165,6 +167,38 @@ test.describe("world", () => {
 		await page.getByRole("button", { name: /continue/i }).click();
 		await expect.poll(async () => (await state(page))?.map, { timeout: 30_000 }).toBe("town");
 		expect((await state(page))?.intro).toBe(false);
+	});
+
+	test("the last stamp leads to the finale: the pier at night, credits, then contact", async ({ page }) => {
+		// Every stamp but Thomas's, then talk to him at his desk.
+		const others = ["boathouse", "radio-tower", "kiosk", "office", "town-hall", "gym", "library", "farm", "post-office"];
+		await continueAt(page, { map: "house-up", x: 7, y: 5, facing: "left" }, "coding", others);
+		const readUntil = async (done: () => Promise<boolean>) => {
+			for (let i = 0; i < 60 && !(await done()); i++) {
+				const s = await state(page);
+				// Say goodbye as soon as it's offered, then read on.
+				const bye = s?.choices?.findIndex((c) => /see you|thanks|let him sleep/i.test(c)) ?? -1;
+				for (let k = s?.selected ?? 0; bye >= 0 && k < bye; k++) {
+					await page.keyboard.press("ArrowDown");
+					await page.waitForTimeout(60);
+				}
+				await page.keyboard.press("e");
+				await page.waitForTimeout(200);
+			}
+		};
+		await page.keyboard.press("e");
+		// His conversation, the stamp, then the note in the back of the passport.
+		await readUntil(async () => (await state(page))?.finale === true);
+		await expect.poll(async () => (await state(page))?.map).toBe("town");
+		await expect.poll(async () => (await state(page))?.prompt).toBe("E Talk");
+
+		await page.keyboard.press("e");
+		await readUntil(async () => (await state(page))?.credits === true);
+		await page.keyboard.press("x"); // skip the credits
+		await readUntil(async () => !(await state(page))?.dialogueOpen && !(await state(page))?.credits);
+		expect((await state(page))?.finale).toBe(false);
+		const flags = await page.evaluate(() => JSON.parse(localStorage.getItem("fjordtown.save") ?? "{}").flags);
+		expect(flags.finale).toBe(true);
 	});
 
 	test("holding interact opens the emote wheel; back closes it", async ({ page }) => {

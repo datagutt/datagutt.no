@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 70,
+  "nextobjectid": 72,
   "properties": [
     {
       "name": "name",
@@ -2357,6 +2357,42 @@
         },
         {
           "id": 46,
+          "name": "datagutt-pier",
+          "type": "spot",
+          "x": 784,
+          "y": 1136,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 47,
+          "name": "finale",
+          "type": "spawn",
+          "x": 784,
+          "y": 1120,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 48,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -2374,7 +2410,7 @@
           ]
         },
         {
-          "id": 47,
+          "id": 49,
           "name": "office_door",
           "type": "spawn",
           "x": 1136,
@@ -2392,7 +2428,7 @@
           ]
         },
         {
-          "id": 48,
+          "id": 50,
           "name": "boathouse_door",
           "type": "spawn",
           "x": 192,
@@ -2410,7 +2446,7 @@
           ]
         },
         {
-          "id": 49,
+          "id": 51,
           "name": "library_door",
           "type": "spawn",
           "x": 560,
@@ -2428,7 +2464,7 @@
           ]
         },
         {
-          "id": 50,
+          "id": 52,
           "name": "kiosk_door",
           "type": "spawn",
           "x": 944,
@@ -2446,7 +2482,7 @@
           ]
         },
         {
-          "id": 51,
+          "id": 53,
           "name": "post_office_door",
           "type": "spawn",
           "x": 656,
@@ -2464,7 +2500,7 @@
           ]
         },
         {
-          "id": 52,
+          "id": 54,
           "name": "gym_door",
           "type": "spawn",
           "x": 1392,
@@ -2482,7 +2518,7 @@
           ]
         },
         {
-          "id": 53,
+          "id": 55,
           "name": "farmhouse_door",
           "type": "spawn",
           "x": 224,
@@ -2500,7 +2536,7 @@
           ]
         },
         {
-          "id": 54,
+          "id": 56,
           "name": "radio_hut_door",
           "type": "spawn",
           "x": 1216,
@@ -2518,7 +2554,7 @@
           ]
         },
         {
-          "id": 55,
+          "id": 57,
           "name": "town_hall_door",
           "type": "spawn",
           "x": 720,
@@ -2536,7 +2572,7 @@
           ]
         },
         {
-          "id": 56,
+          "id": 58,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -2554,7 +2590,7 @@
           ]
         },
         {
-          "id": 57,
+          "id": 59,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -2572,7 +2608,7 @@
           ]
         },
         {
-          "id": 58,
+          "id": 60,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -2590,7 +2626,7 @@
           ]
         },
         {
-          "id": 59,
+          "id": 61,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -2608,7 +2644,7 @@
           ]
         },
         {
-          "id": 60,
+          "id": 62,
           "name": "",
           "type": "sign",
           "x": 192,
@@ -2626,7 +2662,7 @@
           ]
         },
         {
-          "id": 61,
+          "id": 63,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -2644,7 +2680,7 @@
           ]
         },
         {
-          "id": 62,
+          "id": 64,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -2662,7 +2698,7 @@
           ]
         },
         {
-          "id": 63,
+          "id": 65,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -2680,7 +2716,7 @@
           ]
         },
         {
-          "id": 64,
+          "id": 66,
           "name": "",
           "type": "sign",
           "x": 1104,
@@ -2698,7 +2734,7 @@
           ]
         },
         {
-          "id": 65,
+          "id": 67,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -2716,7 +2752,7 @@
           ]
         },
         {
-          "id": 66,
+          "id": 68,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -2734,7 +2770,7 @@
           ]
         },
         {
-          "id": 67,
+          "id": 69,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -2767,7 +2803,7 @@
           ]
         },
         {
-          "id": 68,
+          "id": 70,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -2800,7 +2836,7 @@
           ]
         },
         {
-          "id": 69,
+          "id": 71,
           "name": "farmer",
           "type": "npc",
           "x": 256,
