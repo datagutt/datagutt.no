@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices } from "../boot";
+import { EMOTE_FRAME } from "../ui/emotes";
+import { nowDoing } from "../live/datagutt";
 import { CHARACTERS } from "../assets/manifest";
 import {
 	ANIMS,
@@ -35,6 +37,7 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.image("tiles:world", "tilesets/world.png");
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
 		this.load.image("ui:frame", "ui/frame.png");
+		this.load.spritesheet("ui:emotes", "ui/emotes.png", { frameWidth: EMOTE_FRAME, frameHeight: EMOTE_FRAME });
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
 			if (!("portrait" in recipe && recipe.portrait === false)) {
@@ -79,7 +82,7 @@ export class PreloadScene extends Phaser.Scene {
 		const runner = new DialogueRunner(this.cache.json.get("dialogue"), {
 			world: services.world,
 			hasStamp: (place) => progress.hasStamp(place),
-			lanyardActivity: () => "offline",
+			lanyardActivity: () => nowDoing(services.presence.current),
 		}, saved?.dialogue.main);
 		this.registry.set(DIALOGUE_KEY, runner);
 

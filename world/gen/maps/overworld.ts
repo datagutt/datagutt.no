@@ -106,6 +106,10 @@ export function overworld(): MapCanvas {
 	for (const x of [12, 24, 32, 45, 57, 64, 78, 89]) c.stamp(PREFABS.lamp, x, 42);
 	c.stamp(PREFABS.planter, 41, 26).stamp(PREFABS.planter, 48, 26);
 	c.stamp(PREFABS.bench, HARBOUR_X + 4, shore[HARBOUR_X + 4] - 4);
+	// Where the live datagutt NPC goes out in town (game/live/datagutt.ts): by the harbour
+	// bench looking out over the fjord while music plays, the square otherwise.
+	c.add({ type: "spot", id: "datagutt-fjord", x: HARBOUR_X + 5, y: shore[HARBOUR_X + 4] - 2, facing: "down" });
+	c.add({ type: "spot", id: "datagutt-square", x: 47, y: 38, facing: "down" });
 
 	// --- Forest edge -----------------------------------------------------------------------
 	// Nothing grows on buildings, props, paths, the square, the field or the beach.

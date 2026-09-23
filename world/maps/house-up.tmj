@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 10,
+  "nextobjectid": 11,
   "properties": [
     {
       "name": "name",
@@ -171,7 +171,7 @@
         0,2509,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2511,0,
         0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,2576,2577,2578,2515,0,
         0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,2579,0,2580,2515,0,
-        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,2581,2582,2583,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,2579,0,2580,2515,0,
         0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
         0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
         0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
@@ -413,8 +413,8 @@
         },
         {
           "id": 7,
-          "name": "datagutt",
-          "type": "npc",
+          "name": "datagutt-desk",
+          "type": "spot",
           "x": 96,
           "y": 80,
           "width": 16,
@@ -423,29 +423,32 @@
           "visible": true,
           "properties": [
             {
-              "name": "character",
-              "type": "string",
-              "value": "datagutt"
-            },
-            {
               "name": "facing",
               "type": "string",
               "value": "up"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Thomas"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "datagutt"
             }
           ]
         },
         {
           "id": 8,
+          "name": "datagutt-bed",
+          "type": "spot",
+          "x": 48,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 9,
           "name": "",
           "type": "sign",
           "x": 112,
@@ -463,7 +466,7 @@
           ]
         },
         {
-          "id": 9,
+          "id": 10,
           "name": "",
           "type": "sign",
           "x": 144,

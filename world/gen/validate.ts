@@ -21,7 +21,8 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		.flatMap((l) => (l.objects as TiledObject[]).map((o) => parseMapObject(o, T)));
 	const problems: string[] = [];
 	const at = new Map<string, MapObject>();
-	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign").map((o) => `${o.x},${o.y}`));
+	// A spot counts as taken: the NPC who goes there may be standing on it.
+	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign" || o.type === "spot").map((o) => `${o.x},${o.y}`));
 	const reachableFrom = (o: MapObject) =>
 		NEIGHBOURS.some(([dx, dy]) => walkable(o.x + dx, o.y + dy) && !occupied.has(`${o.x + dx},${o.y + dy}`));
 
@@ -36,7 +37,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		else if ((o.type === "spawn" || o.type === "npc" || o.type === "door") && !walkable(o.x, o.y)) {
 			problems.push(`${where} is on a blocked tile`);
 		}
-		if ((o.type === "sign" || o.type === "npc") && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
+		if (o.type === "sign" && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
 		// A sign is read from next to it, so it must sit on something solid, not open floor.
 		if (o.type === "sign" && walkable(o.x, o.y)) problems.push(`${where} is on open floor; put it on the thing it describes`);
 		if (o.type === "door" && !walkable(o.x, o.y + 1)) problems.push(`${where} has a blocked tile in front of it`);
@@ -83,7 +84,11 @@ function checkReachable(
 		if (o.type === "light" || o.type === "crops" || o.type === "books") continue;
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const ok =
-			o.type === "door" || o.type === "spawn" ? reached(o.x, o.y) : o.type === "npc" ? fromSide(o) || acrossCounter(o) : fromSide(o);
+			o.type === "door" || o.type === "spawn"
+				? reached(o.x, o.y)
+				: o.type === "npc" || o.type === "spot"
+					? fromSide(o) || acrossCounter(o)
+					: fromSide(o);
 		if (!ok) problems.push(`${where} can't be reached from ${start.id}`);
 	}
 	return problems;

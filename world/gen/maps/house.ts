@@ -5,7 +5,6 @@
 // model of Fjord Town by the door (the Portfolio project, i.e. this game).
 // Upstairs, cooler and more personal: Thomas at one long desk with three computers, the
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
-import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
 import { glow, GLOWS, shadowUnder, windowLight } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
@@ -74,12 +73,15 @@ export function houseUpstairs(): MapCanvas {
 
 	// Stairs down in the back-right corner, railed on three sides, open at the bottom.
 	c.stamp(F.stairsDown, 15, 2).stamp(F.stairwellRail, 15, 2);
+	c.stamp(F.stairwellPostLeft, 15, 4).stamp(F.stairwellPostRight, 17, 4);
 	c.put("above", 16, 3, null); // the rail sheet has loose stubs inside the well
 	c.add({ type: "door", x: 16, y: 4, toMap: "house", toSpawn: "stairs" });
 	c.add({ type: "spawn", id: "stairs", x: 16, y: 6, facing: "down" });
 
-	const thomas = NPCS.find((n) => n.id === "datagutt")!;
-	c.add({ type: "npc", id: "datagutt", character: "datagutt", x: 6, y: 5, facing: "up", name: thomas.name, dialogue: "datagutt" });
+	// Thomas is live (game/live/datagutt.ts): at the desk while coding or gaming, in bed
+	// when offline, out in town otherwise.
+	c.add({ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" });
+	c.add({ type: "spot", id: "datagutt-bed", x: 3, y: 7, facing: "down" });
 	c.add({ type: "sign", x: 7, y: 4, text: "* Three computers. Several terminals are open. Something is compiling." });
 	c.add({ type: "sign", x: 9, y: 3, text: "* A mini-fridge. Energy drinks, top to bottom. Also one lemon, looking lonely." });
 	return c;

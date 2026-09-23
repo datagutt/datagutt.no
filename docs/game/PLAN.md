@@ -260,10 +260,11 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       `wss://api.lanyard.rest/socket`, heartbeat, reconnect, typed presence. Discord id
       from WorldState (still `NEXT_PUBLIC_DISCORD_ID` or `DEFAULT_DISCORD_ID`). *Done when*
       presence updates arrive in the game.
-- [ ] **M4.2** datagutt NPC behaviour (also add "datagutt's status" to the START menu): a state machine mapping presence to place,
+- [x] **M4.2** datagutt NPC behaviour (also add "datagutt's status" to the START menu): a state machine mapping presence to place,
       animation and emote (DESIGN open-questions table). Smooth walking between places when
       state changes while the player is watching. Status screen in START menu. *Done when*
-      each presence state shows correctly (test with a mocked presence).
+      each presence state shows correctly (test with a mocked presence). (Mock with
+      `?debug&presence=<name>`; `window.__fjordPresence(name)` switches it live.)
 - [ ] **M4.3** Ghost protocol v2: rename the route to `/api/world/ws`, messages `join`
       (map), `move` (tile, facing), `emote`, `leave`; server rooms per map; server stamps a
       random name and tint; token bucket per connection; no echo to sender. Keep

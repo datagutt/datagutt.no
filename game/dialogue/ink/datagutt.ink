@@ -8,6 +8,9 @@
     Oh, hi! I'm {profile("firstName")}. {profile("role")} by trade, {profile("location")} by postcode. # nod
     {about(0)}
 }
+{ lanyard_activity() != "":
+    {lanyard_activity()}
+}
 - (topics)
 * [What are you working on?] -> answer_1 ->
     -> topics
@@ -40,4 +43,14 @@
 
 = goodbye
     Have a look around. Everyone here knows something about me, which is a little embarrassing.
+    -> END
+
+// Thomas is offline, asleep in bed (game/live/datagutt.ts). Waking him leads into the
+// usual conversation, which is what stamps the passport.
+=== datagutt_asleep ===
+\* {~Thomas is fast asleep. He mumbles something about merge conflicts.|Thomas is asleep. "Just one more commit," he says, to nobody.|Thomas is asleep, snoring softly. A laptop fan whirs somewhere under the duvet.} # narration
+* [Wake him up.]
+    Mm? Oh. Hi. I was just resting my eyes. # nod
+    -> datagutt
+* [Let him sleep.]
     -> END

@@ -13,6 +13,7 @@ import type { Facing } from "./world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "./world/season";
 import { LanyardClient, PresenceFeed } from "./net/lanyard";
+import { MOCK_PRESENCES } from "./live/datagutt";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -94,8 +95,19 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		);
 		services.presence.subscribe((p) => console.info("[game] presence", p));
 	}
+	// `?debug&presence=<name>` stands in a fixed presence (MOCK_PRESENCES) for Lanyard, and
+	// window.__fjordPresence(name) switches it live, to watch Thomas move.
+	const mock = debug ? new URLSearchParams(window.location.search).get("presence") : null;
 	const lanyard = new LanyardClient(services.world.discordId, (p) => services.presence.set(p));
-	lanyard.start();
+	if (mock && MOCK_PRESENCES[mock]) services.presence.set(MOCK_PRESENCES[mock]);
+	else lanyard.start();
+	if (debug) {
+		(window as unknown as { __fjordPresence?: (name: string) => void }).__fjordPresence = (name) => {
+			if (!MOCK_PRESENCES[name]) throw new Error(`No mock presence "${name}": ${Object.keys(MOCK_PRESENCES).join(", ")}`);
+			lanyard.stop();
+			services.presence.set(MOCK_PRESENCES[name]);
+		};
+	}
 
 	const dpr = () => window.devicePixelRatio || 1;
 	const initial = computeViewport(parent.clientWidth, parent.clientHeight, dpr());

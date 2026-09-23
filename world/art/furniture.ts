@@ -157,7 +157,15 @@ export const FURNITURE = {
 	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
 	/** Stairs going down, seen from above: a railing on three sides around the steps. */
 	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
-	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 3, aboveRows: 3, collision: [], allowCut: "leave off the railing's bottom bar so the stairwell is open" },
+	/**
+	 * The railing frame's top bar and sides, cut above its bottom bar so the stairwell is
+	 * open. The bottom bar straddles the frame's last two rows, so the frame stops a row
+	 * early and `stairwellPost` carries the sides one tile further.
+	 */
+	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 2, aboveRows: 2, collision: [], allowCut: "leave off the railing's bottom bar so the stairwell is open" },
+	/** One side post of the railing frame, without any bar. */
+	stairwellPostLeft: { sheet: "upstairs", col: 9, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
+	stairwellPostRight: { sheet: "upstairs", col: 11, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
 } satisfies Record<string, Prefab>;
 
 /**

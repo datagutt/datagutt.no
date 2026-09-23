@@ -7,6 +7,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { CHARACTERS } from "../../game/assets/manifest.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
+import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
 import { composeCharacter, composePortrait, placeholderCharacter, placeholderPortrait } from "./characters.mjs";
 import { buildBitmapFont } from "./font.mjs";
@@ -79,6 +80,33 @@ async function buildUiFrame() {
 	return img.toPng();
 }
 fs.writeFileSync(path.join(outDir, "ui/frame.png"), await buildUiFrame());
+
+// Emote bubbles (game/ui/emotes.ts): LimeZu's thinking-emotes sheet as it is, or in
+// placeholder mode white bubbles with a coloured mark in the frames the game uses.
+async function buildEmotes() {
+	if (source.mode !== "placeholder") {
+		return sharp(path.join(source.dir, "limezu/interiors/ui_elements/UI_thinking_emotes_animation_16x16.png")).png().toBuffer();
+	}
+	const size = EMOTE_FRAME * EMOTE_COLUMNS;
+	const img = new Raster(size, size);
+	const ink = hex("3b2a3a");
+	const white = hex("f2eef7");
+	const marks = ["4a7fd6", "8e5cc4", "3aa0c8", "7a7a90", "e0a020", "d05a3a", "d8404f"];
+	Object.values(EMOTES).forEach(([col, row], i) => {
+		for (const dx of [0, 1]) {
+			const x = (col + dx) * EMOTE_FRAME;
+			const y = row * EMOTE_FRAME;
+			img.rect(x + 2, y + 1, 12, 13, ink);
+			img.rect(x + 3, y + 2, 10, 11, white);
+			img.rect(x + 6, y + 5, 4, 5, hex(marks[i % marks.length]));
+		}
+	});
+	const [tx, ty] = EMOTE_TAIL;
+	img.rect(tx * EMOTE_FRAME + 7, ty * EMOTE_FRAME + 2, 2, 2, white);
+	img.rect(tx * EMOTE_FRAME + 6, ty * EMOTE_FRAME + 6, 2, 2, white);
+	return img.toPng();
+}
+fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await buildEmotes());
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
 const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");

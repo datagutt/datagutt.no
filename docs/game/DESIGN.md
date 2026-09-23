@@ -207,7 +207,7 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 |---|---|
 | Internal resolution | 16 px tiles on a low-res canvas scaled by whole *device* pixels (`game/viewport.ts`): about 12 tiles on a phone's short axis, about 17 on desktops, never fewer than 11 |
 | NPC names and personalities | Claude drafts them in M2 alongside the Ink scripts, user edits |
-| Lanyard activity to NPC location mapping | Coding app → PC in house; Spotify → bench by the fjord with headphones; online idle → wandering town square; offline → asleep in bed; custom status text → speech bubble |
+| Lanyard activity to NPC location mapping | Decided (user, M4.2), first match wins: offline → asleep in bed upstairs; code editor or terminal → at the PC upstairs; game or stream → at the PC; Spotify only → by the harbour bench looking over the fjord, music bubble (LimeZu has no headphones); Discord idle → standing in the town square; otherwise → wandering the town square. A custom status shows as a speech bubble when the player is near. Asleep, talking offers "Wake him up?", which leads into the normal conversation (and the stamp) |
 | Ghost name format | "Traveller from <Norwegian town>", random per session |
 | Analytics | None added; existing setup untouched |
 | Language | English, with occasional Norwegian words |
@@ -216,3 +216,4 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 
 - 2026-09-22: initial record from the grilling session.
 - 2026-09-23: datagutt keeps the recoloured stock glasses instead of hand-edited chunky ones (user, M3.10).
+- 2026-09-23: presence to place mapping and waking him from sleep settled (user, M4.2).

@@ -11,6 +11,10 @@ export class Actor {
 	readonly sprite: Phaser.GameObjects.Sprite;
 	readonly mover: GridMover;
 	private currentAnim = "";
+	/** Lying in bed: only the sleeping head is drawn, at `offset` from the tile. */
+	asleep = false;
+	/** Nudge in pixels, for poses that don't line up with the tile grid (a head on a pillow). */
+	offset = { x: 0, y: 0 };
 
 	constructor(
 		scene: Phaser.Scene,
@@ -28,13 +32,18 @@ export class Actor {
 	/** Move the sprite to the mover's position and pick the right animation. */
 	sync(): void {
 		const { x, y } = this.mover.position;
-		this.sprite.setPosition(Math.round(x * TILE), Math.round((y + 1) * TILE));
+		this.sprite.setPosition(Math.round(x * TILE) + this.offset.x, Math.round((y + 1) * TILE) + this.offset.y);
 		this.sprite.setDepth(this.sprite.y);
-		this.play(this.mover.moving ? "walk" : "idle");
+		this.play(this.asleep ? "sleep" : this.mover.moving ? "walk" : "idle");
+	}
+
+	/** Top of the head in world pixels, for bubbles. Frames leave some air above it. */
+	get headTop(): number {
+		return this.sprite.y - this.sprite.height + (this.asleep ? 1 : 7);
 	}
 
 	private play(anim: AnimName): void {
-		const key = animKey(this.character, anim, this.mover.facing);
+		const key = animKey(this.character, anim, anim === "sleep" ? "right" : this.mover.facing);
 		if (key === this.currentAnim) return;
 		// Turning a corner mid-walk: keep the stride instead of restarting the cycle.
 		// currentFrame.index is 1-based; startFrame is 0-based.

@@ -1,6 +1,6 @@
-// START menu (docs/game/PLAN.md M2.11): Passport, Journal, Settings, Credits. Opened with
-// Enter, Start on a gamepad, or the on-screen Menu button. Items that depend on later
-// milestones (datagutt's live status, other visitors) join the list when they exist.
+// START menu (docs/game/PLAN.md M2.11): Passport, datagutt's live status, Journal,
+// Settings, Credits. Opened with Enter, Start on a gamepad, or the on-screen Menu button.
+// Items that depend on later milestones (other visitors) join the list when they exist.
 import Phaser from "phaser";
 import type { Facing } from "../world/objects";
 import { PassportPanel } from "./Passport";
@@ -20,10 +20,12 @@ export type MenuHooks = {
 	settings(): MenuSettings;
 	changeSettings(next: MenuSettings): void;
 	openJournal(): void;
+	/** Thomas's live status, one line each (game/live/datagutt.ts statusLines). */
+	status(): string[];
 	sound(kind: "open" | "move" | "select"): void;
 };
 
-type View = "closed" | "main" | "passport" | "settings" | "credits";
+type View = "closed" | "main" | "passport" | "settings" | "credits" | "status";
 
 const CREDITS = [
 	"Fjord Town, a portfolio by Thomas Lekanger.",
@@ -71,7 +73,7 @@ export class StartMenu {
 
 	/** Handle one frame of input while open. */
 	handle(input: { dirPresses: Facing[]; interact: boolean; back: boolean; menu: boolean; taps: { screenX: number; screenY: number }[] }): void {
-		if (this.view === "passport" || this.view === "credits") {
+		if (this.view === "passport" || this.view === "credits" || this.view === "status") {
 			if (input.interact || input.back || input.menu || input.taps.length) this.backToMain();
 			return;
 		}
@@ -121,6 +123,7 @@ export class StartMenu {
 		}
 		return [
 			{ label: "Passport", run: () => this.showPassport() },
+			{ label: "datagutt's status", run: () => this.openView("status") },
 			{ label: "Journal (plain text)", run: () => this.hooks.openJournal() },
 			{ label: "Settings", run: () => this.openView("settings") },
 			{ label: "Credits", run: () => this.openView("credits") },
@@ -158,14 +161,15 @@ export class StartMenu {
 		const parts: Phaser.GameObjects.GameObject[] = [];
 		const g = scene.add.graphics();
 
-		if (this.view === "credits") {
+		if (this.view === "credits" || this.view === "status") {
+			const text = this.view === "credits" ? CREDITS.join("\n\n") : this.hooks.status().join("\n");
 			const w = Math.min(cam.width - 16, 300);
-			const body = scene.add.bitmapText(12, 9 + lh + 6, FONT, CREDITS.join("\n\n")).setTint(INK).setMaxWidth(w - 24);
+			const body = scene.add.bitmapText(12, 9 + lh + 6, FONT, text).setTint(INK).setMaxWidth(w - 24);
 			const bodyBottom = 9 + lh + 6 + Math.ceil(body.getTextBounds().local.height);
 			const hint = scene.add.bitmapText(12, bodyBottom + 8, FONT, "Tap or press E to go back.").setTint(FADED).setMaxWidth(w - 24);
 			const h = bodyBottom + 8 + Math.ceil(hint.getTextBounds().local.height) + 12;
 			parts.push(scene.add.nineslice(0, 0, FRAME, undefined, w, h, ...SLICE).setOrigin(0), body, hint);
-			parts.push(scene.add.bitmapText(12, 9, FONT, "Credits").setTint(ACCENT));
+			parts.push(scene.add.bitmapText(12, 9, FONT, this.view === "credits" ? "Credits" : "datagutt's status").setTint(ACCENT));
 			this.container = scene.add
 				.container(Math.floor((cam.width - w) / 2), Math.max(4, Math.floor((cam.height - h) / 2)), parts)
 				.setScrollFactor(0)

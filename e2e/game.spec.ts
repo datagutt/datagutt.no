@@ -13,6 +13,7 @@ type FjordState = {
 	stamps: string[];
 	passportOpen: boolean;
 	menu: string;
+	thomas: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -23,14 +24,18 @@ async function holdKey(page: Page, key: string, ms: number) {
 	await page.keyboard.up(key);
 }
 
-/** Start from a save at the given spot, through the title screen's Continue button. */
-async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }) {
-	await page.goto("/?debug");
+/**
+ * Start from a save at the given spot, through the title screen's Continue button.
+ * `presence` fixes Thomas's Discord presence (game/live/datagutt.ts MOCK_PRESENCES), so
+ * where he stands doesn't depend on the real Lanyard feed.
+ */
+async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding") {
+	await page.goto(`/?debug&presence=${presence}`);
 	await page.evaluate(
 		(save) => localStorage.setItem("fjordtown.save", JSON.stringify({ version: 1, ...save, stamps: [], flags: {}, dialogue: {}, settings: {} })),
 		at,
 	);
-	await page.goto("/?debug");
+	await page.goto(`/?debug&presence=${presence}`);
 	await page.getByRole("button", { name: /continue/i }).click();
 	await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: at.map, tile: { x: at.x, y: at.y } });
 }
@@ -88,6 +93,39 @@ test.describe("world", () => {
 		await expect.poll(async () => (await state(page))?.menu).toBe("main");
 		await page.keyboard.press("Enter");
 		await expect.poll(async () => (await state(page))?.menu).toBe("closed");
+	});
+
+	test("Thomas follows his presence: asleep in bed, awake to talk, then off out", async ({ page }) => {
+		await continueAt(page, { map: "house-up", x: 4, y: 7, facing: "left" }, "offline");
+		await expect.poll(async () => (await state(page))?.thomas).toMatchObject({ place: "bed", asleep: true, tile: { x: 3, y: 7 } });
+
+		// Talking to him asleep offers to wake him.
+		await page.keyboard.press("e");
+		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
+		for (let i = 0; i < 5 && !(await state(page))?.choices; i++) {
+			await page.keyboard.press("e");
+			await page.waitForTimeout(250);
+		}
+		expect((await state(page))?.choices).toEqual(["Wake him up.", "Let him sleep."]);
+		await page.keyboard.press("ArrowDown");
+		await page.waitForTimeout(60);
+		await page.keyboard.press("e");
+		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(false);
+		// Letting him sleep isn't a conversation: no stamp.
+		expect((await state(page))?.stamps).not.toContain("home");
+
+		// He comes online with music on: out of bed and off down the stairs to the fjord.
+		await page.evaluate(() => (window as unknown as { __fjordPresence(name: string): void }).__fjordPresence("music"));
+		await expect.poll(async () => (await state(page))?.thomas.asleep).toBe(false);
+		await expect.poll(async () => (await state(page))?.thomas.tile, { timeout: 15_000 }).toBeNull();
+
+		// The START menu says where he went.
+		await page.keyboard.press("Enter");
+		await expect.poll(async () => (await state(page))?.menu).toBe("main");
+		await page.keyboard.press("ArrowDown");
+		await page.waitForTimeout(60);
+		await page.keyboard.press("e");
+		await expect.poll(async () => (await state(page))?.menu).toBe("status");
 	});
 
 	test("reloading continues where the player left off", async ({ page }) => {

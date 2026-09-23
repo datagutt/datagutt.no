@@ -15,7 +15,8 @@
 // Running joke material: Thomas doesn't drink coffee. He drinks energy drinks, as a grown
 // adult. Never give him a coffee habit.
 //
-// Tags: `# speaker: Name` overrides the speaker for a line; `# nod` and `# shake`
+// Tags: `# narration` makes a line the narrator's (no portrait or name);
+// `# speaker: Name` overrides the speaker for a line; `# nod` and `# shake`
 // play that portrait gesture once at the start of the line.
 
 INCLUDE ferryman.ink

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices, type WorldTarget } from "../boot";
 import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
+import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
 import { playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
@@ -24,6 +25,7 @@ import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 import { applySeason } from "../world/season";
+import { statusLines } from "../live/datagutt";
 
 type Door = Extract<MapObject, { type: "door" }>;
 type Sign = Extract<MapObject, { type: "sign" }>;
@@ -40,6 +42,7 @@ export class WorldScene extends Phaser.Scene {
 	private grid!: CollisionGrid;
 	private player!: Actor;
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
+	private thomas!: LiveThomas;
 	private doors = new Map<string, Door>();
 	private signs = new Map<string, Sign>();
 	private input2!: InputController;
@@ -114,12 +117,14 @@ export class WorldScene extends Phaser.Scene {
 		}
 
 		const spawns = new Map<string, Extract<MapObject, { type: "spawn" }>>();
+		const spots = new Map<string, Extract<MapObject, { type: "spot" }>>();
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		const lights: LightObject[] = [];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
+			if (obj.type === "spot") spots.set(obj.id, obj);
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") this.signs.set(tileKey(obj), obj);
 			if (obj.type === "light") lights.push(obj);
@@ -141,6 +146,21 @@ export class WorldScene extends Phaser.Scene {
 		const facing = this.target.facing ?? spawn?.facing ?? "down";
 		this.player = new Actor(this, PLAYER_ID, "player", start, facing, PLAYER_MOVEMENT);
 		this.grid.occupy(start.x, start.y, PLAYER_ID);
+		this.thomas = new LiveThomas(
+			{
+				scene: this,
+				map: this.target.map,
+				grid: this.grid,
+				spots,
+				doors: this.doors,
+				addNpc: (def, actor) => this.npcs.set(def.id, { actor, def }),
+				removeNpc: (id) => this.npcs.delete(id),
+				playerTile: () => this.player.mover.tile,
+			},
+			this.services.presence,
+			rosterNpc(THOMAS_ID)?.name ?? "Thomas",
+		);
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.thomas.destroy());
 
 		this.input2 = new InputController(this);
 		this.dialogue = new DialogueBox(this);
@@ -165,6 +185,7 @@ export class WorldScene extends Phaser.Scene {
 				this.sound.mute = next.muted;
 				this.save();
 			},
+			status: () => statusLines(this.services.presence.current),
 			openJournal: () => {
 				this.save();
 				window.location.href = "/journal";
@@ -243,7 +264,8 @@ export class WorldScene extends Phaser.Scene {
 		}
 
 		this.player.sync();
-		for (const { actor } of this.npcs.values()) actor.sync();
+		for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
+		this.thomas.update(dt, time);
 
 	}
 
@@ -273,6 +295,7 @@ export class WorldScene extends Phaser.Scene {
 			map: this.target.map,
 			season: this.services.season,
 			presence: this.services.presence.current,
+			thomas: this.thomas.state,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,
@@ -433,8 +456,12 @@ export class WorldScene extends Phaser.Scene {
 
 	/** Play an NPC's Ink knot beat by beat until it ends. */
 	private talk(npc: NpcDef) {
+		// Each NPC's own knot has their id. Another knot first (Thomas asleep) only counts
+		// as talking to them if it leads there.
+		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
+		const visits = runner.visits(npc.id);
 		this.playKnot(npc.dialogue, npc, () => {
-			this.finishedTalking(npc.id);
+			if (runner.visits(npc.id) > visits) this.finishedTalking(npc.id);
 			this.save();
 		});
 	}
@@ -451,12 +478,14 @@ export class WorldScene extends Phaser.Scene {
 			if (beat.type === "line") {
 				const gesture = beat.tags.includes("nod") ? "nod" : beat.tags.includes("shake") ? "shake" : null;
 				// A `# speaker:` tag means someone else is talking: no portrait for them yet.
-				const character = npc && !beat.speaker ? npc.character : null;
+				// `# narration` is the narrator: no portrait, no name.
+				const narration = beat.tags.includes("narration");
+				const character = npc && !beat.speaker && !narration ? npc.character : null;
 				const voice = voiceFor(character);
 				const onChar = (text: string, i: number) => shouldBlip(text, i, voice.every) && this.blips.play(voice);
 				const link = beat.tags.map(resolveLink).find((l) => l && !("error" in l));
 				const next = link && !("error" in link) ? () => this.offerLink(link.url, link.label, step) : step;
-				const name = beat.speaker ?? (npc ? (rosterNpc(npc.id)?.name ?? npc.name) : null);
+				const name = narration ? null : (beat.speaker ?? (npc ? (rosterNpc(npc.id)?.name ?? npc.name) : null));
 				this.dialogue.say(beat.text, name, next, { portrait: character, gesture, onChar });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {

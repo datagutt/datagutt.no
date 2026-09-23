@@ -40,7 +40,7 @@ export const EXTERNALS = {
 	stat: { params: ["name"], arg: "stat", doc: "GitHub stat (live): public_repos, followers, total_stars, years_coding" },
 	contributions_total: { params: [], arg: "none", doc: "Contributions in the last year (live)" },
 	has_stamp: { params: ["place"], arg: "place", doc: "Whether the player has that place's passport stamp" },
-	lanyard_activity: { params: [], arg: "none", doc: "What datagutt is doing right now (live, M4)" },
+	lanyard_activity: { params: [], arg: "none", doc: "What Thomas is up to right now in his own words, or \"\" (live, game/live/datagutt.ts)" },
 } as const satisfies Record<string, ExternalSpec>;
 
 export type ExternalName = keyof typeof EXTERNALS;

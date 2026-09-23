@@ -4,6 +4,30 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M4.2 live datagutt NPC done.** `game/live/datagutt.ts` maps presence to a place
+  (`doingFor`, the user's rules in DESIGN's open-questions table), what he says about it
+  in dialogue (`nowDoing`, bound to the `lanyard_activity()` external) and the START
+  menu's "datagutt's status" screen (`statusLines`). Places are `spot` map objects named
+  `datagutt-<place>` (desk and bed in `house-up`, fjord and square in `town`), placed by
+  the generator; a test checks they exist and that doors link house-up, house and town.
+  `game/entities/LiveThomas.ts` puts him on the current map and walks him when his
+  presence changes while the player watches: to the new spot, out through the door
+  toward another map, or in through the door he comes from (a small map-link table in
+  datagutt.ts, since only he travels). He wanders the square, lies in bed with LimeZu's
+  sleep frames (the head drawn on the pillow, `PILLOW` offset), and shows emote bubbles
+  from LimeZu's thinking-emotes sheet (`game/ui/emotes.ts`, built to `ui/emotes.png`) or
+  his custom status as a speech bubble when the player is within 7 tiles
+  (`game/ui/Bubbles.ts`). Asleep, talking plays `datagutt_asleep`: "Wake him up?" leads
+  into his usual knot. The passport stamp now needs the NPC's own knot visited during the
+  talk (`DialogueRunner.visits`), so "Let him sleep" doesn't stamp. New Ink tag
+  `# narration` (no portrait or name).
+  - Debug and e2e: `?debug&presence=offline|coding|gaming|music|idle|online` fixes his
+    presence instead of Lanyard; `window.__fjordPresence(name)` switches it live;
+    `window.__fjord.thomas` has his place, tile and whether he is asleep. e2e tests pin
+    `presence=coding` for anything that talks to him.
+  - Upstairs stairwell: the railing frame's bottom bar straddles two sheet rows, so the
+    rail prefab stops a row early and bare side posts continue it (user spotted a bar
+    across the stairs).
 - **M4 started: M4.1 Lanyard client done.** `game/net/lanyard.ts`: `LanyardClient`
   (hello, subscribe, heartbeat, reconnect with backoff from 1 s to 60 s), `parsePresence`
   (status, custom status text, Spotify song, other activities), and `PresenceFeed`, which
@@ -225,10 +249,9 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-M4.2: the datagutt NPC's behaviour from `services.presence` (the DESIGN open-questions
-table maps presence to place: coding app to the PC upstairs, Spotify to the fjord bench
-with headphones, online idle to the town square, offline asleep in bed, custom status as
-a speech bubble), plus "datagutt's status" in the START menu. Then M4.3 to M4.6. Still
+M4.3: ghost protocol v2 (`/api/world/ws`, rooms per map, join/move/emote/leave), then
+M4.4 ghost rendering, M4.5 emotes (reuse `game/ui/emotes.ts` and `EmoteBubble`), M4.6
+cleanup of the old reactions overlay and `react-use-lanyard`. Still
 open in M3: two interiors wait on art, the Nettbureau office (Modern Office pack) and the
 town hall basement server room (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
 mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user

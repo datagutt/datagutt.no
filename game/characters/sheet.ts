@@ -17,6 +17,11 @@ export const ANIMS = {
 	idle: { row: 1, framesPerDirection: 6, frameRate: 6, repeat: -1 },
 	walk: { row: 2, framesPerDirection: 6, frameRate: 12, repeat: -1 },
 	phone: { row: 6, framesPerDirection: 3, frameRate: 4, repeat: -1 },
+	/**
+	 * A head asleep on a pillow, meant to be drawn over a bed. One set of frames, not four:
+	 * use it facing right (the "directions" after it are the sheet's labels and bed guide).
+	 */
+	sleep: { row: 3, framesPerDirection: 6, frameRate: 2, repeat: -1 },
 } satisfies Record<string, AnimSpec>;
 export type AnimName = keyof typeof ANIMS;
 

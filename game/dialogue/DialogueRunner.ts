@@ -43,6 +43,11 @@ export class DialogueRunner {
 		this.story.ChooseChoiceIndex(index);
 	}
 
+	/** How often a knot has been visited, over the whole game. */
+	visits(knot: string): number {
+		return this.story.state.VisitCountAtPathString(knot) ?? 0;
+	}
+
 	/** Visit counts and variables, for the save file. */
 	saveState(): string {
 		return this.story.state.ToJson();

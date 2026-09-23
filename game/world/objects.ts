@@ -10,6 +10,11 @@ export type MapObject =
 	/** A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. */
 	| { type: "sign"; x: number; y: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
+	/**
+	 * A named place an NPC who moves between maps can be, facing a way: the live datagutt
+	 * NPC goes to the spot his presence picks (game/live/datagutt.ts).
+	 */
+	| { type: "spot"; id: string; x: number; y: number; facing: Facing }
 	| LightObject
 	/**
 	 * Live content drawn by the game from the WorldState (M3.11): `crops` is the farm field
@@ -70,6 +75,8 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			const dialogue = props.get("dialogue");
 			return { type: "sign", x, y, text: str("text"), ...(typeof dialogue === "string" && dialogue ? { dialogue } : {}) };
 		}
+		case "spot":
+			return { type: "spot", id: obj.name || str("id"), x, y, facing: facing() };
 		case "npc":
 			return { type: "npc", id: obj.name || str("id"), character: str("character"), x, y, facing: facing(), name: str("name"), dialogue: str("dialogue") };
 		case "crops":
