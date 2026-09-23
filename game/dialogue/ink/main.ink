@@ -9,10 +9,22 @@
 // the conversation. Unasked questions stay available on later visits, so no fact can be
 // missed by picking the "wrong" option first.
 //
+// Running joke material: Thomas doesn't drink coffee. He drinks energy drinks, as a grown
+// adult. Never give him a coffee habit.
+//
 // Tags: `# speaker: Name` overrides the speaker for a line; `# nod` and `# shake`
 // play that portrait gesture once at the start of the line.
 
 INCLUDE ferryman.ink
 INCLUDE datagutt.ink
+INCLUDE streamer.ink
+INCLUDE technician.ink
+INCLUDE shopkeeper.ink
+INCLUDE coworker.ink
+INCLUDE sysadmin.ink
+INCLUDE smith.ink
+INCLUDE librarian.ink
+INCLUDE farmer.ink
+INCLUDE postmaster.ink
 
 -> END

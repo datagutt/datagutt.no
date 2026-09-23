@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { profile } from "../../content/profile";
+import { asSentence } from "./externals";
 import { resolveLink } from "./links";
 
 describe("resolveLink", () => {
@@ -14,5 +15,14 @@ describe("resolveLink", () => {
 		expect(resolveLink("link: project nope")).toHaveProperty("error");
 		expect(resolveLink("link: social myspace")).toHaveProperty("error");
 		expect(resolveLink("link: carrier-pigeon")).toHaveProperty("error");
+	});
+});
+
+
+describe("asSentence", () => {
+	it("capitalises and ends with a full stop only when needed", () => {
+		expect(asSentence("my home on the internet")).toBe("My home on the internet.");
+		expect(asSentence("Done!")).toBe("Done!");
+		expect(asSentence("  ")).toBe("");
 	});
 });

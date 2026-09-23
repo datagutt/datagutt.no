@@ -161,18 +161,20 @@ the passport works.
       Tabs open inside the real key or tap event via `game/ui/LinkOpener.ts`, because
       browsers block popups from Phaser's frame-delayed input. Wiring every project and
       the email into dialogue happens in M2.9.)
-- [ ] **M2.8** NPC roster and personalities: `game/npcs.ts` defines each NPC (id,
+- [x] **M2.8** NPC roster and personalities: `game/npcs.ts` defines each NPC (id,
       name, place, sprite layer recipe, portrait recipe, blip voice, Ink knot). Draft names
       and one-line personalities for review. **datagutt NPC recipe follows
       `public/images/avatar.png`** (DESIGN §3). *Done when* the user has reviewed the
-      roster.
-- [ ] **M2.9** Write all Ink scripts (Claude drafts, user edits): ferryman, datagutt
+      roster. (Approved 2026-09-23 "good for now"; lives in `game/npcs.ts`.)
+- [x] **M2.9** Write all Ink scripts (Claude drafts, user edits): ferryman, datagutt
       (and house objects), streamer (Guac), technician (IRLServer), shopkeeper
       (Donate.chat), coworkers (Nettbureau), sysadmin (IØD), smith (skills), librarian
       (repos, live), farmer (stats, live), postmaster (contact), plus 4–6 townsfolk for
       life and hints. Each main NPC: first-visit, repeat, has-stamp variants. *Done when*
       every content field in `content/` is referenced by at least one line (checked by
-      the validator's coverage report).
+      the validator's coverage report). (`game/dialogue/coverage.test.ts` checks
+      coverage; every conversation is walked to the end in tests with live and empty
+      data. Drafts are ready for the user to edit.)
 - [ ] **M2.10** Passport and stamps: stamp on first full conversation with each main
       NPC, stamp animation and sound, passport screen in the START menu. *Done when*
       all stamps can be collected in one run.

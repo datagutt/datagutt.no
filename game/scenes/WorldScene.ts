@@ -8,6 +8,7 @@ import { BlipPlayer, shouldBlip, voiceFor } from "../audio/blips";
 import { DialogueBox } from "../ui/DialogueBox";
 import { LinkOpener } from "../ui/LinkOpener";
 import { resolveLink } from "../dialogue/links";
+import { npc as rosterNpc } from "../npcs";
 import type { DialogueRunner } from "../dialogue/DialogueRunner";
 import { DIALOGUE_KEY } from "./PreloadScene";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid";
@@ -318,7 +319,7 @@ export class WorldScene extends Phaser.Scene {
 				const onChar = (text: string, i: number) => shouldBlip(text, i, voice.every) && this.blips.play(voice);
 				const link = beat.tags.map(resolveLink).find((l) => l && !("error" in l));
 				const next = link && !("error" in link) ? () => this.offerLink(link.url, link.label, step) : step;
-				this.dialogue.say(beat.text, beat.speaker ?? npc.name, next, { portrait, gesture, onChar });
+				this.dialogue.say(beat.text, beat.speaker ?? rosterNpc(npc.id)?.name ?? npc.name, next, { portrait, gesture, onChar });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {
 					runner.choose(i);

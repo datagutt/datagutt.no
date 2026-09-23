@@ -3,7 +3,7 @@
 // visitor should learn may hide behind a one-time choice.
 === datagutt ===
 { datagutt > 1:
-    {~Back already? The town isn't that big. Yet.|If you find a bug, it's a feature. Probably.|I'd offer you coffee, but the greybox doesn't have any.}
+    {~Back already? The town isn't that big. Yet.|If you find a bug, it's a feature. Probably.|I'd offer you a drink, but I'm down to my last energy drink. It's for emergencies. Everything is an emergency.}
 - else:
     Oh, hi! I'm {profile("firstName")}. {profile("role")} by trade, {profile("location")} by postcode. # nod
     {about(0)}

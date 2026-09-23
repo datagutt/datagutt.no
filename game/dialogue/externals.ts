@@ -13,7 +13,7 @@ import { socials } from "../../content/socials.ts";
 /** What kind of value an external's first argument is, so literal ids can be checked. */
 export type ArgKind = "project" | "job" | "social" | "profileField" | "stat" | "skillCategory" | "place" | "index" | "none";
 
-const PROFILE_FIELDS = ["name", "firstName", "handle", "role", "tagline", "location", "email"] as const;
+const PROFILE_FIELDS = ["name", "firstName", "handle", "role", "tagline", "location", "email", "contactPitch"] as const;
 const STAT_FIELDS = ["public_repos", "followers", "total_stars", "years_coding"] as const;
 
 export type ExternalSpec = { params: string[]; arg: ArgKind; doc: string };
@@ -90,6 +90,14 @@ const find = <T extends { id: string }>(list: readonly T[], id: string, what: st
 	return found;
 };
 
+/** "my home on the internet" -> "My home on the internet." (empty stays empty). */
+export function asSentence(text: string): string {
+	const t = text.trim();
+	if (!t) return "";
+	const capital = t.charAt(0).toUpperCase() + t.slice(1);
+	return /[.!?…)]$/.test(capital) ? capital : `${capital}.`;
+}
+
 export function bindExternals(story: Bindable, ctx: ExternalContext): void {
 	const repo = (i: number) => ctx.world.repos[Math.trunc(i)];
 	const impl: Record<ExternalName, (...args: never[]) => unknown> = {
@@ -108,7 +116,8 @@ export function bindExternals(story: Bindable, ctx: ExternalContext): void {
 		social_url: (id: string) => find(socials, id, "social").url,
 		repo_count: () => ctx.world.repos.length,
 		repo_name: (i: number) => repo(i)?.name ?? "",
-		repo_desc: (i: number) => repo(i)?.description ?? "",
+		// GitHub descriptions often lack a full stop; dialogue reads them as sentences.
+		repo_desc: (i: number) => asSentence(repo(i)?.description ?? ""),
 		repo_lang: (i: number) => repo(i)?.language ?? "",
 		repo_stars: (i: number) => repo(i)?.stars ?? 0,
 		stat: (name: string) => ctx.world.stats[name as (typeof STAT_FIELDS)[number]] ?? 0,

@@ -6,6 +6,7 @@ import { EMPTY_WORLD_STATE } from "../../content/live";
 import { profile } from "../../content/profile";
 import { projects } from "../../content/projects";
 import { externalDeclarations } from "./externals";
+import { NPCS } from "../npcs";
 import { DialogueRunner, type Beat } from "./DialogueRunner";
 
 const dir = path.join(__dirname, "ink");
@@ -86,4 +87,43 @@ describe("DialogueRunner", () => {
 		second.start("ferryman");
 		expect(read(second).lines[0]).not.toMatch(/Welcome ashore/);
 	});
+
+	const sampleWorld = {
+		...EMPTY_WORLD_STATE,
+		repos: [
+			{ author: "datagutt", name: "one", description: "First.", language: "Rust", languageColor: "", stars: 3, forks: 0 },
+			{ author: "datagutt", name: "two", description: "Second.", language: "", languageColor: "", stars: 0, forks: 0 },
+		],
+		stats: { public_repos: 90, followers: 12, total_stars: 300, years_coding: 16 },
+		contributions: [{ date: "2026-09-01", count: 5, level: 2 as const }],
+	};
+
+	it.each(NPCS.flatMap((n) => [{ id: n.id, world: "live" }, { id: n.id, world: "empty" }]))(
+		"$id: every question can be asked and the conversation ends ($world data)",
+		({ id, world }) => {
+			const runner = new DialogueRunner(json, { ...ctx, world: world === "live" ? sampleWorld : EMPTY_WORLD_STATE });
+			runner.start(id);
+			const said: string[] = [];
+			const asked = new Set<string>();
+			for (let steps = 0; steps < 200; steps++) {
+				const beat = runner.next();
+				if (beat.type === "end") {
+					expect(said.join(" ")).not.toMatch(/undefined|NaN|\[object/);
+					return;
+				}
+				if (beat.type === "line") {
+					said.push(beat.text);
+					continue;
+				}
+				// Ask every question once, then leave: "Back" out of sub-menus, then goodbye (last).
+				const fresh = beat.choices.findIndex((c, i) => !asked.has(c) && !/^Back/.test(c) && i < beat.choices.length - 1);
+				const back = beat.choices.findIndex((c) => /^Back/.test(c));
+				const pick = fresh >= 0 ? fresh : back >= 0 ? back : beat.choices.length - 1;
+				asked.add(beat.choices[pick]);
+				runner.choose(pick);
+			}
+			throw new Error(`${id} did not finish in 200 steps`);
+		},
+	);
 });
+
