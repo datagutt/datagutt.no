@@ -44,6 +44,17 @@ export const PIER = {
 	ring: [t("campingDry", 2, 13), t("campingDry", 2, 14)],
 };
 
+/**
+ * Dock trim for water indoors: a lip (pier end: plank edge and post stubs over the water)
+ * with a left end, and a mooring post.
+ */
+export const DOCK_TRIM = {
+	lipLeft: t("campingDry", 3, 14),
+	lip: t("campingDry", 4, 14),
+	/** A post hugging the right side of its tile, two tiles tall. */
+	postRight: [t("campingDry", 0, 12), t("campingDry", 0, 13)],
+};
+
 /** A plain wooden door (generic buildings), 1×2, for buildings drawn without one. */
 export const DOOR = [t("buildings", 5, 38), t("buildings", 5, 39)];
 

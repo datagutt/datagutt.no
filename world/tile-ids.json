@@ -2615,6 +2615,12 @@
 		"studio:3,13",
 		"studio:4,13",
 		"studio:5,13",
-		"studio:6,13"
+		"studio:6,13",
+		"campingDry:5,17",
+		"campingDry:6,17",
+		"campingDry:3,17",
+		"campingDry:4,17",
+		"campingDry:0,12",
+		"campingDry:0,13"
 	]
 }

@@ -4,9 +4,9 @@
 // her, the stream on the wall monitor and the ON AIR lamp.
 import { NPCS } from "../../../game/npcs.ts";
 import { variant } from "../../art/autotile.ts";
-import { TERRAIN } from "../../art/palette.ts";
+import { DOCK_TRIM, TERRAIN } from "../../art/palette.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { MapCanvas } from "../canvas.ts";
+import { FLIP, MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 import { Region } from "../layout.ts";
 
@@ -24,6 +24,11 @@ export function boathouse(): MapCanvas {
 		c.put("ground2", x, y, variant(TERRAIN.sea.center, x, y)).block(x, y);
 		if (y === r.y + r.h) c.put("above", x, y, null); // the wall is open to the fjord here
 	});
+	// Dock trim: the floor's plank lip over the water's top edge, posts along its side.
+	for (let x = 2; x <= 5; x++) c.put("below", x, 5, x === 2 ? DOCK_TRIM.lipLeft : DOCK_TRIM.lip);
+	// Down the side, the same lip turned a quarter clockwise (it is flat, so rotating is safe).
+	for (let y = 6; y <= 10; y++) c.put("decal", 5, y, { ...DOCK_TRIM.lip, flip: FLIP.D | FLIP.H });
+	for (const y of [6, 9]) c.put("below", 5, y, DOCK_TRIM.postRight[0]).put("below", 5, y + 1, DOCK_TRIM.postRight[1]);
 	c.stamp(F.rowboatUp, 3, 6);
 
 	// Fishing corner along the back wall.
