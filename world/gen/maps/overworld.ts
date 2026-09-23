@@ -1,5 +1,5 @@
-// The overworld: Fjord Town on the north shore of a fjord (docs/game/DESIGN.md §5).
-// Work in progress for M3.7; the greybox `town` stays the live map until this is approved.
+// The overworld, map id `town`: Fjord Town on the north shore of a fjord
+// (docs/game/DESIGN.md §5). Approved by the user on 2026-09-23 (M3.7).
 //
 //   x:  0-4 forest | 5-34 farm, datagutt's street, boathouse | 35-62 library, town hall,
 //       square, post office, harbour | 63-90 radio hill, office, smithy | 91-95 forest
@@ -70,13 +70,13 @@ export function overworld(): MapCanvas {
 	// --- Buildings -------------------------------------------------------------------------
 	building(c, "farmhouse", 5, 7);
 	c.stamp(PREFABS.windmill, 23, 8);
-	building(c, "library", 29, 5, { toMap: "library", toSpawn: "entrance", addDoor: true });
-	building(c, "townHall", 42, 4, { toMap: "town-hall", toSpawn: "entrance", addDoor: true });
+	building(c, "library", 29, 5, { addDoor: true });
+	building(c, "townHall", 42, 4, { addDoor: true });
 	c.stamp(PREFABS.radioTower, 79, 5);
 	building(c, "office", 69, 22);
 	building(c, "smithy", 79, 28);
 	building(c, "villaOrange", 6, 29);
-	const home = building(c, "homeVilla", 16, 29, { toMap: "house", toSpawn: "entrance" });
+	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
 	building(c, "villaBlue", 26, 29);
 	building(c, "kiosk", 57, 30);
 	building(c, "postOffice", 37, 44);
@@ -90,7 +90,8 @@ export function overworld(): MapCanvas {
 	const pierEnd = pierTop + 8;
 	pier(c, HARBOUR_X, pierTop, pierEnd);
 	c.stamp(PREFABS.ferry, HARBOUR_X + 3, pierEnd - 4);
-	c.stamp(PREFABS.rowboat, 25, shore[25] + 1);
+	// Moored with its rope end (right) at the boathouse pier.
+	c.stamp(PREFABS.rowboat, 18, Math.max(...shore.slice(18, 22)));
 
 	// --- Town furniture --------------------------------------------------------------------
 	c.stamp(PREFABS.bigFountain, 48, 32);

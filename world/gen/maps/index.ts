@@ -4,4 +4,4 @@ import { overworld } from "./overworld.ts";
 
 export type GeneratedMap = { id: string; properties?: Record<string, string>; build: () => MapCanvas };
 
-export const GENERATED_MAPS: GeneratedMap[] = [{ id: "overworld", properties: { name: "Fjord Town" }, build: overworld }];
+export const GENERATED_MAPS: GeneratedMap[] = [{ id: "town", properties: { name: "Fjord Town" }, build: overworld }];

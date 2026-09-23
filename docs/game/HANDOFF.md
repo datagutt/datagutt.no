@@ -1,11 +1,12 @@
 # Handoff
 
-Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator and overworld draft)
+Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator and the live generated town)
 
 ## Current state
 
-- **M3 in progress.** The generator works end to end and the overworld draft is waiting
-  for the user's approval (M3.7):
+- **M3 in progress.** The generator works end to end, and the overworld was approved
+  ("looks good for now") and is now the live `town` map (M3.7). The greybox town is gone;
+  the greybox house stays until its interior is built.
   - `pnpm world:gen` runs `world/gen/maps/*` → committed `world/maps/<id>.tmj`
     (keeps `manual_*` layers) + append-only `world/tile-ids.json`. With the art it also
     writes `world/tile-colors.json` (2×2 colour sketch per tile, for placeholder builds),
@@ -25,8 +26,12 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Every building has a notice-board sign with its name and a line of flavour
     (user request). NPCs stand outside their buildings for now; M3.8 moves each one
     indoors as its interior is built (Arne stays on the pier, Ola in the field).
-  - `world/gen/maps/overworld.ts` is the 96×76 draft; the greybox `town` stays the live
-    map until the user approves. Open it with `?debug&map=overworld`.
+  - `world/gen/maps/overworld.ts` builds the 96×76 `town`. Spawns: `ferry` on the pier,
+    `house_door` (18,40), `office_door` (72,37). `?debug&map=<id>` opens any map.
+  - Doors are only wired (`building(..., { link })`) once the interior exists;
+    `pnpm assets` fails on doors to unknown maps or spawns.
+  - Piers use `campingDry`, a derived camping sheet with its baked-in water made
+    transparent (dark bands become a soft shadow), so the animated sea shows under them.
   - Building choices: villas (7_Villas) for homes, falu red villa for datagutt, Victorian
     pieces (24_Additional_Houses) for town hall and library with a door tile added,
     white house = farmhouse, log cabin = smithy, corrugated house = boathouse, modern
@@ -101,9 +106,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-Wait for the user's verdict on the overworld render (`pnpm world:render` →
-`world/out/overworld.png`), then: make it the live `town` (move spawns, update e2e),
-M3.6 validator, M3.8 interiors (Interiors sheets are not surveyed yet), seasons.
+M3.8 interiors (the Interiors sheets are not surveyed yet), starting with datagutt's
+house, moving each NPC indoors as its interior lands and wiring its door. Then the rest
+of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).
 **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user

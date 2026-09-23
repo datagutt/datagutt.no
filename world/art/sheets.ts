@@ -23,8 +23,9 @@ export const SHEETS = {
 export type SheetId = keyof typeof SHEETS;
 
 /**
- * Recoloured copies of sheets: `from` with exact colour swaps (rrggbb, lower case).
- * Tiles reference them like any other sheet, e.g. "villaRed:0,14".
+ * Recoloured copies of sheets: `from` with exact colour swaps (rrggbb to rrggbb, or to
+ * rrggbbaa to change alpha too). Tiles reference them like any other sheet, e.g.
+ * "villaRed:0,14".
  */
 export const DERIVED: Record<string, { from: SheetId; recolor: Record<string, string> }> = {
 	// datagutt's house: a falu red Norwegian wooden house with a dark slate roof.
@@ -41,6 +42,20 @@ export const DERIVED: Record<string, { from: SheetId; recolor: Record<string, st
 			"911d38": "3a3d4a",
 			de4e3b: "6a7080",
 			ae1a2b: "43465a",
+		},
+	},
+	// The camping sheet's piers have its own flat water baked in under the planks. Clear
+	// it so the animated sea shows through, and keep the darker bands as a soft shadow.
+	campingDry: {
+		from: "camping",
+		recolor: {
+			"3ca3b2": "00000000",
+			"369ab0": "00000000",
+			"3690ae": "00000000",
+			"2987a6": "00000000",
+			"2a709b": "0a1e3250",
+			"22648d": "0a1e3260",
+			"215c81": "0a1e3270",
 		},
 	},
 };

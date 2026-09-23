@@ -215,9 +215,11 @@ Goal: the real town, painted, in all seasons.
       `world/gen/validate.ts` runs in `world:gen`/`world:check` and catches objects on
       blocked tiles, unreachable signs and NPCs, blocked door fronts and stacked objects.
       Door targets and reachability from the dock are still to do.)
-- [ ] **M3.7** Overworld: dock and harbour, town square, datagutt's street, hill with
+- [x] **M3.7** Overworld: dock and harbour, town square, datagutt's street, hill with
       radio tower, farm field, forest edge, fjord and cliffs. Iterate on renders until it
-      looks good. *Done when* the user approves the overworld render.
+      looks good. *Done when* the user approves the overworld render. (Approved
+      2026-09-23; `world/gen/maps/overworld.ts` is the live `town`, with name signs on
+      every building.)
 - [ ] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
       studio, radio tower hut, kiosk, office, town hall and basement server room,
       smithy, library, farmhouse, post office. *Done when* the user approves each render.

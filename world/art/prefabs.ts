@@ -53,7 +53,7 @@ export const PREFABS = {
 	library: { sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] },
 
 	hut: { sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] },
-	rowboat: { sheet: "camping", col: 5, row: 34, w: 4, h: 2, aboveRows: 0 },
+	rowboat: { sheet: "camping", col: 4, row: 34, w: 4, h: 2, aboveRows: 0 },
 	ferry: { sheet: "camping", col: 1, row: 37, w: 5, h: 4, aboveRows: 0 },
 	/** A small wooden board on a post: building name signs. */
 	signpost: { sheet: "camping", col: 19, row: 16, w: 1, h: 1, aboveRows: 0 },

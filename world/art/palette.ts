@@ -33,12 +33,15 @@ export const PLATEAU = {
 	stairs: { lip: t("camping", 21, 174), face: t("camping", 21, 175), foot: t("camping", 21, 176) },
 };
 
-/** A north–south wooden pier, three tiles wide (camping sheet), with a life ring at the end. */
+/**
+ * A north–south wooden pier, three tiles wide, from the camping sheet with its baked-in
+ * water cleared ("campingDry"). The life ring is two tiles tall.
+ */
 export const PIER = {
-	top: [t("camping", 3, 12), t("camping", 4, 12), t("camping", 6, 12)],
-	body: [t("camping", 3, 13), t("camping", 4, 13), t("camping", 6, 13)],
-	end: [t("camping", 3, 14), t("camping", 4, 14), t("camping", 6, 14)],
-	ring: t("camping", 2, 14),
+	top: [t("campingDry", 3, 12), t("campingDry", 4, 12), t("campingDry", 6, 12)],
+	body: [t("campingDry", 3, 13), t("campingDry", 4, 13), t("campingDry", 6, 13)],
+	end: [t("campingDry", 3, 14), t("campingDry", 4, 14), t("campingDry", 6, 14)],
+	ring: [t("campingDry", 2, 13), t("campingDry", 2, 14)],
 };
 
 /** A plain wooden door (generic buildings), 1×2, for buildings drawn without one. */

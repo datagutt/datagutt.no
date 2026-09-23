@@ -38,14 +38,18 @@ export class SheetCache {
 }
 
 function recolor(src: Raw, swaps: Record<string, string>): Raw {
-	const table = new Map(Object.entries(swaps).map(([from, to]) => [parseInt(from, 16), parseInt(to, 16)]));
+	// Targets are rrggbb (keep alpha) or rrggbbaa.
+	const table = new Map(
+		Object.entries(swaps).map(([from, to]) => [parseInt(from, 16), [0, 2, 4, 6].map((o) => (to.length > o ? parseInt(to.slice(o, o + 2), 16) : -1))]),
+	);
 	const data = Buffer.from(src.data);
 	for (let i = 0; i < data.length; i += 4) {
 		const to = table.get((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
-		if (to === undefined) continue;
-		data[i] = to >> 16;
-		data[i + 1] = (to >> 8) & 255;
-		data[i + 2] = to & 255;
+		if (!to) continue;
+		data[i] = to[0];
+		data[i + 1] = to[1];
+		data[i + 2] = to[2];
+		if (to[3] >= 0) data[i + 3] = to[3];
 	}
 	return { ...src, data };
 }

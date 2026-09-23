@@ -46,7 +46,7 @@ export function pier(c: MapCanvas, x: number, y0: number, y1: number) {
 			c.block(x + dx, y, y === y1);
 		});
 	}
-	c.put("below", x - 1, y1, PIER.ring);
+	c.put("below", x - 1, y1 - 1, PIER.ring[0]).put("below", x - 1, y1, PIER.ring[1]);
 }
 
 /**
@@ -96,24 +96,23 @@ export function fence(c: MapCanvas, x: number, y: number, w: number, h: number, 
 }
 
 /**
- * A building prefab with its door wired to an interior. `addDoor` draws a door on
- * buildings whose art has none. Returns the tile in front of the door.
+ * A building prefab. `link` wires its door to an interior (leave it out until the
+ * interior exists); `addDoor` draws a door on buildings whose art has none. Returns the
+ * tile in front of the door.
  */
 export function building(
 	c: MapCanvas,
 	id: PrefabId,
 	x: number,
 	y: number,
-	link?: { toMap: string; toSpawn: string; addDoor?: boolean },
+	options: { link?: { toMap: string; toSpawn: string }; addDoor?: boolean } = {},
 ): { x: number; y: number } {
 	const prefab = PREFABS[id] as Prefab;
 	c.stamp(prefab, x, y);
 	if (!prefab.door) throw new Error(`Prefab ${id} has no door`);
 	const door = { x: x + prefab.door[0], y: y + prefab.door[1] };
-	if (link?.addDoor) {
-		c.put("below", door.x, door.y - 1, DOOR[0]).put("below", door.x, door.y, DOOR[1]);
-	}
-	if (link) c.add({ type: "door", x: door.x, y: door.y, toMap: link.toMap, toSpawn: link.toSpawn } satisfies MapObject);
+	if (options.addDoor) c.put("below", door.x, door.y - 1, DOOR[0]).put("below", door.x, door.y, DOOR[1]);
+	if (options.link) c.add({ type: "door", x: door.x, y: door.y, ...options.link } satisfies MapObject);
 	return { x: door.x, y: door.y + 1 };
 }
 

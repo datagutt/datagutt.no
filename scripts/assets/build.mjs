@@ -300,6 +300,16 @@ const mapObjects = [
 		objects: tmj.layers.filter((l) => l.type === "objectgroup").flatMap((l) => l.objects.map((o) => parseMapObject(o, TILE))),
 	})),
 ];
+// Doors must lead to a map that exists and a spawn on it.
+const spawnsByMap = new Map(mapObjects.map(({ id, objects }) => [id, new Set(objects.filter((o) => o.type === "spawn").map((o) => o.id))]));
+for (const { id, objects } of mapObjects) {
+	for (const obj of objects) {
+		if (obj.type !== "door") continue;
+		const spawns = spawnsByMap.get(obj.toMap);
+		if (!spawns) throw new Error(`${id}: door at (${obj.x}, ${obj.y}) leads to unknown map "${obj.toMap}"`);
+		if (!spawns.has(obj.toSpawn)) throw new Error(`${id}: door at (${obj.x}, ${obj.y}) leads to missing spawn "${obj.toSpawn}" on ${obj.toMap}`);
+	}
+}
 for (const { id, objects } of mapObjects) {
 	for (const obj of objects) {
 		if (obj.type === "npc" && !dialogue.knots.includes(obj.dialogue)) {
