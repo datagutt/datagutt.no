@@ -48,3 +48,4 @@ next-env.d.ts
 # world generator: renders and the Tiled tileset contain LimeZu pixels
 /world/out/
 /world/tilesets/
+.env
