@@ -236,6 +236,10 @@ asks.
 
 ## Gotchas learned so far
 
+- Dialogue choices wrap onto several lines when long (`wrapChoices` in
+  `game/ui/text.ts`); the cursor and taps go by choice, not by line. The user caught
+  "Is there a quicker way to see everything?" running outside the box on a narrow window.
+
 - Survey sheets with the scratchpad tools (a labelled grid crop of a sheet, an ASCII
   occupancy dump); LimeZu packs sprites edge to edge, so bounding boxes by flood fill
   merge neighbours. Check every prefab in a render before trusting its door.
