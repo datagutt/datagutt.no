@@ -4,6 +4,8 @@
 // Lanyard only tracks users who are in its Discord server; for anyone else the feed
 // stays empty and the NPC keeps its default place.
 
+import { browserSocket, Reconnecting, type SocketLike } from "./reconnect";
+
 export const LANYARD_SOCKET = "wss://api.lanyard.rest/socket";
 
 export type DiscordStatus = "online" | "idle" | "dnd" | "offline";
@@ -77,68 +79,35 @@ export class PresenceFeed {
 	}
 }
 
-/** The part of WebSocket the client uses, so tests can pass a fake. */
-export type SocketLike = {
-	send(data: string): void;
-	close(): void;
-	onopen: (() => void) | null;
-	onmessage: ((event: { data: unknown }) => void) | null;
-	onclose: (() => void) | null;
-	onerror: (() => void) | null;
-};
-
 type Message = { op?: number; t?: string; d?: { heartbeat_interval?: number } & Record<string, unknown> };
 
 const OP = { event: 0, hello: 1, initialize: 2, heartbeat: 3 } as const;
-/** Reconnect delays grow from the first to the last, doubling. */
-const RETRY_MS = { first: 1_000, max: 60_000 };
 
 /** Keeps one Lanyard subscription alive: heartbeats, and reconnects with backoff. */
 export class LanyardClient {
-	private socket: SocketLike | null = null;
+	private readonly connection: Reconnecting;
 	private heartbeat: ReturnType<typeof setInterval> | null = null;
-	private retry: ReturnType<typeof setTimeout> | null = null;
-	private retryMs = RETRY_MS.first;
-	private stopped = true;
 
 	constructor(
 		private readonly userId: string,
 		private readonly onPresence: (presence: Presence) => void,
-		private readonly createSocket: (url: string) => SocketLike = (url) => new WebSocket(url) as unknown as SocketLike,
-		private readonly url = LANYARD_SOCKET,
-	) {}
+		createSocket: (url: string) => SocketLike = browserSocket,
+		url = LANYARD_SOCKET,
+	) {
+		this.connection = new Reconnecting(
+			url,
+			(socket) => (socket.onmessage = (event) => this.receive(socket, event.data)),
+			() => this.stopHeartbeat(),
+			createSocket,
+		);
+	}
 
 	start(): void {
-		if (!this.stopped) return;
-		this.stopped = false;
-		this.connect();
+		this.connection.start();
 	}
 
 	stop(): void {
-		this.stopped = true;
-		this.clearTimers();
-		const socket = this.socket;
-		this.socket = null;
-		socket?.close();
-	}
-
-	private connect(): void {
-		let socket: SocketLike;
-		try {
-			socket = this.createSocket(this.url);
-		} catch {
-			this.scheduleRetry();
-			return;
-		}
-		this.socket = socket;
-		socket.onmessage = (event) => this.receive(socket, event.data);
-		socket.onclose = () => {
-			if (this.socket !== socket) return;
-			this.socket = null;
-			this.clearTimers();
-			this.scheduleRetry();
-		};
-		socket.onerror = () => socket.close();
+		this.connection.stop();
 	}
 
 	private receive(socket: SocketLike, data: unknown): void {
@@ -152,27 +121,17 @@ export class LanyardClient {
 			socket.send(JSON.stringify({ op: OP.initialize, d: { subscribe_to_id: this.userId } }));
 			const interval = message.d?.heartbeat_interval;
 			if (typeof interval === "number" && interval > 0) {
-				if (this.heartbeat) clearInterval(this.heartbeat);
+				this.stopHeartbeat();
 				this.heartbeat = setInterval(() => socket.send(JSON.stringify({ op: OP.heartbeat })), interval);
 			}
 		} else if (message.op === OP.event && (message.t === "INIT_STATE" || message.t === "PRESENCE_UPDATE")) {
-			this.retryMs = RETRY_MS.first;
+			this.connection.healthy();
 			this.onPresence(parsePresence(message.d));
 		}
 	}
 
-	private scheduleRetry(): void {
-		if (this.stopped) return;
-		this.retry = setTimeout(() => {
-			this.retry = null;
-			if (!this.stopped) this.connect();
-		}, this.retryMs);
-		this.retryMs = Math.min(this.retryMs * 2, RETRY_MS.max);
-	}
-
-	private clearTimers(): void {
+	private stopHeartbeat(): void {
 		if (this.heartbeat) clearInterval(this.heartbeat);
-		if (this.retry) clearTimeout(this.retry);
-		this.heartbeat = this.retry = null;
+		this.heartbeat = null;
 	}
 }

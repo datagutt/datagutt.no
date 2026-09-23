@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { LanyardClient, parsePresence, PresenceFeed, type Presence, type SocketLike } from "./lanyard";
+import { LanyardClient, parsePresence, PresenceFeed, type Presence } from "./lanyard";
+import type { SocketLike } from "./reconnect";
 
 class FakeSocket implements SocketLike {
 	sent: unknown[] = [];

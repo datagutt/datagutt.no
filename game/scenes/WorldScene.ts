@@ -3,6 +3,8 @@ import { SERVICES_KEY, type GameServices, type WorldTarget } from "../boot";
 import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
 import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
+import { GhostLayer } from "../entities/Ghosts";
+import { SimulatedGhosts } from "../dev/simulatedGhosts";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
 import { playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
@@ -43,6 +45,8 @@ export class WorldScene extends Phaser.Scene {
 	private player!: Actor;
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
 	private thomas!: LiveThomas;
+	private ghosts!: GhostLayer;
+	private simulated: SimulatedGhosts | null = null;
 	private doors = new Map<string, Door>();
 	private signs = new Map<string, Sign>();
 	private input2!: InputController;
@@ -162,6 +166,20 @@ export class WorldScene extends Phaser.Scene {
 		);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.thomas.destroy());
 
+		// Other visitors: this map's room, joined at the player's tile.
+		this.ghosts = new GhostLayer(this, this.target.map);
+		const client = this.services.ghosts;
+		const unsubscribe = client?.subscribe((m) => this.ghosts.handle(m));
+		client?.join(this.target.map, start.x, start.y, facing);
+		const params = new URLSearchParams(window.location.search);
+		const crowd = params.has("debug") ? Number(params.get("ghosts")) : 0;
+		if (crowd > 0) this.simulated = new SimulatedGhosts(crowd, start, this.grid, (m) => this.ghosts.handle(m, true));
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+			unsubscribe?.();
+			this.ghosts.destroy();
+			this.simulated = null;
+		});
+
 		this.input2 = new InputController(this);
 		this.dialogue = new DialogueBox(this);
 		this.links = new LinkOpener((clientX, clientY) => {
@@ -266,6 +284,8 @@ export class WorldScene extends Phaser.Scene {
 		this.player.sync();
 		for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
 		this.thomas.update(dt, time);
+		this.simulated?.update(dt);
+		this.ghosts.update(dt, time, this.player.mover.tile);
 
 	}
 
@@ -296,6 +316,7 @@ export class WorldScene extends Phaser.Scene {
 			season: this.services.season,
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,
+			ghosts: this.ghosts.count,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,
@@ -313,6 +334,11 @@ export class WorldScene extends Phaser.Scene {
 
 	private handleEvents(events: MoverEvent[]) {
 		for (const e of events) {
+			if (e.type === "stepStarted" || e.type === "turned") {
+				// Others see the tile the player is heading into, and which way they face.
+				const to = e.type === "stepStarted" ? e.to : this.player.mover.destination;
+				this.services.ghosts?.move(to.x, to.y, this.player.mover.facing);
+			}
 			if (e.type === "stepStarted") {
 				// The player holds only the tile they are heading into.
 				this.grid.vacate(e.from.x, e.from.y, PLAYER_ID);

@@ -265,13 +265,16 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       state changes while the player is watching. Status screen in START menu. *Done when*
       each presence state shows correctly (test with a mocked presence). (Mock with
       `?debug&presence=<name>`; `window.__fjordPresence(name)` switches it live.)
-- [ ] **M4.3** Ghost protocol v2: rename the route to `/api/world/ws`, messages `join`
+- [x] **M4.3** Ghost protocol v2: rename the route to `/api/world/ws`, messages `join`
       (map), `move` (tile, facing), `emote`, `leave`; server rooms per map; server stamps a
       random name and tint; token bucket per connection; no echo to sender. Keep
-      `connection()` before upgrade. *Done when* two browsers see each other move.
+      `connection()` before upgrade. *Done when* two browsers see each other move. (Rooms
+      in `lib/world/rooms.ts`, shared by the Vercel route and the dev harness, which now
+      serves the socket too. The old `/api/reactions/ws` stays until M4.6.)
 - [ ] **M4.4** Ghost rendering: translucent tinted sprites, interpolated tile-to-tile,
       name on hover or long-press, cap about 20 per map, fade after 30 s idle. *Done when*
-      smooth with 20 simulated ghosts on a phone.
+      smooth with 20 simulated ghosts on a phone. (Built; 60 fps with `?debug&ghosts=20` in
+      headless phone emulation. Tick after a check on a real phone.)
 - [ ] **M4.5** Emotes (also add "Show other visitors" to START menu settings): emote wheel (hold interact or long-press self), bubbles from the
       LimeZu emote sheet, sent to the room. Kill switch `rx_off` and the settings toggle
       disable send and receive. *Done when* emotes appear on both clients.

@@ -2,9 +2,13 @@
 // Standalone dev harness for game/: esbuild watch + serve, no Next.js involved.
 // Open http://localhost:3200/game/dev.html  (add ?debug for the debug overlay).
 // Files are written under public/game/ (gitignored) so built assets are served too.
+// A small server in front of esbuild's also answers the world socket, so ghosts work
+// between two tabs (scripts/world-socket.mjs).
 import * as esbuild from "esbuild";
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
+import { attachWorldSocket } from "./world-socket.mjs";
 
 const root = process.cwd();
 const outDir = path.join(root, "public/game/dev");
@@ -45,5 +49,15 @@ const ctx = await esbuild.context({
 });
 
 await ctx.watch();
-const { port: actualPort } = await ctx.serve({ servedir: path.join(root, "public"), port });
-console.log(`[game-dev] http://localhost:${actualPort}/game/dev.html`);
+// esbuild serves on a private port; everything but the socket is passed through to it.
+const inner = await ctx.serve({ servedir: path.join(root, "public"), host: "127.0.0.1", port: port + 1000 });
+const server = http.createServer((req, res) => {
+	const upstream = http.request({ host: "127.0.0.1", port: inner.port, path: req.url, method: req.method, headers: req.headers }, (up) => {
+		res.writeHead(up.statusCode ?? 502, up.headers);
+		up.pipe(res);
+	});
+	upstream.on("error", () => res.writeHead(502).end());
+	req.pipe(upstream);
+});
+attachWorldSocket(server);
+server.listen(port, () => console.log(`[game-dev] http://localhost:${port}/game/dev.html`));

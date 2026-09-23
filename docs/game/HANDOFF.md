@@ -4,6 +4,25 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M4.3 ghost protocol done, M4.4 ghost rendering built** (waiting on a real-phone
+  check). Protocol in `game/net/protocol.ts` (join/move/emote/leave in, welcome/room/
+  joined/moved/emoted/left out, parsed and bounded both ways). Rooms per map in
+  `lib/world/rooms.ts`: random "Traveller from <town>" name and tint per connection, a
+  token bucket per connection (moves 1, joins 2, emotes 3; 20 tokens, 10 a second), no
+  echo to the sender, single-instance fan-out (DESIGN §14). The Vercel route
+  `app/api/world/ws/route.ts` is a thin adapter; `experimental_upgradeWebSocket` only works
+  on Vercel's runtime, so `next start` and the e2e tests have no ghosts. For local work
+  the dev harness (`scripts/game-dev.mjs`) now puts a small proxy in front of esbuild's
+  server that also answers the socket (`scripts/world-socket.mjs`, tested over real
+  sockets), so two tabs of `pnpm game:dev` see each other.
+  - Client: `game/net/ghosts.ts` (`GhostClient`: join on entering a map, move on each
+    step or turn, rejoin after reconnect; off with `localStorage.rx_off = "1"`), built
+    on `game/net/reconnect.ts`, which the Lanyard client now shares.
+    `game/entities/Ghosts.ts` draws them: the player sprite tinted and at 60% alpha,
+    walking tile to tile (snapping when more than 3 behind), nearest 20 only, fading out
+    after 30 s still, name on hover or a long press, emote bubbles ready for M4.5.
+    `?debug&ghosts=20` adds wandering fake ghosts for performance checks;
+    `window.__fjord.ghosts` counts them.
 - **M4.2 live datagutt NPC done.** `game/live/datagutt.ts` maps presence to a place
   (`doingFor`, the user's rules in DESIGN's open-questions table), what he says about it
   in dialogue (`nowDoing`, bound to the `lanyard_activity()` external) and the START
@@ -249,9 +268,11 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-M4.3: ghost protocol v2 (`/api/world/ws`, rooms per map, join/move/emote/leave), then
-M4.4 ghost rendering, M4.5 emotes (reuse `game/ui/emotes.ts` and `EmoteBubble`), M4.6
-cleanup of the old reactions overlay and `react-use-lanyard`. Still
+Tick M4.4 once the user has seen `?debug&ghosts=20` run smoothly on a real phone. Then
+M4.5 emotes (an emote wheel sending `emote`; `GHOST_EMOTES` in the protocol,
+`EmoteBubble` and the ghost layer already show them) and the "Show other visitors"
+setting next to the `rx_off` kill switch, then M4.6 cleanup of the old reactions
+overlay, `/api/reactions/ws`, `lib/reactions` and `react-use-lanyard`. Still
 open in M3: two interiors wait on art, the Nettbureau office (Modern Office pack) and the
 town hall basement server room (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
 mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user

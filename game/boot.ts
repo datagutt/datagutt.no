@@ -14,6 +14,7 @@ import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "./world/season";
 import { LanyardClient, PresenceFeed } from "./net/lanyard";
 import { MOCK_PRESENCES } from "./live/datagutt";
+import { GhostClient, ghostsDisabled, worldSocketUrl } from "./net/ghosts";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -67,6 +68,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	season: Season;
 	/** Thomas's live Discord presence (Lanyard); empty until the first update. */
 	presence: PresenceFeed;
+	/** Other visitors (the world socket), or null when switched off with `rx_off`. */
+	ghosts: GhostClient | null;
 };
 
 export const SERVICES_KEY = "services";
@@ -86,7 +89,9 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		world: readWorldState(),
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
+		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
 	};
+	services.ghosts?.start();
 	const debug = new URLSearchParams(window.location.search).has("debug");
 	if (debug) {
 		console.info(
@@ -105,6 +110,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		(window as unknown as { __fjordPresence?: (name: string) => void }).__fjordPresence = (name) => {
 			if (!MOCK_PRESENCES[name]) throw new Error(`No mock presence "${name}": ${Object.keys(MOCK_PRESENCES).join(", ")}`);
 			lanyard.stop();
+			services.ghosts?.stop();
 			services.presence.set(MOCK_PRESENCES[name]);
 		};
 	}
@@ -168,4 +174,13 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 			game.destroy(true);
 		},
 	};
+}
+
+/** localStorage, or null where reading it throws (some private modes). */
+function safeLocalStorage(): Storage | null {
+	try {
+		return window.localStorage;
+	} catch {
+		return null;
+	}
 }
