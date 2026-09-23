@@ -1,7 +1,7 @@
 // Sunniva, boathouse studio: Guac.tv.
 === streamer ===
 { streamer > 1:
-    {~Chat says hi. Well, chat would, if there were a chat in the greybox.|Back for the director's cut?|Latency check: you, standing right there. Zero milliseconds. Perfect.}
+    {~Chat says hi. Chat is a lot, but chat means well.|Back for the director's cut?|Latency check: you, standing right there. Zero milliseconds. Perfect.}
 - else:
     Oh! Hi chat, we have a visitor! # nod
     Welcome to the boathouse. This is where {project_name("guac")} lives.

@@ -35,6 +35,10 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     bed, stairwell down), in `world/gen/maps/house.ts`. Rooms come from
     `world/gen/interior.ts` (Room Builder walls/floors/border), furniture from
     `world/art/furniture.ts`. The greybox pipeline is gone.
+  - Boathouse studio done (`world/gen/maps/boathouse.ts`, map `boathouse`): water slip
+    with a rowboat running in under the bottom wall, fishing gear, the Guac desk, and the
+    set (green screen, mirrored softboxes, camera). Sunniva moved in; the town door is
+    wired (`boathouse_door` spawn).
   - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
     pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
   - Every building has a notice-board sign with its name and a line of flavour
@@ -120,8 +124,7 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8: the other nine interiors (boathouse studio: studio sheet has green screen, lights,
-cameras; library: classroom sheet shelves; kiosk: grocery; town hall + basement server
+M3.8: the remaining interiors (library: classroom sheet shelves; kiosk: grocery; town hall + basement server
 room; office; smithy; farmhouse; post office; radio hut), moving each NPC indoors as its
 interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).

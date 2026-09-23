@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 8,
-  "nextobjectid": 26,
+  "nextobjectid": 27,
   "properties": [
     {
       "name": "name",
@@ -588,6 +588,29 @@
         },
         {
           "id": 2,
+          "name": "",
+          "type": "door",
+          "x": 192,
+          "y": 960,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "boathouse"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "entrance"
+            }
+          ]
+        },
+        {
+          "id": 3,
           "name": "ferry",
           "type": "spawn",
           "x": 800,
@@ -605,7 +628,7 @@
           ]
         },
         {
-          "id": 3,
+          "id": 4,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -623,7 +646,7 @@
           ]
         },
         {
-          "id": 4,
+          "id": 5,
           "name": "office_door",
           "type": "spawn",
           "x": 1152,
@@ -641,7 +664,25 @@
           ]
         },
         {
-          "id": 5,
+          "id": 6,
+          "name": "boathouse_door",
+          "type": "spawn",
+          "x": 192,
+          "y": 976,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 7,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -659,7 +700,7 @@
           ]
         },
         {
-          "id": 6,
+          "id": 8,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -677,7 +718,7 @@
           ]
         },
         {
-          "id": 7,
+          "id": 9,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -695,7 +736,7 @@
           ]
         },
         {
-          "id": 8,
+          "id": 10,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -713,7 +754,7 @@
           ]
         },
         {
-          "id": 9,
+          "id": 11,
           "name": "",
           "type": "sign",
           "x": 208,
@@ -731,7 +772,7 @@
           ]
         },
         {
-          "id": 10,
+          "id": 12,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -749,7 +790,7 @@
           ]
         },
         {
-          "id": 11,
+          "id": 13,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -767,7 +808,7 @@
           ]
         },
         {
-          "id": 12,
+          "id": 14,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -785,7 +826,7 @@
           ]
         },
         {
-          "id": 13,
+          "id": 15,
           "name": "",
           "type": "sign",
           "x": 1136,
@@ -803,7 +844,7 @@
           ]
         },
         {
-          "id": 14,
+          "id": 16,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -821,7 +862,7 @@
           ]
         },
         {
-          "id": 15,
+          "id": 17,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -839,7 +880,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 18,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -872,40 +913,7 @@
           ]
         },
         {
-          "id": 17,
-          "name": "streamer",
-          "type": "npc",
-          "x": 224,
-          "y": 976,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "character",
-              "type": "string",
-              "value": "streamer"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "down"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Sunniva"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "streamer"
-            }
-          ]
-        },
-        {
-          "id": 18,
+          "id": 19,
           "name": "technician",
           "type": "npc",
           "x": 1328,
@@ -938,7 +946,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 20,
           "name": "shopkeeper",
           "type": "npc",
           "x": 928,
@@ -971,7 +979,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 21,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -1004,7 +1012,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 22,
           "name": "sysadmin",
           "type": "npc",
           "x": 752,
@@ -1037,7 +1045,7 @@
           ]
         },
         {
-          "id": 22,
+          "id": 23,
           "name": "smith",
           "type": "npc",
           "x": 1408,
@@ -1070,7 +1078,7 @@
           ]
         },
         {
-          "id": 23,
+          "id": 24,
           "name": "librarian",
           "type": "npc",
           "x": 576,
@@ -1103,7 +1111,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 25,
           "name": "farmer",
           "type": "npc",
           "x": 320,
@@ -1136,7 +1144,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 26,
           "name": "postmaster",
           "type": "npc",
           "x": 688,

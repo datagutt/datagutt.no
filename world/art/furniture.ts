@@ -44,6 +44,23 @@ export const FURNITURE = {
 	curtainWindow: flat("generic", 8, 45, 3, 3),
 	shelf: solid("classroom", 4, 13, 2, 3),
 	plantTall: solid("living", 12, 0, 1, 3),
+
+	// Boathouse studio: TV-studio and fishing sets.
+	greenScreen: solid("studio", 0, 4, 3, 4),
+	/** A softbox light on a stand, head turned left; mirror it for the other side. */
+	softbox: solid("studio", 8, 0, 2, 3),
+	studioCamera: solid("studio", 3, 0, 1, 2),
+	wallMonitor: flat("studio", 10, 1, 3, 2),
+	onAirLamp: solid("studio", 14, 1, 1, 2),
+	armchair: solid("studio", 5, 3, 2, 2),
+	/** The long front of a green studio desk (Guac green). */
+	guacDesk: solid("studio", 3, 12, 4, 2),
+	tackleBoxBlue: solid("fishing", 0, 4, 2, 2),
+	tackleBoxYellow: solid("fishing", 0, 6, 2, 2),
+	rodRack: solid("fishing", 7, 12, 2, 3),
+	crate: solid("fishing", 4, 5, 2, 2),
+	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
+	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */
 	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
 	/** Stairs going down, seen from above: a railing on three sides around the steps. */
