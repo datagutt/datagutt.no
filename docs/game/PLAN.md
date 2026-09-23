@@ -190,13 +190,15 @@ the passport works.
 
 Goal: the real town, painted, in all seasons.
 
-- [ ] **M3.1** Generator core `world/`: layout DSL (terrain regions, coastline, heights,
+- [x] **M3.1** Generator core `world/`: layout DSL (terrain regions, coastline, heights,
       roads, building footprints), deterministic seeded RNG, writes Tiled `.tmj` with
       generated layers plus untouched `manual_*` layers merged last. *Done when* running
-      it twice is byte-identical and manual layers survive regeneration.
-- [ ] **M3.2** Autotiling: terrain transitions (grass/path/sand/water/cliff/snow) using
+      it twice is byte-identical and manual layers survive regeneration. (`pnpm world:gen`,
+      `world/gen/`, tested in `world/gen/tmj.test.ts`; `pnpm world:check` in CI.)
+- [x] **M3.2** Autotiling: terrain transitions (grass/path/sand/water/cliff/snow) using
       LimeZu's tile layouts; a rule table per terrain pair. *Done when* no visible seams in
-      a test map.
+      a test map. (`world/art/autotile.ts`: 13-piece sets on 7×4 blocks and the animated
+      sea, regions thickened first; cliffs are plateau 9-slices; snow comes with M3.9.)
 - [ ] **M3.3** Prefabs: multi-tile stamps for each building and landmark (red house
       recolours, boathouse studio with antenna, radio tower, kiosk, office, town hall,
       smithy, library, post office, farm field, ferry dock, piers, fjord cliffs). *Done
@@ -204,8 +206,9 @@ Goal: the real town, painted, in all seasons.
 - [ ] **M3.4** Scatter rules: flowers, rocks, bushes, lamps, benches, fences with
       constraints (keep doors and paths clear, benches face paths, density by region).
       *Done when* the town reads as lived-in in the rendered PNG.
-- [ ] **M3.5** Render-to-PNG: `pnpm world:render` writes `world/out/<map>.png` (and
+- [x] **M3.5** Render-to-PNG: `pnpm world:render` writes `world/out/<map>.png` (and
       per-season variants) for visual review. *Done when* Claude can view every map.
+      (`--grid`, `--objects`, `--collision` overlays; seasons arrive with M3.9.)
 - [ ] **M3.6** Validator: doors point at existing maps and spawns, every NPC and stamp
       id exists, spawn points are walkable, all places are reachable from the dock,
       warns on edits to generated layers. *Done when* in `pnpm build`.

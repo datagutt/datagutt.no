@@ -1,11 +1,11 @@
 // Reusable pieces of landscape for map generators: plateaus, piers, forests, buildings.
 import type { MapObject } from "../../game/world/objects.ts";
 import { variant } from "../art/autotile.ts";
-import { DOOR, PIER, PLATEAU } from "../art/palette.ts";
+import { DECALS, DOOR, FENCE, PIER, PLATEAU } from "../art/palette.ts";
 import { PREFABS, type PrefabId } from "../art/prefabs.ts";
 import { seeded } from "../grid.ts";
 import type { MapCanvas, Prefab } from "./canvas.ts";
-import { Region } from "./layout.ts";
+import { noise2, Region } from "./layout.ts";
 
 /**
  * A rectangular raised plateau: grass top from (x, y) sized w×h, rock face below it.
@@ -16,7 +16,8 @@ export function plateau(c: MapCanvas, x: number, y: number, w: number, h: number
 	for (let dx = 0; dx < w; dx++) {
 		const k = col(dx);
 		c.put("ground2", x + dx, y, PLATEAU.top[k]);
-		for (let dy = 1; dy < h - 1; dy++) c.put("ground2", x + dx, y + dy, PLATEAU.middle[k]);
+		// The inside of the top is left to the ground layer's textured grass.
+		if (k !== 1) for (let dy = 1; dy < h - 1; dy++) c.put("ground2", x + dx, y + dy, PLATEAU.middle[k]);
 		c.put("ground2", x + dx, y + h - 1, PLATEAU.lip[k]);
 		PLATEAU.face.forEach((row, i) => {
 			c.put("ground2", x + dx, y + h + i, row[k]);
@@ -48,8 +49,9 @@ export function pier(c: MapCanvas, x: number, y0: number, y1: number) {
 }
 
 /**
- * Scatter trees over a region without overlaps. Each tree's footprint (its whole prefab)
- * must fit inside the region and not touch cells already taken.
+ * Scatter trees without overlaps (a map cell holds one tile per layer, so overlapping
+ * canopies would cut each other up). A tree's trunk (bottom two rows) must sit in
+ * `region`; the canopy only has to avoid other trees and may hang off the map edge.
  */
 export function forest(c: MapCanvas, region: Region, seed: number, kinds: PrefabId[], density = 0.6, taken?: Region) {
 	const rand = seeded(seed);
@@ -59,18 +61,37 @@ export function forest(c: MapCanvas, region: Region, seed: number, kinds: Prefab
 	for (const [x, y] of cells) {
 		if (rand() > density) continue;
 		const prefab: Prefab = PREFABS[kinds[Math.floor(rand() * kinds.length)]];
+		// (x, y) is the trunk's top-left cell; the prefab starts above it.
+		const top = y - (prefab.h - 2);
 		let fits = true;
 		for (let dy = 0; dy < prefab.h && fits; dy++) {
 			for (let dx = 0; dx < prefab.w && fits; dx++) {
-				if (!region.has(x + dx, y + dy) || used.has(x + dx, y + dy)) fits = false;
+				const cx = x + dx;
+				const cy = top + dy;
+				const trunk = dy >= prefab.h - 2;
+				if (trunk && !region.has(cx, cy)) fits = false;
+				else if (c.inBounds(cx, cy) && used.has(cx, cy)) fits = false;
 			}
 		}
 		if (!fits) continue;
-		// Canopies may overlap the next tree's top a little; trunks may not.
-		used.rect(x, y + prefab.h - 2, prefab.w, 2);
-		c.stamp(prefab, x, y);
+		used.rect(x, top, prefab.w, prefab.h);
+		c.stamp(prefab, x, top);
 	}
 	return used;
+}
+
+/** A rail fence around a rectangle; `gates` are cells left open. Blocks the rest. */
+export function fence(c: MapCanvas, x: number, y: number, w: number, h: number, gates: [number, number][] = []) {
+	const open = new Set(gates.map(([gx, gy]) => `${gx},${gy}`));
+	for (let dy = 0; dy < h; dy++) {
+		for (let dx = 0; dx < w; dx++) {
+			const edge = dx === 0 || dy === 0 || dx === w - 1 || dy === h - 1;
+			if (!edge || open.has(`${x + dx},${y + dy}`)) continue;
+			const r = dy === 0 ? 0 : dy === h - 1 ? 2 : 1;
+			const k = dx === 0 ? 0 : dx === w - 1 ? 2 : 1;
+			c.put("below", x + dx, y + dy, FENCE[r][k]).block(x + dx, y + dy);
+		}
+	}
 }
 
 /**
@@ -96,3 +117,26 @@ export function building(
 }
 
 export { variant };
+
+/**
+ * Ground details on open grass: soft grass patches and tufts everywhere, flowers in
+ * clusters where a noise field is high. Only cells in `open` are touched.
+ */
+export function meadow(c: MapCanvas, open: Region, seed: number) {
+	const rand = seeded(seed);
+	const clusters = noise2(seed, 7);
+	const colours = Object.values(DECALS.flowers);
+	const colourAt = noise2(seed + 1, 11);
+	open.each((x, y) => {
+		const r = rand();
+		const n = clusters(x, y);
+		if (n > 0.62 && r < (n - 0.62) * 2.5) {
+			const set = colours[Math.floor(colourAt(x, y) * colours.length) % colours.length];
+			c.put("decal", x, y, set[Math.floor(rand() * set.length)]);
+		} else if (r < 0.05) {
+			c.put("decal", x, y, DECALS.grassPatches[Math.floor(rand() * DECALS.grassPatches.length)]);
+		} else if (r < 0.075) {
+			c.put("decal", x, y, DECALS.tufts[Math.floor(rand() * DECALS.tufts.length)]);
+		}
+	});
+}

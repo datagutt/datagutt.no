@@ -51,6 +51,17 @@ export const PREFABS = {
 	townHall: { sheet: "houses", col: 0, row: 208, w: 18, h: 22, aboveRows: 3, door: [3, 21] },
 	library: { sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] },
 
+	hut: { sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] },
+	rowboat: { sheet: "camping", col: 5, row: 34, w: 4, h: 2, aboveRows: 0 },
+	ferry: { sheet: "camping", col: 1, row: 37, w: 6, h: 4, aboveRows: 0 },
+	lamp: { sheet: "props", col: 20, row: 0, w: 1, h: 4, aboveRows: 3 },
+	parkLamp: { sheet: "props", col: 1, row: 28, w: 3, h: 4, aboveRows: 3, collision: [".#."] },
+	bench: { sheet: "props", col: 21, row: 0, w: 2, h: 2, aboveRows: 0 },
+	benchLong: { sheet: "props", col: 21, row: 2, w: 3, h: 2, aboveRows: 0 },
+	fountain: { sheet: "props", col: 11, row: 28, w: 2, h: 3, aboveRows: 1 },
+	bigFountain: { sheet: "garden", col: 12, row: 16, w: 4, h: 5, aboveRows: 1 },
+	planter: { sheet: "props", col: 8, row: 25, w: 3, h: 2, aboveRows: 0 },
+
 	pineSmall: { sheet: "camping", col: 16, row: 114, w: 2, h: 3, aboveRows: 2 },
 	pineMid: { sheet: "camping", col: 18, row: 113, w: 2, h: 4, aboveRows: 3 },
 	pineTall: { sheet: "camping", col: 20, row: 113, w: 2, h: 4, aboveRows: 3 },

@@ -1,8 +1,34 @@
 # Handoff
 
-Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 complete)
+Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator and overworld draft)
 
 ## Current state
+
+- **M3 in progress.** The generator works end to end and the overworld draft is waiting
+  for the user's approval (M3.7):
+  - `pnpm world:gen` runs `world/gen/maps/*` → committed `world/maps/<id>.tmj`
+    (keeps `manual_*` layers) + append-only `world/tile-ids.json`. With the art it also
+    writes `world/tile-colors.json` (2×2 colour sketch per tile, for placeholder builds),
+    `world/tilesets/world.png` (for Tiled) and, with `--render [--grid --objects
+    --collision --scale=N]`, `world/out/<id>.png` (gitignored: LimeZu pixels).
+    `pnpm world:check` (in CI) fails when committed maps are stale. `--prune` rebuilds
+    the registry while no map has manual layers.
+  - Layers: ground, ground2 (autotile transitions), decal (paving, flowers), below,
+    above (drawn over characters), hidden `collision` (+ `manual_collision`, whose
+    reserved "clear" tile unblocks). The game picks the tileset by name
+    (`greybox` or `world`) and reads every object layer.
+  - Art knowledge lives in `world/art/`: `sheets.ts` (sheet ids and recoloured
+    `DERIVED` sheets, e.g. `villaRed` = datagutt's falu red house), `palette.ts`
+    (terrain sets, cobble, plateau 9-slice with stairs, pier, fence, decals, crops),
+    `prefabs.ts` (buildings with doors, trees, props). Landscape helpers in
+    `world/gen/features.ts` (plateau, pier, forest, fence, meadow, building).
+  - `world/gen/maps/overworld.ts` is the 96×76 draft; the greybox `town` stays the live
+    map until the user approves. Open it with `?debug&map=overworld`.
+  - Building choices: villas (7_Villas) for homes, falu red villa for datagutt, Victorian
+    pieces (24_Additional_Houses) for town hall and library with a door tile added,
+    white house = farmhouse, log cabin = smithy, corrugated house = boathouse, modern
+    house = office, LimeZu post office, two-storey cottage = kiosk, lattice tower = radio
+    tower, pines/oaks from 11_Camping.
 
 - Branch `game` created from `master` at `bc7041e`.
 - Design settled in a grilling session; everything is recorded in DESIGN.md.
@@ -72,11 +98,10 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2 is complete.** Next is **M3.1**: the map generator core (layout DSL, deterministic
-RNG, Tiled output with protected `manual_*` layers), growing out of `world/grid.ts` and
-`world/greybox/`. Then M3.2 autotiling with LimeZu Exteriors tiles and M3.3 prefabs.
-Expect a lot of render-and-look iteration (DESIGN §10). **M0.11 (Vercel token) stays
-deferred** until the user asks.
+Wait for the user's verdict on the overworld render (`pnpm world:render` →
+`world/out/overworld.png`), then: make it the live `town` (move spawns, update e2e),
+M3.6 validator, M3.8 interiors (Interiors sheets are not surveyed yet), seasons.
+**M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
@@ -85,6 +110,14 @@ deferred** until the user asks.
 - The user may edit dialogue drafts in `game/dialogue/ink/` at any time.
 
 ## Gotchas learned so far
+
+- Survey sheets with the scratchpad tools (a labelled grid crop of a sheet, an ASCII
+  occupancy dump); LimeZu packs sprites edge to edge, so bounding boxes by flood fill
+  merge neighbours. Check every prefab in a render before trusting its door.
+- A map cell holds one tile per layer: overlapping prefabs cut each other up. Trees are
+  placed with non-overlapping footprints for that reason.
+- Node's type stripping rejects TypeScript parameter properties
+  (`constructor(readonly x)`) in files the build scripts import.
 
 - Vercel cannot pull private git submodules, so the build clones the assets repo with a
   token instead (DESIGN §9).

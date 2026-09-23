@@ -103,3 +103,24 @@ export function wobble(seed: number, length: number, scale: number): number[] {
 		return knots[k] * (1 - t) + knots[k + 1] * t;
 	});
 }
+
+/** Smooth 2D value noise in [0, 1] with features about `scale` cells across. */
+export function noise2(seed: number, scale: number): (x: number, y: number) => number {
+	const hash = (ix: number, iy: number) => {
+		let h = Math.imul(ix, 374761393) ^ Math.imul(iy, 668265263) ^ Math.imul(seed, 2147483647);
+		h = Math.imul(h ^ (h >>> 13), 1274126177);
+		return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+	};
+	const smooth = (t: number) => t * t * (3 - 2 * t);
+	return (x, y) => {
+		const fx = x / scale;
+		const fy = y / scale;
+		const ix = Math.floor(fx);
+		const iy = Math.floor(fy);
+		const tx = smooth(fx - ix);
+		const ty = smooth(fy - iy);
+		const top = hash(ix, iy) * (1 - tx) + hash(ix + 1, iy) * tx;
+		const bottom = hash(ix, iy + 1) * (1 - tx) + hash(ix + 1, iy + 1) * tx;
+		return top * (1 - ty) + bottom * ty;
+	};
+}

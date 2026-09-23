@@ -43,3 +43,21 @@ export const PIER = {
 
 /** A plain wooden door (generic buildings), 1×2, for buildings drawn without one. */
 export const DOOR = [t("buildings", 5, 38), t("buildings", 5, 39)];
+
+/** Ground details drawn on the decal layer: walkable, one tile each. */
+export const DECALS = {
+	grassPatches: [t("terrain", 25, 2), t("terrain", 26, 2), t("terrain", 27, 2)],
+	tufts: [t("props", 13, 27), t("props", 14, 27), t("props", 14, 26)],
+	flowers: {
+		red: [t("garden", 3, 58), t("garden", 4, 58)],
+		yellow: [t("garden", 9, 56), t("garden", 10, 56)],
+		blue: [t("garden", 9, 60), t("garden", 10, 60)],
+		pink: [t("garden", 15, 60), t("garden", 16, 60)],
+	},
+};
+
+/** A rail fence as a 9-slice: [row][col] with row/col 0 = start, 1 = middle, 2 = end. */
+export const FENCE: TileRef[][] = [0, 1, 2].map((r) => [0, 1, 2].map((k) => t("garden", 10 + k, 38 + r)));
+
+/** Crop rows: growth stages of a wheat-like crop, smallest first (garden sheet). */
+export const CROPS = [t("garden", 3, 56), t("garden", 9, 54), t("garden", 10, 54), t("garden", 11, 54)];

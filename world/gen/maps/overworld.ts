@@ -5,11 +5,11 @@
 //       square, post office, harbour | 63-90 radio hill, office, smithy | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "../../../game/world/objects.ts";
-import { COBBLE, GRASS, TERRAIN } from "../../art/palette.ts";
+import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
 import { PREFABS } from "../../art/prefabs.ts";
 import { variant } from "../../art/autotile.ts";
 import { MapCanvas } from "../canvas.ts";
-import { building, forest, pier, plateau } from "../features.ts";
+import { building, fence, forest, meadow, pier, plateau } from "../features.ts";
 import { Region, wobble } from "../layout.ts";
 
 export const W = 96;
@@ -49,7 +49,9 @@ export function overworld(): MapCanvas {
 		.path([[41, 56], [41, 59]]) // post office to the beach
 		.path([[4, 44], [4, 60]]); // down the west side to the boathouse beach
 	const square = new Region(W, H).rect(38, 29, 25, 13);
-	const field = new Region(W, H).rect(18, 22, 12, 6);
+	// The farm field, fenced, with a gate onto the farm lane (M3.11 grows it from live data).
+	const FIELD = { x: 16, y: 20, w: 12, h: 8 };
+	const field = new Region(W, H).rect(FIELD.x + 1, FIELD.y + 1, FIELD.w - 2, FIELD.h - 2);
 
 	c.autotile("ground2", sand.drawable("inside"), TERRAIN.sand, { edge: "inside" });
 	c.autotile("ground2", paths.clone().union(square).subtract(sand).drawable(), TERRAIN.dirt);
@@ -58,8 +60,12 @@ export function overworld(): MapCanvas {
 	sea.each((x, y) => c.block(x, y));
 	new Region(W, H).rect(39, 30, 23, 11).each((x, y) => c.put("decal", x, y, COBBLE(x, y)));
 
+	fence(c, FIELD.x, FIELD.y, FIELD.w, FIELD.h, [[FIELD.x, FIELD.y + 4]]);
+	field.each((x, y) => (y - FIELD.y) % 2 === 1 && c.put("decal", x, y, CROPS[(x * 7 + y * 3) % CROPS.length]));
+
 	// --- Radio hill ------------------------------------------------------------------------
 	plateau(c, 63, 5, 27, 10, [66, 67]);
+	c.stamp(PREFABS.hut, 75, 9);
 
 	// --- Buildings -------------------------------------------------------------------------
 	building(c, "farmhouse", 5, 7);
@@ -83,19 +89,45 @@ export function overworld(): MapCanvas {
 	const pierTop = shore[HARBOUR_X] - 1;
 	const pierEnd = pierTop + 8;
 	pier(c, HARBOUR_X, pierTop, pierEnd);
+	c.stamp(PREFABS.ferry, HARBOUR_X + 3, pierEnd - 4);
+	c.stamp(PREFABS.rowboat, 25, shore[25] + 1);
+
+	// --- Town furniture --------------------------------------------------------------------
+	c.stamp(PREFABS.bigFountain, 48, 32);
+	c.stamp(PREFABS.benchLong, 43, 33).stamp(PREFABS.benchLong, 54, 33);
+	for (const [x, y] of [[39, 29], [61, 29], [39, 37], [61, 37]]) c.stamp(PREFABS.lamp, x, y);
+	// Lamps along the south verge of the main road (a lamp's base is its bottom tile).
+	for (const x of [12, 24, 32, 45, 57, 64, 78, 89]) c.stamp(PREFABS.lamp, x, 42);
+	c.stamp(PREFABS.planter, 43, 26).stamp(PREFABS.planter, 48, 26);
+	c.stamp(PREFABS.bench, HARBOUR_X + 4, shore[HARBOUR_X + 4] - 4);
 
 	// --- Forest edge -----------------------------------------------------------------------
-	const taken = new Region(W, H);
-	// Nothing grows on buildings, paths, the square, the beach or the plateau.
-	for (let i = 0; i < W * H; i++) if (c.collision[i] || c.layers.below[i] || c.layers.ground2[i]) taken.cells[i] = 1;
+	// Nothing grows on buildings, props, paths, the square, the field or the beach.
+	const taken = Region.from(W, H, (x, y) => {
+		const i = y * W + x;
+		return c.collision[i] === 1 || c.layers.below[i] !== null || c.layers.above[i] !== null;
+	})
+		.union(paths.grow(1))
+		.union(square.grow(1))
+		.union(sand)
+		.union(new Region(W, H).rect(FIELD.x, FIELD.y, FIELD.w, FIELD.h));
 	const edge = new Region(W, H)
 		.rect(0, 0, W, 5)
 		.rect(0, 0, 5, 60)
 		.rect(91, 0, 5, 60)
+		.rect(64, 5, 25, 2) // the back of the radio hill
 		.subtract(sand);
 	forest(c, edge, 3, ["pineTall", "pineMid", "pineSmall", "pineMid"], 0.9, taken);
-	const groves = new Region(W, H).rect(5, 5, 60, 2).rect(52, 44, 10, 12).rect(30, 44, 6, 12).rect(88, 17, 3, 40);
+	const groves = new Region(W, H).rect(5, 5, 58, 2).rect(52, 44, 10, 12).rect(30, 44, 6, 12).rect(76, 17, 14, 8).rect(88, 17, 3, 40);
 	forest(c, groves.subtract(sand), 5, ["oak", "roundTree", "pineMid"], 0.25, taken);
+
+	// --- Meadow details on whatever grass is left --------------------------------------------
+	const onGrass = (i: number) => c.layers.ground2[i] === null;
+	const open = Region.from(W, H, (x, y) => {
+		const i = y * W + x;
+		return !c.collision[i] && onGrass(i) && !c.layers.decal[i] && !c.layers.below[i] && !c.layers.above[i];
+	});
+	meadow(c, open, 17);
 
 	// --- Objects ---------------------------------------------------------------------------
 	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 1, facing: "up" });
