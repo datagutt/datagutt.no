@@ -18,10 +18,7 @@ import {
 	PORTRAIT_CROP,
 	PORTRAIT_SOURCE_FRAME,
 } from "../../game/characters/sheet.ts";
-import { GREYBOX_MAPS } from "../../world/greybox/maps.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
-import { GREYBOX_TILES } from "../../world/greybox/tiles.ts";
-import { toTmj } from "../../world/tiled.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
 import { buildBitmapFont } from "./font.mjs";
 import { compileDialogue } from "./ink.mjs";
@@ -42,47 +39,6 @@ const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
 for (const sub of ["characters", "portraits", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
-}
-
-// --- Greybox tileset -------------------------------------------------------------
-
-const TILESET_COLUMNS = 8;
-async function buildGreyboxTileset() {
-	const rows = Math.ceil(GREYBOX_TILES.length / TILESET_COLUMNS);
-	const img = new Raster(TILESET_COLUMNS * TILE, rows * TILE);
-	GREYBOX_TILES.forEach((tile, i) => {
-		const ox = (i % TILESET_COLUMNS) * TILE;
-		const oy = Math.floor(i / TILESET_COLUMNS) * TILE;
-		const base = hex(tile.base);
-		const accent = hex(tile.accent);
-		img.rect(ox, oy, TILE, TILE, base);
-		for (let y = 0; y < TILE; y++) {
-			for (let x = 0; x < TILE; x++) {
-				let on = false;
-				switch (tile.pattern) {
-					case "speckle": on = ((x * 7 + y * 13 + i * 5) % 11 === 0); break;
-					case "dots": on = x % 4 === 1 && y % 4 === (x % 8 === 1 ? 1 : 3); break;
-					case "stripes": on = y % 4 === 3; break;
-					case "waves": on = (y % 6 === 2 && (x + y) % 8 < 4) || (y % 6 === 5 && (x + y + 4) % 8 < 3); break;
-					case "bricks": on = y % 4 === 3 || (x + (Math.floor(y / 4) % 2) * 4) % 8 === 0; break;
-					case "planks": on = y % 5 === 4 || (x === (y < 8 ? 5 : 11)); break;
-					case "block": on = x >= 3 && x <= 12 && y >= 3 && y <= 12 && (x === 3 || x === 12 || y === 3 || y === 12); break;
-					case "cross": on = x === 0 || y === 0; break;
-					case "flat": break;
-				}
-				if (on) img.px(ox + x, oy + y, accent);
-			}
-		}
-	});
-	await sharp(await img.toPng()).toFile(path.join(outDir, "tilesets/greybox.png"));
-	return {
-		name: "greybox",
-		image: "../tilesets/greybox.png",
-		columns: TILESET_COLUMNS,
-		tileCount: GREYBOX_TILES.length,
-		tileSize: TILE,
-		colliding: GREYBOX_TILES.flatMap((t, i) => (t.collides ? [i] : [])),
-	};
 }
 
 // --- Characters --------------------------------------------------------------------
@@ -235,7 +191,6 @@ async function placeholderPortrait(recipe) {
 // --- Run ---------------------------------------------------------------------------
 
 const started = Date.now();
-const tileset = await buildGreyboxTileset();
 
 for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(id, recipe);
@@ -246,12 +201,8 @@ for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	}
 }
 
-for (const spec of GREYBOX_MAPS) {
-	fs.writeFileSync(path.join(outDir, `maps/${spec.id}.tmj`), JSON.stringify(toTmj(spec, tileset)));
-}
-
-// Generated maps (world/maps, from `pnpm world:gen`) replace greybox maps of the same id.
-// They share one packed tileset, from the art or from the committed colour sketches.
+// Maps come from `pnpm world:gen` (world/maps). They share one packed tileset, from the
+// art or from the committed colour sketches.
 const worldDir = path.join(root, "world");
 const generated = fs.readdirSync(path.join(worldDir, "maps")).filter((f) => f.endsWith(".tmj"));
 const registry = JSON.parse(fs.readFileSync(path.join(worldDir, "tile-ids.json"), "utf8"));
@@ -265,7 +216,7 @@ const generatedMaps = generated.map((file) => {
 	fs.writeFileSync(path.join(outDir, "maps", file), JSON.stringify(tmj));
 	return { id: path.basename(file, ".tmj"), tmj };
 });
-const mapIds = [...new Set([...GREYBOX_MAPS.map((m) => m.id), ...generatedMaps.map((m) => m.id)])];
+const mapIds = generatedMaps.map((m) => m.id);
 
 // Dialogue frame for a nine-slice: LimeZu's wood-rimmed parchment box (Modern UI style 1),
 // or a drawn stand-in of the same size and palette in placeholder mode.
@@ -294,7 +245,6 @@ fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
 const dialogue = compileDialogue("game/dialogue/ink");
 fs.writeFileSync(path.join(outDir, "dialogue/main.json"), dialogue.json);
 const mapObjects = [
-	...GREYBOX_MAPS.map((spec) => ({ id: spec.id, objects: spec.objects })),
 	...generatedMaps.map(({ id, tmj }) => ({
 		id,
 		objects: tmj.layers.filter((l) => l.type === "objectgroup").flatMap((l) => l.objects.map((o) => parseMapObject(o, TILE))),
@@ -324,7 +274,7 @@ const manifest = {
 	characters: Object.keys(CHARACTERS),
 	portraits: Object.entries(CHARACTERS).flatMap(([id, r]) => (r.portrait !== false ? [id] : [])),
 	maps: mapIds,
-	tilesets: [tileset.name, "world"],
+	tilesets: ["world"],
 	fonts: ["pixel"],
 	dialogue: dialogue.files,
 };

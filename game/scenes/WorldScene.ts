@@ -81,7 +81,7 @@ export class WorldScene extends Phaser.Scene {
 
 	create() {
 		const map = this.make.tilemap({ key: `map:${this.target.map}` });
-		// Greybox maps use the greybox tileset, generated maps the packed "world" one.
+		// Generated maps use the packed "world" tileset; the name comes from the map.
 		const tilesetName = map.tilesets[0]?.name ?? "";
 		const tileset = map.addTilesetImage(tilesetName, `tiles:${tilesetName}`);
 		if (!tileset) throw new Error(`Map ${this.target.map} uses unknown tileset "${tilesetName}"`);

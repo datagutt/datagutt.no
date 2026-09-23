@@ -3,7 +3,7 @@ import type { MapObject } from "../../game/world/objects.ts";
 import { variant } from "../art/autotile.ts";
 import { DECALS, DOOR, FENCE, PIER, PLATEAU } from "../art/palette.ts";
 import { PREFABS, type PrefabId } from "../art/prefabs.ts";
-import { seeded } from "../grid.ts";
+import { seeded } from "./random.ts";
 import type { MapCanvas, Prefab } from "./canvas.ts";
 import { noise2, Region } from "./layout.ts";
 

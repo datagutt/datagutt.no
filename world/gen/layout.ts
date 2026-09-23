@@ -1,7 +1,7 @@
 // Layout helpers for map generators: boolean regions that terrain autotiling paints,
 // and seeded smooth noise for natural edges (coastlines, forest borders).
 import { gridMask, thicken, type Mask } from "../art/autotile.ts";
-import { seeded } from "../grid.ts";
+import { seeded } from "./random.ts";
 
 export class Region {
 	readonly width: number;

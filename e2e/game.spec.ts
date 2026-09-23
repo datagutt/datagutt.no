@@ -23,11 +23,23 @@ async function holdKey(page: Page, key: string, ms: number) {
 	await page.keyboard.up(key);
 }
 
+/** Start from a save at the given spot, through the title screen's Continue button. */
+async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }) {
+	await page.goto("/?debug");
+	await page.evaluate(
+		(save) => localStorage.setItem("fjordtown.save", JSON.stringify({ version: 1, ...save, stamps: [], flags: {}, dialogue: {}, settings: {} })),
+		at,
+	);
+	await page.goto("/?debug");
+	await page.getByRole("button", { name: /continue/i }).click();
+	await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: at.map, tile: { x: at.x, y: at.y } });
+}
+
 test.describe("world", () => {
 	// Keyboard play only; the phone project covers taps through the title-screen test.
 	test.skip(({ isMobile }) => isMobile, "keyboard walkthrough");
 
-	test("deep link skips the title, doors connect both ways, NPCs talk", async ({ page }) => {
+	test("deep link skips the title and doors connect both ways", async ({ page }) => {
 		const errors: string[] = [];
 		page.on("pageerror", (err) => errors.push(err.message));
 
@@ -35,17 +47,17 @@ test.describe("world", () => {
 		await expect(page.getByRole("heading", { name: "datagutt" })).toBeHidden();
 		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "town", tile: { x: 18, y: 40 } });
 
-		// Step up onto the door tile.
+		// Step up onto the door tile, then straight back out.
 		await holdKey(page, "ArrowUp", 300);
-		await expect.poll(() => state(page)).toMatchObject({ map: "house", tile: { x: 6, y: 7 }, facing: "up" });
+		await expect.poll(() => state(page)).toMatchObject({ map: "house", tile: { x: 9, y: 10 }, facing: "up" });
+		await expect.poll(async () => (await state(page))?.moving).toBe(false);
+		await holdKey(page, "ArrowDown", 300);
+		await expect.poll(() => state(page), { timeout: 5_000 }).toMatchObject({ map: "town", tile: { x: 18, y: 40 } });
+		expect(errors).toEqual([]);
+	});
 
-		// Walk to datagutt: up two, left one, then face him.
-		await holdKey(page, "ArrowUp", 480);
-		await expect.poll(async () => (await state(page))?.moving).toBe(false);
-		await holdKey(page, "ArrowLeft", 250);
-		await expect.poll(async () => (await state(page))?.moving).toBe(false);
-		const beforeTalk = await state(page);
-		if (beforeTalk?.facing !== "left") await page.keyboard.press("ArrowLeft");
+	test("talking to datagutt stamps the passport", async ({ page }) => {
+		await continueAt(page, { map: "house", x: 5, y: 5, facing: "left" });
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
 
@@ -68,12 +80,6 @@ test.describe("world", () => {
 		await expect.poll(async () => (await state(page))?.menu).toBe("main");
 		await page.keyboard.press("Enter");
 		await expect.poll(async () => (await state(page))?.menu).toBe("closed");
-
-		// And back out through the door.
-		await holdKey(page, "ArrowRight", 250);
-		await holdKey(page, "ArrowDown", 1200);
-		await expect.poll(() => state(page), { timeout: 5_000 }).toMatchObject({ map: "town", tile: { x: 18, y: 40 } });
-		expect(errors).toEqual([]);
 	});
 
 	test("reloading continues where the player left off", async ({ page }) => {
@@ -93,16 +99,7 @@ test.describe("world", () => {
 
 	test("a link offered in dialogue opens in a new tab", async ({ page, context }) => {
 		// Stand next to datagutt, facing him.
-		await page.goto("/?debug");
-		await page.evaluate(() =>
-			localStorage.setItem(
-				"fjordtown.save",
-				JSON.stringify({ version: 1, map: "house", x: 5, y: 4, facing: "left", stamps: [], flags: {}, dialogue: {}, settings: {} }),
-			),
-		);
-		await page.goto("/?debug");
-		await page.getByRole("button", { name: /continue/i }).click();
-		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "house" });
+		await continueAt(page, { map: "house", x: 5, y: 5, facing: "left" });
 
 		await page.keyboard.press("e");
 		// Read until the topics appear, then pick "Where can I find you online?".

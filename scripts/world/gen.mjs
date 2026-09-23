@@ -34,6 +34,10 @@ const files = {
 };
 const readJson = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null);
 
+if (flag("prune") && opt("only")) {
+	console.error("[world] --prune rebuilds tile ids for every map; it can't be combined with --only.");
+	process.exit(1);
+}
 if (flag("prune")) {
 	const edited = GENERATED_MAPS.filter((m) => readJson(path.join(files.maps, `${m.id}.tmj`))?.layers.some(isManual));
 	if (edited.length) {
