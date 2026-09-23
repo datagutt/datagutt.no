@@ -11,6 +11,15 @@ export default defineConfig({
 	projects: [
 		{ name: "desktop", use: { ...devices["Desktop Chrome"] } },
 		{ name: "phone", use: { ...devices["Pixel 7"] } },
+		// The QA matrix (docs/game/PLAN.md M6.6): `pnpm test:e2e:all`. Off by default, since
+		// WebKit needs system libraries (`sudo pnpm exec playwright install-deps webkit`).
+		...(process.env.E2E_ALL_BROWSERS
+			? [
+					{ name: "firefox", use: { ...devices["Desktop Firefox"] } },
+					{ name: "safari", use: { ...devices["Desktop Safari"] } },
+					{ name: "iphone", use: { ...devices["iPhone 15"] } },
+				]
+			: []),
 	],
 	// Runs against a production build (`pnpm build` first): the canary dev server's
 	// Turbopack panics intermittently on this repo. Point E2E_BASE_URL at a preview
