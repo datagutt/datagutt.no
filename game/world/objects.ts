@@ -22,7 +22,9 @@ export type MapObject =
 	 * `books` the library's featured shelf (one spine per pinned repo).
 	 */
 	| { type: "crops"; x: number; y: number; w: number; h: number; stages: string }
-	| { type: "books"; x: number; y: number; w: number; h: number };
+	| { type: "books"; x: number; y: number; w: number; h: number }
+	/** A named rectangle of the map for scripted scenes, e.g. the ferry for the intro. */
+	| { type: "area"; id: string; x: number; y: number; w: number; h: number };
 
 /**
  * A light, drawn additively over the map and characters (game/fx/Lights.ts). A glow is
@@ -85,6 +87,8 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			return { type: "crops", x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize), stages: str("stages") };
 		case "books":
 			return { type: "books", x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize) };
+		case "area":
+			return { type: "area", id: obj.name || str("id"), x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize) };
 		case "light": {
 			const num = (name: string) => {
 				const v = Number(props.get(name));
@@ -109,7 +113,7 @@ export function toTiledObject(obj: MapObject, id: number, tileSize: number): Til
 	const { type, x, y, ...rest } = obj;
 	const objectName = "id" in rest ? rest.id : "";
 	// Areas (crops, books) keep their size as the Tiled object's width and height.
-	const area = type === "crops" || type === "books" ? (rest as { w: number; h: number }) : null;
+	const area = type === "crops" || type === "books" || type === "area" ? (rest as { w: number; h: number }) : null;
 	const properties: TiledProperty[] = Object.entries(rest)
 		.filter(([key]) => key !== "id" && !(area && (key === "w" || key === "h")))
 		.map(([key, value]) => ({ name: key, type: "string", value: String(value) }));

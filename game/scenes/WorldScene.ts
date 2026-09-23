@@ -34,6 +34,7 @@ import { Ambience } from "../audio/Ambience";
 import { ambienceMix } from "../audio/mix";
 import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
+import { Intro } from "./Intro";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -64,6 +65,7 @@ export class WorldScene extends Phaser.Scene {
 	private aurora: Aurora | null = null;
 	private prompt!: Prompt;
 	private feel!: Feel;
+	private intro: Intro | null = null;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -154,6 +156,7 @@ export class WorldScene extends Phaser.Scene {
 
 		const spawns = new Map<string, Extract<MapObject, { type: "spawn" }>>();
 		const spots = new Map<string, Extract<MapObject, { type: "spot" }>>();
+		const areas = new Map<string, Extract<MapObject, { type: "area" }>>();
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		const lights: LightObject[] = [];
@@ -161,6 +164,7 @@ export class WorldScene extends Phaser.Scene {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
 			if (obj.type === "spot") spots.set(obj.id, obj);
+			if (obj.type === "area") areas.set(obj.id, obj);
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") this.signs.set(tileKey(obj), obj);
 			if (obj.type === "light") lights.push(obj);
@@ -272,6 +276,7 @@ export class WorldScene extends Phaser.Scene {
 		this.fitCamera();
 		this.feel = new Feel(this, this.player, () => this.progress.reducedMotion);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.feel.destroy());
+		this.startIntro(areas.get("ferry"), start, [layers.get("below"), layers.get("above")]);
 		this.cameras.main.fadeIn(180, 11, 19, 32);
 		this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
@@ -314,6 +319,11 @@ export class WorldScene extends Phaser.Scene {
 		this.updateDebug();
 
 		if (this.transitioning) return;
+		if (this.intro?.active && !this.dialogue.open) {
+			this.intro.update(input);
+			for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
+			return;
+		}
 		if (this.menu.open) {
 			this.menu.handle(input);
 			this.menuButton.setVisible(!this.menu.open);
@@ -369,6 +379,31 @@ export class WorldScene extends Phaser.Scene {
 		this.updatePrompt(input.device);
 		this.feel.update();
 
+	}
+
+	/** On a first visit, arriving at the dock: sail in on the ferry and meet Arne. */
+	private startIntro(ferry: Extract<MapObject, { type: "area" }> | undefined, spawn: Point, layers: (Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer | undefined)[]) {
+		const arne = this.npcs.get("ferryman");
+		const forced = new URLSearchParams(window.location.search).has("intro");
+		if (!ferry || !arne || !this.services.firstVisit || this.target.spawn !== "ferry" || (this.progress.flags.intro && !forced)) return;
+		this.intro = new Intro(
+			this,
+			this.player,
+			ferry,
+			layers.filter((l) => l !== undefined),
+			spawn,
+			this.progress.reducedMotion,
+			(done) => {
+				arne.actor.mover.face("left");
+				this.playKnot("ferryman_intro", arne.def, () => {
+					this.progress.flags.intro = true;
+					this.services.firstVisit = false;
+					this.save();
+					done();
+				});
+			},
+			() => (this.intro = null),
+		);
 	}
 
 	/** How far the sea, the forest and any fire are from every tile, for the ambience. */
@@ -466,6 +501,7 @@ export class WorldScene extends Phaser.Scene {
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
+			intro: this.intro?.active ?? false,
 			prompt: this.prompt.text,
 			tile: { ...p },
 			facing: this.player.mover.facing,

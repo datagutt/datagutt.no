@@ -4,6 +4,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.7 ferry intro done.** `game/scenes/Intro.ts`, on a first visit (no save, no deep
+  link: `services.firstVisit`; `?debug&intro` forces it) arriving at the dock: the
+  ferry's tiles (a new `area` map object, id `ferry`, from the generator) are lifted into
+  a group of images using per-tile atlas frames, sail in from 14 tiles out with the
+  player on deck, and go back into the map on docking; the player hops onto the pier and
+  Arne plays `ferryman_intro` (passport, controls, Journal). Any key, button or tap skips
+  the crossing. The save flag `intro` stops it replaying; Arne's usual greeting knows the
+  intro happened. `window.__fjord.intro`; e2e covers first and returning visits.
 - **M5.6 audio done** (sounds synthesised, the user's choice; recordings may replace
   layers later). `game/audio/Ambience.ts`: one per game (registry `ambience`), buses
   master (into Phaser's output, so mute holds), ambience, effects, music. Layers: waves

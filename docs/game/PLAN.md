@@ -310,7 +310,7 @@ Goal: the Celeste-level feel.
       synthesised effects. *Done when* walking from dock to forest to indoors crossfades.
       (All synthesised for now, the user's call: `game/audio/Ambience.ts`. The sound design
       itself still wants the user's ears.)
-- [ ] **M5.7** Ferry intro cutscene: ferry arrival, ferryman gives passport, one line on
+- [x] **M5.7** Ferry intro cutscene: ferry arrival, ferryman gives passport, one line on
       controls and Journal; skippable. *Done when* first visit plays it and returning
       visits do not.
 - [ ] **M5.8** Finale: all stamps → night, aurora, datagutt on the pier, credits roll from

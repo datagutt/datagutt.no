@@ -11,6 +11,7 @@ describe("map objects", () => {
 			{ type: "door", x: 3, y: 4, toMap: "house", toSpawn: "entrance" },
 			{ type: "sign", x: 5, y: 6, text: "Hello" },
 			{ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" },
+			{ type: "area", id: "ferry", x: 52, y: 67, w: 6, h: 4 },
 			{ type: "light", shape: "glow", x: 7, y: 8, radius: 2.5, color: "ffae62", intensity: 0.5, flicker: true },
 			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4 },
 			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4, when: "day" },

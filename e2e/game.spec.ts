@@ -16,6 +16,7 @@ type FjordState = {
 	thomas: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
 	emoteWheel: boolean;
 	prompt: string | null;
+	intro: boolean;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -142,6 +143,28 @@ test.describe("world", () => {
 		await expect.poll(async () => (await state(page))?.prompt).toBe("E Enter");
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.map).toBe("town-hall");
+	});
+
+	test("a first visit sails in on the ferry and meets Arne; a return does not", async ({ page }) => {
+		await page.goto("/?debug&presence=coding");
+		await page.evaluate(() => localStorage.clear());
+		await page.goto("/?debug&presence=coding");
+		await page.getByRole("button", { name: /start/i }).click();
+		await expect.poll(async () => (await state(page))?.intro, { timeout: 30_000 }).toBe(true);
+		// Skip the crossing: Arne's welcome comes straight away.
+		await page.keyboard.press("e");
+		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
+		for (let i = 0; i < 10 && (await state(page))?.dialogueOpen; i++) {
+			await page.keyboard.press("e");
+			await page.waitForTimeout(250);
+		}
+		await expect.poll(async () => (await state(page))?.intro).toBe(false);
+		expect((await state(page))?.dialogueOpen).toBe(false);
+
+		await page.goto("/?debug&presence=coding");
+		await page.getByRole("button", { name: /continue/i }).click();
+		await expect.poll(async () => (await state(page))?.map, { timeout: 30_000 }).toBe("town");
+		expect((await state(page))?.intro).toBe(false);
 	});
 
 	test("holding interact opens the emote wheel; back closes it", async ({ page }) => {

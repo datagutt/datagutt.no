@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 69,
+  "nextobjectid": 70,
   "properties": [
     {
       "name": "name",
@@ -1776,52 +1776,20 @@
         },
         {
           "id": 30,
-          "name": "",
-          "type": "light",
-          "x": 624,
-          "y": 464,
-          "width": 16,
-          "height": 16,
+          "name": "ferry",
+          "type": "area",
+          "x": 832,
+          "y": 1088,
+          "width": 96,
+          "height": 64,
           "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "shape",
-              "type": "string",
-              "value": "glow"
-            },
-            {
-              "name": "radius",
-              "type": "string",
-              "value": "2.6"
-            },
-            {
-              "name": "color",
-              "type": "string",
-              "value": "ffd08a"
-            },
-            {
-              "name": "intensity",
-              "type": "string",
-              "value": "0.75"
-            },
-            {
-              "name": "flicker",
-              "type": "string",
-              "value": "false"
-            },
-            {
-              "name": "when",
-              "type": "string",
-              "value": "night"
-            }
-          ]
+          "visible": true
         },
         {
           "id": 31,
           "name": "",
           "type": "light",
-          "x": 976,
+          "x": 624,
           "y": 464,
           "width": 16,
           "height": 16,
@@ -1864,8 +1832,8 @@
           "id": 32,
           "name": "",
           "type": "light",
-          "x": 624,
-          "y": 592,
+          "x": 976,
+          "y": 464,
           "width": 16,
           "height": 16,
           "rotation": 0,
@@ -1907,7 +1875,7 @@
           "id": 33,
           "name": "",
           "type": "light",
-          "x": 976,
+          "x": 624,
           "y": 592,
           "width": 16,
           "height": 16,
@@ -1950,8 +1918,8 @@
           "id": 34,
           "name": "",
           "type": "light",
-          "x": 192,
-          "y": 672,
+          "x": 976,
+          "y": 592,
           "width": 16,
           "height": 16,
           "rotation": 0,
@@ -1993,7 +1961,7 @@
           "id": 35,
           "name": "",
           "type": "light",
-          "x": 384,
+          "x": 192,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2036,7 +2004,7 @@
           "id": 36,
           "name": "",
           "type": "light",
-          "x": 512,
+          "x": 384,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2079,7 +2047,7 @@
           "id": 37,
           "name": "",
           "type": "light",
-          "x": 720,
+          "x": 512,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2122,7 +2090,7 @@
           "id": 38,
           "name": "",
           "type": "light",
-          "x": 912,
+          "x": 720,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2165,7 +2133,7 @@
           "id": 39,
           "name": "",
           "type": "light",
-          "x": 1024,
+          "x": 912,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2208,7 +2176,7 @@
           "id": 40,
           "name": "",
           "type": "light",
-          "x": 1248,
+          "x": 1024,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2251,7 +2219,7 @@
           "id": 41,
           "name": "",
           "type": "light",
-          "x": 1424,
+          "x": 1248,
           "y": 672,
           "width": 16,
           "height": 16,
@@ -2292,6 +2260,49 @@
         },
         {
           "id": 42,
+          "name": "",
+          "type": "light",
+          "x": 1424,
+          "y": 672,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "2.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "ffd08a"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.75"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            },
+            {
+              "name": "when",
+              "type": "string",
+              "value": "night"
+            }
+          ]
+        },
+        {
+          "id": 43,
           "name": "datagutt-fjord",
           "type": "spot",
           "x": 864,
@@ -2309,7 +2320,7 @@
           ]
         },
         {
-          "id": 43,
+          "id": 44,
           "name": "datagutt-square",
           "type": "spot",
           "x": 752,
@@ -2327,7 +2338,7 @@
           ]
         },
         {
-          "id": 44,
+          "id": 45,
           "name": "ferry",
           "type": "spawn",
           "x": 800,
@@ -2345,7 +2356,7 @@
           ]
         },
         {
-          "id": 45,
+          "id": 46,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -2363,7 +2374,7 @@
           ]
         },
         {
-          "id": 46,
+          "id": 47,
           "name": "office_door",
           "type": "spawn",
           "x": 1136,
@@ -2381,7 +2392,7 @@
           ]
         },
         {
-          "id": 47,
+          "id": 48,
           "name": "boathouse_door",
           "type": "spawn",
           "x": 192,
@@ -2399,7 +2410,7 @@
           ]
         },
         {
-          "id": 48,
+          "id": 49,
           "name": "library_door",
           "type": "spawn",
           "x": 560,
@@ -2417,7 +2428,7 @@
           ]
         },
         {
-          "id": 49,
+          "id": 50,
           "name": "kiosk_door",
           "type": "spawn",
           "x": 944,
@@ -2435,7 +2446,7 @@
           ]
         },
         {
-          "id": 50,
+          "id": 51,
           "name": "post_office_door",
           "type": "spawn",
           "x": 656,
@@ -2453,7 +2464,7 @@
           ]
         },
         {
-          "id": 51,
+          "id": 52,
           "name": "gym_door",
           "type": "spawn",
           "x": 1392,
@@ -2471,7 +2482,7 @@
           ]
         },
         {
-          "id": 52,
+          "id": 53,
           "name": "farmhouse_door",
           "type": "spawn",
           "x": 224,
@@ -2489,7 +2500,7 @@
           ]
         },
         {
-          "id": 53,
+          "id": 54,
           "name": "radio_hut_door",
           "type": "spawn",
           "x": 1216,
@@ -2507,7 +2518,7 @@
           ]
         },
         {
-          "id": 54,
+          "id": 55,
           "name": "town_hall_door",
           "type": "spawn",
           "x": 720,
@@ -2525,7 +2536,7 @@
           ]
         },
         {
-          "id": 55,
+          "id": 56,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -2543,7 +2554,7 @@
           ]
         },
         {
-          "id": 56,
+          "id": 57,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -2561,7 +2572,7 @@
           ]
         },
         {
-          "id": 57,
+          "id": 58,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -2579,7 +2590,7 @@
           ]
         },
         {
-          "id": 58,
+          "id": 59,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -2597,7 +2608,7 @@
           ]
         },
         {
-          "id": 59,
+          "id": 60,
           "name": "",
           "type": "sign",
           "x": 192,
@@ -2615,7 +2626,7 @@
           ]
         },
         {
-          "id": 60,
+          "id": 61,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -2633,7 +2644,7 @@
           ]
         },
         {
-          "id": 61,
+          "id": 62,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -2651,7 +2662,7 @@
           ]
         },
         {
-          "id": 62,
+          "id": 63,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -2669,7 +2680,7 @@
           ]
         },
         {
-          "id": 63,
+          "id": 64,
           "name": "",
           "type": "sign",
           "x": 1104,
@@ -2687,7 +2698,7 @@
           ]
         },
         {
-          "id": 64,
+          "id": 65,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -2705,7 +2716,7 @@
           ]
         },
         {
-          "id": 65,
+          "id": 66,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -2723,7 +2734,7 @@
           ]
         },
         {
-          "id": 66,
+          "id": 67,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -2756,7 +2767,7 @@
           ]
         },
         {
-          "id": 67,
+          "id": 68,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -2789,7 +2800,7 @@
           ]
         },
         {
-          "id": 68,
+          "id": 69,
           "name": "farmer",
           "type": "npc",
           "x": 256,

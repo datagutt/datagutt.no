@@ -1,7 +1,10 @@
 // Topics pattern (see datagutt.ink).
 === ferryman ===
-{ ferryman > 1:
+{
+- ferryman > 1:
     {~The ferry's late again. It's always late.|The fjord's calm today.|Back for more directions?|I've been rowing this route for thirty years. The ferry only has an engine for show.}
+- ferryman_intro:
+    Still here? The town's that way. Mind the passport, it's the only one I had.
 - else:
     Hei! Welcome ashore.
     Walk with the arrow keys or WASD, or tap where you want to go. Press E, or tap someone, to talk.
@@ -32,3 +35,12 @@
 = goodbye
     Good. There's plenty to look at. Most of it is his fault. # nod
     -> END
+
+// The first visit's arrival (game/scenes/Intro.ts): Arne hands over the passport and
+// says how things work, once.
+=== ferryman_intro ===
+Hei! Welcome to Fjord Town. # nod
+Here's your passport. Get it stamped by the folks who live here, one stamp a house.
+Walk with the arrow keys or WASD, or tap where you want to go. Press E, or tap someone, to talk.
+And if you'd rather read than walk, the Journal in the menu has it all in plain text.
+-> END

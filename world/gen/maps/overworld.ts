@@ -96,6 +96,8 @@ export function overworld(): MapCanvas {
 	const pierEnd = pierTop + 8;
 	pier(c, HARBOUR_X, pierTop, pierEnd);
 	c.stamp(PREFABS.ferry, HARBOUR_X + 3, pierEnd - 4);
+	// The intro sails it in (game/scenes/Intro.ts); it needs to know which tiles it is.
+	c.add({ type: "area", id: "ferry", x: HARBOUR_X + 3, y: pierEnd - 4, w: PREFABS.ferry.w, h: PREFABS.ferry.h });
 	// Moored with its rope end (right) at the boathouse pier.
 	c.stamp(PREFABS.rowboat, 18, Math.max(...shore.slice(18, 22)));
 

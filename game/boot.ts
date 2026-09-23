@@ -67,6 +67,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	world: WorldState;
 	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
 	season: Season;
+	/** No save and no deep link: the ferry intro plays (or `?debug&intro` forces it). */
+	firstVisit: boolean;
 	/** Hours on the visitor's clock (0–24), or `?debug&time=<phase|HH:MM>`. */
 	hours: () => number;
 	/** The month on the visitor's clock (1–12), or `?debug&month=`. */
@@ -97,6 +99,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		world: readWorldState(),
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
+		firstVisit: (!hasSave && !deepLinked) || (new URLSearchParams(window.location.search).has("debug") && new URLSearchParams(window.location.search).has("intro")),
 		hours: clock(window.location.search),
 		month: monthNow(window.location.search),
 		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
