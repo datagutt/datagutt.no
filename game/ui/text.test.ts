@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { charDelayMs, paginate, wrapText } from "./text";
+import { charDelayMs, choiceOfLine, paginate, wrapChoices, wrapText } from "./text";
 
 const mono: (t: string) => number = (t) => t.length * 5;
 
@@ -30,5 +30,14 @@ describe("charDelayMs", () => {
 		expect(charDelayMs(text, 9)).toBeGreaterThan(charDelayMs(text, 7)); // after ","
 		expect(charDelayMs(text, 12)).toBe(charDelayMs(text, 2)); // inside "3.5"
 		expect(charDelayMs(text, 4)).toBeGreaterThan(charDelayMs(text, 9)); // full stop beats comma
+	});
+});
+
+describe("wrapChoices", () => {
+	it("wraps long choices onto more lines and keeps track of where each starts", () => {
+		const { lines, first } = wrapChoices(["Hello.", "Is there a quicker way to see everything?", "Bye."], 100, mono);
+		expect(lines).toEqual(["Hello.", "Is there a quicker", "way to see", "everything?", "Bye."]);
+		expect(first).toEqual([0, 1, 4]);
+		expect([0, 1, 2, 3, 4].map((line) => choiceOfLine(first, line))).toEqual([0, 1, 1, 1, 2]);
 	});
 });

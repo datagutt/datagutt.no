@@ -29,6 +29,27 @@ export function wrapText(text: string, maxWidth: number, measure: Measure): stri
 	return lines;
 }
 
+/**
+ * Choices wrapped to `maxWidth`: every line, and the line each choice starts on (long
+ * choices take more than one line; the cursor and taps go by choice, not by line).
+ */
+export function wrapChoices(choices: string[], maxWidth: number, measure: Measure): { lines: string[]; first: number[] } {
+	const lines: string[] = [];
+	const first: number[] = [];
+	for (const choice of choices) {
+		first.push(lines.length);
+		lines.push(...wrapText(choice, maxWidth, measure));
+	}
+	return { lines, first };
+}
+
+/** Which choice a line of `wrapChoices` output belongs to. */
+export function choiceOfLine(first: number[], line: number): number {
+	let choice = 0;
+	while (choice + 1 < first.length && first[choice + 1] <= line) choice++;
+	return choice;
+}
+
 /** Group wrapped lines into pages of at most `linesPerPage`. */
 export function paginate(lines: string[], linesPerPage: number): string[][] {
 	const pages: string[][] = [];

@@ -3,7 +3,7 @@
 import Phaser from "phaser";
 import type { Facing } from "../world/objects";
 import { PORTRAIT_CROP, portraitKey } from "../characters/sheet";
-import { charDelayMs, paginate, wrapText } from "./text";
+import { charDelayMs, choiceOfLine, paginate, wrapChoices, wrapText } from "./text";
 
 const FONT = "pixel";
 const FRAME = "ui:frame";
@@ -169,9 +169,10 @@ export class DialogueBox {
 	choiceAt(screenX: number, screenY: number): number | null {
 		const m = this.mode;
 		if (m.kind !== "choices") return null;
-		const { x, y, width } = this.layout(m.choices.length);
+		const { lines, first } = this.choiceLines(m.choices);
+		const { x, y, width } = this.layout(lines.length);
 		const row = Math.floor((screenY - y - PADDING) / this.lineHeight);
-		return screenX >= x && screenX <= x + width && row >= 0 && row < m.choices.length ? row : null;
+		return screenX >= x && screenX <= x + width && row >= 0 && row < lines.length ? choiceOfLine(first, row) : null;
 	}
 
 	/** A tap at screen coordinates: picks the choice under it, or acts like interact. */
@@ -225,6 +226,11 @@ export class DialogueBox {
 		if (this.open) this.draw();
 	}
 
+	private choiceLines(choices: string[]) {
+		const { width } = this.layout(LINES);
+		return wrapChoices(choices, width - PADDING * 2 - CHOICE_INDENT, this.measure);
+	}
+
 	private layout(lines: number) {
 		const cam = this.scene.cameras.main;
 		const width = Math.min(cam.width - 8, 300);
@@ -237,8 +243,8 @@ export class DialogueBox {
 	private draw(): void {
 		const m = this.mode;
 		if (m.kind === "closed") return;
-		const rows = m.kind === "choices" ? m.choices.length : LINES;
-		const { x, y, width, height } = this.layout(rows);
+		const choices = m.kind === "choices" ? this.choiceLines(m.choices) : null;
+		const { x, y, width, height } = this.layout(choices ? choices.lines.length : LINES);
 		this.box.setPosition(x, y).setSize(width, height);
 		const g = this.marks.clear();
 
@@ -254,8 +260,8 @@ export class DialogueBox {
 				g.fillStyle(ACCENT, 1).fillTriangle(ax, ay, ax + 5, ay, ax + 2.5, ay + 3);
 			}
 		} else {
-			this.label.setText(m.choices.join("\n")).setPosition(x + PADDING + CHOICE_INDENT, y + PADDING);
-			const cy = y + PADDING + m.selected * this.lineHeight + Math.floor(this.lineHeight / 2) - 3;
+			this.label.setText(choices!.lines.join("\n")).setPosition(x + PADDING + CHOICE_INDENT, y + PADDING);
+			const cy = y + PADDING + choices!.first[m.selected] * this.lineHeight + Math.floor(this.lineHeight / 2) - 3;
 			g.fillStyle(ACCENT, 1).fillTriangle(x + PADDING, cy, x + PADDING, cy + 6, x + PADDING + 4, cy + 3);
 		}
 
