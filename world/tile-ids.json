@@ -6207,6 +6207,25 @@
 		"upstairs:0,26",
 		"upstairs:1,26",
 		"upstairs:2,26",
-		"workplace:8,31|workplace:11,31|workplace:2,10"
+		"workplace:8,31|workplace:11,31|workplace:2,10",
+		"workplace:11,29|workplace:8,27|workplace:1,8",
+		"workplace:11,29|workplace:11,27|workplace:1,8",
+		"workplace:11,29|workplace:14,27|workplace:1,8",
+		"workplace:1,9",
+		"workplace:8,31|workplace:11,31|workplace:1,10",
+		"workplace:1,11",
+		"workplace:8,29|workplace:11,27|workplace:1,8",
+		"workplace:8,29|workplace:14,29|workplace:1,8",
+		"workplace:2,31|workplace:11,27|workplace:1,8",
+		"workplace:8,31|workplace:8,27|workplace:1,10",
+		"workplace:2,31|workplace:14,27|workplace:1,10",
+		"workplace:5,31|workplace:14,29|workplace:1,8",
+		"workplace:8,29|workplace:11,27|workplace:1,10",
+		"workplace:8,31|workplace:11,31|workplace:1,8",
+		"workplace:2,31|workplace:8,27|workplace:1,8",
+		"workplace:8,31|workplace:14,27|workplace:1,10",
+		"workplace:11,29|workplace:8,27|workplace:1,10",
+		"workplace:5,31|workplace:11,27|workplace:1,8",
+		"workplace:8,29|workplace:8,27|workplace:1,8"
 	]
 }

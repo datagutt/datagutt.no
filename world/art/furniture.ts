@@ -186,8 +186,9 @@ export const FURNITURE = {
 	setupLamp: { sheet: "workplace", col: 13, row: 26, w: 3, h: 2, aboveRows: 0, collision: [] },
 	setupDualPhoto: { sheet: "workplace", col: 13, row: 28, w: 3, h: 2, aboveRows: 0, collision: [] },
 	setupPrinter: { sheet: "workplace", col: 10, row: 30, w: 3, h: 2, aboveRows: 0, collision: [] },
-	chairBack: solid("workplace", 2, 8, 1, 2),
-	chairBackOrange: solid("workplace", 2, 10, 1, 2),
+	/** Office chairs seen from behind: the plain shell of the backrest (LimeZu's designs use this one at desks). */
+	chairBack: solid("workplace", 1, 8, 1, 2),
+	chairBackOrange: solid("workplace", 1, 10, 1, 2),
 	backpackBlue: single("workplace", 329),
 	backpackRed: single("workplace", 331),
 	backpackGrey: single("workplace", 333),
