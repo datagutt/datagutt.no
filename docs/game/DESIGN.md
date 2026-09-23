@@ -31,10 +31,10 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
   presence (coding at the PC, headphones outside when Spotify plays, asleep when offline).
 - **The datagutt sprite and portrait are based on `public/images/avatar.png`**: short
   blond (yellow) hair, pale skin, thick black square glasses, light stubble, light-blue
-  top. Built from the closest character-generator and portrait-generator layers, then
-  hand-edited where the stock parts differ (the chunky glasses in particular). The
-  original avatar also appears as-is on the title screen, in the Journal and as the
-  framed photo in the house.
+  top. Built from the closest character-generator and portrait-generator layers, with
+  the hair recoloured yellow and the stock glasses recoloured black (not thickened by
+  hand: see the changelog). The original avatar also appears as-is on the title screen,
+  in the Journal and as the framed photo in the house.
 
 ## 4. Setting
 
@@ -215,3 +215,4 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 ## Changelog
 
 - 2026-09-22: initial record from the grilling session.
+- 2026-09-23: datagutt keeps the recoloured stock glasses instead of hand-edited chunky ones (user, M3.10).

@@ -76,3 +76,23 @@ in `world/gen/snowDraft.ts`) and writes `world/out/snow-drafts.png` to review th
 never overwrites a file that exists, since it may be hand-edited; `--force` redrafts
 (and `--only=<prefab>` limits it to one building). Clean the drafts up in Aseprite,
 commit them in datagutt-assets, then run `pnpm world:gen` to rebuild the atlas.
+
+
+# Characters
+
+NPC walk sheets and portraits are stacked from the LimeZu character and portrait
+generator layers in datagutt-assets, per recipe in `game/assets/manifest.ts`
+(`scripts/assets/characters.mjs` does the stacking). A recipe lists body, eyes, outfit,
+hair and accessories in that order; the portrait is derived from the same layers because
+the two generators share numbering.
+
+- `pnpm characters:review` writes `world/out/characters.png`: every character facing
+  all four ways plus its portrait, at 1x on grass and at 4x. Judge looks at 1x.
+- Natural skin tones are Body_01 to 04 and 07 (05, 06, 08 and 09 are yellow, grey, pink
+  and blue). Hair colours 1 to 7 are ginger, light brown, auburn, dark brown, grey,
+  dark grey and near black; styles 27 to 29 come in bright colours instead.
+- Big hats cover the eyes in the portrait. Where a `_Small` portrait variant exists,
+  name it on the layer: `{ file: "Accessories/Accessory_11_Beanie_01.png", portrait:
+  "Accessories/PG_Accessory_11_Beanie_Small_1.png" }`.
+- `recolor` on a recipe swaps exact colours in every layer (datagutt's yellow hair and
+  black glasses).

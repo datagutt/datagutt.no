@@ -232,9 +232,12 @@ Goal: the real town, painted, in all seasons.
       date. *Done when* all four seasons render and switch via `?season=` in debug.
       (Swap tables per season instead of layers; hand-drawn full snow roofs are
       overrides in datagutt-assets, drafts await cleanup in Aseprite.)
-- [ ] **M3.10** Character build: composite NPC walk sheets from generator layers per
+- [x] **M3.10** Character build: composite NPC walk sheets from generator layers per
       recipe; hand-edit the datagutt sprite and portrait to match the avatar (chunky black
-      glasses). *Done when* every NPC in the roster has a sprite and portrait.
+      glasses). *Done when* every NPC in the roster has a sprite and portrait. (Every NPC
+      got a look fitting their job, reviewed with `pnpm characters:review`. Thickened
+      glasses and stubble for datagutt were built and dropped: the user preferred the
+      stock glasses recoloured black.)
 - [x] **M3.11** Library and farm from live data: one book per pinned repo (spine colour
       from the repo's language), contribution field with one tile per day and crop height
       from the level. *Done when* both reflect real data. (User chose 26 weeks × 7 days,

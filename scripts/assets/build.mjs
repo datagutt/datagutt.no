@@ -6,20 +6,9 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { CHARACTERS } from "../../game/assets/manifest.ts";
-import {
-	FRAME_HEIGHT,
-	FRAME_WIDTH,
-	SHEET_COLUMNS,
-	SHEET_ROWS,
-	DIRECTIONS,
-	ANIMS,
-	PORTRAIT_ANIMS,
-	PORTRAIT_COLUMNS,
-	PORTRAIT_CROP,
-	PORTRAIT_SOURCE_FRAME,
-} from "../../game/characters/sheet.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
+import { composeCharacter, composePortrait, placeholderCharacter, placeholderPortrait } from "./characters.mjs";
 import { buildBitmapFont } from "./font.mjs";
 import { compileDialogue } from "./ink.mjs";
 import { Raster, hex } from "./raster.mjs";
@@ -35,157 +24,12 @@ if (!fs.existsSync(sourceFile)) {
 }
 const source = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
 const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
+const portraitsDir = source.dir && path.join(source.dir, "limezu/portraits");
+const portraitExists = (file) => fs.existsSync(path.join(portraitsDir, file));
 
 for (const sub of ["characters", "portraits", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
-}
-
-// --- Characters --------------------------------------------------------------------
-
-const SHEET_W = SHEET_COLUMNS * FRAME_WIDTH;
-const SHEET_H = SHEET_ROWS * FRAME_HEIGHT;
-
-async function recolor(buffer, map) {
-	const { data, info } = await sharp(buffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-	const swaps = new Map(Object.entries(map).map(([from, to]) => [from.toLowerCase(), hex(to)]));
-	for (let i = 0; i < data.length; i += 4) {
-		if (!data[i + 3]) continue;
-		const key = ((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]).toString(16).padStart(6, "0");
-		const to = swaps.get(key);
-		if (to) data.set(to.slice(0, 3), i);
-	}
-	return sharp(data, { raw: info }).png().toBuffer();
-}
-
-async function composeCharacter(id, recipe) {
-	const layers = [];
-	for (const layer of recipe.layers) {
-		const file = path.join(charactersDir, layer);
-		if (!fs.existsSync(file)) throw new Error(`Character "${id}": layer ${layer} does not exist in the assets repo`);
-		// Some sheets are wider than the grid (Body_01 is 927 px); crop to the frames we use.
-		let buf = await sharp(file).extract({ left: 0, top: 0, width: SHEET_W, height: SHEET_H }).png().toBuffer();
-		if (recipe.recolor) buf = await recolor(buf, recipe.recolor);
-		layers.push({ input: buf });
-	}
-	return sharp({ create: { width: SHEET_W, height: SHEET_H, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-		.composite(layers)
-		.png()
-		.toBuffer();
-}
-
-/** A stand-in figure with the same frame layout: body colour, lighter head, eyes that face. */
-async function placeholderCharacter(recipe) {
-	const img = new Raster(SHEET_W, SHEET_H);
-	const body = hex(recipe.placeholder);
-	const head = [...body.slice(0, 3).map((c) => Math.min(255, c + 70)), 255];
-	const outline = hex("1b1b24");
-	for (const spec of Object.values(ANIMS)) {
-		DIRECTIONS.forEach((dir, d) => {
-			for (let f = 0; f < spec.framesPerDirection; f++) {
-				const ox = (d * spec.framesPerDirection + f) * FRAME_WIDTH;
-				const oy = spec.row * FRAME_HEIGHT;
-				const bob = spec === ANIMS.walk ? f % 2 : 0;
-				img.rect(ox + 3, oy + 12 + bob, 10, 9, outline);
-				img.rect(ox + 4, oy + 13 + bob, 8, 7, head);
-				img.rect(ox + 4, oy + 21 + bob, 8, 7, body);
-				const step = spec === ANIMS.walk ? (f % 3) - 1 : 0;
-				img.rect(ox + 5 + step, oy + 28, 2, 3, outline);
-				img.rect(ox + 9 - step, oy + 28, 2, 3, outline);
-				const eyes = { right: [9, 11], left: [4, 6], down: [5, 9], up: null }[dir];
-				if (eyes) for (const ex of eyes) img.rect(ox + ex, oy + 16 + bob, 1, 2, outline);
-			}
-		});
-	}
-	return img.toPng();
-}
-
-// --- Portraits ----------------------------------------------------------------------
-
-const PORTRAIT_ROWS = Object.keys(PORTRAIT_ANIMS).length;
-const P = PORTRAIT_CROP.size;
-
-/**
- * Portrait layers for a recipe: explicit ones, or derived from the sprite layers (the two
- * generators share numbering; outfits don't appear in head portraits). Accessories the
- * portrait generator lacks, such as backpacks, are skipped.
- */
-export function portraitLayers(recipe, exists) {
-	if (recipe.portrait === false) return null;
-	if (Array.isArray(recipe.portrait)) return recipe.portrait;
-	return recipe.layers.flatMap((layer) => {
-		let m;
-		if ((m = /^Bodies\/Body_0?(\d+)\.png$/.exec(layer))) return [`Skins/PG_Skin_${Number(m[1])}.png`];
-		if ((m = /^Eyes\/Eyes_(\d+)\.png$/.exec(layer))) return [`Eyes/PG_Eyes_${m[1]}.png`];
-		if ((m = /^Hairstyles\/Hairstyle_(\d+)_0?(\d+)\.png$/.exec(layer))) return [`Hairstyles/PG_Hairstyle_${m[1]}_${Number(m[2])}.png`];
-		if ((m = /^Accessories\/Accessory_(.+)_0?(\d+)\.png$/.exec(layer))) {
-			const candidate = `Accessories/PG_Accessory_${m[1]}_${Number(m[2])}.png`;
-			return exists(candidate) ? [candidate] : [];
-		}
-		return [];
-	});
-}
-
-/** Stack the portrait layers, then crop every frame to the area heads actually use. */
-async function composePortrait(id, recipe) {
-	const dir = path.join(source.dir, "limezu/portraits");
-	const width = PORTRAIT_COLUMNS * PORTRAIT_SOURCE_FRAME;
-	const height = PORTRAIT_ROWS * PORTRAIT_SOURCE_FRAME;
-	const layers = [];
-	for (const layer of portraitLayers(recipe, (f) => fs.existsSync(path.join(dir, f)))) {
-		const file = path.join(dir, layer);
-		if (!fs.existsSync(file)) throw new Error(`Portrait "${id}": layer ${layer} does not exist in the assets repo`);
-		let buf = await sharp(file).extract({ left: 0, top: 0, width, height }).png().toBuffer();
-		if (recipe.recolor) buf = await recolor(buf, recipe.recolor);
-		layers.push({ input: buf });
-	}
-	const full = await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-		.composite(layers)
-		.png()
-		.toBuffer();
-	const frames = [];
-	for (let row = 0; row < PORTRAIT_ROWS; row++) {
-		for (let col = 0; col < PORTRAIT_COLUMNS; col++) {
-			const input = await sharp(full)
-				.extract({
-					left: col * PORTRAIT_SOURCE_FRAME + PORTRAIT_CROP.x,
-					top: row * PORTRAIT_SOURCE_FRAME + PORTRAIT_CROP.y,
-					width: P,
-					height: P,
-				})
-				.png()
-				.toBuffer();
-			frames.push({ input, left: col * P, top: row * P });
-		}
-	}
-	return sharp({ create: { width: PORTRAIT_COLUMNS * P, height: PORTRAIT_ROWS * P, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-		.composite(frames)
-		.png()
-		.toBuffer();
-}
-
-/** A stand-in face: talking opens and closes the mouth, nodding bobs, shaking sways. */
-async function placeholderPortrait(recipe) {
-	const img = new Raster(PORTRAIT_COLUMNS * P, PORTRAIT_ROWS * P);
-	const skin = hex(recipe.placeholder);
-	const light = [...skin.slice(0, 3).map((c) => Math.min(255, c + 70)), 255];
-	const ink = hex("1b1b24");
-	for (let row = 0; row < PORTRAIT_ROWS; row++) {
-		for (let col = 0; col < PORTRAIT_COLUMNS; col++) {
-			const dx = row === 2 ? [0, -1, -2, -1, 0, 1, 2, 1, 0, 0][col] : 0;
-			const dy = row === 1 ? [0, 1, 2, 1, 0, 1, 2, 1, 0, 0][col] : 0;
-			const ox = col * P + 5 + dx;
-			const oy = row * P + 4 + dy;
-			img.rect(ox, oy, 15, 16, ink);
-			img.rect(ox + 1, oy + 1, 13, 14, light);
-			img.rect(ox + 1, oy + 1, 13, 4, skin);
-			img.rect(ox + 4, oy + 7, 1, 2, ink);
-			img.rect(ox + 10, oy + 7, 1, 2, ink);
-			const open = row === 0 && col % 2 === 1;
-			img.rect(ox + 6, oy + 11, 3, open ? 2 : 1, ink);
-		}
-	}
-	return img.toPng();
 }
 
 // --- Run ---------------------------------------------------------------------------
@@ -193,10 +37,10 @@ async function placeholderPortrait(recipe) {
 const started = Date.now();
 
 for (const [id, recipe] of Object.entries(CHARACTERS)) {
-	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(id, recipe);
+	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(charactersDir, id, recipe);
 	fs.writeFileSync(path.join(outDir, `characters/${id}.png`), png);
 	if (recipe.portrait !== false) {
-		const portrait = source.mode === "placeholder" ? await placeholderPortrait(recipe) : await composePortrait(id, recipe);
+		const portrait = source.mode === "placeholder" ? await placeholderPortrait(recipe) : await composePortrait(portraitsDir, id, recipe, portraitExists);
 		fs.writeFileSync(path.join(outDir, `portraits/${id}.png`), portrait);
 	}
 }

@@ -1,8 +1,21 @@
 # Handoff
 
-Last updated: 2026-09-23 (session 1: design through M3; interiors, live field and shelf, ask-again dialogue, seasons)
+Last updated: 2026-09-23 (session 1: design through M3; interiors, live field and shelf, ask-again dialogue, seasons, characters)
 
 ## Current state
+
+- **M3.10 characters done.** Every NPC has a walk sheet and a portrait with a look that
+  fits their job (recipes and one-line looks in `game/assets/manifest.ts`). Compositing
+  moved from `scripts/assets/build.mjs` to `scripts/assets/characters.mjs`.
+  `pnpm characters:review` writes `world/out/characters.png` straight from the recipes
+  (1x on grass and 4x, all four directions plus the portrait), no `pnpm assets` needed.
+  A layer can name its own portrait counterpart (`{ file, portrait }`), used for the
+  `_Small` hats that fit portrait heads (Arne's beanie, Ola's cap).
+  - User decision: datagutt keeps the original look (stock Glasses_01 recoloured black,
+    no stubble). Build-time thickened glasses and a skin-toned stubble beard were tried
+    and dropped.
+  - LimeZu has no straw hat that leaves the eyes visible in the portrait (the
+    "Detective" hat covers them), no headphones, no tank top and no hard hat.
 
 - **M3.9 seasons done** (docs/game/ART.md, "Seasons"). The generator writes a swap
   table per season into outdoor maps (`season:<name>` map properties; only `town` is
@@ -202,7 +215,7 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-M3.10 (NPC sprites and datagutt's portrait against the avatar). Two interiors wait on
+The rest of M3.8 (interiors), then M3.3 and M3.4 if still open. Two interiors wait on
 art: the Nettbureau office (Modern Office pack) and the town hall basement server room
 (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
 mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user
@@ -290,5 +303,6 @@ asks.
 - Phaser ships `docs/` and `skills/` inside `node_modules/phaser`. Read those for
   Phaser 4 APIs.
 - `jq` is not installed on this machine; hook scripts use plain shell and node.
-- The datagutt NPC must match `public/images/avatar.png` (blond hair, chunky black square
-  glasses, stubble, light-blue top).
+- The datagutt NPC is based on `public/images/avatar.png` (blond hair, black glasses,
+  light-blue top). The user prefers the stock glasses recoloured black over thicker
+  hand-edited ones.
