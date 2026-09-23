@@ -14,6 +14,7 @@ type FjordState = {
 	passportOpen: boolean;
 	menu: string;
 	thomas: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
+	emoteWheel: boolean;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -126,6 +127,15 @@ test.describe("world", () => {
 		await page.waitForTimeout(60);
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.menu).toBe("status");
+	});
+
+	test("holding interact opens the emote wheel; back closes it", async ({ page }) => {
+		await continueAt(page, { map: "town", x: 30, y: 44, facing: "down" });
+		await page.keyboard.down("e");
+		await expect.poll(async () => (await state(page))?.emoteWheel).toBe(true);
+		await page.keyboard.up("e");
+		await page.keyboard.press("x");
+		await expect.poll(async () => (await state(page))?.emoteWheel).toBe(false);
 	});
 
 	test("reloading continues where the player left off", async ({ page }) => {

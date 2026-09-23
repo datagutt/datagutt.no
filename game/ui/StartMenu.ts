@@ -13,7 +13,7 @@ const ACCENT = 0x8a3c1a;
 const FADED = 0x9c8a78;
 const DEPTH = 120_000;
 
-export type MenuSettings = { muted: boolean; reducedMotion: boolean | null };
+export type MenuSettings = { muted: boolean; reducedMotion: boolean | null; showVisitors: boolean };
 
 export type MenuHooks = {
 	stamps(): readonly string[];
@@ -114,6 +114,7 @@ export class StartMenu {
 			const motion = s.reducedMotion === null ? "Auto" : s.reducedMotion ? "On" : "Off";
 			return [
 				{ label: `Sound: ${s.muted ? "Off" : "On"}`, run: () => this.hooks.changeSettings({ ...s, muted: !s.muted }) },
+				{ label: `Other visitors: ${s.showVisitors ? "On" : "Off"}`, run: () => this.hooks.changeSettings({ ...s, showVisitors: !s.showVisitors }) },
 				{
 					label: `Reduced motion: ${motion}`,
 					run: () => this.hooks.changeSettings({ ...s, reducedMotion: s.reducedMotion === null ? true : s.reducedMotion ? false : null }),

@@ -4,6 +4,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M4.5 emotes done.** Holding interact for 0.4 s (keys or pad A; a press still
+  interacts at once) or a long press on the player opens `game/ui/EmoteWheel.ts`, a ring
+  of `GHOST_EMOTES` around the head: arrows move round it, interact picks, back or a tap
+  elsewhere cancels. The pick shows over the player for 3 s and goes to the room, where
+  the ghost layer shows it over that visitor. `InputController` gained `interactHeld` and
+  `longPresses`. Settings has "Other visitors: On/Off" (`showVisitors`, already in the
+  save), which starts or stops the socket (`WorldScene.applyVisitors`); with
+  `localStorage.rx_off = "1"` there is no client at all. `window.__fjord.emoteWheel`.
 - **M4.3 ghost protocol done, M4.4 ghost rendering built** (waiting on a real-phone
   check). Protocol in `game/net/protocol.ts` (join/move/emote/leave in, welcome/room/
   joined/moved/emoted/left out, parsed and bounded both ways). Rooms per map in
@@ -269,10 +277,9 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 ## Next step
 
 Tick M4.4 once the user has seen `?debug&ghosts=20` run smoothly on a real phone. Then
-M4.5 emotes (an emote wheel sending `emote`; `GHOST_EMOTES` in the protocol,
-`EmoteBubble` and the ghost layer already show them) and the "Show other visitors"
-setting next to the `rx_off` kill switch, then M4.6 cleanup of the old reactions
-overlay, `/api/reactions/ws`, `lib/reactions` and `react-use-lanyard`. Still
+M4.6: remove the old reactions overlay, `/api/reactions/ws`, `lib/reactions`,
+`useReactionsSocket` and `react-use-lanyard`, and update CLAUDE.md's architecture notes
+(they still describe the reactions overlay and the Lanyard card). Still
 open in M3: two interiors wait on art, the Nettbureau office (Modern Office pack) and the
 town hall basement server room (rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
 mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user

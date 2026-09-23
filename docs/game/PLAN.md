@@ -275,9 +275,11 @@ Goal: the town is alive: the datagutt NPC follows Lanyard and other visitors app
       name on hover or long-press, cap about 20 per map, fade after 30 s idle. *Done when*
       smooth with 20 simulated ghosts on a phone. (Built; 60 fps with `?debug&ghosts=20` in
       headless phone emulation. Tick after a check on a real phone.)
-- [ ] **M4.5** Emotes (also add "Show other visitors" to START menu settings): emote wheel (hold interact or long-press self), bubbles from the
+- [x] **M4.5** Emotes (also add "Show other visitors" to START menu settings): emote wheel (hold interact or long-press self), bubbles from the
       LimeZu emote sheet, sent to the room. Kill switch `rx_off` and the settings toggle
       disable send and receive. *Done when* emotes appear on both clients.
+      (Hold interact about 0.4 s, or a long press on the player; `game/ui/EmoteWheel.ts`.
+      "Other visitors" in Settings starts or stops the socket; `rx_off` means no client.)
 - [ ] **M4.6** Remove the old reactions overlay, `useReactionsSocket`, `lib/reactions`
       pieces that are no longer used, and `react-use-lanyard`. *Done when* no dead code is
       left and the build passes.

@@ -4,6 +4,8 @@ import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
 import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
 import { GhostLayer } from "../entities/Ghosts";
+import { EmoteWheel } from "../ui/EmoteWheel";
+import { EmoteBubble } from "../ui/Bubbles";
 import { SimulatedGhosts } from "../dev/simulatedGhosts";
 import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
@@ -46,6 +48,10 @@ export class WorldScene extends Phaser.Scene {
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
 	private thomas!: LiveThomas;
 	private ghosts!: GhostLayer;
+	private wheel!: EmoteWheel;
+	/** The player's own emote, shown for a moment after picking it. */
+	private selfEmote!: EmoteBubble;
+	private selfEmoteUntil = 0;
 	private simulated: SimulatedGhosts | null = null;
 	private doors = new Map<string, Door>();
 	private signs = new Map<string, Sign>();
@@ -170,13 +176,17 @@ export class WorldScene extends Phaser.Scene {
 		this.ghosts = new GhostLayer(this, this.target.map);
 		const client = this.services.ghosts;
 		const unsubscribe = client?.subscribe((m) => this.ghosts.handle(m));
-		client?.join(this.target.map, start.x, start.y, facing);
+		this.wheel = new EmoteWheel(this);
+		this.selfEmote = new EmoteBubble(this);
+		this.applyVisitors();
 		const params = new URLSearchParams(window.location.search);
 		const crowd = params.has("debug") ? Number(params.get("ghosts")) : 0;
 		if (crowd > 0) this.simulated = new SimulatedGhosts(crowd, start, this.grid, (m) => this.ghosts.handle(m, true));
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
 			unsubscribe?.();
 			this.ghosts.destroy();
+			this.wheel.close();
+			this.selfEmote.destroy();
 			this.simulated = null;
 		});
 
@@ -197,10 +207,14 @@ export class WorldScene extends Phaser.Scene {
 		this.menuButton = new MenuButton(this);
 		this.menu = new StartMenu(this, {
 			stamps: () => this.progress.stamps,
-			settings: () => ({ muted: this.progress.settings.muted, reducedMotion: this.progress.settings.reducedMotion }),
+			settings: () => {
+				const { muted, reducedMotion, showVisitors } = this.progress.settings;
+				return { muted, reducedMotion, showVisitors };
+			},
 			changeSettings: (next) => {
 				this.progress.settings = { ...this.progress.settings, ...next };
 				this.sound.mute = next.muted;
+				this.applyVisitors();
 				this.save();
 			},
 			status: () => statusLines(this.services.presence.current),
@@ -260,6 +274,12 @@ export class WorldScene extends Phaser.Scene {
 			this.player.sync();
 			return;
 		}
+		if (this.wheel.open) {
+			this.wheel.handle(input);
+			this.player.sync();
+			this.updateSelfEmote(time);
+			return;
+		}
 		if (this.dialogue.open) {
 			for (const dir of input.dirPresses) this.dialogue.move(dir);
 			if (input.interact || input.back) this.dialogue.advance();
@@ -268,6 +288,11 @@ export class WorldScene extends Phaser.Scene {
 			return;
 		}
 
+		const onPlayer = (p: { x: number; y: number }) => this.player.sprite.getBounds().contains(p.x, p.y);
+		if (!this.player.mover.moving && (input.interactHeld || input.longPresses.some(onPlayer))) {
+			this.openEmoteWheel();
+			return;
+		}
 		this.handleTaps(input);
 		if (input.interact && !this.player.mover.moving) this.interactAhead();
 
@@ -286,7 +311,43 @@ export class WorldScene extends Phaser.Scene {
 		this.thomas.update(dt, time);
 		this.simulated?.update(dt);
 		this.ghosts.update(dt, time, this.player.mover.tile);
+		this.updateSelfEmote(time);
 
+	}
+
+	/** Other visitors on or off, from the setting (the rx_off kill switch means no client at all). */
+	private applyVisitors() {
+		const client = this.services.ghosts;
+		if (!client) return;
+		if (this.progress.settings.showVisitors) {
+			client.start();
+			const t = this.player.mover.destination;
+			client.join(this.target.map, t.x, t.y, this.player.mover.facing);
+		} else {
+			client.stop();
+			this.ghosts.handle({ t: "room", map: this.target.map, ghosts: [] });
+		}
+	}
+
+	private openEmoteWheel() {
+		this.clearPath();
+		const cam = this.cameras.main;
+		const sprite = this.player.sprite;
+		this.wheel.show(sprite.x + sprite.width / 2 - cam.worldView.x, this.player.headTop - 8 - cam.worldView.y, (emote) => {
+			if (!emote) return;
+			this.selfEmote.show(emote);
+			this.selfEmoteUntil = this.time.now + 3_000;
+			if (this.progress.settings.showVisitors) this.services.ghosts?.emote(emote);
+		});
+	}
+
+	private updateSelfEmote(time: number) {
+		if (this.selfEmoteUntil && time > this.selfEmoteUntil) {
+			this.selfEmoteUntil = 0;
+			this.selfEmote.show(null);
+		}
+		const sprite = this.player.sprite;
+		this.selfEmote.update(time, sprite.x + sprite.width / 2, this.player.headTop);
 	}
 
 	/**
@@ -317,6 +378,7 @@ export class WorldScene extends Phaser.Scene {
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,
+			emoteWheel: this.wheel.open,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,

@@ -68,7 +68,10 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	season: Season;
 	/** Thomas's live Discord presence (Lanyard); empty until the first update. */
 	presence: PresenceFeed;
-	/** Other visitors (the world socket), or null when switched off with `rx_off`. */
+	/**
+	 * Other visitors (the world socket), or null when switched off with `rx_off`. The World
+	 * scene starts and stops it by the "Other visitors" setting.
+	 */
 	ghosts: GhostClient | null;
 };
 
@@ -91,7 +94,6 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		presence: new PresenceFeed(),
 		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
 	};
-	services.ghosts?.start();
 	const debug = new URLSearchParams(window.location.search).has("debug");
 	if (debug) {
 		console.info(

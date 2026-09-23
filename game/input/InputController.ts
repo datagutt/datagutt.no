@@ -16,6 +16,10 @@ export type FrameInput = {
 	menu: boolean;
 	/** Taps/clicks this frame: world coordinates, plus screen coordinates for UI. */
 	taps: { x: number; y: number; screenX: number; screenY: number }[];
+	/** Interact has been held long enough to mean more than a press (the emote wheel). Once per hold. */
+	interactHeld: boolean;
+	/** A pointer held still long enough this frame, once per press (touch's "hold"). */
+	longPresses: { x: number; y: number; screenX: number; screenY: number }[];
 };
 
 const KEY_DIRS: [string, Facing][] = [
@@ -33,6 +37,8 @@ const STICK_DEADZONE = 0.45;
 /** A press shorter than this, that moved less than TAP_SLOP pixels, counts as a tap. */
 const TAP_MAX_MS = 500;
 const TAP_SLOP = 12;
+/** Holding interact or a pointer this long is a hold, not a press. */
+const HOLD_MS = 400;
 
 export class InputController {
 	private readonly stack = new DirectionStack();
@@ -42,6 +48,10 @@ export class InputController {
 	private menuQueued = false;
 	private taps: FrameInput["taps"] = [];
 	private dirPressQueue: Facing[] = [];
+	/** When the interact key or button went down, until it comes up; null once reported. */
+	private interactSince: number | null = null;
+	private interactReported = false;
+	private pressReported = false;
 	private padPrev: { a: boolean; b: boolean; start: boolean; dir: Facing | null } = { a: false, b: false, start: false, dir: null };
 
 	constructor(private readonly scene: Phaser.Scene) {
@@ -57,13 +67,21 @@ export class InputController {
 				this.keys[name] = key;
 			}
 			this.keys.SHIFT = kb.addKey("SHIFT");
-			for (const name of ["E", "SPACE", "Z"]) kb.addKey(name).on("down", () => (this.interactQueued = true));
+			for (const name of ["E", "SPACE", "Z"]) {
+				const key = kb.addKey(name);
+				key.on("down", () => {
+					this.interactQueued = true;
+					this.startHold();
+				});
+				key.on("up", () => (this.interactSince = null));
+			}
 			for (const name of ["X", "ESC", "BACKSPACE"]) kb.addKey(name).on("down", () => (this.backQueued = true));
 			kb.addKey("ENTER").on("down", () => (this.menuQueued = true));
 			// Losing focus (alt-tab) must not leave a direction stuck down.
 			scene.game.events.on(Phaser.Core.Events.BLUR, () => this.stack.clear());
 		}
 
+		scene.input.on(Phaser.Input.Events.POINTER_DOWN, () => (this.pressReported = false));
 		scene.input.on(Phaser.Input.Events.POINTER_UP, (p: Phaser.Input.Pointer) => {
 			const dist = Phaser.Math.Distance.Between(p.downX, p.downY, p.upX, p.upY);
 			if (p.getDuration() <= TAP_MAX_MS && dist <= TAP_SLOP) {
@@ -71,6 +89,12 @@ export class InputController {
 				this.taps.push({ x: world.x, y: world.y, screenX: p.x, screenY: p.y });
 			}
 		});
+	}
+
+	private startHold(): void {
+		if (this.interactSince !== null) return;
+		this.interactSince = this.scene.time.now;
+		this.interactReported = false;
 	}
 
 	private padDirection(pad: Phaser.Input.Gamepad.Gamepad): Facing | null {
@@ -102,16 +126,31 @@ export class InputController {
 			const b = pad.B;
 			const start = pad.buttons[9]?.pressed ?? false;
 			interact ||= a && !this.padPrev.a;
+			if (a && !this.padPrev.a) this.startHold();
+			if (!a && this.padPrev.a) this.interactSince = null;
 			back ||= b && !this.padPrev.b;
 			menu ||= start && !this.padPrev.start;
 			run ||= b;
 			this.padPrev = { a, b, start, dir: padDir };
 		}
 
+		const now = this.scene.time.now;
+		let interactHeld = false;
+		if (this.interactSince !== null && !this.interactReported && now - this.interactSince >= HOLD_MS) {
+			interactHeld = this.interactReported = true;
+		}
+		const longPresses: FrameInput["longPresses"] = [];
+		const p = this.scene.input.activePointer;
+		if (p.isDown && !this.pressReported && p.getDuration() >= HOLD_MS && Phaser.Math.Distance.Between(p.downX, p.downY, p.x, p.y) <= TAP_SLOP) {
+			this.pressReported = true;
+			const world = p.positionToCamera(this.scene.cameras.main) as Phaser.Math.Vector2;
+			longPresses.push({ x: world.x, y: world.y, screenX: p.x, screenY: p.y });
+		}
+
 		const taps = this.taps;
 		this.taps = [];
 		this.interactQueued = this.backQueued = this.menuQueued = false;
 		this.dirPressQueue = [];
-		return { dir, dirPresses, run, interact, back, menu, taps };
+		return { dir, dirPresses, run, interact, back, menu, taps, interactHeld, longPresses };
 	}
 }
