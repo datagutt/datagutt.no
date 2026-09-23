@@ -1,0 +1,538 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 14,
+  "height": 10,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 9,
+  "nextobjectid": 12,
+  "properties": [
+    {
+      "name": "name",
+      "type": "string",
+      "value": "Radio hut"
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,2893,2894,2894,2894,2894,2894,2894,2894,2894,2895,0,0,
+        0,0,2896,2897,2897,2897,2897,2897,2897,2897,2897,2898,0,0,
+        0,0,2899,2900,2900,2900,2900,2900,2900,2900,2900,2900,0,0,
+        0,0,2901,2902,2902,2902,2902,2902,2902,2902,2902,2902,0,0,
+        0,0,2901,2902,2902,2902,2902,2902,2902,2902,2902,2902,0,0,
+        0,0,2901,2902,2902,2902,2902,2902,2902,2902,2902,2902,0,0,
+        0,0,2901,2902,2902,2902,2902,2902,2902,2902,2902,2902,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ground2",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,2903,2904,2905,2906,2907,0,0,0,0,
+        0,0,0,0,0,2908,2909,2910,2911,2912,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "decal",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "below",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,2913,2914,2915,0,0,0,0,0,2916,2943,0,0,
+        0,0,2919,2920,2921,0,0,0,0,0,2922,2944,0,0,
+        0,0,2925,2926,2927,0,0,0,0,0,2928,2945,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,2931,2932,2933,0,0,0,0,2934,2935,2936,0,0,
+        0,0,2937,2938,2939,0,0,0,0,2940,2941,2942,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 5,
+      "name": "shade",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ],
+      "properties": [
+        {
+          "name": "blend",
+          "type": "string",
+          "value": "multiply"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "above",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,2423,2424,2424,2424,2424,2424,2424,2424,2424,2424,2424,2425,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2426,0,0,0,0,0,0,0,0,0,0,2429,0,
+        0,2430,2431,2431,2431,2431,2431,0,2431,2431,2431,2431,2432,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 7,
+      "name": "collision",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 14,
+      "height": 10,
+      "opacity": 1,
+      "visible": false,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,1,1,1,1,1,1,1,1,1,1,1,1,0,
+        0,1,1,1,1,1,1,1,1,1,1,1,1,0,
+        0,1,1,1,1,0,0,0,0,0,1,1,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,1,1,1,0,0,0,0,1,1,1,1,0,
+        0,1,1,1,1,0,0,0,0,1,1,1,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,1,1,1,1,1,0,1,1,1,1,1,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 8,
+      "name": "objects",
+      "type": "objectgroup",
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 1,
+          "name": "",
+          "type": "light",
+          "x": 112,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "light",
+          "x": 48,
+          "y": 96,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "light",
+          "x": 160,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "0.9"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "ff4038"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.55"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "light",
+          "x": 48,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "0.9"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "60ff80"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.55"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "",
+          "type": "door",
+          "x": 112,
+          "y": 128,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "town"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "radio_hut_door"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "entrance",
+          "type": "spawn",
+          "x": 112,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "up"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "technician",
+          "type": "npc",
+          "x": 112,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "character",
+              "type": "string",
+              "value": "technician"
+            },
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "Kjell"
+            },
+            {
+              "name": "dialogue",
+              "type": "string",
+              "value": "technician"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "name": "",
+          "type": "sign",
+          "x": 112,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* Six signal meters, one per connection. All of them at five bars. Kjell looks very pleased."
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "",
+          "type": "sign",
+          "x": 48,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* A transceiver, tuned to the tower. It hums."
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "",
+          "type": "sign",
+          "x": 160,
+          "y": 96,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* A spare transceiver. Labelled: DO NOT UNPLUG (KJELL)."
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "",
+          "type": "sign",
+          "x": 48,
+          "y": 96,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* A very old PC. It runs the stream dashboard, somehow."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "world",
+      "image": "../tilesets/world.png",
+      "imagewidth": 2048,
+      "imageheight": 2048,
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 16384,
+      "columns": 128,
+      "margin": 0,
+      "spacing": 0,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "clears",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

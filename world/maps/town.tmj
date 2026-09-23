@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 33,
+  "nextobjectid": 34,
   "properties": [
     {
       "name": "name",
@@ -663,6 +663,29 @@
           "id": 1,
           "name": "",
           "type": "door",
+          "x": 1216,
+          "y": 192,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "radio-hut"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "entrance"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "door",
           "x": 224,
           "y": 320,
           "width": 16,
@@ -683,7 +706,7 @@
           ]
         },
         {
-          "id": 2,
+          "id": 3,
           "name": "",
           "type": "door",
           "x": 560,
@@ -706,7 +729,7 @@
           ]
         },
         {
-          "id": 3,
+          "id": 4,
           "name": "",
           "type": "door",
           "x": 1376,
@@ -729,7 +752,7 @@
           ]
         },
         {
-          "id": 4,
+          "id": 5,
           "name": "",
           "type": "door",
           "x": 288,
@@ -752,7 +775,7 @@
           ]
         },
         {
-          "id": 5,
+          "id": 6,
           "name": "",
           "type": "door",
           "x": 944,
@@ -775,7 +798,7 @@
           ]
         },
         {
-          "id": 6,
+          "id": 7,
           "name": "",
           "type": "door",
           "x": 656,
@@ -798,7 +821,7 @@
           ]
         },
         {
-          "id": 7,
+          "id": 8,
           "name": "",
           "type": "door",
           "x": 192,
@@ -821,7 +844,7 @@
           ]
         },
         {
-          "id": 8,
+          "id": 9,
           "name": "ferry",
           "type": "spawn",
           "x": 800,
@@ -839,7 +862,7 @@
           ]
         },
         {
-          "id": 9,
+          "id": 10,
           "name": "house_door",
           "type": "spawn",
           "x": 288,
@@ -857,7 +880,7 @@
           ]
         },
         {
-          "id": 10,
+          "id": 11,
           "name": "office_door",
           "type": "spawn",
           "x": 1152,
@@ -875,7 +898,7 @@
           ]
         },
         {
-          "id": 11,
+          "id": 12,
           "name": "boathouse_door",
           "type": "spawn",
           "x": 192,
@@ -893,7 +916,7 @@
           ]
         },
         {
-          "id": 12,
+          "id": 13,
           "name": "library_door",
           "type": "spawn",
           "x": 560,
@@ -911,7 +934,7 @@
           ]
         },
         {
-          "id": 13,
+          "id": 14,
           "name": "kiosk_door",
           "type": "spawn",
           "x": 944,
@@ -929,7 +952,7 @@
           ]
         },
         {
-          "id": 14,
+          "id": 15,
           "name": "post_office_door",
           "type": "spawn",
           "x": 656,
@@ -947,7 +970,7 @@
           ]
         },
         {
-          "id": 15,
+          "id": 16,
           "name": "gym_door",
           "type": "spawn",
           "x": 1376,
@@ -965,7 +988,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 17,
           "name": "farmhouse_door",
           "type": "spawn",
           "x": 224,
@@ -983,7 +1006,25 @@
           ]
         },
         {
-          "id": 17,
+          "id": 18,
+          "name": "radio_hut_door",
+          "type": "spawn",
+          "x": 1216,
+          "y": 208,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "down"
+            }
+          ]
+        },
+        {
+          "id": 19,
           "name": "",
           "type": "sign",
           "x": 832,
@@ -1001,7 +1042,7 @@
           ]
         },
         {
-          "id": 18,
+          "id": 20,
           "name": "",
           "type": "sign",
           "x": 384,
@@ -1019,7 +1060,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 21,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -1037,7 +1078,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 22,
           "name": "",
           "type": "sign",
           "x": 704,
@@ -1055,7 +1096,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 23,
           "name": "",
           "type": "sign",
           "x": 208,
@@ -1073,7 +1114,7 @@
           ]
         },
         {
-          "id": 22,
+          "id": 24,
           "name": "",
           "type": "sign",
           "x": 960,
@@ -1091,7 +1132,7 @@
           ]
         },
         {
-          "id": 23,
+          "id": 25,
           "name": "",
           "type": "sign",
           "x": 640,
@@ -1109,7 +1150,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 26,
           "name": "",
           "type": "sign",
           "x": 160,
@@ -1127,7 +1168,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 27,
           "name": "",
           "type": "sign",
           "x": 1136,
@@ -1145,7 +1186,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 28,
           "name": "",
           "type": "sign",
           "x": 1360,
@@ -1163,7 +1204,7 @@
           ]
         },
         {
-          "id": 27,
+          "id": 29,
           "name": "",
           "type": "sign",
           "x": 1248,
@@ -1181,7 +1222,7 @@
           ]
         },
         {
-          "id": 28,
+          "id": 30,
           "name": "ferryman",
           "type": "npc",
           "x": 816,
@@ -1214,40 +1255,7 @@
           ]
         },
         {
-          "id": 29,
-          "name": "technician",
-          "type": "npc",
-          "x": 1328,
-          "y": 192,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "character",
-              "type": "string",
-              "value": "technician"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "left"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "Kjell"
-            },
-            {
-              "name": "dialogue",
-              "type": "string",
-              "value": "technician"
-            }
-          ]
-        },
-        {
-          "id": 30,
+          "id": 31,
           "name": "coworker",
           "type": "npc",
           "x": 1184,
@@ -1280,7 +1288,7 @@
           ]
         },
         {
-          "id": 31,
+          "id": 32,
           "name": "sysadmin",
           "type": "npc",
           "x": 752,
@@ -1313,7 +1321,7 @@
           ]
         },
         {
-          "id": 32,
+          "id": 33,
           "name": "farmer",
           "type": "npc",
           "x": 320,

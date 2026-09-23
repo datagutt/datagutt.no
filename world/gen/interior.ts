@@ -33,6 +33,7 @@ export const WALLS = {
 	rusticPlanks: { col: 11, row: 22 },
 	gingham: { col: 22, row: 16 },
 	mint: { col: 22, row: 20 },
+	industrial: { col: 11, row: 6 },
 } satisfies Record<string, WallStyle>;
 
 export const FLOORS = {

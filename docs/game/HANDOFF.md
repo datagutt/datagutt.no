@@ -64,6 +64,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     forge/anvil art in any pack). Place id `gym`, NPC id `trainer` (still Tor, now a
     gym bro), map `gym` (`world/gen/maps/gym.ts`), dialogue `trainer.ink`, exterior
     prefab `logCabin`. One piece of gym kit per skill category; front desk = payments.
+  - Radio hut done (`world/gen/maps/radioHut.ts`, map `radio-hut`, door on the hill):
+    Kjell's control room: transceivers, a transmitter, signal screens, a retro PC,
+    blinking status lights (flickering glows). Kjell moved in from the tower.
   - Farmhouse done (`world/gen/maps/farmhouse.ts`): Ola's home (he stays out in the
     field): gingham walls, pale planks, baking oven, table, his harvest ledger, crates.
   - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
@@ -156,7 +159,7 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 ## Next step
 
 M3.8: the remaining interiors ( town hall + basement server
-room; office; radio hut), moving each NPC indoors as its
+room; office), moving each NPC indoors as its
 interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).
 **M0.11 (Vercel token) stays deferred** until the user asks.

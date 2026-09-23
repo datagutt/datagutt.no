@@ -65,7 +65,7 @@ export function overworld(): MapCanvas {
 
 	// --- Radio hill ------------------------------------------------------------------------
 	plateau(c, 63, 5, 27, 10, [66, 67]);
-	c.stamp(PREFABS.hut, 75, 9);
+	const hutDoor = building(c, "hut", 75, 9, { link: { toMap: "radio-hut", toSpawn: "entrance" } });
 
 	// --- Buildings -------------------------------------------------------------------------
 	const farmDoor = building(c, "farmhouse", 5, 7, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
@@ -140,6 +140,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "post_office_door", ...postDoor, facing: "down" });
 	c.add({ type: "spawn", id: "gym_door", ...gymDoor, facing: "down" });
 	c.add({ type: "spawn", id: "farmhouse_door", ...farmDoor, facing: "down" });
+	c.add({ type: "spawn", id: "radio_hut_door", ...hutDoor, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
@@ -153,7 +154,6 @@ export function overworld(): MapCanvas {
 	sign(c, 85, 37, "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.");
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
-	c.add(npc("technician", 83, 12, "left"));
 	c.add(npc("coworker", 74, 38, "left"));
 	c.add(npc("sysadmin", 47, 27, "down"));
 	c.add(npc("farmer", 20, 28, "up"));

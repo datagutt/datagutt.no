@@ -99,6 +99,14 @@ export const FURNITURE = {
 	gymMat: flat("gym", 0, 1, 3, 3),
 	frontDesk: solid("conference", 8, 4, 5, 2),
 
+	// Radio hut (outdoor radio gear from the houses sheet works indoors too).
+	transceiver: solid("houses", 24, 268, 3, 2),
+	transceiverAntenna: solid("houses", 24, 270, 3, 3),
+	transmitter: solid("houses", 27, 267, 2, 3),
+	retroPc: solid("classroom", 1, 10, 2, 2),
+	pcTower: solid("classroom", 0, 10, 1, 2),
+	signalScreens: flat("studio", 10, 3, 5, 2),
+
 	// Farmhouse.
 	farmTable: solid("kitchen", 3, 15, 3, 3),
 	chairRedRight: solid("kitchen", 4, 11, 1, 2),
