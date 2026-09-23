@@ -4,6 +4,13 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.10 interaction prompts done.** `game/ui/Prompt.ts` shows "E Talk", "A Enter",
+  "Tap Read" (or "Wake" for Thomas asleep) over whatever interact would use
+  (`WorldScene.targetAhead`, counters included). The button follows the last input used
+  (`FrameInput.device`: keyboard and mouse show E, gamepad A, touch "Tap"). Interact on a
+  door now walks through it. Thomas's bubbles step aside while the prompt is on him
+  (`LiveThomas.quiet`). `window.__fjord.prompt`. In e2e, a quick key press doesn't turn
+  the player (press and release land in one frame); hold it about 60 ms.
 - **M5 started: M5.1 time of day done.** `game/world/dayNight.ts` maps the visitor's
   clock to a multiplied tint and a darkness (dawn 6:30 pink, day, dusk 19:00 rose, night
   from 20:30 blue; keyframes blend); `?debug&time=dawn|day|dusk|night|HH:MM` fixes it

@@ -5,9 +5,10 @@ import { Actor } from "../entities/Actor";
 import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
 import { GhostLayer } from "../entities/Ghosts";
 import { EmoteWheel } from "../ui/EmoteWheel";
+import { Prompt } from "../ui/Prompt";
 import { EmoteBubble } from "../ui/Bubbles";
 import { SimulatedGhosts } from "../dev/simulatedGhosts";
-import { InputController, type FrameInput } from "../input/InputController";
+import { InputController, type FrameInput, type InputDevice } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
 import { playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
 import { stampForNpc } from "../progress/passport";
@@ -49,6 +50,7 @@ export class WorldScene extends Phaser.Scene {
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
 	private thomas!: LiveThomas;
 	private dayNight!: DayNight;
+	private prompt!: Prompt;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -181,6 +183,7 @@ export class WorldScene extends Phaser.Scene {
 		const client = this.services.ghosts;
 		const unsubscribe = client?.subscribe((m) => this.ghosts.handle(m));
 		this.wheel = new EmoteWheel(this);
+		this.prompt = new Prompt(this);
 		this.selfEmote = new EmoteBubble(this);
 		this.applyVisitors();
 		const params = new URLSearchParams(window.location.search);
@@ -190,6 +193,7 @@ export class WorldScene extends Phaser.Scene {
 			unsubscribe?.();
 			this.ghosts.destroy();
 			this.wheel.close();
+			this.prompt.destroy();
 			this.selfEmote.destroy();
 			this.simulated = null;
 		});
@@ -263,6 +267,7 @@ export class WorldScene extends Phaser.Scene {
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
 		this.dayNight.update(time);
+		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open) this.prompt.hide();
 		this.updateDebug();
 
 		if (this.transitioning) return;
@@ -318,6 +323,7 @@ export class WorldScene extends Phaser.Scene {
 		this.simulated?.update(dt);
 		this.ghosts.update(dt, time, this.player.mover.tile);
 		this.updateSelfEmote(time);
+		this.updatePrompt(input.device);
 
 	}
 
@@ -386,6 +392,7 @@ export class WorldScene extends Phaser.Scene {
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
+			prompt: this.prompt.text,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,
@@ -519,21 +526,45 @@ export class WorldScene extends Phaser.Scene {
 		}
 	}
 
-	private interactAhead() {
+	/**
+	 * What interact would use: the tile ahead, or across a counter, Pokémon style (up to
+	 * two blocked tiles with nothing on them, and someone standing right behind).
+	 */
+	private targetAhead(): Point {
 		const { tile, facing } = this.player.mover;
 		const ahead = neighbour(tile, facing);
-		// Across a counter, Pokémon style: up to two blocked tiles with nothing on them, and
-		// someone standing right behind.
 		const isCounter = (p: Point) => !this.npcAt(p) && !this.signs.has(tileKey(p)) && !this.grid.isWalkable(p.x, p.y, PLAYER_ID);
-		let target = ahead;
 		for (let p = ahead, depth = 0; depth < 2 && isCounter(p); depth++) {
 			p = neighbour(p, facing);
-			if (this.npcAt(p)) {
-				target = p;
-				break;
-			}
+			if (this.npcAt(p)) return p;
+		}
+		return ahead;
+	}
+
+	private interactAhead() {
+		const target = this.targetAhead();
+		// A door ahead: interact walks through it, as the prompt promises.
+		if (this.doors.has(tileKey(target)) && !this.npcAt(target) && !this.signs.has(tileKey(target))) {
+			this.handleEvents(this.player.mover.walk(this.player.mover.facing, false, (p) => this.grid.isWalkable(p.x, p.y, PLAYER_ID)));
+			return;
 		}
 		this.interactWith(target);
+	}
+
+	/** The prompt over whatever the player faces, if it can be used. */
+	private updatePrompt(device: InputDevice) {
+		const target = this.player.mover.moving || this.path.length ? null : this.targetAhead();
+		const npc = target && this.npcAt(target);
+		this.thomas.quiet = npc?.def.id === THOMAS_ID;
+		if (!target) return this.prompt.hide();
+		if (npc) {
+			const { sprite } = npc.actor;
+			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, sprite.x + sprite.width / 2, npc.actor.headTop - 3);
+		}
+		const x = (target.x + 0.5) * TILE;
+		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
+		if (this.doors.has(tileKey(target))) return this.prompt.show("Enter", device, x, target.y * TILE - 1);
+		this.prompt.hide();
 	}
 
 	private interactWith(p: Point) {

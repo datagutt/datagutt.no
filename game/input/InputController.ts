@@ -20,7 +20,11 @@ export type FrameInput = {
 	interactHeld: boolean;
 	/** A pointer held still long enough this frame, once per press (touch's "hold"). */
 	longPresses: { x: number; y: number; screenX: number; screenY: number }[];
+	/** What the player used last, for button prompts. A mouse counts as the keyboard. */
+	device: InputDevice;
 };
+
+export type InputDevice = "keyboard" | "gamepad" | "touch";
 
 const KEY_DIRS: [string, Facing][] = [
 	["UP", "up"],
@@ -52,11 +56,13 @@ export class InputController {
 	private interactSince: number | null = null;
 	private interactReported = false;
 	private pressReported = false;
+	private device: InputDevice = "keyboard";
 	private padPrev: { a: boolean; b: boolean; start: boolean; dir: Facing | null } = { a: false, b: false, start: false, dir: null };
 
 	constructor(private readonly scene: Phaser.Scene) {
 		const kb = scene.input.keyboard;
 		if (kb) {
+			kb.on("keydown", () => (this.device = "keyboard"));
 			for (const [name, dir] of KEY_DIRS) {
 				const key = kb.addKey(name);
 				key.on("down", () => {
@@ -81,7 +87,10 @@ export class InputController {
 			scene.game.events.on(Phaser.Core.Events.BLUR, () => this.stack.clear());
 		}
 
-		scene.input.on(Phaser.Input.Events.POINTER_DOWN, () => (this.pressReported = false));
+		scene.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer) => {
+			this.pressReported = false;
+			this.device = p.wasTouch ? "touch" : "keyboard";
+		});
 		scene.input.on(Phaser.Input.Events.POINTER_UP, (p: Phaser.Input.Pointer) => {
 			const dist = Phaser.Math.Distance.Between(p.downX, p.downY, p.upX, p.upY);
 			if (p.getDuration() <= TAP_MAX_MS && dist <= TAP_SLOP) {
@@ -120,6 +129,7 @@ export class InputController {
 		const pad = this.scene.input.gamepad?.pad1;
 		if (pad) {
 			const padDir = this.padDirection(pad);
+			if (padDir || pad.A || pad.B || pad.buttons[9]?.pressed) this.device = "gamepad";
 			if (padDir && padDir !== this.padPrev.dir) dirPresses.push(padDir);
 			dir = padDir ?? dir;
 			const a = pad.A;
@@ -151,6 +161,6 @@ export class InputController {
 		this.taps = [];
 		this.interactQueued = this.backQueued = this.menuQueued = false;
 		this.dirPressQueue = [];
-		return { dir, dirPresses, run, interact, back, menu, taps, interactHeld, longPresses };
+		return { dir, dirPresses, run, interact, back, menu, taps, interactHeld, longPresses, device: this.device };
 	}
 }

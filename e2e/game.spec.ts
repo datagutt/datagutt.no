@@ -15,6 +15,7 @@ type FjordState = {
 	menu: string;
 	thomas: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
 	emoteWheel: boolean;
+	prompt: string | null;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -127,6 +128,20 @@ test.describe("world", () => {
 		await page.waitForTimeout(60);
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.menu).toBe("status");
+	});
+
+	test("prompts say what interact will do, and interact walks through doors", async ({ page }) => {
+		await continueAt(page, { map: "house-up", x: 7, y: 5, facing: "left" });
+		await expect.poll(async () => (await state(page))?.prompt).toBe("E Talk");
+		// Turn away (a short hold turns without stepping): nothing to use there.
+		await holdKey(page, "ArrowRight", 60);
+		await expect.poll(async () => (await state(page))?.facing).toBe("right");
+		await expect.poll(async () => (await state(page))?.prompt).toBeNull();
+
+		await continueAt(page, { map: "town", x: 45, y: 26, facing: "up" });
+		await expect.poll(async () => (await state(page))?.prompt).toBe("E Enter");
+		await page.keyboard.press("e");
+		await expect.poll(async () => (await state(page))?.map).toBe("town-hall");
 	});
 
 	test("holding interact opens the emote wheel; back closes it", async ({ page }) => {

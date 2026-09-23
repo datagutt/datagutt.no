@@ -313,7 +313,7 @@ Goal: the Celeste-level feel.
 - [ ] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus
       setting), payload under about 1 MB gzipped before interiors. *Done when* 60 fps on a
       mid-range Android phone and an iPhone, measured.
-- [ ] **M5.10** Interaction prompts (user idea): when you face something usable, a small
+- [x] **M5.10** Interaction prompts (user idea): when you face something usable, a small
       prompt shows the button and the action ("E  Talk", "E  Enter", "E  Read"), matching
       the input in use (keyboard key, gamepad button, a tap hint on touch). *Done when*
       every NPC, sign and door shows the right prompt on all three inputs.

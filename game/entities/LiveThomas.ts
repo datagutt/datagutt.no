@@ -47,6 +47,8 @@ export class LiveThomas {
 	private onArrive: (() => void) | null = null;
 	private blockedMs = 0;
 	private restMs = 0;
+	/** Something else is shown over him (the interaction prompt): his bubbles step aside. */
+	quiet = false;
 	private readonly emote: EmoteBubble;
 	private readonly speech: SpeechBubble;
 	private readonly unsubscribe: () => void;
@@ -276,9 +278,9 @@ export class LiveThomas {
 		const player = this.host.playerTile();
 		const near = Math.abs(player.x - actor.mover.tile.x) + Math.abs(player.y - actor.mover.tile.y) <= SPEECH_RANGE;
 		// Words when the player is close enough to read them, the emote otherwise.
-		const says = near && !actor.mover.moving ? this.doing.says : null;
+		const says = near && !actor.mover.moving && !this.quiet ? this.doing.says : null;
 		this.speech.show(says);
-		this.emote.show(says ? null : this.doing.emote);
+		this.emote.show(says || this.quiet ? null : this.doing.emote);
 		this.speech.update(x, actor.headTop);
 		this.emote.update(timeMs, x, actor.headTop);
 	}
