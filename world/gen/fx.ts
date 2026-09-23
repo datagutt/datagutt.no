@@ -2,12 +2,16 @@
 // placeholder builds too. Maps put them on the `shade` layer, which the game multiplies
 // (LAYER_BLEND in canvas.ts). Lights are map objects instead (game/fx/Lights.ts).
 //
-// The "fx" sheet, 8×1 tiles: an oval blob (cols 0-2), a top-down fade (3), a solid tile (4).
+// The "fx" sheet, 10×5 tiles. Row 0: an old free-standing oval (cols 0-2, unused), a
+// top-down fade (3), a solid tile (4). Rows 1-2 and 3-4: contact shadows 1 to 4 tiles
+// wide (SHADOW_COL), an oval around the object's base (see shadowUnder).
 import type { Raw } from "./atlas.ts";
 
 const T = 16;
-export const FX_COLS = 8;
-export const FX_ROWS = 1;
+export const FX_COLS = 10;
+export const FX_ROWS = 5;
+/** Where the contact shadow `w` tiles wide starts in rows 1-2. */
+export const SHADOW_COL = (w: number) => (w * (w - 1)) / 2;
 
 type Rgb = [number, number, number];
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -40,6 +44,19 @@ export function fxSheet(): Raw {
 	});
 	paint(img, 3 * T, 0, T, T, (_x, y) => [shadow, 0.6 * smooth(clamp01(1 - y / T))]);
 	paint(img, 4 * T, 0, T, T, () => [shadow, 0.5]);
+	for (let w = 1; w <= 4; w++) {
+		// Wide and flat, mostly hidden under the object and peeking out around its feet.
+		// Rows 1-2 for art that reaches the bottom of its tile, rows 3-4 for art that
+		// ends halfway down it.
+		for (const [row, cy] of [[1, T - 3], [3, T / 2 - 1]]) {
+			const rx = (w * T) / 2 - 1;
+			const ry = 0.36 * T;
+			paint(img, SHADOW_COL(w) * T, row * T, w * T, 2 * T, (x, y) => {
+				const d = Math.hypot((x - (w * T) / 2) / rx, (y - cy) / ry);
+				return [shadow, 0.5 * smooth(clamp01(1 - d))];
+			});
+		}
+	}
 	cached = img;
 	return img;
 }

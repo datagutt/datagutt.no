@@ -3,7 +3,7 @@
 // writing desk; behind the counter, parcel cages and stacks.
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE, windowLight } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder, windowLight } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -25,7 +25,8 @@ export function postOffice(): MapCanvas {
 	c.stamp(F.parcels, 8, 2).stamp(F.parcelStack, 8, 4).stamp(F.parcels, 8, 6);
 	c.stamp(F.serviceCounter, 10, 6).stamp(F.serviceCounter, 13, 6);
 	c.stamp(F.parcelStack, 16, 6);
-	c.stamp(SHADE.blob, 10, 8).stamp(SHADE.blob, 13, 8);
+	shadowUnder(c, F.serviceCounter, 10, 6, true);
+	shadowUnder(c, F.serviceCounter, 13, 6, true);
 	c.add(glow(12, 5, GLOWS.lamp));
 
 	exitDoor(c, r, 7, { toMap: "town", toSpawn: "post_office_door" });

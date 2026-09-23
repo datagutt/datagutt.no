@@ -2,7 +2,7 @@
 // contribution crops, M3.11), so the house holds his harvest ledger. A country kitchen:
 // gingham walls, pale planks, a baking oven, a big table with the chairs turned in.
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE, windowLight } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder, windowLight } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -22,7 +22,7 @@ export function farmhouse(): MapCanvas {
 	c.stamp(F.roundRug, 9, 5);
 	// Chairs first, so the table's edge draws over them (tiles stack in stamping order).
 	c.stamp(F.chairRedRight, 5, 4).stamp(F.chairRedLeft, 9, 4).stamp(F.farmTable, 6, 4);
-	c.stamp(SHADE.blob, 6, 7);
+	shadowUnder(c, F.farmTable, 6, 4);
 	// Ledger on the sideboard, vegetables by the door.
 	c.stamp(F.sideboard, 2, 6);
 	c.stamp(F.crates, 13, 6);

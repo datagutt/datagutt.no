@@ -6,7 +6,7 @@
 // Laid out with two-tile aisles so there is room to move between the kit.
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -26,7 +26,7 @@ export function gym(): MapCanvas {
 	c.stamp(F.gymMat, 2, 5).stamp(F.warmupRack, 3, 6); // everyday tools
 	c.stamp(F.benchPress, 11, 6).stamp(F.weightPlates, 13, 9); // the heavy rack
 	c.stamp(F.treadmill, 15, 5); // cloud and DevOps
-	c.stamp(SHADE.blob, 11, 9);
+	shadowUnder(c, F.benchPress, 11, 6);
 
 	// Front desk by the door (payments), with a light over it.
 	c.stamp(F.frontDesk, 3, 9);

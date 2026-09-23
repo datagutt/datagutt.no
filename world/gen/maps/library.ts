@@ -4,7 +4,7 @@
 // reading corner on the right, and Solveig's desk facing the door.
 import { NPCS } from "../../../game/npcs.ts";
 import { bookcase, FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -30,7 +30,7 @@ export function library(): MapCanvas {
 	for (const y of [5, 8]) {
 		c.stamp(F.chairDarkRight, 17, y).stamp(F.chairDarkLeft, 20, y).stamp(F.table, 17, y);
 		c.add(glow(18, y, GLOWS.readingLamp));
-		c.stamp(SHADE.blob, 17, y + 2);
+		shadowUnder(c, F.table, 17, y, true);
 	}
 	c.stamp(F.globe, 22, 4);
 

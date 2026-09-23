@@ -5,7 +5,7 @@
 // corner, closed off by the Kroneis freezer.
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -20,13 +20,13 @@ export function kiosk(): MapCanvas {
 	c.add(glow(3, 3, GLOWS.screen)).add(glow(5, 3, GLOWS.screen));
 	// The pick-and-mix island.
 	c.stamp(F.displayCounter, 3, 6);
-	c.stamp(SHADE.blob, 4, 8);
+	shadowUnder(c, F.displayCounter, 3, 6, true);
 
 	// Staff corner: snacks and the open sign behind the till, the freezer closing it off.
 	c.stamp(F.openSign, 12, 1).stamp(F.productShelf, 14, 1);
 	c.stamp(F.fridge, 10, 3);
 	c.stamp(F.checkout, 11, 5).stamp(F.fridge, 14, 5);
-	c.stamp(SHADE.blob, 11, 7);
+	shadowUnder(c, F.checkout, 11, 5);
 	c.add(glow(12, 4, GLOWS.lamp));
 
 	exitDoor(c, r, 8, { toMap: "town", toSpawn: "kiosk_door" });

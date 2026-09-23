@@ -4,7 +4,7 @@
 // basement door; the basement server room comes later (it needs server rack art).
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, SHADE } from "../../art/lighting.ts";
+import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -28,7 +28,7 @@ export function townHall(): MapCanvas {
 	}
 	for (let y = 5; y <= 10; y += 2) c.stamp(F.redRug, 11, y);
 	c.stamp(F.vasePedestal, 2, 8).stamp(F.vasePedestal, 20, 8);
-	c.stamp(SHADE.blob, 10, 5);
+	shadowUnder(c, F.stage, 9, 2);
 
 	exitDoor(c, r, 12, { toMap: "town", toSpawn: "town_hall_door" });
 	const bjorn = NPCS.find((n) => n.id === "sysadmin")!;

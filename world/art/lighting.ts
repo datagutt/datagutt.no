@@ -1,17 +1,32 @@
 // Shade pieces (tiles from the generated fx sheet, on the multiplied `shade` layer) and
 // light presets (map objects the game draws additively; see game/fx/Lights.ts).
 import type { LightObject } from "../../game/world/objects.ts";
-import type { Prefab } from "../gen/canvas.ts";
+import type { MapCanvas, Prefab } from "../gen/canvas.ts";
+import { SHADOW_COL } from "../gen/fx.ts";
 
 const shade = (col: number, w: number): Prefab => ({ sheet: "fx", col, row: 0, w, h: 1, aboveRows: 0, collision: [], rowLayers: ["shade"] });
 
 export const SHADE = {
-	/** An oval shadow under furniture (3×1). */
-	blob: shade(0, 3),
 	/** Darkest at the top, fading down: under a ledge or along a wall. */
 	fade: shade(3, 1),
 	solid: shade(4, 1),
 };
+
+/**
+ * A soft contact shadow under a prefab stamped at (x, y): an oval centred on its base
+ * (the bottom edge of its lowest solid row), drawn beneath it on the `shade` layer
+ * so it shows only around the feet. Grounds furniture instead of floating a blob below.
+ * `highBase` for art that ends halfway down its last row (tables on legs).
+ */
+export function shadowUnder(c: MapCanvas, prefab: Prefab, x: number, y: number, highBase = false): MapCanvas {
+	const rows = prefab.coverage?.split("/");
+	const base = rows ? rows.findLastIndex((r) => r.includes("#")) : prefab.h - 1;
+	for (let dx = 0; dx < prefab.w; dx += 4) {
+		const w = Math.min(4, prefab.w - dx);
+		c.stamp({ sheet: "fx", col: SHADOW_COL(w), row: highBase ? 3 : 1, w, h: 2, aboveRows: 0, collision: [], rowLayers: ["shade", "shade"] }, x + dx, y + base);
+	}
+	return c;
+}
 
 type Glow = Omit<Extract<LightObject, { shape: "glow" }>, "x" | "y" | "type" | "shape">;
 

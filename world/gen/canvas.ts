@@ -5,10 +5,11 @@ import { pieceAt, variant, type AutotileSet, type Mask, type TileRef } from "../
 
 /**
  * Drawing order, bottom to top: base terrain, terrain transitions, paving and small
- * details, things that stand up, soft shadows (`shade`), then roofs and tree tops that
- * draw over characters (`above`). Lights are map objects, drawn over all of it.
+ * details, soft shadows (`shade`, under the things that cast them), things that stand
+ * up, then roofs and tree tops that draw over characters (`above`). Lights are map
+ * objects, drawn over all of it.
  */
-export const LAYERS = ["ground", "ground2", "decal", "below", "shade", "above"] as const;
+export const LAYERS = ["ground", "ground2", "decal", "shade", "below", "above"] as const;
 export type LayerName = (typeof LAYERS)[number];
 
 /** Layers drawn with a blend mode instead of plain alpha (fx tiles from world/gen/fx.ts). */

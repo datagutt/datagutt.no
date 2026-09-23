@@ -33,7 +33,11 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
     review renderer. Presets in `world/art/lighting.ts` (GLOWS, windowLight). Soft
     shadows are tiles from a generated "fx" sheet (`world/gen/fx.ts`) on the `shade`
     layer, which the game multiplies (layer property `blend`). Tile-based glows were
-    tried and dropped: overlapping glows cut each other up.
+    tried and dropped: overlapping glows cut each other up. Furniture shadows use
+    `shadowUnder(c, prefab, x, y, highBase?)`: an oval around the object's base on the
+    `shade` layer, which now draws *under* `below` so it only peeks out around the feet
+    (blobs a row below made sofas and tables look like they floated; user spotted it).
+    Pass `highBase` for art that ends halfway down its last row (tables, counters, bed).
   - LimeZu Room Builder groups are not repeating patterns: floors use (1,1) as the plain
     tile with (1,0)/(0,1)/(0,0) as baked wall shadows; walls are left end / middle /
     right end. Mixing them caused seams and blotchy shadows (user spotted it).
