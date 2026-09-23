@@ -81,23 +81,31 @@ export class WorldScene extends Phaser.Scene {
 
 	create() {
 		const map = this.make.tilemap({ key: `map:${this.target.map}` });
-		const tileset = map.addTilesetImage("greybox", "tiles:greybox");
-		if (!tileset) throw new Error(`Map ${this.target.map} does not use the greybox tileset`);
+		// Greybox maps use the greybox tileset, generated maps the packed "world" one.
+		const tilesetName = map.tilesets[0]?.name ?? "";
+		const tileset = map.addTilesetImage(tilesetName, `tiles:${tilesetName}`);
+		if (!tileset) throw new Error(`Map ${this.target.map} uses unknown tileset "${tilesetName}"`);
 		this.mapWidth = map.width;
 		this.mapHeight = map.height;
 		this.grid = new CollisionGrid(map.width, map.height);
 
+		// Layer order matters: `collision` then `manual_collision`, whose clear tiles unblock.
 		for (const layerData of map.layers) {
 			const layer = map.createLayer(layerData.name, tileset);
 			if (!layer) continue;
-			layer.setDepth(layerData.name.startsWith("above") ? 50_000 : -1);
+			const collisionOnly = layerData.name === "collision" || layerData.name === "manual_collision";
+			layer.setVisible(!collisionOnly);
+			layer.setDepth(layerData.name.includes("above") ? 50_000 : -1);
 			layer.forEachTile((tile) => {
-				if (tile.index >= 0 && tile.properties?.collides) this.grid.setBlocked(tile.x, tile.y);
+				if (tile.index < 0) return;
+				if (tile.properties?.collides) this.grid.setBlocked(tile.x, tile.y);
+				if (tile.properties?.clears) this.grid.setBlocked(tile.x, tile.y, false);
 			});
 		}
 
 		const spawns = new Map<string, Extract<MapObject, { type: "spawn" }>>();
-		const rawObjects = (map.getObjectLayer("objects")?.objects ?? []) as unknown as TiledObject[];
+		// Generated `objects` plus any `manual_*` object layers added in Tiled.
+		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);

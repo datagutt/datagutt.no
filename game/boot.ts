@@ -21,6 +21,10 @@ export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: 
  */
 export function resolveStart(search: string): { target: WorldTarget; deepLinked: boolean; hasSave: boolean } {
 	const save = loadSave(browserStorage());
+	// Debug only: `?debug&map=overworld` opens any map at its first spawn (maps in progress).
+	const params = new URLSearchParams(search);
+	const debugMap = params.has("debug") ? params.get("map") : null;
+	if (debugMap && /^[a-z0-9_-]+$/.test(debugMap)) return { target: { map: debugMap }, deepLinked: true, hasSave: save !== null };
 	const linked = placeFromSearch(search);
 	if (linked?.entrance) return { target: { ...linked.entrance }, deepLinked: true, hasSave: save !== null };
 	if (save) return { target: { map: save.map, tile: { x: save.x, y: save.y }, facing: save.facing }, deepLinked: false, hasSave: true };

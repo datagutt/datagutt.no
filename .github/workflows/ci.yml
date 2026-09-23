@@ -20,6 +20,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm exec tsc --noEmit
       - run: pnpm test
+      - run: pnpm world:check
       # No access to the private art repo here: this builds and plays the game with
       # placeholder art, which is exactly what a fresh clone gets.
       - run: pnpm build

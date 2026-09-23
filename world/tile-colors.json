@@ -1,0 +1,19 @@
+{
+	"terrain:1,12": "449456ff459556ff459556ff469556ff",
+	"terrain:0,55": "499757ff599455ff5b9255ffdeaf57ff",
+	"terrain:2,55": "579556ff479757ffdbac56ff5d9255ff",
+	"terrain:1,55": "719654ff739454ffe7b358ffe7b458ff",
+	"terrain:4,56": "9c9c54ffe7b257ffe7b358ffe7b458ff",
+	"terrain:3,56": "e7b357ffa09a53ffe7b358ffe7b458ff",
+	"terrain:1,56": "e7b357ffe7b257ffe7b358ffe7b458ff",
+	"sea:0,0": "e2a251ffe0a052ffdfa355ff7db8aaff",
+	"sea:3,0": "e1a253ffe2a150ff7db8aaffdfa355ff",
+	"sea:1,0": "acaf88ffa7af8aff43afbbff44b3beff",
+	"sea:2,0": "acaf88ffa7af8aff43afbbff44b3beff",
+	"seaCorners:1,1": "85baa9ff42b0bcff43afbbff42acbaff",
+	"seaCorners:0,1": "46b6c0ff85baaaff42a8b9ff43b0bcff",
+	"sea:2,1": "43abbaff3fa4b7ff41a4b8ff41a6b8ff",
+	"sea:1,2": "43abbaff3fa4b7ff41a4b8ff41a6b8ff",
+	"sea:2,2": "43abbaff3fa4b7ff41a4b8ff41a6b8ff",
+	"sea:1,1": "43abbaff3fa4b7ff41a4b8ff41a6b8ff"
+}

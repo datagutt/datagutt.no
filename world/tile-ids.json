@@ -1,0 +1,23 @@
+{
+	"tiles": [
+		"@collision",
+		"@clear",
+		"terrain:1,12",
+		"terrain:0,55",
+		"terrain:2,55",
+		"terrain:1,55",
+		"terrain:4,56",
+		"terrain:3,56",
+		"terrain:1,56",
+		"sea:0,0",
+		"sea:3,0",
+		"sea:1,0",
+		"sea:2,0",
+		"seaCorners:1,1",
+		"seaCorners:0,1",
+		"sea:2,1",
+		"sea:1,2",
+		"sea:2,2",
+		"sea:1,1"
+	]
+}

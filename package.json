@@ -8,13 +8,16 @@
     "build": "pnpm assets && next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx,.js,.mjs",
-    "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ../.gitignore --ignore-unknown --no-error-on-unmatched-pattern --write",
-    "format:check": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ../.gitignore --ignore-unknown --no-error-on-unmatched-pattern --check",
+    "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path .gitignore --ignore-path .prettierignore --ignore-unknown --no-error-on-unmatched-pattern --write",
+    "format:check": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path .gitignore --ignore-path .prettierignore --ignore-unknown --no-error-on-unmatched-pattern --check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "game:dev": "pnpm assets && node scripts/game-dev.mjs",
-    "assets": "node scripts/assets/fetch.mjs && node scripts/assets/build.mjs"
+    "assets": "node scripts/assets/fetch.mjs && node scripts/assets/build.mjs",
+    "world:gen": "node scripts/world/gen.mjs",
+    "world:render": "node scripts/world/gen.mjs --render",
+    "world:check": "node scripts/world/gen.mjs --check"
   },
   "dependencies": {
     "@spissvinkel/simplex-noise": "^1.0.1",

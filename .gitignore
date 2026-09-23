@@ -45,3 +45,6 @@ next-env.d.ts
 # test output
 /test-results/
 /playwright-report/
+# world generator: renders and the Tiled tileset contain LimeZu pixels
+/world/out/
+/world/tilesets/

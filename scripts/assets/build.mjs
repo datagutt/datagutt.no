@@ -19,8 +19,10 @@ import {
 	PORTRAIT_SOURCE_FRAME,
 } from "../../game/characters/sheet.ts";
 import { GREYBOX_MAPS } from "../../world/greybox/maps.ts";
+import { parseMapObject } from "../../game/world/objects.ts";
 import { GREYBOX_TILES } from "../../world/greybox/tiles.ts";
 import { toTmj } from "../../world/tiled.ts";
+import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
 import { buildBitmapFont } from "./font.mjs";
 import { compileDialogue } from "./ink.mjs";
 import { Raster, hex } from "./raster.mjs";
@@ -248,6 +250,23 @@ for (const spec of GREYBOX_MAPS) {
 	fs.writeFileSync(path.join(outDir, `maps/${spec.id}.tmj`), JSON.stringify(toTmj(spec, tileset)));
 }
 
+// Generated maps (world/maps, from `pnpm world:gen`) replace greybox maps of the same id.
+// They share one packed tileset, from the art or from the committed colour sketches.
+const worldDir = path.join(root, "world");
+const generated = fs.readdirSync(path.join(worldDir, "maps")).filter((f) => f.endsWith(".tmj"));
+const registry = JSON.parse(fs.readFileSync(path.join(worldDir, "tile-ids.json"), "utf8"));
+const worldAtlas =
+	source.mode === "placeholder"
+		? await buildPlaceholderAtlas(registry.tiles, JSON.parse(fs.readFileSync(path.join(worldDir, "tile-colors.json"), "utf8")))
+		: await buildAtlas(registry.tiles, new SheetCache(source.dir));
+fs.writeFileSync(path.join(outDir, "tilesets/world.png"), worldAtlas);
+const generatedMaps = generated.map((file) => {
+	const tmj = JSON.parse(fs.readFileSync(path.join(worldDir, "maps", file), "utf8"));
+	fs.writeFileSync(path.join(outDir, "maps", file), JSON.stringify(tmj));
+	return { id: path.basename(file, ".tmj"), tmj };
+});
+const mapIds = [...new Set([...GREYBOX_MAPS.map((m) => m.id), ...generatedMaps.map((m) => m.id)])];
+
 // Dialogue frame for a nine-slice: LimeZu's wood-rimmed parchment box (Modern UI style 1),
 // or a drawn stand-in of the same size and palette in placeholder mode.
 const FRAME = { left: 58, top: 129, width: 28, height: 29 };
@@ -274,10 +293,17 @@ fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
 // Ink dialogue, validated against the external registry (fails the build on bad ids).
 const dialogue = compileDialogue("game/dialogue/ink");
 fs.writeFileSync(path.join(outDir, "dialogue/main.json"), dialogue.json);
-for (const spec of GREYBOX_MAPS) {
-	for (const obj of spec.objects) {
+const mapObjects = [
+	...GREYBOX_MAPS.map((spec) => ({ id: spec.id, objects: spec.objects })),
+	...generatedMaps.map(({ id, tmj }) => ({
+		id,
+		objects: tmj.layers.filter((l) => l.type === "objectgroup").flatMap((l) => l.objects.map((o) => parseMapObject(o, TILE))),
+	})),
+];
+for (const { id, objects } of mapObjects) {
+	for (const obj of objects) {
 		if (obj.type === "npc" && !dialogue.knots.includes(obj.dialogue)) {
-			throw new Error(`${spec.id}: NPC "${obj.id}" uses dialogue "${obj.dialogue}", which is not a knot. Knots: ${dialogue.knots.join(", ")}`);
+			throw new Error(`${id}: NPC "${obj.id}" uses dialogue "${obj.dialogue}", which is not a knot. Knots: ${dialogue.knots.join(", ")}`);
 		}
 	}
 }
@@ -287,13 +313,13 @@ const manifest = {
 	builtAt: new Date().toISOString(),
 	characters: Object.keys(CHARACTERS),
 	portraits: Object.entries(CHARACTERS).flatMap(([id, r]) => (r.portrait !== false ? [id] : [])),
-	maps: GREYBOX_MAPS.map((m) => m.id),
-	tilesets: [tileset.name],
+	maps: mapIds,
+	tilesets: [tileset.name, "world"],
 	fonts: ["pixel"],
 	dialogue: dialogue.files,
 };
 fs.writeFileSync(path.join(outDir, "assets.json"), JSON.stringify(manifest, null, "\t") + "\n");
 console.log(
 	`[assets] Built ${manifest.characters.length} characters, ${manifest.maps.length} maps, ` +
-		`${manifest.tilesets.length} tileset (${source.mode} art) in ${Date.now() - started} ms`,
+		`${manifest.tilesets.length} tilesets (${source.mode} art) in ${Date.now() - started} ms`,
 );

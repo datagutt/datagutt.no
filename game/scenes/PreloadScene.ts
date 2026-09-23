@@ -33,6 +33,7 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.on(Phaser.Loader.Events.PROGRESS, services.onProgress);
 
 		this.load.image("tiles:greybox", "tilesets/greybox.png");
+		this.load.image("tiles:world", "tilesets/world.png");
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
 		this.load.image("ui:frame", "ui/frame.png");
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
