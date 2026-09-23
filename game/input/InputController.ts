@@ -7,8 +7,8 @@ import { DirectionStack } from "./directionStack";
 export type FrameInput = {
 	/** Held direction from keys, d-pad or stick. */
 	dir: Facing | null;
-	/** A direction newly pressed this frame (menus move one step per press). */
-	dirPressed: Facing | null;
+	/** Directions newly pressed this frame, in order (menus move one step per press). */
+	dirPresses: Facing[];
 	run: boolean;
 	/** Pressed this frame. */
 	interact: boolean;
@@ -41,7 +41,7 @@ export class InputController {
 	private backQueued = false;
 	private menuQueued = false;
 	private taps: FrameInput["taps"] = [];
-	private dirPressedQueued: Facing | null = null;
+	private dirPressQueue: Facing[] = [];
 	private padPrev: { a: boolean; b: boolean; start: boolean; dir: Facing | null } = { a: false, b: false, start: false, dir: null };
 
 	constructor(private readonly scene: Phaser.Scene) {
@@ -51,7 +51,7 @@ export class InputController {
 				const key = kb.addKey(name);
 				key.on("down", () => {
 					this.stack.press(dir);
-					this.dirPressedQueued = dir;
+					this.dirPressQueue.push(dir);
 				});
 				key.on("up", () => this.stack.release(dir));
 				this.keys[name] = key;
@@ -91,12 +91,12 @@ export class InputController {
 		let interact = this.interactQueued;
 		let back = this.backQueued;
 		let menu = this.menuQueued;
-		let dirPressed = this.dirPressedQueued;
+		const dirPresses = this.dirPressQueue;
 
 		const pad = this.scene.input.gamepad?.pad1;
 		if (pad) {
 			const padDir = this.padDirection(pad);
-			if (padDir && padDir !== this.padPrev.dir) dirPressed = padDir;
+			if (padDir && padDir !== this.padPrev.dir) dirPresses.push(padDir);
 			dir = padDir ?? dir;
 			const a = pad.A;
 			const b = pad.B;
@@ -111,7 +111,7 @@ export class InputController {
 		const taps = this.taps;
 		this.taps = [];
 		this.interactQueued = this.backQueued = this.menuQueued = false;
-		this.dirPressedQueued = null;
-		return { dir, dirPressed, run, interact, back, menu, taps };
+		this.dirPressQueue = [];
+		return { dir, dirPresses, run, interact, back, menu, taps };
 	}
 }

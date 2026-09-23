@@ -48,22 +48,34 @@ describe("DialogueRunner", () => {
 	it("keeps unasked questions available, within a visit and on the next one", () => {
 		const first = new DialogueRunner(json, ctx);
 		first.start("datagutt");
-		let beat = read(first).last;
-		expect(choicesOf(beat)).toHaveLength(3);
-		first.choose(0);
-		beat = read(first).last;
+		let options = choicesOf(read(first).last);
+		expect(options).toContain("What are you working on?");
+		expect(options.at(-1)).toBe("See you around.");
+		first.choose(options.indexOf("What are you working on?"));
+		options = choicesOf(read(first).last);
 		// Back at the topics: the asked question is gone, the rest remain.
-		expect(choicesOf(beat)).toEqual(["What do you mostly use?", "See you around."]);
-		first.choose(1);
+		expect(options).not.toContain("What are you working on?");
+		expect(options).toContain("What do you mostly use?");
+		first.choose(options.indexOf("See you around."));
 		expect(read(first).last.type).toBe("end");
 
 		const second = new DialogueRunner(json, ctx, first.saveState());
 		second.start("datagutt");
 		const again = read(second);
 		expect(again.lines[0]).not.toContain(profile.about[0]);
-		expect(choicesOf(again.last)).toEqual(["What do you mostly use?", "See you around."]);
-		second.choose(0);
+		options = choicesOf(again.last);
+		expect(options).not.toContain("What are you working on?");
+		second.choose(options.indexOf("What do you mostly use?"));
 		expect(read(second).lines).toContain(profile.about[1]);
+	});
+
+	it("tags lines that offer a link", () => {
+		const runner = new DialogueRunner(json, ctx);
+		runner.start("datagutt");
+		const options = choicesOf(read(runner).last);
+		runner.choose(options.indexOf("Where can I find you online?"));
+		const beat = runner.next();
+		expect(beat.type === "line" && beat.tags).toContain("link: social github");
 	});
 
 	it("greets returning visitors briefly", () => {

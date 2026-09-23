@@ -16,6 +16,9 @@
 * [What do you mostly use?]
     {about(1)}
     -> topics
+* [Where can I find you online?]
+    I'm {profile("handle")} pretty much everywhere. GitHub is where the code lives. # link: social github
+    -> topics
 + [See you around.]
     Have a look around. Everyone here knows something about me, which is a little embarrassing.
     -> END

@@ -8,6 +8,8 @@ type FjordState = {
 	dialogueOpen: boolean;
 	blips: number;
 	audio: string;
+	choices: string[] | null;
+	selected: number | null;
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
@@ -73,4 +75,45 @@ test.describe("world", () => {
 		await page.getByRole("button", { name: /continue/i }).click();
 		await expect.poll(() => state(page)).toMatchObject({ map: "town", tile: moved!.tile });
 	});
+
+	test("a link offered in dialogue opens in a new tab", async ({ page, context }) => {
+		// Stand next to datagutt, facing him.
+		await page.goto("/?debug");
+		await page.evaluate(() =>
+			localStorage.setItem(
+				"fjordtown.save",
+				JSON.stringify({ version: 1, map: "house", x: 5, y: 4, facing: "left", stamps: [], flags: {}, dialogue: {}, settings: {} }),
+			),
+		);
+		await page.goto("/?debug");
+		await page.getByRole("button", { name: /continue/i }).click();
+		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "house" });
+
+		await page.keyboard.press("e");
+		// Read until the topics appear, then pick "Where can I find you online?".
+		const pick = async (label: string) => {
+			for (let i = 0; i < 20; i++) {
+				const s = await state(page);
+				if (s?.choices?.includes(label)) break;
+				await page.keyboard.press("e");
+				await page.waitForTimeout(200);
+			}
+			const s = await state(page);
+			const target = s!.choices!.indexOf(label);
+			// One press per frame or so: Phaser folds same-key presses within a frame.
+			for (let i = s!.selected!; i < target; i++) {
+				await page.keyboard.press("ArrowDown");
+				await page.waitForTimeout(60);
+			}
+			await expect.poll(async () => (await state(page))?.selected).toBe(target);
+		};
+		await pick("Where can I find you online?");
+		await page.keyboard.press("e");
+		await pick("Open GitHub (github.com)");
+
+		const popup = context.waitForEvent("page");
+		await page.keyboard.press("e");
+		expect((await popup).url()).toContain("github.com/datagutt");
+	});
 });
+

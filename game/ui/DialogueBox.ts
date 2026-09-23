@@ -155,13 +155,31 @@ export class DialogueBox {
 		this.draw();
 	}
 
+	/** Choices on screen, for the ?debug readout. */
+	get currentChoices(): string[] | null {
+		return this.mode.kind === "choices" ? this.mode.choices : null;
+	}
+
+	/** Index of the highlighted choice, or null when not choosing. */
+	get selectedChoice(): number | null {
+		return this.mode.kind === "choices" ? this.mode.selected : null;
+	}
+
+	/** Which choice row is at game-screen coordinates, if any. */
+	choiceAt(screenX: number, screenY: number): number | null {
+		const m = this.mode;
+		if (m.kind !== "choices") return null;
+		const { x, y, width } = this.layout(m.choices.length);
+		const row = Math.floor((screenY - y - PADDING) / this.lineHeight);
+		return screenX >= x && screenX <= x + width && row >= 0 && row < m.choices.length ? row : null;
+	}
+
 	/** A tap at screen coordinates: picks the choice under it, or acts like interact. */
 	tap(screenX: number, screenY: number): void {
 		const m = this.mode;
 		if (m.kind === "choices") {
-			const { x, y, width } = this.layout(m.choices.length);
-			const row = Math.floor((screenY - y - PADDING) / this.lineHeight);
-			if (screenX >= x && screenX <= x + width && row >= 0 && row < m.choices.length) {
+			const row = this.choiceAt(screenX, screenY);
+			if (row !== null) {
 				m.selected = row;
 				m.onPick(row);
 			}

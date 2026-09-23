@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Compiler, CompilerOptions } from "inkjs/full";
 import { EXTERNALS, externalDeclarations, validIds } from "../../game/dialogue/externals.ts";
+import { resolveLink } from "../../game/dialogue/links.ts";
 
 const EXTERNALS_FILE = "__externals.ink";
 
@@ -15,6 +16,10 @@ export function validateSource(file, source) {
 	const call = new RegExp(`\\b(${names})\\s*\\(\\s*(?:"([^"]*)"|(-?\\d+))?`, "g");
 	source.split("\n").forEach((line, i) => {
 		if (/^\s*\/\//.test(line)) return;
+		for (const tag of line.split("#").slice(1)) {
+			const link = resolveLink(tag);
+			if (link && "error" in link) problems.push(`${file}:${i + 1}: ${link.error}`);
+		}
 		for (const m of line.matchAll(call)) {
 			const [, name, str] = m;
 			const spec = EXTERNALS[name];

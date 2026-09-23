@@ -154,9 +154,13 @@ the passport works.
       muted with the master mute. *Done when* two NPCs sound distinct. (Voices in
       `game/audio/blips.ts`; `?debug` counts plays. Whether they sound good is the user's
       call.)
-- [ ] **M2.7** Links and actions from dialogue: Ink tags `# open:<url>` and
+- [x] **M2.7** Links and actions from dialogue: Ink tags `# open:<url>` and
       `# mail` show an in-game confirm ("Open donate.chat in a new tab?"). *Done when*
-      every project link and the email work from dialogue.
+      every project link and the email work from dialogue. (Tags are
+      `# link: project <id>`, `# link: social <id>` and `# link: email`, validated at build.
+      Tabs open inside the real key or tap event via `game/ui/LinkOpener.ts`, because
+      browsers block popups from Phaser's frame-delayed input. Wiring every project and
+      the email into dialogue happens in M2.9.)
 - [ ] **M2.8** NPC roster and personalities: `game/npcs.ts` defines each NPC (id,
       name, place, sprite layer recipe, portrait recipe, blip voice, Ink knot). Draft names
       and one-line personalities for review. **datagutt NPC recipe follows

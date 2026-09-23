@@ -6,6 +6,8 @@ import { InputController, type FrameInput } from "../input/InputController";
 import { browserStorage, loadSave, writeSave } from "../save/save";
 import { BlipPlayer, shouldBlip, voiceFor } from "../audio/blips";
 import { DialogueBox } from "../ui/DialogueBox";
+import { LinkOpener } from "../ui/LinkOpener";
+import { resolveLink } from "../dialogue/links";
 import type { DialogueRunner } from "../dialogue/DialogueRunner";
 import { DIALOGUE_KEY } from "./PreloadScene";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid";
@@ -33,6 +35,7 @@ export class WorldScene extends Phaser.Scene {
 	private input2!: InputController;
 	private dialogue!: DialogueBox;
 	private blips!: BlipPlayer;
+	private links!: LinkOpener;
 	private path: Point[] = [];
 	private pathMarkers: Phaser.GameObjects.Rectangle[] = [];
 	/** What to do when the current path ends (talk to the NPC that was tapped). */
@@ -107,6 +110,13 @@ export class WorldScene extends Phaser.Scene {
 
 		this.input2 = new InputController(this);
 		this.dialogue = new DialogueBox(this);
+		this.links = new LinkOpener((clientX, clientY) => {
+			if (clientX === undefined || clientY === undefined) return this.dialogue.selectedChoice === 0;
+			const x = this.scale.transformX(clientX + window.scrollX);
+			const y = this.scale.transformY(clientY + window.scrollY);
+			return this.dialogue.choiceAt(x, y) === 0;
+		});
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.links.destroy());
 		this.blips = new BlipPlayer(() =>
 			this.sound instanceof Phaser.Sound.WebAudioSoundManager
 				? { context: this.sound.context, destination: this.sound.destination }
@@ -148,7 +158,7 @@ export class WorldScene extends Phaser.Scene {
 
 		if (this.transitioning) return;
 		if (this.dialogue.open) {
-			if (input.dirPressed) this.dialogue.move(input.dirPressed);
+			for (const dir of input.dirPresses) this.dialogue.move(dir);
 			if (input.interact || input.back) this.dialogue.advance();
 			for (const tap of input.taps) this.dialogue.tap(tap.screenX, tap.screenY);
 			this.player.sync();
@@ -185,6 +195,8 @@ export class WorldScene extends Phaser.Scene {
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,
 			dialogueOpen: this.dialogue.open,
+			choices: this.dialogue.currentChoices,
+			selected: this.dialogue.selectedChoice,
 			blips: this.blips.played,
 			audio: this.sound instanceof Phaser.Sound.WebAudioSoundManager ? this.sound.context.state : "none",
 			camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
@@ -304,7 +316,9 @@ export class WorldScene extends Phaser.Scene {
 				const portrait = beat.speaker ? null : npc.character;
 				const voice = voiceFor(beat.speaker ? null : npc.character);
 				const onChar = (text: string, i: number) => shouldBlip(text, i, voice.every) && this.blips.play(voice);
-				this.dialogue.say(beat.text, beat.speaker ?? npc.name, step, { portrait, gesture, onChar });
+				const link = beat.tags.map(resolveLink).find((l) => l && !("error" in l));
+				const next = link && !("error" in link) ? () => this.offerLink(link.url, link.label, step) : step;
+				this.dialogue.say(beat.text, beat.speaker ?? npc.name, next, { portrait, gesture, onChar });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {
 					runner.choose(i);
@@ -316,6 +330,16 @@ export class WorldScene extends Phaser.Scene {
 			}
 		};
 		step();
+	}
+
+	/** "Open github.com?" after a line with a `# link:` tag. */
+	private offerLink(url: string, label: string, then: () => void) {
+		this.links.arm(url);
+		this.dialogue.choose([`Open ${label}`, "Not now"], (i) => {
+			if (i === 0) this.links.confirm();
+			else this.links.disarm();
+			then();
+		});
 	}
 
 	private enterDoor(door: Door) {
