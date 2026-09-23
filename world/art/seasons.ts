@@ -21,7 +21,7 @@ const GRASS = new Set(["479757", "37854e", "2d7256", "53a65d", "79a15c", "46a44d
 const ROOFS: Record<string, string[]> = {
 	houses: ["3a3a50", "565972", "6c6e85", "46465e", "7d7f99", "838897", "8b8bab", "9da3b7"],
 	"houses#Post_Apocalyptic_House_1": ["9d433e", "a14f44", "943c3f", "a7604a", "3a3a50", "46465e"],
-	post: ["8b8bab"],
+	post: ["8b8bab", "7d7f99", "6c6e85", "595e75", "565972", "46465e"],
 	villas: ["cb2a2a", "e63f38", "d93232", "fc5c46", "a82b2d"],
 	"villas#Villa_1": ["984723", "c0723b", "833026", "d08945", "9a5827", "71272b"],
 	"villas#Villa_2": ["6f4a39", "7c5c46", "663731", "77573f", "5a2f31", "826c57"],

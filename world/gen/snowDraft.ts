@@ -14,38 +14,65 @@ const rect = (col: number, row: number, w: number, h: number): Polygon => [
 ];
 
 /**
- * Walls right under a roof in the roof's own colours, which the sky scan can't tell
- * apart: polygons in tile units of the sheet (or single) that never get snow.
+ * Hand-placed fixes to the scanned roof, per sheet or single, applied in order (later
+ * wins where they overlap), polygons in tile units of the sheet or single:
+ * - "cut": never snow. Walls right under a roof in the roof's own colours, chimneys.
+ * - "roof": every opaque pixel inside is roof whatever its colour. Roofs the sky scan
+ *   can't reach (under a trim, a parapet or another roof) and roofs in colours the
+ *   walls share.
  */
-const NO_SNOW: Record<string, Polygon[]> = {
+type Edit = ["cut" | "roof", Polygon];
+const SNOW_EDITS: Record<string, Edit[]> = {
 	houses: [
 		// Boathouse: the gable's siding in the V under the ridge, and the side annexes.
-		[[23.6, 256.45], [18.1, 258.6], [18.1, 264], [29, 264], [29, 258.6]],
-		rect(16, 254, 2.1, 10),
-		rect(29, 254, 2, 10),
-		// Farmhouse: the two gable walls under the roofs, and the garage storey.
-		[[7.8, 256.3], [5, 258.2], [5, 264], [16, 264], [16, 260.5]],
-		[[4.9, 259], [0.8, 261], [0.8, 264], [9, 264], [9, 261.2]],
-		rect(0, 261, 16, 3),
+		["cut", [[23.6, 256.45], [18.1, 258.6], [18.1, 264], [29, 264], [29, 258.6]]],
+		["cut", rect(16, 254, 2.1, 10)],
+		["cut", rect(29, 254, 2, 10)],
+		// Farmhouse: the two gable walls under the roofs and the garage storey, then the
+		// porch roof's right slope, which runs across them.
+		["cut", [[7.8, 256.3], [5, 258.2], [5, 264], [16, 264], [16, 260.5]]],
+		["cut", [[4.9, 259], [0.8, 261], [0.8, 264], [9, 264], [9, 261.2]]],
+		["cut", rect(0, 261, 16, 3)],
+		["roof", [[4, 257.95], [8.15, 260.05], [8.15, 260.85], [4, 258.7]]],
 		// Office: the lower storey and the stairwell siding.
-		rect(0, 94, 5, 5),
-		rect(5, 93, 5, 6),
+		["cut", rect(0, 94, 5, 5)],
+		["cut", rect(5, 93, 5, 6)],
+		// Town hall: the flat roof inside its parapet, the tower's roof and the front
+		// roof; then the tower's dormer, the chimneys and the facades.
+		["roof", rect(1.9, 210.6, 13.9, 6.5)],
+		["roof", rect(0, 214.9, 5.5, 5)],
+		["roof", rect(5.5, 217.2, 12.4, 4.4)],
+		["cut", rect(1.8, 214.2, 1.8, 1.3)],
+		["cut", rect(4.9, 208.5, 1.7, 1.4)],
+		["cut", rect(11.1, 208.5, 1.7, 1.4)],
+		["cut", rect(13.2, 218.3, 1.7, 2.4)],
+		["cut", rect(0, 219.95, 5.6, 10.05)],
+		["cut", rect(5.5, 221.65, 12.5, 8.35)],
+		// Library: the lower roof, then the chimney pillars and the facade.
+		["roof", rect(19.05, 219.35, 11.5, 2.3)],
+		["cut", rect(19.1, 208.1, 1.2, 4.1)],
+		["cut", rect(19.1, 212.6, 1.2, 3.8)],
+		["cut", rect(28.7, 208.1, 1.8, 4.1)],
+		["cut", rect(28.7, 212.6, 1.8, 3.8)],
+		["cut", rect(18.9, 221.65, 12, 8.4)],
 	],
 	"houses#Post_Apocalyptic_House_1": [
-		rect(0.8, 0, 0.8, 2.5), // the gym: the antenna and the box it stands on
-		rect(10.7, 6.6, 2.6, 1), // the annex wall under its roof
+		// The gym: the lower roof under the trim and the annex roof (the logs share the
+		// lower roof's red), then the antenna and the annex wall.
+		["roof", rect(0.05, 3.95, 10.65, 2.85)],
+		["roof", rect(10.7, 3.25, 2.55, 3.35)],
+		["cut", rect(0.8, 0, 0.8, 2.5)],
+		["cut", rect(10.7, 6.6, 2.6, 1)],
 	],
-};
-
-/**
- * Roofs the sky scan can't reach, per sheet or single: every opaque pixel inside is roof,
- * whatever its colour. For roofs under a trim or a second roof, in colours the walls
- * share (the gym's logs are the red of its lower roof).
- */
-const SNOW_AREAS: Record<string, Polygon[]> = {
-	"houses#Post_Apocalyptic_House_1": [
-		rect(0.05, 3.95, 10.65, 2.85), // the gym: the lower roof, under the trim
-		rect(10.7, 3.25, 2.55, 3.35), // and the annex roof on its right
+	post: [
+		// The post office: both flat roof levels, then the upper storey's wall, the AC
+		// units and the antenna.
+		["roof", rect(16.7, 4, 6.6, 2.1)],
+		["roof", rect(15.9, 6, 8.2, 4.2)],
+		["cut", rect(16.7, 6.1, 6.6, 2.6)],
+		["cut", rect(17, 4.35, 2.9, 1.2)],
+		["cut", rect(17, 5.75, 1.3, 0.6)],
+		["cut", rect(22.3, 4.5, 1, 1.7)],
 	],
 };
 
@@ -62,7 +89,7 @@ function inside(poly: Polygon, x: number, y: number): boolean {
 
 /**
  * The whole roof: the sky scan, spread sideways into strips a chimney hid, flecks of moss
- * and rust filled in, roofs the scan can't reach added, and the known walls cut out.
+ * and rust filled in, then the hand-placed fixes (SNOW_EDITS).
  */
 export function fullRoofMask(img: Img, sheet: string): Uint8Array | null {
 	const mask = roofMask(img, sheet);
@@ -101,12 +128,11 @@ export function fullRoofMask(img: Img, sheet: string): Uint8Array | null {
 			if (near(x, y, -1, 0) && near(x, y, 1, 0) && near(x, y, 0, -1) && near(x, y, 0, 1)) mask[p] = 1;
 		}
 	}
-	for (const poly of SNOW_AREAS[sheet] ?? []) {
+	for (const [kind, poly] of SNOW_EDITS[sheet] ?? []) {
 		eachPixel(poly, width, height, (p) => {
-			if (opaque(p) && !isDark(data, p * 4)) mask[p] = 1;
+			mask[p] = kind === "roof" && opaque(p) && !isDark(data, p * 4) ? 1 : 0;
 		});
 	}
-	for (const poly of NO_SNOW[sheet] ?? []) eachPixel(poly, width, height, (p) => (mask[p] = 0));
 	return mask;
 }
 

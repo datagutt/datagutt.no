@@ -210,13 +210,13 @@ asks.
 
 ## Blockers and things waiting on the user
 
-- **Snow roof drafts to clean up in Aseprite** (user's choice): `pnpm world:snow` drafted
-  13 full snow roofs into datagutt-assets `seasons/winter/` (review sheet:
-  `world/out/snow-drafts.png`). Known rough spots: the farmhouse porch roof's right slope
-  has no snow, the town hall's slate roofs and the library's lower roof are patchy, the
-  post office has none. Roofs the sky scan can't reach, or walls in roof colours, are
-  fixed per sheet or single in `world/gen/snowDraft.ts` (`SNOW_AREAS`, `NO_SNOW`), as
-  done for the gym's lower roof (its logs share the roof's red). Once cleaned, commit
+- **Snow roof drafts in datagutt-assets `seasons/winter/`** (user's choice: drafted by
+  `pnpm world:snow`, committed as they are, the user may clean them up in Aseprite
+  later). Review sheet: `world/out/snow-drafts.png`. Roofs the sky scan misses and walls
+  in roof colours are fixed per sheet or single with ordered "roof"/"cut" polygons in
+  `SNOW_EDITS` (`world/gen/snowDraft.ts`); every building in town has them where needed.
+  Once a file is hand-edited, never `--force` over it; commit edits in datagutt-assets
+  and run `pnpm world:gen`. Once cleaned, commit
   in datagutt-assets and run `pnpm world:gen`. Never `--force` over cleaned files.
 
 - LimeZu packs worth buying (research 2026-09-23): **Modern Farm** (barns, 19 crops,
