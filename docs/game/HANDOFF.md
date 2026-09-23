@@ -64,6 +64,11 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     forge/anvil art in any pack). Place id `gym`, NPC id `trainer` (still Tor, now a
     gym bro), map `gym` (`world/gen/maps/gym.ts`), dialogue `trainer.ink`, exterior
     prefab `logCabin`. One piece of gym kit per skill category; front desk = payments.
+  - Town hall done (`world/gen/maps/townHall.ts`, map `town-hall`): burgundy walls,
+    marble, stage and lectern between pillars, portraits, pews (museum benches mirrored
+    top to bottom so they face the stage), a red carpet. Bjørn waits by the locked,
+    humming basement door; his first line now says "nobody comes looking for the
+    basement". The basement server room is still to build (needs rack art).
   - Radio hut done (`world/gen/maps/radioHut.ts`, map `radio-hut`, door on the hill):
     Kjell's control room: transceivers, a transmitter, signal screens, a retro PC,
     blinking status lights (flickering glows). Kjell moved in from the tower.
@@ -158,7 +163,7 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8: the remaining interiors ( town hall + basement server
+M3.8: the office (waits for Modern Office) and the town hall basement server room ( town hall + basement server
 room; office), moving each NPC indoors as its
 interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).

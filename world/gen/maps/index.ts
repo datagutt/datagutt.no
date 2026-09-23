@@ -7,6 +7,7 @@ import { kiosk } from "./kiosk.ts";
 import { library } from "./library.ts";
 import { postOffice } from "./postOffice.ts";
 import { radioHut } from "./radioHut.ts";
+import { townHall } from "./townHall.ts";
 import { gym } from "./gym.ts";
 import { overworld } from "./overworld.ts";
 
@@ -23,4 +24,5 @@ export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "gym", properties: { name: "Gym" }, build: gym },
 	{ id: "farmhouse", properties: { name: "Farmhouse" }, build: farmhouse },
 	{ id: "radio-hut", properties: { name: "Radio hut" }, build: radioHut },
+	{ id: "town-hall", properties: { name: "Town hall" }, build: townHall },
 ];

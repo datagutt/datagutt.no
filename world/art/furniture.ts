@@ -107,6 +107,19 @@ export const FURNITURE = {
 	pcTower: solid("classroom", 0, 10, 1, 2),
 	signalScreens: flat("studio", 10, 3, 5, 2),
 
+	// Town hall (museum and conference sheets).
+	stage: flat("conference", 5, 6, 5, 3),
+	lectern: solid("conference", 8, 2, 1, 2),
+	pillar: solid("museumSheet", 4, 29, 1, 4),
+	pillarBlue: solid("museumSheet", 5, 29, 1, 4),
+	portraitWave: flat("museumSheet", 4, 27, 2, 2),
+	portraitStars: flat("museumSheet", 6, 27, 2, 2),
+	monaLisa: flat("museumSheet", 12, 27, 2, 3),
+	museumBench: solid("museumSheet", 0, 9, 2, 1),
+	vasePedestal: solid("museumSheet", 2, 11, 2, 3),
+	redRug: flat("generic", 4, 22, 2, 2),
+	plainDoor: flat("generic", 0, 40, 1, 2),
+
 	// Farmhouse.
 	farmTable: solid("kitchen", 3, 15, 3, 3),
 	chairRedRight: solid("kitchen", 4, 11, 1, 2),
