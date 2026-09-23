@@ -4,6 +4,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.3 aurora built** (waiting on a real-phone fps check; the user approved day and
+  night, M5.1). The camera looks straight down, so `game/fx/Aurora.ts` shows what you'd
+  glimpse overhead: a screen-space additive shader, a curtain hanging from the top of the
+  screen with a swaying hem and drifting rays, violet to teal to the site green, in 8
+  flat steps. Strength follows darkness (from 60% dark) times the season (winter 1,
+  autumn 0.7, spring 0.45, summer 0); `update(dark, boost)` takes a boost for the
+  finale. The fjord's ripples turn green with it. The winter frost rim fades at night
+  (it glowed). First try covered half the screen in speckled noise; keep it high and flat.
 - **M5.2 water shader built** (waiting on the user's look by day and night).
   `game/fx/Water.ts`: one Phaser `Shader` quad over the map with drifting ripple lines
   in the sky's colour and sparse glints, whole pixels only. The generator writes a hidden

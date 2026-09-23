@@ -15,6 +15,7 @@ uniform vec2 uTiles;
 uniform float uTime;
 uniform vec3 uSky;
 uniform float uDark;
+uniform float uAurora;
 varying vec2 outTexCoord;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -50,7 +51,7 @@ void main() {
 
 	vec3 glintColor = mix(vec3(1.0, 0.98, 0.9), vec3(0.85, 0.9, 1.0), uDark);
 	// Ripples take the sky's colour (rose at dusk, blue at night); glints stay bright.
-	vec3 color = mix(uSky, vec3(1.0), 0.4);
+	vec3 color = mix(mix(uSky, vec3(1.0), 0.4), vec3(0.2, 0.95, 0.55), uAurora * 0.8);
 	float alpha = ripple * (0.32 - 0.1 * uDark);
 	color = mix(color, glintColor, glint);
 	alpha = max(alpha, glint * 0.75);
@@ -70,7 +71,7 @@ export class Water {
 	private light: Daylight;
 
 	/** Null when there is no water on the map, or no WebGL to draw it with. */
-	static create(scene: Phaser.Scene, layer: Phaser.Tilemaps.LayerData | undefined, light: () => Daylight): Water | null {
+	static create(scene: Phaser.Scene, layer: Phaser.Tilemaps.LayerData | undefined, light: () => Daylight, aurora: () => number): Water | null {
 		if (!layer || scene.game.renderer.type !== Phaser.WEBGL) return null;
 		const { width, height } = layer;
 		if (scene.textures.exists(MASK_KEY)) scene.textures.remove(MASK_KEY);
@@ -89,7 +90,7 @@ export class Water {
 		}
 		canvas.refresh();
 		canvas.setFilter(Phaser.Textures.FilterMode.NEAREST);
-		return any ? new Water(scene, width, height, light) : null;
+		return any ? new Water(scene, width, height, light, aurora) : null;
 	}
 
 	private constructor(
@@ -97,6 +98,7 @@ export class Water {
 		widthTiles: number,
 		heightTiles: number,
 		private readonly daylight: () => Daylight,
+		aurora: () => number,
 	) {
 		this.light = daylight();
 		this.shader = scene.add
@@ -110,6 +112,7 @@ export class Water {
 						setUniform("uTime", scene.time.now / 1000);
 						setUniform("uSky", skyColor(this.light));
 						setUniform("uDark", this.light.dark);
+						setUniform("uAurora", aurora());
 					},
 				},
 				0,

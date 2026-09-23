@@ -7,6 +7,8 @@ import type { Season } from "../world/season";
 import { LIGHT_DEPTH } from "./Lights";
 
 const DEPTH = LIGHT_DEPTH - 2;
+/** How strong the winter frost rim is by day. */
+const FROST = 0.2;
 
 /** Pixel art for each particle: rows of palette indices, 0 transparent. */
 type Sprite = { key: string; palette: string[]; rows: string[] };
@@ -52,7 +54,12 @@ export class Weather {
 		const cam = scene.cameras.main;
 		this.start(cam.width, cam.height);
 		// A cold, pale rim round the screen in winter.
-		if (season === "winter") this.frost = cam.filters.internal.addVignette(0.5, 0.5, 0.9, 0.2, 0xdde8f8);
+		if (season === "winter") this.frost = cam.filters.internal.addVignette(0.5, 0.5, 0.9, FROST, 0xdde8f8);
+	}
+
+	/** The pale frost would glow in the dark: it fades as night falls. */
+	update(dark: number): void {
+		if (this.frost) this.frost.strength = FROST * (1 - 0.8 * dark);
 	}
 
 	/** A new size means a new spread of particles. */

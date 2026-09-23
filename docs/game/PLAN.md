@@ -296,6 +296,8 @@ Goal: the Celeste-level feel.
       (Built in `game/fx/Water.ts`; waiting on the user's look at night and day.)
 - [ ] **M5.3** Aurora shader: animated curtains on the night sky, stronger in winter,
       site-green palette. *Done when* it runs at 60 fps on a mid-range phone.
+      (Built in `game/fx/Aurora.ts`; 60 fps in headless phone emulation, waiting on a real
+      phone.)
 - [x] **M5.4** Season effects: falling snow particles and frost vignette in winter,
       leaves in autumn, pollen in summer, midnight-sun brightness in June. *Done when*
       each season has one particle effect.
