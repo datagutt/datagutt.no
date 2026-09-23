@@ -319,6 +319,10 @@ Goal: the Celeste-level feel.
 - [ ] **M5.9** Performance pass: atlas count, draw calls, shader tiers (auto-detect plus
       setting), payload under about 1 MB gzipped before interiors. *Done when* 60 fps on a
       mid-range Android phone and an iPhone, measured.
+      (Done so far: lossless palette PNGs and max-effort compression in the asset build,
+      87 KB less; an Effects setting, Auto/High/Low, where Low drops the water and aurora
+      shaders and thins the weather, and Auto drops to Low when the first seconds on a map
+      run under 45 fps. Waiting on real-phone measurements.)
 - [x] **M5.10** Interaction prompts (user idea): when you face something usable, a small
       prompt shows the button and the action ("E  Talk", "E  Enter", "E  Read"), matching
       the input in use (keyboard key, gamepad button, a tap hint on touch). *Done when*

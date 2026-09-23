@@ -72,6 +72,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	 * passport is full, or with `?debug&finale`.
 	 */
 	finale: boolean;
+	/** The "auto" effects setting found frames running slow this visit (fx/quality.ts). */
+	autoLow: boolean;
 	/** No save and no deep link: the ferry intro plays (or `?debug&intro` forces it). */
 	firstVisit: boolean;
 	/** Hours on the visitor's clock (0–24), or `?debug&time=<phase|HH:MM>`. */
@@ -105,6 +107,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
 		finale: false,
+		autoLow: false,
 		firstVisit: (!hasSave && !deepLinked) || (new URLSearchParams(window.location.search).has("debug") && new URLSearchParams(window.location.search).has("intro")),
 		hours: clock(window.location.search),
 		month: monthNow(window.location.search),

@@ -15,7 +15,7 @@ export class Progress {
 	constructor(saved: SaveData | null) {
 		this.stamps = awardStamp(saved?.stamps ?? [], null).stamps;
 		this.flags = { ...(saved?.flags ?? {}) };
-		this.settings = saved?.settings ?? { muted: false, showVisitors: true, reducedMotion: null };
+		this.settings = saved?.settings ?? { muted: false, showVisitors: true, reducedMotion: null, effects: "auto" };
 	}
 
 	hasStamp(place: string): boolean {

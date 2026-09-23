@@ -4,6 +4,20 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.9 performance pass, first half** (the real-phone measuring is the user's).
+  - Payload for a first visit, gzipped: the game chunk (Phaser and the game) about
+    417 KB, the world atlas about 290 KB, sprites about 100 KB, the town map 25 KB, plus
+    Next's own JS. Around 1 MB, the target. A physics-free Phaser build (Phaser's
+    `src/phaser-no-physics.js`) would save only about 35 KB and needs bundler defines;
+    not done.
+  - `scripts/assets/png.mjs` `shrinkPng`: indexed PNG when an image has 256 colours or
+    fewer (checked pixel for pixel), else max-effort truecolour. Used for characters,
+    portraits, the atlas and the emotes: 478 KB became 391 KB.
+  - Effects setting (`settings.effects`: auto, high, low; Settings menu "Effects").
+    `game/fx/quality.ts`: low skips the water and aurora shaders and thins the weather
+    (no frost filter); auto watches frame times (`FrameWatch`: after 1.5 s, a 4 s
+    window, under 45 fps is slow) and drops to low for the visit (`services.autoLow`).
+    `window.__fjord.quality`.
 - **M5.8 finale done.** The stamp that fills the passport shows its toast, then
   `finale_note` (a note from Thomas) and a fade to the town's `finale` spawn with
   `services.finale` on: the clock fixed at night, the aurora at full strength whatever

@@ -15,9 +15,12 @@ export type SaveData = {
 	flags: Record<string, boolean>;
 	/** Ink visit state per dialogue, stored as the runtime's JSON (M2). */
 	dialogue: Record<string, string>;
-	settings: { muted: boolean; showVisitors: boolean; reducedMotion: boolean | null };
+	settings: { muted: boolean; showVisitors: boolean; reducedMotion: boolean | null; effects: EffectsSetting };
 	updatedAt: string;
 };
+
+/** Shader and particle quality: "auto" starts high and drops to low if frames run slow. */
+export type EffectsSetting = "auto" | "high" | "low";
 
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
@@ -48,6 +51,7 @@ function validate(raw: unknown): SaveData | null {
 			muted: s.muted === true,
 			showVisitors: s.showVisitors !== false,
 			reducedMotion: typeof s.reducedMotion === "boolean" ? s.reducedMotion : null,
+			effects: s.effects === "high" || s.effects === "low" ? s.effects : "auto",
 		},
 		updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : new Date(0).toISOString(),
 	};

@@ -20,7 +20,7 @@ const sample = {
 	stamps: ["library"],
 	flags: { metFerryman: true },
 	dialogue: {},
-	settings: { muted: false, showVisitors: true, reducedMotion: null },
+	settings: { muted: false, showVisitors: true, reducedMotion: null, effects: "auto" as const },
 };
 
 describe("save", () => {
@@ -61,7 +61,7 @@ describe("save", () => {
 		});
 		const save = loadSave(storage)!;
 		expect(save.stamps).toEqual(["a"]);
-		expect(save.settings).toEqual({ muted: false, showVisitors: true, reducedMotion: null });
+		expect(save.settings).toEqual({ muted: false, showVisitors: true, reducedMotion: null, effects: "auto" });
 	});
 });
 

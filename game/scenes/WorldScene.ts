@@ -34,6 +34,7 @@ import { Ambience } from "../audio/Ambience";
 import { ambienceMix } from "../audio/mix";
 import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
+import { FrameWatch, qualityFor, type Quality } from "../fx/quality";
 import { Intro } from "./Intro";
 import { CreditsRoll } from "../ui/CreditsRoll";
 import { fieldLevels } from "../live/field";
@@ -67,6 +68,7 @@ export class WorldScene extends Phaser.Scene {
 	private prompt!: Prompt;
 	private feel!: Feel;
 	private intro: Intro | null = null;
+	private readonly frameWatch = new FrameWatch();
 	private credits: CreditsRoll | null = null;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
@@ -184,10 +186,11 @@ export class WorldScene extends Phaser.Scene {
 		// The finale is always at night.
 		const hours = this.services.finale ? () => 23 : this.services.hours;
 		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, hours, this.services.month);
-		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion) : null;
-		this.aurora = outdoors ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
+		const low = this.quality === "low";
+		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion, low) : null;
+		this.aurora = outdoors && !low ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.aurora?.destroy());
-		this.water = Water.create(this, map.getLayer("water") ?? undefined, () => this.dayNight.current, () => this.aurora?.strength ?? 0);
+		this.water = low ? null : Water.create(this, map.getLayer("water") ?? undefined, () => this.dayNight.current, () => this.aurora?.strength ?? 0);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.water?.destroy());
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.weather?.destroy());
 
@@ -261,14 +264,16 @@ export class WorldScene extends Phaser.Scene {
 		this.menu = new StartMenu(this, {
 			stamps: () => this.progress.stamps,
 			settings: () => {
-				const { muted, reducedMotion, showVisitors } = this.progress.settings;
-				return { muted, reducedMotion, showVisitors };
+				const { muted, reducedMotion, showVisitors, effects } = this.progress.settings;
+				return { muted, reducedMotion, showVisitors, effects };
 			},
 			changeSettings: (next) => {
+				const effectsChanged = next.effects !== this.progress.settings.effects;
 				this.progress.settings = { ...this.progress.settings, ...next };
 				this.sound.mute = next.muted;
 				this.applyVisitors();
 				this.save();
+				if (effectsChanged) this.applyQuality();
 			},
 			status: () => statusLines(this.services.presence.current),
 			openJournal: () => {
@@ -316,6 +321,11 @@ export class WorldScene extends Phaser.Scene {
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
 		this.dayNight.update(time);
+		if (this.progress.settings.effects === "auto" && this.frameWatch.sample(delta)) {
+			// Struggling: the shaders go now, the weather thins on the next map.
+			this.services.autoLow = true;
+			this.applyQuality();
+		}
 		this.water?.update();
 		this.aurora?.update(this.dayNight.current.dark, this.services.finale);
 		this.updateAmbience(time);
@@ -447,6 +457,24 @@ export class WorldScene extends Phaser.Scene {
 		);
 	}
 
+	private get quality(): Quality {
+		return qualityFor(this.progress.settings.effects, this.services.autoLow);
+	}
+
+	/** Effects quality changed: drop the shaders now, or rebuild the scene to add them back. */
+	private applyQuality() {
+		if (this.quality === "low") {
+			this.water?.destroy();
+			this.aurora?.destroy();
+			this.water = this.aurora = null;
+			return;
+		}
+		if (!this.water && !this.aurora && !this.transitioning && !this.dialogue.open) {
+			const t = this.player.mover.destination;
+			this.goTo({ map: this.target.map, tile: t, facing: this.player.mover.facing });
+		}
+	}
+
 	/** Other visitors on or off, from the setting (the rx_off kill switch means no client at all). */
 	private applyVisitors() {
 		const client = this.services.ghosts;
@@ -506,6 +534,7 @@ export class WorldScene extends Phaser.Scene {
 			map: this.target.map,
 			season: this.services.season,
 			daylight: this.dayNight.current,
+			quality: this.quality,
 			ambience: this.ambience.levels,
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,

@@ -49,12 +49,14 @@ export class Weather {
 		private readonly scene: Phaser.Scene,
 		private readonly season: Season,
 		private readonly reducedMotion: boolean,
+		/** Low effects quality: fewer particles, no frost filter. */
+		private readonly low = false,
 	) {
 		bake(scene, SPRITES[season]);
 		const cam = scene.cameras.main;
 		this.start(cam.width, cam.height);
 		// A cold, pale rim round the screen in winter.
-		if (season === "winter") this.frost = cam.filters.internal.addVignette(0.5, 0.5, 0.9, FROST, 0xdde8f8);
+		if (season === "winter" && !low) this.frost = cam.filters.internal.addVignette(0.5, 0.5, 0.9, FROST, 0xdde8f8);
 	}
 
 	/** The pale frost would glow in the dark: it fades as night falls. */
@@ -75,7 +77,7 @@ export class Weather {
 
 	private start(width: number, height: number): void {
 		const m = MOTION[this.season];
-		const calm = this.reducedMotion;
+		const calm = this.reducedMotion || this.low;
 		this.emitter = this.scene.add
 			.particles(0, 0, SPRITES[this.season].key, {
 				x: { min: -16, max: width + 16 },

@@ -13,6 +13,7 @@ import { composeCharacter, composePortrait, placeholderCharacter, placeholderPor
 import { buildBitmapFont } from "./font.mjs";
 import { compileDialogue } from "./ink.mjs";
 import { Raster, hex } from "./raster.mjs";
+import { shrinkPng } from "./png.mjs";
 
 const TILE = 16;
 const root = process.cwd();
@@ -39,10 +40,10 @@ const started = Date.now();
 
 for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(charactersDir, id, recipe);
-	fs.writeFileSync(path.join(outDir, `characters/${id}.png`), png);
+	fs.writeFileSync(path.join(outDir, `characters/${id}.png`), await shrinkPng(png));
 	if (recipe.portrait !== false) {
 		const portrait = source.mode === "placeholder" ? await placeholderPortrait(recipe) : await composePortrait(portraitsDir, id, recipe, portraitExists);
-		fs.writeFileSync(path.join(outDir, `portraits/${id}.png`), portrait);
+		fs.writeFileSync(path.join(outDir, `portraits/${id}.png`), await shrinkPng(portrait));
 	}
 }
 
@@ -55,7 +56,7 @@ const worldAtlas =
 	source.mode === "placeholder"
 		? await buildPlaceholderAtlas(registry.tiles, JSON.parse(fs.readFileSync(path.join(worldDir, "tile-colors.json"), "utf8")))
 		: await buildAtlas(registry.tiles, new SheetCache(source.dir));
-fs.writeFileSync(path.join(outDir, "tilesets/world.png"), worldAtlas);
+fs.writeFileSync(path.join(outDir, "tilesets/world.png"), await shrinkPng(worldAtlas));
 const generatedMaps = generated.map((file) => {
 	const tmj = JSON.parse(fs.readFileSync(path.join(worldDir, "maps", file), "utf8"));
 	fs.writeFileSync(path.join(outDir, "maps", file), JSON.stringify(tmj));
@@ -106,7 +107,7 @@ async function buildEmotes() {
 	img.rect(tx * EMOTE_FRAME + 6, ty * EMOTE_FRAME + 6, 2, 2, white);
 	return img.toPng();
 }
-fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await buildEmotes());
+fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await shrinkPng(await buildEmotes()));
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
 const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");
