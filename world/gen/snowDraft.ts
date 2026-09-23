@@ -31,6 +31,22 @@ const NO_SNOW: Record<string, Polygon[]> = {
 		rect(0, 94, 5, 5),
 		rect(5, 93, 5, 6),
 	],
+	"houses#Post_Apocalyptic_House_1": [
+		rect(0.8, 0, 0.8, 2.5), // the gym: the antenna and the box it stands on
+		rect(10.7, 6.6, 2.6, 1), // the annex wall under its roof
+	],
+};
+
+/**
+ * Roofs the sky scan can't reach, per sheet or single: every opaque pixel inside is roof,
+ * whatever its colour. For roofs under a trim or a second roof, in colours the walls
+ * share (the gym's logs are the red of its lower roof).
+ */
+const SNOW_AREAS: Record<string, Polygon[]> = {
+	"houses#Post_Apocalyptic_House_1": [
+		rect(0.05, 3.95, 10.65, 2.85), // the gym: the lower roof, under the trim
+		rect(10.7, 3.25, 2.55, 3.35), // and the annex roof on its right
+	],
 };
 
 /** Whether (x, y) is inside a polygon (even-odd rule). */
@@ -46,7 +62,7 @@ function inside(poly: Polygon, x: number, y: number): boolean {
 
 /**
  * The whole roof: the sky scan, spread sideways into strips a chimney hid, flecks of moss
- * and rust filled in, and the known walls cut out again.
+ * and rust filled in, roofs the scan can't reach added, and the known walls cut out.
  */
 export function fullRoofMask(img: Img, sheet: string): Uint8Array | null {
 	const mask = roofMask(img, sheet);
@@ -85,16 +101,24 @@ export function fullRoofMask(img: Img, sheet: string): Uint8Array | null {
 			if (near(x, y, -1, 0) && near(x, y, 1, 0) && near(x, y, 0, -1) && near(x, y, 0, 1)) mask[p] = 1;
 		}
 	}
-	for (const poly of NO_SNOW[sheet] ?? []) {
-		const xs = poly.map(([x]) => x * 16);
-		const ys = poly.map(([, y]) => y * 16);
-		for (let y = Math.max(0, Math.floor(Math.min(...ys))); y < Math.min(height, Math.ceil(Math.max(...ys))); y++) {
-			for (let x = Math.max(0, Math.floor(Math.min(...xs))); x < Math.min(width, Math.ceil(Math.max(...xs))); x++) {
-				if (inside(poly, (x + 0.5) / 16, (y + 0.5) / 16)) mask[y * width + x] = 0;
-			}
+	for (const poly of SNOW_AREAS[sheet] ?? []) {
+		eachPixel(poly, width, height, (p) => {
+			if (opaque(p) && !isDark(data, p * 4)) mask[p] = 1;
+		});
+	}
+	for (const poly of NO_SNOW[sheet] ?? []) eachPixel(poly, width, height, (p) => (mask[p] = 0));
+	return mask;
+}
+
+/** Calls `fn` with the index of each pixel inside a polygon given in tile units. */
+function eachPixel(poly: Polygon, width: number, height: number, fn: (p: number) => void) {
+	const xs = poly.map(([x]) => x * 16);
+	const ys = poly.map(([, y]) => y * 16);
+	for (let y = Math.max(0, Math.floor(Math.min(...ys))); y < Math.min(height, Math.ceil(Math.max(...ys))); y++) {
+		for (let x = Math.max(0, Math.floor(Math.min(...xs))); x < Math.min(width, Math.ceil(Math.max(...xs))); x++) {
+			if (inside(poly, (x + 0.5) / 16, (y + 0.5) / 16)) fn(y * width + x);
 		}
 	}
-	return mask;
 }
 
 /** Whether pixel p has a colour some pixel of the (scanned) roof has. */

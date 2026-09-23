@@ -214,7 +214,9 @@ asks.
   13 full snow roofs into datagutt-assets `seasons/winter/` (review sheet:
   `world/out/snow-drafts.png`). Known rough spots: the farmhouse porch roof's right slope
   has no snow, the town hall's slate roofs and the library's lower roof are patchy, the
-  gym only has snow on its upper roof, the post office has none. Once cleaned, commit
+  post office has none. Roofs the sky scan can't reach, or walls in roof colours, are
+  fixed per sheet or single in `world/gen/snowDraft.ts` (`SNOW_AREAS`, `NO_SNOW`), as
+  done for the gym's lower roof (its logs share the roof's red). Once cleaned, commit
   in datagutt-assets and run `pnpm world:gen`. Never `--force` over cleaned files.
 
 - LimeZu packs worth buying (research 2026-09-23): **Modern Farm** (barns, 19 crops,
