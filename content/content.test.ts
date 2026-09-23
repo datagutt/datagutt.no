@@ -35,10 +35,10 @@ describe("content", () => {
 });
 
 describe("placeFromSearch", () => {
-	it("accepts built places only", () => {
+	it("accepts known places only", () => {
 		expect(placeFromSearch("?at=office")?.id).toBe("office");
 		expect(placeFromSearch("?at=Office")?.id).toBe("office");
-		expect(placeFromSearch("?at=library")).toBeNull(); // not on a map yet
+		expect(placeFromSearch("?at=library")?.id).toBe("library");
 		expect(placeFromSearch("?at=nowhere")).toBeNull();
 		expect(placeFromSearch("?at=constructor")).toBeNull();
 		expect(placeFromSearch("")).toBeNull();

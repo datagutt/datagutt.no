@@ -4,6 +4,13 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **M6 in progress (the user asked for all of M6, then the backlogs).** M6.1 Journal done:
+  `app/journal/page.tsx` and `components/journal/`, one section per place with a
+  "Visit ... in the game" deep link, live GitHub data, passport progress from the save,
+  credits in the footer. The live sections render without a Suspense boundary on
+  purpose: a streamed boundary lands in a hidden chunk that only JavaScript reveals, and
+  the Journal must read with JavaScript off (e2e checks it, plus axe). Every place in
+  `content/places.ts` now has an entrance (`world/gen/maps/places.test.ts`).
 - **Title screen v2 (M5.11), approved by the user 2026-09-24.**
   - Backdrop (`components/game/TitleArt.tsx`): a summer day, drawn on a grid of game
     pixels. A wide screen sees 512×288 (18 tiles tall, like the game); a tall phone sees

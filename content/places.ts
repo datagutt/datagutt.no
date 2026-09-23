@@ -17,7 +17,7 @@ export type Place = {
 	presents: ContentRef[];
 	/** Gives a Fjord Passport stamp when its main NPC has been talked to. */
 	stamp: boolean;
-	/** Where `?at=<id>` puts the player. Missing until the place exists on a map. */
+	/** Where `?at=<id>` puts the player: outside its door. */
 	entrance?: { map: string; spawn: string };
 };
 
@@ -30,9 +30,9 @@ export const places = [
 		stamp: true,
 		entrance: { map: "town", spawn: "house_door" },
 	},
-	{ id: "boathouse", name: "Boathouse studio", presents: [{ kind: "project", id: "guac" }], stamp: true },
-	{ id: "radio-tower", name: "Radio tower", presents: [{ kind: "project", id: "irlserver" }], stamp: true },
-	{ id: "kiosk", name: "Kiosk", presents: [{ kind: "project", id: "donate-chat" }], stamp: true },
+	{ id: "boathouse", name: "Boathouse studio", presents: [{ kind: "project", id: "guac" }], stamp: true, entrance: { map: "town", spawn: "boathouse_door" } },
+	{ id: "radio-tower", name: "Radio tower", presents: [{ kind: "project", id: "irlserver" }], stamp: true, entrance: { map: "town", spawn: "radio_hut_door" } },
+	{ id: "kiosk", name: "Kiosk", presents: [{ kind: "project", id: "donate-chat" }], stamp: true, entrance: { map: "town", spawn: "kiosk_door" } },
 	{
 		id: "office",
 		name: "Nettbureau office",
@@ -40,11 +40,11 @@ export const places = [
 		stamp: true,
 		entrance: { map: "town", spawn: "office_door" },
 	},
-	{ id: "town-hall", name: "Town hall", presents: [{ kind: "experience", id: "iod" }], stamp: true },
-	{ id: "gym", name: "Gym", presents: [{ kind: "skills" }], stamp: true },
-	{ id: "library", name: "Library", presents: [{ kind: "repos" }], stamp: true },
-	{ id: "farm", name: "Farm", presents: [{ kind: "stats" }], stamp: true },
-	{ id: "post-office", name: "Post office", presents: [{ kind: "contact" }], stamp: true },
+	{ id: "town-hall", name: "Town hall", presents: [{ kind: "experience", id: "iod" }], stamp: true, entrance: { map: "town", spawn: "town_hall_door" } },
+	{ id: "gym", name: "Gym", presents: [{ kind: "skills" }], stamp: true, entrance: { map: "town", spawn: "gym_door" } },
+	{ id: "library", name: "Library", presents: [{ kind: "repos" }], stamp: true, entrance: { map: "town", spawn: "library_door" } },
+	{ id: "farm", name: "Farm", presents: [{ kind: "stats" }], stamp: true, entrance: { map: "town", spawn: "farmhouse_door" } },
+	{ id: "post-office", name: "Post office", presents: [{ kind: "contact" }], stamp: true, entrance: { map: "town", spawn: "post_office_door" } },
 ] as const satisfies readonly Place[];
 
 export type PlaceId = (typeof places)[number]["id"];
@@ -60,4 +60,11 @@ export function placeFromSearch(search: string): Place | null {
 	const at = new URLSearchParams(search).get("at")?.trim().toLowerCase();
 	const found = at ? (places as readonly Place[]).find((p) => p.id === at) : undefined;
 	return found?.entrance ? found : null;
+}
+
+/** The place that presents a piece of content (content.test.ts: each has exactly one). */
+export function placePresenting(kind: ContentRef["kind"], id?: string): Place {
+	const found = (places as readonly Place[]).find((p) => p.presents.some((r) => r.kind === kind && (!("id" in r) || r.id === id)));
+	if (!found) throw new Error(`No place presents ${kind}${id ? ` "${id}"` : ""}`);
+	return found;
 }

@@ -337,10 +337,12 @@ Goal: the Celeste-level feel.
 
 Goal: ship v1 to production.
 
-- [ ] **M6.1** `/journal`: server-rendered, plain and readable, every `content/` field and
+- [x] **M6.1** `/journal`: server-rendered, plain and readable, every `content/` field and
       live GitHub data, anchors per section, link back into the game with `?at=`. Shows
       passport progress client-side if a save exists. *Done when* it passes an axe check
       and reads well with JS disabled.
+      (`app/journal/page.tsx`, `components/journal/`; e2e/journal.spec.ts runs axe with and
+      without a save, and reads it with JavaScript off. Every place now has a `?at=` entrance.)
 - [ ] **M6.2** Metadata: titles, descriptions, Open Graph image (a render of the town),
       sitemap with `/` and `/journal`, canonical links. *Done when* link previews look
       right on Bluesky and Discord.
