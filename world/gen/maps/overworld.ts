@@ -9,7 +9,7 @@ import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
 import { PREFABS } from "../../art/prefabs.ts";
 import { variant } from "../../art/autotile.ts";
 import { MapCanvas } from "../canvas.ts";
-import { building, fence, forest, meadow, pier, plateau } from "../features.ts";
+import { building, fence, forest, meadow, pier, plateau, sign } from "../features.ts";
 import { Region, wobble } from "../layout.ts";
 
 export const W = 96;
@@ -98,7 +98,7 @@ export function overworld(): MapCanvas {
 	for (const [x, y] of [[39, 29], [61, 29], [39, 37], [61, 37]]) c.stamp(PREFABS.lamp, x, y);
 	// Lamps along the south verge of the main road (a lamp's base is its bottom tile).
 	for (const x of [12, 24, 32, 45, 57, 64, 78, 89]) c.stamp(PREFABS.lamp, x, 42);
-	c.stamp(PREFABS.planter, 43, 26).stamp(PREFABS.planter, 48, 26);
+	c.stamp(PREFABS.planter, 41, 26).stamp(PREFABS.planter, 48, 26);
 	c.stamp(PREFABS.bench, HARBOUR_X + 4, shore[HARBOUR_X + 4] - 4);
 
 	// --- Forest edge -----------------------------------------------------------------------
@@ -133,9 +133,20 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 2, facing: "up" });
 	c.add({ type: "spawn", id: "house_door", x: home.x, y: home.y, facing: "down" });
 	c.add({ type: "spawn", id: "office_door", x: 72, y: 37, facing: "down" });
-	c.add({ type: "sign", x: HARBOUR_X + 3, y: pierTop - 2, text: "Welcome to Fjord Town. Population: small, but opinionated." });
+	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
+	// A name sign in front of every building, so the town reads without talking to anyone.
+	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
+	sign(c, 33, 27, "Fjord Town Library. Every book on the shelves is one of datagutt's repositories. Shh.");
+	sign(c, 44, 26, "Town Hall. The basement hums. That's the servers, not the ghosts. Probably.");
+	sign(c, 13, 21, "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.");
+	sign(c, 60, 35, "Kiosk. Snacks, newspapers and Randi's opinions, all free.");
+	sign(c, 40, 57, "Post Office. Letters for datagutt are delivered by Liv, rain or shine.");
+	sign(c, 10, 61, "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.");
+	sign(c, 71, 37, "Nettbureau. datagutt's day job, since 2021.");
+	sign(c, 85, 37, "Smithy. Tor forges tools, and the skills to use them.");
+	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
-	c.add(npc("streamer", 14, 60, "down"));
+	c.add(npc("streamer", 14, 61, "down"));
 	c.add(npc("technician", 83, 12, "left"));
 	c.add(npc("shopkeeper", 58, 35, "down"));
 	c.add(npc("coworker", 74, 38, "left"));

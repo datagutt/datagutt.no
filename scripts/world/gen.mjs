@@ -17,6 +17,7 @@ import { TileRegistry } from "../../world/gen/registry.ts";
 import { canvasToTmj, formatTmj, isManual } from "../../world/gen/tmj.ts";
 import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
 import { renderTmj } from "../../world/gen/render.ts";
+import { validateMap } from "../../world/gen/validate.ts";
 import { resolveAssetSource } from "../assets/source.mjs";
 
 const root = process.cwd();
@@ -43,11 +44,17 @@ if (flag("prune")) {
 const registry = new TileRegistry(flag("prune") ? undefined : (readJson(files.registry) ?? undefined));
 const only = opt("only");
 const outputs = new Map();
+const problems = [];
 for (const map of GENERATED_MAPS) {
 	if (only && map.id !== only) continue;
 	const file = path.join(files.maps, `${map.id}.tmj`);
 	const tmj = canvasToTmj(map.id, map.build(), registry, { properties: map.properties, previous: readJson(file) });
+	problems.push(...validateMap(map.id, tmj));
 	outputs.set(file, formatTmj(tmj));
+}
+if (problems.length) {
+	console.error(`[world] ${problems.length} problem(s):\n  ${problems.join("\n  ")}`);
+	process.exit(1);
 }
 outputs.set(files.registry, JSON.stringify(registry.toJSON(), null, "\t") + "\n");
 

@@ -211,7 +211,10 @@ Goal: the real town, painted, in all seasons.
       (`--grid`, `--objects`, `--collision` overlays; seasons arrive with M3.9.)
 - [ ] **M3.6** Validator: doors point at existing maps and spawns, every NPC and stamp
       id exists, spawn points are walkable, all places are reachable from the dock,
-      warns on edits to generated layers. *Done when* in `pnpm build`.
+      warns on edits to generated layers. *Done when* in `pnpm build`. (Started:
+      `world/gen/validate.ts` runs in `world:gen`/`world:check` and catches objects on
+      blocked tiles, unreachable signs and NPCs, blocked door fronts and stacked objects.
+      Door targets and reachability from the dock are still to do.)
 - [ ] **M3.7** Overworld: dock and harbour, town square, datagutt's street, hill with
       radio tower, farm field, forest edge, fjord and cliffs. Iterate on renders until it
       looks good. *Done when* the user approves the overworld render.

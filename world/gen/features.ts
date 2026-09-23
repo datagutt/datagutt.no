@@ -141,3 +141,10 @@ export function meadow(c: MapCanvas, open: Region, seed: number) {
 		}
 	});
 }
+
+/** A readable sign: the post (or board) art, a blocked tile, and the text to show. */
+export function sign(c: MapCanvas, x: number, y: number, text: string, art: "signpost" | "noticeBoard" = "noticeBoard") {
+	const prefab = PREFABS[art] as Prefab;
+	c.stamp(prefab, x, y - (prefab.h - 1));
+	c.add({ type: "sign", x, y, text });
+}

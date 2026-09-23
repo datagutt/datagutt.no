@@ -42,12 +42,12 @@ export const PREFABS = {
 	/** Farmhouse: white board-and-batten house whose garage reads as barn doors. */
 	farmhouse: { sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] },
 	/** Smithy: red-roofed log cabin. */
-	smithy: { sheet: "houses", col: 0, row: 267, w: 12, h: 10, aboveRows: 2, door: [7, 8] },
+	smithy: { sheet: "houses", col: 0, row: 267, w: 12, h: 10, aboveRows: 2, door: [7, 8], collision: [...Array(7).fill("#".repeat(12)), "."] },
 	windmill: { sheet: "houses", col: 16, row: 267, w: 4, h: 9, aboveRows: 6, collision: [".##."] },
 	radioTower: { sheet: "houses", col: 21, row: 266, w: 3, h: 10, aboveRows: 7, collision: ["###"] },
 	/** The sheet stacks a second storey under the cottage; take only the top one. */
 	kiosk: { sheet: "villas", col: 23, row: 14, w: 4, h: 5, aboveRows: 2, door: [2, 4] },
-	office: { sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [3, 14] },
+	office: { sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [3, 14], collision: [...Array(12).fill("#".repeat(10)), "."] },
 	postOffice: { sheet: "post", col: 16, row: 4, w: 8, h: 13, aboveRows: 2, door: [4, 12] },
 	townHall: { sheet: "houses", col: 0, row: 208, w: 18, h: 22, aboveRows: 3, door: [3, 21] },
 	library: { sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] },
@@ -55,6 +55,10 @@ export const PREFABS = {
 	hut: { sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] },
 	rowboat: { sheet: "camping", col: 5, row: 34, w: 4, h: 2, aboveRows: 0 },
 	ferry: { sheet: "camping", col: 1, row: 37, w: 5, h: 4, aboveRows: 0 },
+	/** A small wooden board on a post: building name signs. */
+	signpost: { sheet: "camping", col: 19, row: 16, w: 1, h: 1, aboveRows: 0 },
+	/** A notice board with a paper on it: the welcome sign at the dock. */
+	noticeBoard: { sheet: "camping", col: 18, row: 12, w: 1, h: 2, aboveRows: 1 },
 	lamp: { sheet: "props", col: 20, row: 0, w: 1, h: 4, aboveRows: 3 },
 	parkLamp: { sheet: "props", col: 1, row: 28, w: 3, h: 4, aboveRows: 3, collision: [".#."] },
 	bench: { sheet: "props", col: 21, row: 0, w: 2, h: 2, aboveRows: 0 },

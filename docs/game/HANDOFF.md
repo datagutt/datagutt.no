@@ -22,6 +22,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     (terrain sets, cobble, plateau 9-slice with stairs, pier, fence, decals, crops),
     `prefabs.ts` (buildings with doors, trees, props). Landscape helpers in
     `world/gen/features.ts` (plateau, pier, forest, fence, meadow, building).
+  - Every building has a notice-board sign with its name and a line of flavour
+    (user request). NPCs stand outside their buildings for now; M3.8 moves each one
+    indoors as its interior is built (Arne stays on the pier, Ola in the field).
   - `world/gen/maps/overworld.ts` is the 96×76 draft; the greybox `town` stays the live
     map until the user approves. Open it with `?debug&map=overworld`.
   - Building choices: villas (7_Villas) for homes, falu red villa for datagutt, Victorian
