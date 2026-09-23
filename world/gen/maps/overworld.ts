@@ -68,7 +68,7 @@ export function overworld(): MapCanvas {
 	c.stamp(PREFABS.hut, 75, 9);
 
 	// --- Buildings -------------------------------------------------------------------------
-	building(c, "farmhouse", 5, 7);
+	const farmDoor = building(c, "farmhouse", 5, 7, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
 	c.stamp(PREFABS.windmill, 23, 8);
 	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	building(c, "townHall", 42, 4, { addDoor: true });
@@ -139,6 +139,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "kiosk_door", ...kioskDoor, facing: "down" });
 	c.add({ type: "spawn", id: "post_office_door", ...postDoor, facing: "down" });
 	c.add({ type: "spawn", id: "smithy_door", ...smithyDoor, facing: "down" });
+	c.add({ type: "spawn", id: "farmhouse_door", ...farmDoor, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");

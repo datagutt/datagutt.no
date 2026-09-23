@@ -96,6 +96,18 @@ export const FURNITURE = {
 	rebar: solid("worksite", 6, 13, 2, 3),
 	smallCabinet: solid("living", 3, 11, 2, 2),
 
+	// Farmhouse.
+	farmTable: solid("kitchen", 3, 15, 3, 3),
+	chairRedRight: solid("kitchen", 4, 11, 1, 2),
+	chairRedLeft: solid("kitchen", 7, 13, 1, 2),
+	kitchenCounter: solid("kitchen", 2, 8, 6, 1),
+	bakingOven: solid("grocery", 9, 35, 2, 3),
+	redCurtainWindow: flat("generic", 5, 45, 3, 3),
+	sideboard: solid("living", 5, 11, 3, 2),
+	crates: solid("grocery", 1, 61, 3, 2),
+	roundRug: flat("bedroom", 0, 22, 3, 2),
+	pottedTree: solid("generic", 8, 56, 2, 3),
+
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
 	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
 	/** Staircase going up; walk up its middle column. */

@@ -1,6 +1,7 @@
 // Every map the generator owns. `pnpm world:gen` writes each to world/maps/<id>.tmj.
 import type { MapCanvas } from "../canvas.ts";
 import { boathouse } from "./boathouse.ts";
+import { farmhouse } from "./farmhouse.ts";
 import { house, houseUpstairs } from "./house.ts";
 import { kiosk } from "./kiosk.ts";
 import { library } from "./library.ts";
@@ -19,4 +20,5 @@ export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "kiosk", properties: { name: "Kiosk" }, build: kiosk },
 	{ id: "post-office", properties: { name: "Post office" }, build: postOffice },
 	{ id: "smithy", properties: { name: "Smithy" }, build: smithy },
+	{ id: "farmhouse", properties: { name: "Farmhouse" }, build: farmhouse },
 ];

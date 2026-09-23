@@ -63,6 +63,8 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Smithy done (`world/gen/maps/smithy.ts`): rustic planks, dark stone, the forge
     (flickering), one rack or chest per skill category from smith.ink (the heavy rack is
     a dumbbell rack with iron plates), the till by the door.
+  - Farmhouse done (`world/gen/maps/farmhouse.ts`): Ola's home (he stays out in the
+    field): gingham walls, pale planks, baking oven, table, his harvest ledger, crates.
   - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
     cabinets for the v1.1 canvases-as-arcade-machines idea; the museum sheet has
     paintings, statues and pillars for the town hall.
@@ -102,7 +104,8 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 - M2.9 done: all 11 NPCs have Ink scripts using the topics pattern; every NPC stands in
   the greybox town near their future building (`TOWN_NPCS` in `world/greybox/maps.ts`),
   so every piece of content is playable now. Names come from the roster.
-- User facts for dialogue: Thomas does **not** drink coffee; he drinks energy drinks
+- User facts for dialogue: Ola (the farmer) is a man; Norwegian names follow their real
+  gender, so check before using pronouns. Thomas does **not** drink coffee; he drinks energy drinks
   (running joke, noted in `main.ink`).
 - M2.8 approved by the user: 11 NPCs in `game/npcs.ts` (name, place, personality, voice) with sprite
   recipes in `game/assets/manifest.ts`. Portraits are derived from sprite layers unless a
