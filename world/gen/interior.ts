@@ -32,6 +32,7 @@ export const WALLS = {
 	postenRed: { col: 22, row: 0 },
 	rusticPlanks: { col: 11, row: 22 },
 	gingham: { col: 22, row: 16 },
+	mint: { col: 22, row: 20 },
 } satisfies Record<string, WallStyle>;
 
 export const FLOORS = {
@@ -47,6 +48,7 @@ export const FLOORS = {
 	paleTiles: { col: 0, row: 2 },
 	darkStone: { col: 12, row: 18 },
 	palePlanks: { col: 0, row: 24 },
+	rubberGrid: { col: 12, row: 22 },
 } satisfies Record<string, FloorStyle>;
 
 // The thin wall-top border as a 9-slice (combined Room Builder sheet).

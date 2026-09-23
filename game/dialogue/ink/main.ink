@@ -22,7 +22,7 @@ INCLUDE technician.ink
 INCLUDE shopkeeper.ink
 INCLUDE coworker.ink
 INCLUDE sysadmin.ink
-INCLUDE smith.ink
+INCLUDE trainer.ink
 INCLUDE librarian.ink
 INCLUDE farmer.ink
 INCLUDE postmaster.ink

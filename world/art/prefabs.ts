@@ -41,8 +41,8 @@ export const PREFABS = {
 	boathouse: { sheet: "houses", col: 16, row: 250, w: 15, h: 14, aboveRows: 3, door: [5, 13] },
 	/** Farmhouse: white board-and-batten house whose garage reads as barn doors. */
 	farmhouse: { sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] },
-	/** Smithy: red-roofed log cabin. */
-	smithy: { sheet: "houses", col: 0, row: 267, w: 12, h: 10, aboveRows: 2, door: [7, 8], collision: [...Array(7).fill("#".repeat(12)), "."] },
+	/** Red-roofed log cabin: the gym. */
+	logCabin: { sheet: "houses", col: 0, row: 267, w: 12, h: 10, aboveRows: 2, door: [7, 8], collision: [...Array(7).fill("#".repeat(12)), "."] },
 	windmill: { sheet: "houses", col: 16, row: 267, w: 4, h: 9, aboveRows: 6, collision: [".##."] },
 	radioTower: { sheet: "houses", col: 21, row: 266, w: 3, h: 10, aboveRows: 7, collision: ["###"] },
 	/** The sheet stacks a second storey under the cottage; take only the top one. */

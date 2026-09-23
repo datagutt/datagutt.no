@@ -719,7 +719,7 @@
             {
               "name": "toMap",
               "type": "string",
-              "value": "smithy"
+              "value": "gym"
             },
             {
               "name": "toSpawn",
@@ -948,7 +948,7 @@
         },
         {
           "id": 15,
-          "name": "smithy_door",
+          "name": "gym_door",
           "type": "spawn",
           "x": 1376,
           "y": 592,
@@ -1158,7 +1158,7 @@
             {
               "name": "text",
               "type": "string",
-              "value": "Smithy. Tor forges tools, and the skills to use them."
+              "value": "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack."
             }
           ]
         },

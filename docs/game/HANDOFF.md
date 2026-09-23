@@ -60,9 +60,10 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Post office done (`world/gen/maps/postOffice.ts`): Posten-red walls, noticeboard
     and red letter box (both named in Liv's dialogue), writing desk, parcels behind a
     service counter, Liv behind it.
-  - Smithy done (`world/gen/maps/smithy.ts`): rustic planks, dark stone, the forge
-    (flickering), one rack or chest per skill category from smith.ink (the heavy rack is
-    a dumbbell rack with iron plates), the till by the door.
+  - **The smithy is now a gym** (user decision after a subagent's research: LimeZu has no
+    forge/anvil art in any pack). Place id `gym`, NPC id `trainer` (still Tor, now a
+    gym bro), map `gym` (`world/gen/maps/gym.ts`), dialogue `trainer.ink`, exterior
+    prefab `logCabin`. One piece of gym kit per skill category; front desk = payments.
   - Farmhouse done (`world/gen/maps/farmhouse.ts`): Ola's home (he stays out in the
     field): gingham walls, pale planks, baking oven, table, his harvest ledger, crates.
   - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
@@ -81,7 +82,7 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     transparent (dark bands become a soft shadow), so the animated sea shows under them.
   - Building choices: villas (7_Villas) for homes, falu red villa for datagutt, Victorian
     pieces (24_Additional_Houses) for town hall and library with a door tile added,
-    white house = farmhouse, log cabin = smithy, corrugated house = boathouse, modern
+    white house = farmhouse, log cabin = gym, corrugated house = boathouse, modern
     house = office, LimeZu post office, two-storey cottage = kiosk, lattice tower = radio
     tower, pines/oaks from 11_Camping.
 
@@ -155,13 +156,19 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 ## Next step
 
 M3.8: the remaining interiors ( town hall + basement server
-room; office; smithy; farmhouse; post office; radio hut), moving each NPC indoors as its
+room; office; radio hut), moving each NPC indoors as its
 interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).
 **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
+- LimeZu packs worth buying (research 2026-09-23): **Modern Farm** (barns, 19 crops,
+  animals, tools; good for the farm and M3.11) and **Modern Office**. Office previews
+  show cubicles, desktop PCs, laptops, printers, water coolers, a drinks vending
+  machine, whiteboards with charts, filing cabinets, AC units and brick/tile/plank
+  floors; no server racks are visible, so the server basement may still need a
+  workaround.
 - The user may buy LimeZu's **Modern Office** pack. The Nettbureau office interior and
   the town hall's basement server room wait for it (desks, computers, server racks);
   build the other interiors first. When it lands in datagutt-assets, add its sheets to

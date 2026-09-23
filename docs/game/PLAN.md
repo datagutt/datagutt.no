@@ -168,7 +168,7 @@ the passport works.
       roster. (Approved 2026-09-23 "good for now"; lives in `game/npcs.ts`.)
 - [x] **M2.9** Write all Ink scripts (Claude drafts, user edits): ferryman, datagutt
       (and house objects), streamer (Guac), technician (IRLServer), shopkeeper
-      (Donate.chat), coworkers (Nettbureau), sysadmin (IØD), smith (skills), librarian
+      (Donate.chat), coworkers (Nettbureau), sysadmin (IØD), trainer (skills; was the smith), librarian
       (repos, live), farmer (stats, live), postmaster (contact), plus 4–6 townsfolk for
       life and hints. Each main NPC: first-visit, repeat, has-stamp variants. *Done when*
       every content field in `content/` is referenced by at least one line (checked by
@@ -201,7 +201,7 @@ Goal: the real town, painted, in all seasons.
       sea, regions thickened first; cliffs are plateau 9-slices; snow comes with M3.9.)
 - [ ] **M3.3** Prefabs: multi-tile stamps for each building and landmark (red house
       recolours, boathouse studio with antenna, radio tower, kiosk, office, town hall,
-      smithy, library, post office, farm field, ferry dock, piers, fjord cliffs). *Done
+      smithy (now the gym), library, post office, farm field, ferry dock, piers, fjord cliffs). *Done
       when* each prefab renders correctly in isolation.
 - [ ] **M3.4** Scatter rules: flowers, rocks, bushes, lamps, benches, fences with
       constraints (keep doors and paths clear, benches face paths, density by region).
@@ -222,7 +222,7 @@ Goal: the real town, painted, in all seasons.
       every building.)
 - [ ] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
       studio, radio tower hut, kiosk, office, town hall and basement server room,
-      smithy, library, farmhouse, post office. *Done when* the user approves each render.
+      gym (was the smithy), library, farmhouse, post office. *Done when* the user approves each render.
 - [ ] **M3.9** Seasonal variants: generator emits season layers (snow ground and roof
       caps, autumn foliage, spring flowers), runtime picks the season from the Norwegian
       date. *Done when* all four seasons render and switch via `?season=` in debug.

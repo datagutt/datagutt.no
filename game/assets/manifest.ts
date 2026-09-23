@@ -97,7 +97,7 @@ export const CHARACTERS = {
 		],
 		placeholder: "7d8594",
 	},
-	smith: {
+	trainer: {
 		layers: [
 			"Bodies/Body_07.png",
 			"Eyes/Eyes_02.png",

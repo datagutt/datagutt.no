@@ -41,7 +41,7 @@ export const places = [
 		entrance: { map: "town", spawn: "office_door" },
 	},
 	{ id: "town-hall", name: "Town hall", presents: [{ kind: "experience", id: "iod" }], stamp: true },
-	{ id: "smithy", name: "Smithy", presents: [{ kind: "skills" }], stamp: true },
+	{ id: "gym", name: "Gym", presents: [{ kind: "skills" }], stamp: true },
 	{ id: "library", name: "Library", presents: [{ kind: "repos" }], stamp: true },
 	{ id: "farm", name: "Farm", presents: [{ kind: "stats" }], stamp: true },
 	{ id: "post-office", name: "Post office", presents: [{ kind: "contact" }], stamp: true },

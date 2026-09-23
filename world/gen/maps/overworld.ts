@@ -2,7 +2,7 @@
 // (docs/game/DESIGN.md §5). Approved by the user on 2026-09-23 (M3.7).
 //
 //   x:  0-4 forest | 5-34 farm, datagutt's street, boathouse | 35-62 library, town hall,
-//       square, post office, harbour | 63-90 radio hill, office, smithy | 91-95 forest
+//       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "../../../game/world/objects.ts";
 import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
@@ -41,7 +41,7 @@ export function overworld(): MapCanvas {
 		.path([[45, 26], [45, 30]]) // town hall
 		.path([[66, 18], [66, 42]]) // up to the radio hill
 		.path([[72, 37], [72, 42]]) // office
-		.path([[86, 37], [86, 42]]) // smithy
+		.path([[86, 37], [86, 42]]) // gym
 		.path([[HARBOUR_X, 42], [HARBOUR_X, 62]], 3) // harbour road to the pier
 		.path([[8, 40], [8, 42]]) // villas
 		.path([[18, 40], [18, 42]])
@@ -74,7 +74,7 @@ export function overworld(): MapCanvas {
 	building(c, "townHall", 42, 4, { addDoor: true });
 	c.stamp(PREFABS.radioTower, 79, 5);
 	building(c, "office", 69, 22);
-	const smithyDoor = building(c, "smithy", 79, 28, { link: { toMap: "smithy", toSpawn: "entrance" } });
+	const gymDoor = building(c, "logCabin", 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
 	building(c, "villaOrange", 6, 29);
 	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
 	building(c, "villaBlue", 26, 29);
@@ -138,7 +138,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "library_door", ...libraryDoor, facing: "down" });
 	c.add({ type: "spawn", id: "kiosk_door", ...kioskDoor, facing: "down" });
 	c.add({ type: "spawn", id: "post_office_door", ...postDoor, facing: "down" });
-	c.add({ type: "spawn", id: "smithy_door", ...smithyDoor, facing: "down" });
+	c.add({ type: "spawn", id: "gym_door", ...gymDoor, facing: "down" });
 	c.add({ type: "spawn", id: "farmhouse_door", ...farmDoor, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
@@ -150,7 +150,7 @@ export function overworld(): MapCanvas {
 	sign(c, 40, 57, "Post Office. Letters for datagutt are delivered by Liv, rain or shine.");
 	sign(c, 10, 61, "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.");
 	sign(c, 71, 37, "Nettbureau. datagutt's day job, since 2021.");
-	sign(c, 85, 37, "Smithy. Tor forges tools, and the skills to use them.");
+	sign(c, 85, 37, "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.");
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("technician", 83, 12, "left"));

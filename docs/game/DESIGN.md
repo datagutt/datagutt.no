@@ -58,7 +58,7 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
 | Portfolio (this site) | Scale model of the town in datagutt's house | Meta joke: "you're standing in it" |
 | Nettbureau (current job) | Office building, town centre | Coworker NPCs |
 | Indre Østfold Data IKS | Town hall basement server room | Old sysadmin NPC |
-| Tech stack (6 categories) | Smithy/workshop, tools on 6 racks | Smith NPC (moves to the mine in v2) |
+| Tech stack (6 categories) | Gym (treningsstudio) in the red log cabin, one piece of kit per category | Tor, a gym bro who "lifts the whole stack" (changed from a smithy on 2026-09-23: LimeZu has no forge or anvil art) |
 | Open source (pinned repos, live) | Public library, one book per repo | Librarian NPC |
 | GitHub stats and contributions (live) | Farm field, one tile per day, crop height = commits | Farmer NPC |
 | Contact (email, socials) | Post office: write a letter, noticeboard | Postmaster NPC |

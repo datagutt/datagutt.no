@@ -74,10 +74,10 @@ export const NPCS: Npc[] = [
 		voice: { wave: "sawtooth", pitch: 170, variance: 0.03, volume: 0.035, every: 3 },
 	},
 	{
-		id: "smith",
+		id: "trainer",
 		name: "Tor",
-		place: "smithy",
-		personality: "Big, patient smith who treats languages and frameworks as tools on racks. Very particular about the right tool.",
+		place: "gym",
+		personality: "Friendly gym bro who runs the gym in the old log cabin. Treats the tech stack as weights: one rack per skill category, and he lifts all of it. Encouraging, a little too loud.",
 		presents: "Tech stack",
 		voice: { wave: "triangle", pitch: 150, variance: 0.04, volume: 0.1, every: 3 },
 	},

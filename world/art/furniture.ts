@@ -86,15 +86,18 @@ export const FURNITURE = {
 	noticeboard: flat("classroom", 0, 6, 2, 1),
 	writingDesk: solid("classroom", 5, 3, 2, 2),
 
-	// Smithy: a dark stone fireplace for the forge, racks and tool chests.
-	forge: solid("living", 14, 37, 2, 3),
+	// Gym (gym sheet), plus a wooden front desk.
 	dumbbellRack: solid("gym", 0, 14, 3, 2),
+	warmupRack: solid("gym", 8, 25, 2, 2),
+	barbellRack: solid("gym", 11, 4, 4, 2),
+	treadmill: solid("gym", 11, 8, 3, 4),
+	powerRack: solid("gym", 13, 25, 2, 4),
 	weightPlates: solid("gym", 9, 23, 2, 2),
-	toolChest: solid("worksite", 8, 13, 2, 3),
-	toolChestShut: solid("worksite", 8, 11, 2, 2),
-	timber: solid("worksite", 3, 13, 2, 3),
-	rebar: solid("worksite", 6, 13, 2, 3),
-	smallCabinet: solid("living", 3, 11, 2, 2),
+	weightBench: solid("gym", 11, 1, 2, 3),
+	punchingBag: solid("gym", 6, 0, 1, 3),
+	mirrorWall: flat("gym", 4, 21, 3, 2),
+	gymMat: flat("gym", 0, 1, 3, 3),
+	frontDesk: solid("conference", 8, 4, 5, 2),
 
 	// Farmhouse.
 	farmTable: solid("kitchen", 3, 15, 3, 3),

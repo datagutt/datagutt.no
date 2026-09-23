@@ -11,7 +11,7 @@ describe("passport", () => {
 			"kiosk",
 			"office",
 			"town-hall",
-			"smithy",
+			"gym",
 			"library",
 			"farm",
 			"post-office",
