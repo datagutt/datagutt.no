@@ -57,7 +57,7 @@ test.describe("world", () => {
 	});
 
 	test("talking to datagutt stamps the passport", async ({ page }) => {
-		await continueAt(page, { map: "house", x: 5, y: 5, facing: "left" });
+		await continueAt(page, { map: "house-up", x: 6, y: 5, facing: "left" });
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
 
@@ -99,7 +99,7 @@ test.describe("world", () => {
 
 	test("a link offered in dialogue opens in a new tab", async ({ page, context }) => {
 		// Stand next to datagutt, facing him.
-		await continueAt(page, { map: "house", x: 5, y: 5, facing: "left" });
+		await continueAt(page, { map: "house-up", x: 6, y: 5, facing: "left" });
 
 		await page.keyboard.press("e");
 		// Read until the topics appear, then pick "Where can I find you online?".

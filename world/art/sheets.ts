@@ -32,6 +32,7 @@ export const SHEETS = {
 	grocery: "interiors/Theme_Sorter/16_Grocery_store_16x16.png",
 	museum: "interiors/Theme_Sorter/22_Museum.png",
 	studio: "interiors/Theme_Sorter/23_Television_and_Film_Studio.png",
+	upstairs: "interiors/Theme_Sorter/17_Visibile_Upstairs_System_16x16.png",
 	sea: "exteriors/Animated_16x16/Animated_Terrains_16x16/Sea_Water_Tileset_Basic_16x16.png",
 	seaCorners: "exteriors/Animated_16x16/Animated_Terrains_16x16/Sea_Water_Tileset_Outer_Corners_16x16.png",
 } as const;

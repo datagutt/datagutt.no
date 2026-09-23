@@ -18,4 +18,13 @@ export const FURNITURE = {
 	doormat: flat("generic", 0, 44, 3, 2),
 	/** Wooden window; the sheet draws it straddling tile edges, so it sits mid-wall. */
 	window: flat("generic", 10, 43, 2, 2),
+	stove: solid("kitchen", 8, 11, 2, 2),
+	/** A wooden table drawn across the middle of a 4×3 block. */
+	table: { sheet: "generic", col: 0, row: 5, w: 4, h: 3, aboveRows: 0, collision: [".##.", ".##."] },
+	chair: solid("kitchen", 4, 11, 1, 2),
+	/** Staircase going up; walk up its middle column. */
+	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
+	/** Stairs going down, seen from above: a railing on three sides around the steps. */
+	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 3, aboveRows: 0, collision: ["#.#", "#.#", "#.#"] },
+	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 3, aboveRows: 3, collision: [] },
 } satisfies Record<string, Prefab>;

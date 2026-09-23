@@ -23,6 +23,13 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     (terrain sets, cobble, plateau 9-slice with stairs, pier, fence, decals, crops),
     `prefabs.ts` (buildings with doors, trees, props). Landscape helpers in
     `world/gen/features.ts` (plateau, pier, forest, fence, meadow, building).
+  - M3.8 started: datagutt's house has two floors (user request): `house` (living room,
+    kitchen, scale model, stairs up) and `house-up` (Thomas at two desks, mini-fridge,
+    bed, stairwell down), in `world/gen/maps/house.ts`. Rooms come from
+    `world/gen/interior.ts` (Room Builder walls/floors/border), furniture from
+    `world/art/furniture.ts`. The greybox pipeline is gone.
+  - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
+    pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
   - Every building has a notice-board sign with its name and a line of flavour
     (user request). NPCs stand outside their buildings for now; M3.8 moves each one
     indoors as its interior is built (Arne stays on the pier, Ola in the field).
@@ -106,8 +113,10 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
 
 ## Next step
 
-M3.8 interiors (the Interiors sheets are not surveyed yet), starting with datagutt's
-house, moving each NPC indoors as its interior lands and wiring its door. Then the rest
+M3.8: the other nine interiors (boathouse studio: studio sheet has green screen, lights,
+cameras; library: classroom sheet shelves; kiosk: grocery; town hall + basement server
+room; office; smithy; farmhouse; post office; radio hut), moving each NPC indoors as its
+interior lands and wiring its door with `building(..., { link })`. Then the rest
 of M3.6 (reachability from the dock), seasons (M3.9), live library and farm (M3.11).
 **M0.11 (Vercel token) stays deferred** until the user asks.
 
