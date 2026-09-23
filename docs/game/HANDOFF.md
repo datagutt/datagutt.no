@@ -14,6 +14,9 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
   and UI art, character and portrait generator layers (with `.ase` sources), and the
   original licence files: about 30k files, 85 MB. Layout is in its README.md. The zips
   and generator tool builds stay local and gitignored.
+- M2.8 drafted: 11 NPCs in `game/npcs.ts` (name, place, personality, voice) with sprite
+  recipes in `game/assets/manifest.ts`. Portraits are derived from sprite layers unless a
+  recipe sets `portrait` (or `false`). Voices moved from blips.ts into the roster.
 - M2.7 done: `# link:` tags offer "Open …?" after a line; e2e confirms a real popup.
   Input now queues every direction press (`dirPresses`).
 - M2.6 done: synthesised per-character dialogue blips through Phaser's Web Audio output
@@ -58,15 +61,16 @@ Last updated: 2026-09-23 (session 1: design, planning, assets repo, M0, M1 compl
 
 ## Next step
 
-**M2.8**: draft the NPC roster (names, one-line personalities, sprite and portrait
-recipes, blip voices, knots) in `game/npcs.ts` for the user to review, then **M2.9** (all
-Ink scripts). **M0.11 (Vercel token) stays deferred** until the user asks.
+**M2.8 is waiting on the user's review** of the NPC roster (`game/npcs.ts`; line-up image
+at `public/game/dev/roster.png`, regenerate with the snippet in the M2.8 commit). While
+waiting, **M2.10** (passport and stamps) does not depend on names. Then **M2.9** (all Ink
+scripts). **M0.11 (Vercel token) stays deferred** until the user asks.
 
 ## Blockers and things waiting on the user
 
 - A fine-grained read-only token for that repo, stored in Vercel as `ASSETS_REPO_TOKEN`
   (M0.11).
-- Review of the NPC roster and dialogue drafts later in M2.
+- Review of the NPC roster (M2.8, now) and dialogue drafts (M2.9).
 
 ## Gotchas learned so far
 

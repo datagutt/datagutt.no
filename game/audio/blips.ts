@@ -1,6 +1,7 @@
 // Undertale-style dialogue blips (docs/game/PLAN.md M2.6): a short synthesised tone per
 // revealed letter, with a distinct voice per character. Plays through Phaser's Web Audio
 // context so it shares the browser's audio unlock and the master mute.
+import { npc } from "../npcs";
 
 export type Voice = {
 	wave: OscillatorType;
@@ -15,14 +16,9 @@ export type Voice = {
 
 export const DEFAULT_VOICE: Voice = { wave: "square", pitch: 440, variance: 0.06, volume: 0.05, every: 2 };
 
-/** Voices by character id. Unlisted characters use DEFAULT_VOICE. */
-export const VOICES: Record<string, Voice> = {
-	datagutt: { wave: "square", pitch: 520, variance: 0.08, volume: 0.045, every: 2 },
-	ferryman: { wave: "triangle", pitch: 190, variance: 0.05, volume: 0.09, every: 3 },
-};
-
+/** A character's voice from the NPC roster, or the default. */
 export function voiceFor(character: string | null): Voice {
-	return (character && VOICES[character]) || DEFAULT_VOICE;
+	return (character && npc(character)?.voice) || DEFAULT_VOICE;
 }
 
 /** Whether revealing `text[index]` should make a sound: letters and digits only, spaced out. */

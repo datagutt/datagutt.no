@@ -10,10 +10,11 @@ export type CharacterRecipe = {
 	/** Main colour of the stand-in sprite drawn in placeholder mode. */
 	placeholder: string;
 	/**
-	 * Dialogue portrait from the portrait generator, relative to limezu/portraits/.
-	 * Same stacking order (skin, eyes, hair, accessories); `recolor` applies here too.
+	 * Dialogue portrait layers, relative to limezu/portraits/. Omit it to derive the
+	 * portrait from `layers` (the two generators share numbering); `false` for none.
+	 * `recolor` applies here too.
 	 */
-	portrait?: string[];
+	portrait?: string[] | false;
 };
 
 export const CHARACTERS = {
@@ -26,6 +27,7 @@ export const CHARACTERS = {
 			"Hairstyles/Hairstyle_05_03.png",
 			"Accessories/Accessory_03_Backpack_01.png",
 		],
+		portrait: false,
 		placeholder: "4f8a5b",
 	},
 	/**
@@ -39,12 +41,6 @@ export const CHARACTERS = {
 			"Outfits/Outfit_14_04.png",
 			"Hairstyles/Hairstyle_20_01.png",
 			"Accessories/Accessory_15_Glasses_01.png",
-		],
-		portrait: [
-			"Skins/PG_Skin_2.png",
-			"Eyes/PG_Eyes_01.png",
-			"Hairstyles/PG_Hairstyle_20_1.png",
-			"Accessories/PG_Accessory_15_Glasses_1.png",
 		],
 		recolor: {
 			cc9659: "f7d768",
@@ -66,14 +62,80 @@ export const CHARACTERS = {
 			"Accessories/Accessory_11_Beanie_01.png",
 			"Accessories/Accessory_13_Beard_05.png",
 		],
-		portrait: [
-			"Skins/PG_Skin_4.png",
-			"Eyes/PG_Eyes_02.png",
-			"Hairstyles/PG_Hairstyle_08_5.png",
-			"Accessories/PG_Accessory_11_Beanie_1.png",
-			"Accessories/PG_Accessory_13_Beard_5.png",
-		],
 		placeholder: "3d6f8e",
+	},
+	streamer: {
+		layers: ["Bodies/Body_03.png", "Eyes/Eyes_03.png", "Outfits/Outfit_19_01.png", "Hairstyles/Hairstyle_29_04.png"],
+		placeholder: "5a8fd8",
+	},
+	technician: {
+		layers: [
+			"Bodies/Body_04.png",
+			"Eyes/Eyes_02.png",
+			"Outfits/Outfit_16_02.png",
+			"Hairstyles/Hairstyle_12_04.png",
+			"Accessories/Accessory_11_Beanie_02.png",
+		],
+		placeholder: "e07b39",
+	},
+	shopkeeper: {
+		layers: ["Bodies/Body_02.png", "Eyes/Eyes_04.png", "Outfits/Outfit_09_02.png", "Hairstyles/Hairstyle_11_03.png"],
+		placeholder: "e8c86a",
+	},
+	coworker: {
+		layers: ["Bodies/Body_01.png", "Eyes/Eyes_05.png", "Outfits/Outfit_13_02.png", "Hairstyles/Hairstyle_04_04.png"],
+		placeholder: "a88fd0",
+	},
+	sysadmin: {
+		layers: [
+			"Bodies/Body_02.png",
+			"Eyes/Eyes_06.png",
+			"Outfits/Outfit_22_01.png",
+			"Hairstyles/Hairstyle_01_05.png",
+			"Accessories/Accessory_12_Mustache_05.png",
+			"Accessories/Accessory_15_Glasses_02.png",
+		],
+		placeholder: "7d8594",
+	},
+	smith: {
+		layers: [
+			"Bodies/Body_07.png",
+			"Eyes/Eyes_02.png",
+			"Outfits/Outfit_18_01.png",
+			"Hairstyles/Hairstyle_21_03.png",
+			"Accessories/Accessory_13_Beard_04.png",
+		],
+		placeholder: "9a5a32",
+	},
+	librarian: {
+		layers: [
+			"Bodies/Body_03.png",
+			"Eyes/Eyes_07.png",
+			"Outfits/Outfit_12_02.png",
+			"Hairstyles/Hairstyle_18_05.png",
+			"Accessories/Accessory_15_Glasses_05.png",
+		],
+		placeholder: "b87a9a",
+	},
+	farmer: {
+		layers: [
+			"Bodies/Body_04.png",
+			"Eyes/Eyes_01.png",
+			"Outfits/Outfit_26_02.png",
+			"Hairstyles/Hairstyle_08_03.png",
+			"Accessories/Accessory_04_Snapback_06.png",
+		],
+		placeholder: "6f9a45",
+	},
+	postmaster: {
+		layers: [
+			"Bodies/Body_01.png",
+			"Eyes/Eyes_03.png",
+			"Outfits/Outfit_15_03.png",
+			"Hairstyles/Hairstyle_23_02.png",
+			"Accessories/Accessory_06_Policeman_Hat_02.png",
+		],
+		placeholder: "3b5fa8",
 	},
 } satisfies Record<string, CharacterRecipe>;
 

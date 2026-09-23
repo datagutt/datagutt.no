@@ -147,13 +147,34 @@ async function placeholderCharacter(recipe) {
 const PORTRAIT_ROWS = Object.keys(PORTRAIT_ANIMS).length;
 const P = PORTRAIT_CROP.size;
 
+/**
+ * Portrait layers for a recipe: explicit ones, or derived from the sprite layers (the two
+ * generators share numbering; outfits don't appear in head portraits). Accessories the
+ * portrait generator lacks, such as backpacks, are skipped.
+ */
+export function portraitLayers(recipe, exists) {
+	if (recipe.portrait === false) return null;
+	if (Array.isArray(recipe.portrait)) return recipe.portrait;
+	return recipe.layers.flatMap((layer) => {
+		let m;
+		if ((m = /^Bodies\/Body_0?(\d+)\.png$/.exec(layer))) return [`Skins/PG_Skin_${Number(m[1])}.png`];
+		if ((m = /^Eyes\/Eyes_(\d+)\.png$/.exec(layer))) return [`Eyes/PG_Eyes_${m[1]}.png`];
+		if ((m = /^Hairstyles\/Hairstyle_(\d+)_0?(\d+)\.png$/.exec(layer))) return [`Hairstyles/PG_Hairstyle_${m[1]}_${Number(m[2])}.png`];
+		if ((m = /^Accessories\/Accessory_(.+)_0?(\d+)\.png$/.exec(layer))) {
+			const candidate = `Accessories/PG_Accessory_${m[1]}_${Number(m[2])}.png`;
+			return exists(candidate) ? [candidate] : [];
+		}
+		return [];
+	});
+}
+
 /** Stack the portrait layers, then crop every frame to the area heads actually use. */
 async function composePortrait(id, recipe) {
 	const dir = path.join(source.dir, "limezu/portraits");
 	const width = PORTRAIT_COLUMNS * PORTRAIT_SOURCE_FRAME;
 	const height = PORTRAIT_ROWS * PORTRAIT_SOURCE_FRAME;
 	const layers = [];
-	for (const layer of recipe.portrait) {
+	for (const layer of portraitLayers(recipe, (f) => fs.existsSync(path.join(dir, f)))) {
 		const file = path.join(dir, layer);
 		if (!fs.existsSync(file)) throw new Error(`Portrait "${id}": layer ${layer} does not exist in the assets repo`);
 		let buf = await sharp(file).extract({ left: 0, top: 0, width, height }).png().toBuffer();
@@ -217,7 +238,7 @@ const tileset = await buildGreyboxTileset();
 for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	const png = source.mode === "placeholder" ? await placeholderCharacter(recipe) : await composeCharacter(id, recipe);
 	fs.writeFileSync(path.join(outDir, `characters/${id}.png`), png);
-	if (recipe.portrait) {
+	if (recipe.portrait !== false) {
 		const portrait = source.mode === "placeholder" ? await placeholderPortrait(recipe) : await composePortrait(id, recipe);
 		fs.writeFileSync(path.join(outDir, `portraits/${id}.png`), portrait);
 	}
@@ -265,7 +286,7 @@ const manifest = {
 	mode: source.mode,
 	builtAt: new Date().toISOString(),
 	characters: Object.keys(CHARACTERS),
-	portraits: Object.entries(CHARACTERS).flatMap(([id, r]) => (r.portrait ? [id] : [])),
+	portraits: Object.entries(CHARACTERS).flatMap(([id, r]) => (r.portrait !== false ? [id] : [])),
 	maps: GREYBOX_MAPS.map((m) => m.id),
 	tilesets: [tileset.name],
 	fonts: ["pixel"],

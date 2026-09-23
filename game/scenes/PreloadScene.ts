@@ -36,7 +36,7 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.image("ui:frame", "ui/frame.png");
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
-			if ("portrait" in recipe) {
+			if (!("portrait" in recipe && recipe.portrait === false)) {
 				const size = PORTRAIT_CROP.size;
 				this.load.spritesheet(portraitKey(id), `portraits/${id}.png`, { frameWidth: size, frameHeight: size });
 			}
@@ -60,7 +60,7 @@ export class PreloadScene extends Phaser.Scene {
 			}
 		}
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
-			if (!("portrait" in recipe)) continue;
+			if ("portrait" in recipe && recipe.portrait === false) continue;
 			for (const anim of Object.keys(PORTRAIT_ANIMS) as PortraitAnim[]) {
 				this.anims.create({
 					key: portraitKey(id, anim),
