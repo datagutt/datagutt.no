@@ -9,7 +9,17 @@
  * One tile of a sheet. `flip` holds Tiled's per-tile transform bits (see FLIP in
  * world/gen/canvas.ts); the same sheet tile keeps one id however it is turned.
  */
-export type TileRef = { sheet: string; col: number; row: number; flip?: number };
+export type TileRef = {
+	sheet: string;
+	col: number;
+	row: number;
+	flip?: number;
+	/**
+	 * A stacked tile: these tiles drawn bottom to top into one atlas tile (each with its own
+	 * flip). Used where objects overlap, since a map cell holds one tile per layer.
+	 */
+	parts?: TileRef[];
+};
 export type Block = { sheet: string; col: number; row: number };
 
 export type Piece =

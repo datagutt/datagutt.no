@@ -233,9 +233,12 @@ Goal: the real town, painted, in all seasons.
 - [ ] **M3.10** Character build: composite NPC walk sheets from generator layers per
       recipe; hand-edit the datagutt sprite and portrait to match the avatar (chunky black
       glasses). *Done when* every NPC in the roster has a sprite and portrait.
-- [ ] **M3.11** Library and farm from live data: one book per pinned repo (spine colour
+- [x] **M3.11** Library and farm from live data: one book per pinned repo (spine colour
       from the repo's language), contribution field with one tile per day and crop height
-      from the level. *Done when* both reflect real data.
+      from the level. *Done when* both reflect real data. (User chose 26 weeks × 7 days,
+      GitHub-style, along the top of the farm; `game/live/field.ts`. The featured shelf
+      gets a spine per pinned repo in its language colour (`game/live/shelf.ts`) and reads
+      them out through the `featured_shelf` knot: signs can run Ink knots now.)
 - [x] **M3.12** Closed buildings read as closed (user idea): a building whose interior
       doesn't exist yet (the Nettbureau office for now) gets a visibly shut door (a
       "Stengt / Closed" sign or boarded door) and a line when you try it ("It's locked.

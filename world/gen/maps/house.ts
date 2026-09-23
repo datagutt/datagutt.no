@@ -24,7 +24,8 @@ export function house(): MapCanvas {
 	c.stamp(F.stairsUp, 15, 1);
 
 	// Dining: the chairs face the table from either side.
-	c.stamp(F.table, 3, 6).stamp(F.chairFacingRight, 3, 6).stamp(F.chairFacingLeft, 6, 6);
+	// Chairs first, so the table's edge draws over them (tiles stack in stamping order).
+	c.stamp(F.chairFacingRight, 3, 6).stamp(F.chairFacingLeft, 6, 6).stamp(F.table, 3, 6);
 	// TV lounge: sofas on both sides of the rug, turned toward the TV.
 	c.stamp(F.rug, 9, 6);
 	c.stamp(F.sofaFacingRight, 8, 5).stamp(F.sofaFacingLeft, 12, 5);

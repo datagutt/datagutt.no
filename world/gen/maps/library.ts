@@ -20,13 +20,15 @@ export function library(): MapCanvas {
 	c.stamp(F.plantTall, 15, 1);
 	c.stamp(bookcase("narrow2", 0), 16, 1).stamp(bookcase("narrow", 2), 18, 1).stamp(bookcase("wide", 1), 20, 1);
 	c.add(glow(12, 3, GLOWS.lamp));
+	// The game stands one book per pinned repo on the featured shelf (M3.11).
+	c.add({ type: "books", x: 11, y: 2, w: 3, h: 1 });
 
 	// Aisles on the left: long bookcases seen end-on.
 	for (const x of [3, 5, 7]) c.stamp(F.aisleShelf, x, 6);
 
 	// Reading corner on the right: two tables, chairs turned in, a lamp over each.
 	for (const y of [5, 8]) {
-		c.stamp(F.table, 17, y).stamp(F.chairDarkRight, 17, y).stamp(F.chairDarkLeft, 20, y);
+		c.stamp(F.chairDarkRight, 17, y).stamp(F.chairDarkLeft, 20, y).stamp(F.table, 17, y);
 		c.add(glow(18, y, GLOWS.readingLamp));
 		c.stamp(SHADE.blob, 17, y + 2);
 	}
@@ -40,7 +42,13 @@ export function library(): MapCanvas {
 	exitDoor(c, r, 12, { toMap: "town", toSpawn: "library_door" });
 	const solveig = NPCS.find((n) => n.id === "librarian")!;
 	c.add({ type: "npc", id: "librarian", character: "librarian", x: 12, y: 7, facing: "down", name: solveig.name, dialogue: "librarian" });
-	c.add({ type: "sign", x: 12, y: 3, text: "* The featured shelf. Every book on it is one of Thomas's projects, free for anyone to borrow." });
+	c.add({
+		type: "sign",
+		x: 12,
+		y: 3,
+		text: "* The featured shelf. Every book on it is one of Thomas's projects, free for anyone to borrow.",
+		dialogue: "featured_shelf",
+	});
 	c.add({ type: "sign", x: 22, y: 4, text: "* A globe. Someone has drawn a tiny circle around Norway." });
 	return c;
 }

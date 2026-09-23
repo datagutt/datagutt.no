@@ -7,7 +7,7 @@ import { DERIVED, SHEETS, SINGLES, type SheetId } from "../art/sheets.ts";
 import { singleKeys } from "../art/singleKey.ts";
 import { FLIP } from "./canvas.ts";
 import { fxSheet } from "./fx.ts";
-import { ATLAS_CAPACITY, ATLAS_COLUMNS, parseKey, RESERVED } from "./registry.ts";
+import { ATLAS_CAPACITY, ATLAS_COLUMNS, keyParts, RESERVED } from "./registry.ts";
 
 const T = 16;
 /** Quadrant size for placeholder colour sketches. */
@@ -139,14 +139,21 @@ function drawReserved(atlas: Raw) {
 
 const png = (raw: Raw) => sharp(raw.data, { raw: { width: raw.width, height: raw.height, channels: 4 } }).png({ compressionLevel: 9 }).toBuffer();
 
+/** Draw a registry key's tile (all its stacked parts, with their flips) at (dx, dy). */
+export async function drawKey(key: string, sheets: SheetCache, dst: Raw, dx: number, dy: number, flip = 0, blend: "normal" | "multiply" | "add" = "normal") {
+	for (const part of keyParts(key) ?? []) {
+		// A stacked tile's own flip is always 0; a plain tile's comes from its gid.
+		blitTile(await sheets.get(part.sheet), part.col * T, part.row * T, dst, dx, dy, part.flip || flip, blend);
+	}
+}
+
 export async function buildAtlas(tiles: string[], sheets: SheetCache): Promise<Buffer> {
 	const atlas = emptyAtlas();
 	drawReserved(atlas);
 	for (const [id, key] of tiles.entries()) {
-		const ref = parseKey(key);
-		if (!ref) continue;
+		if (key.startsWith("@")) continue;
 		const [ox, oy] = slot(id);
-		blitTile(await sheets.get(ref.sheet), ref.col * T, ref.row * T, atlas, ox, oy);
+		await drawKey(key, sheets, atlas, ox, oy);
 	}
 	return png(atlas);
 }
@@ -161,9 +168,12 @@ export type TileColors = Record<string, string>;
 export async function tileColors(tiles: string[], sheets: SheetCache): Promise<TileColors> {
 	const out: TileColors = {};
 	for (const key of tiles) {
-		const ref = parseKey(key);
-		if (!ref || ref.sheet === "fx") continue;
-		const src = await sheets.get(ref.sheet);
+		const parts = keyParts(key);
+		if (!parts || (parts.length === 1 && parts[0].sheet === "fx")) continue;
+		// Compose the tile (stacks included) and sketch that.
+		const src: Raw = { data: Buffer.alloc(T * T * 4), width: T, height: T };
+		await drawKey(key, sheets, src, 0, 0);
+		const ref = { col: 0, row: 0 };
 		const cells: string[] = [];
 		for (let by = 0; by < 2; by++) {
 			for (let bx = 0; bx < 2; bx++) {
@@ -192,10 +202,10 @@ export async function buildPlaceholderAtlas(tiles: string[], colors: TileColors)
 	drawReserved(atlas);
 	for (const [id, key] of tiles.entries()) {
 		const [ox, oy] = slot(id);
-		const ref = parseKey(key);
+		const parts = keyParts(key);
 		// Light and shade tiles are generated, not LimeZu art: draw them for real.
-		if (ref?.sheet === "fx") {
-			blitTile(fxSheet(), ref.col * T, ref.row * T, atlas, ox, oy);
+		if (parts?.length === 1 && parts[0].sheet === "fx") {
+			blitTile(fxSheet(), parts[0].col * T, parts[0].row * T, atlas, ox, oy);
 			continue;
 		}
 		const sketch = colors[key];

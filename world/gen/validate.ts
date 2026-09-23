@@ -26,7 +26,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		NEIGHBOURS.some(([dx, dy]) => walkable(o.x + dx, o.y + dy) && !occupied.has(`${o.x + dx},${o.y + dy}`));
 
 	for (const o of objects) {
-		if (o.type === "light") continue; // lights sit anywhere, on top of other things
+		if (o.type === "light" || o.type === "crops" || o.type === "books") continue; // areas and lights overlap other things
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const key = `${o.x},${o.y}`;
 		const other = at.get(key);
@@ -80,7 +80,7 @@ function checkReachable(
 		NEIGHBOURS.some(([dx, dy]) => [2, 3].some((d) => reached(o.x + dx * d, o.y + dy * d) && !walkable(o.x + dx, o.y + dy)));
 	const problems: string[] = [];
 	for (const o of objects) {
-		if (o.type === "light") continue;
+		if (o.type === "light" || o.type === "crops" || o.type === "books") continue;
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const ok =
 			o.type === "door" || o.type === "spawn" ? reached(o.x, o.y) : o.type === "npc" ? fromSide(o) || acrossCounter(o) : fromSide(o);

@@ -41,3 +41,21 @@ describe("blitTile", () => {
 		expect([...dst.data.subarray(15 * 4, 15 * 4 + 4)]).toEqual([255, 0, 0, 255]);
 	});
 });
+
+describe("stacking and assembled prefabs", () => {
+	it("keeps both tiles where prefabs overlap, in stamping order", () => {
+		const table: Prefab = { sheet: "t", col: 0, row: 0, w: 2, h: 1, aboveRows: 0 };
+		const c = new MapCanvas(2, 1).stamp(chair, 0, 0).stamp(table, 0, 0);
+		expect(c.get("below", 0, 0)?.parts?.map((p) => p.sheet)).toEqual(["s", "t"]);
+		const tmj = canvasToTmj("t", c, new TileRegistry());
+		expect((tmj.layers.find((l) => l.name === "below")!.data as number[]).every((g) => g > 0)).toBe(true);
+	});
+
+	it("stamps every part of an assembled prefab at its offset", () => {
+		const top: Prefab = { sheet: "a", col: 0, row: 0, w: 1, h: 1, aboveRows: 0 };
+		const end: Prefab = { sheet: "b", col: 0, row: 0, w: 1, h: 1, aboveRows: 0 };
+		const sofa: Prefab = { sheet: "parts", col: 0, row: 0, w: 1, h: 2, aboveRows: 0, parts: [{ prefab: top, dx: 0, dy: 0 }, { prefab: end, dx: 0, dy: 1 }] };
+		const c = new MapCanvas(1, 2).stamp(sofa, 0, 0);
+		expect([c.get("below", 0, 0)?.sheet, c.get("below", 0, 1)?.sheet]).toEqual(["a", "b"]);
+	});
+});

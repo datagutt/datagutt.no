@@ -7,9 +7,17 @@ export type Facing = "right" | "up" | "left" | "down";
 export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
 	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string }
-	| { type: "sign"; x: number; y: number; text: string }
+	/** A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. */
+	| { type: "sign"; x: number; y: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
-	| LightObject;
+	| LightObject
+	/**
+	 * Live content drawn by the game from the WorldState (M3.11): `crops` is the farm field
+	 * (one tile per day; `stages` lists the growth-stage tiles as gids, smallest first),
+	 * `books` the library's featured shelf (one spine per pinned repo).
+	 */
+	| { type: "crops"; x: number; y: number; w: number; h: number; stages: string }
+	| { type: "books"; x: number; y: number; w: number; h: number };
 
 /**
  * A light, drawn additively over the map and characters (game/fx/Lights.ts). A glow is
@@ -58,10 +66,16 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			return { type: "spawn", id: obj.name || str("id"), x, y, facing: facing() };
 		case "door":
 			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn") };
-		case "sign":
-			return { type: "sign", x, y, text: str("text") };
+		case "sign": {
+			const dialogue = props.get("dialogue");
+			return { type: "sign", x, y, text: str("text"), ...(typeof dialogue === "string" && dialogue ? { dialogue } : {}) };
+		}
 		case "npc":
 			return { type: "npc", id: obj.name || str("id"), character: str("character"), x, y, facing: facing(), name: str("name"), dialogue: str("dialogue") };
+		case "crops":
+			return { type: "crops", x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize), stages: str("stages") };
+		case "books":
+			return { type: "books", x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize) };
 		case "light": {
 			const num = (name: string) => {
 				const v = Number(props.get(name));
@@ -82,8 +96,10 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 export function toTiledObject(obj: MapObject, id: number, tileSize: number): TiledObject {
 	const { type, x, y, ...rest } = obj;
 	const objectName = "id" in rest ? rest.id : "";
+	// Areas (crops, books) keep their size as the Tiled object's width and height.
+	const area = type === "crops" || type === "books" ? (rest as { w: number; h: number }) : null;
 	const properties: TiledProperty[] = Object.entries(rest)
-		.filter(([key]) => key !== "id")
+		.filter(([key]) => key !== "id" && !(area && (key === "w" || key === "h")))
 		.map(([key, value]) => ({ name: key, type: "string", value: String(value) }));
 	return {
 		id,
@@ -91,8 +107,8 @@ export function toTiledObject(obj: MapObject, id: number, tileSize: number): Til
 		type,
 		x: x * tileSize,
 		y: y * tileSize,
-		width: tileSize,
-		height: tileSize,
+		width: area ? area.w * tileSize : tileSize,
+		height: area ? area.h * tileSize : tileSize,
 		rotation: 0,
 		visible: true,
 		...(properties.length ? { properties } : {}),

@@ -6,6 +6,7 @@
 import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "../../../game/world/objects.ts";
 import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
+import { refKey } from "../registry.ts";
 import { PREFABS } from "../../art/prefabs.ts";
 import { variant } from "../../art/autotile.ts";
 import { MapCanvas } from "../canvas.ts";
@@ -36,7 +37,7 @@ export function overworld(): MapCanvas {
 	const HARBOUR_X = 49;
 	const paths = new Region(W, H)
 		.path([[5, 42], [90, 42]]) // main road
-		.path([[14, 21], [14, 42]]) // farm lane
+		.path([[14, 28], [3, 28], [3, 42]]) // farm lane: farmhouse door, west, down to the road
 		.path([[34, 27], [34, 42]]) // library
 		.path([[45, 26], [45, 30]]) // town hall
 		.path([[66, 18], [66, 42]]) // up to the radio hill
@@ -49,8 +50,10 @@ export function overworld(): MapCanvas {
 		.path([[41, 56], [41, 59]]) // post office to the beach
 		.path([[4, 44], [4, 60]]); // down the west side to the boathouse beach
 	const square = new Region(W, H).rect(38, 29, 25, 13);
-	// The farm field, fenced, with a gate onto the farm lane (M3.11 grows it from live data).
-	const FIELD = { x: 16, y: 20, w: 12, h: 8 };
+	// The farm field along the top of the farm: 26 weeks × 7 days inside the fence, laid out
+	// like GitHub's contribution calendar. The game plants it from live data (M3.11); the
+	// generator sows a sample so renders and placeholder builds show a field.
+	const FIELD = { x: 1, y: 5, w: 28, h: 9 };
 	const field = new Region(W, H).rect(FIELD.x + 1, FIELD.y + 1, FIELD.w - 2, FIELD.h - 2);
 
 	c.autotile("ground2", sand.drawable("inside"), TERRAIN.sand, { edge: "inside" });
@@ -60,16 +63,17 @@ export function overworld(): MapCanvas {
 	sea.each((x, y) => c.block(x, y));
 	new Region(W, H).rect(39, 30, 23, 11).each((x, y) => c.put("decal", x, y, COBBLE(x, y)));
 
-	fence(c, FIELD.x, FIELD.y, FIELD.w, FIELD.h, [[FIELD.x, FIELD.y + 4]]);
-	field.each((x, y) => (y - FIELD.y) % 2 === 1 && c.put("decal", x, y, CROPS[(x * 7 + y * 3) % CROPS.length]));
+	fence(c, FIELD.x, FIELD.y, FIELD.w, FIELD.h, [[15, FIELD.y + FIELD.h - 1]]);
+	field.each((x, y) => (x * 7 + y * 3) % 5 !== 0 && c.put("decal", x, y, CROPS[(x * 3 + y * 5) % CROPS.length]));
+	c.add({ type: "crops", x: FIELD.x + 1, y: FIELD.y + 1, w: FIELD.w - 2, h: FIELD.h - 2, stages: CROPS.map(refKey).join("|") });
 
 	// --- Radio hill ------------------------------------------------------------------------
 	plateau(c, 63, 5, 27, 10, [66, 67]);
 	const hutDoor = building(c, "hut", 75, 9, { link: { toMap: "radio-hut", toSpawn: "entrance" } });
 
 	// --- Buildings -------------------------------------------------------------------------
-	const farmDoor = building(c, "farmhouse", 5, 7, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
-	c.stamp(PREFABS.windmill, 23, 8);
+	const farmDoor = building(c, "farmhouse", 5, 14, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
+	c.stamp(PREFABS.windmill, 23, 15);
 	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
@@ -115,7 +119,7 @@ export function overworld(): MapCanvas {
 		.union(new Region(W, H).rect(FIELD.x, FIELD.y, FIELD.w, FIELD.h));
 	const edge = new Region(W, H)
 		.rect(0, 0, W, 5)
-		.rect(0, 0, 5, 60)
+		.rect(0, 14, 3, 46) // west edge, below the field
 		.rect(91, 0, 5, 60)
 		.rect(64, 5, 25, 2) // the back of the radio hill
 		.subtract(sand);
@@ -148,7 +152,7 @@ export function overworld(): MapCanvas {
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
 	sign(c, 33, 27, "Fjord Town Library. Every book on the shelves is one of datagutt's repositories. Shh.");
 	sign(c, 44, 26, "Town Hall. The basement hums. That's the servers, not the ghosts. Probably.");
-	sign(c, 13, 21, "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.");
+	sign(c, 12, 28, "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.");
 	sign(c, 60, 35, "Kiosk. Snacks, newspapers and Randi's opinions, all free.");
 	sign(c, 40, 57, "Post Office. Letters for datagutt are delivered by Liv, rain or shine.");
 	sign(c, 10, 61, "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.");
@@ -157,6 +161,6 @@ export function overworld(): MapCanvas {
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("coworker", 74, 38, "left"));
-	c.add(npc("farmer", 20, 28, "up"));
+	c.add(npc("farmer", 16, 12, "down"));
 	return c;
 }

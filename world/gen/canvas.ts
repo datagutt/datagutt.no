@@ -30,6 +30,11 @@ export type Prefab = {
 	collision?: string[];
 	/** Put the lower part on `ground2` instead of `below` (rugs, flat things). */
 	flat?: boolean;
+	/**
+	 * An object assembled from other prefabs (LimeZu's modular sofas and counters): each
+	 * part stamped at its offset; `sheet`, `col` and `row` are then unused.
+	 */
+	parts?: { prefab: Prefab; dx: number; dy: number }[];
 	/** The door tile, relative to the top-left corner. It stays walkable. */
 	door?: [number, number];
 	/** Per-row layers, top to bottom, overriding `aboveRows` and `flat`. */
@@ -90,6 +95,14 @@ export class MapCanvas {
 		return this;
 	}
 
+	/** Draw `tile` over what the cell already holds on `layer`, keeping both (a stack). */
+	stack(layer: LayerName, x: number, y: number, tile: TileRef): this {
+		const below = this.get(layer, x, y);
+		if (!below) return this.put(layer, x, y, tile);
+		const flatten = (t: TileRef): TileRef[] => t.parts ?? [t];
+		return this.put(layer, x, y, { sheet: "stack", col: 0, row: 0, parts: [...flatten(below), ...flatten(tile)] });
+	}
+
 	get(layer: LayerName, x: number, y: number): TileRef | null {
 		return this.inBounds(x, y) ? this.layers[layer][y * this.width + x] : null;
 	}
@@ -133,9 +146,13 @@ export class MapCanvas {
 
 	/**
 	 * Place a prefab with its top-left corner at (x, y), optionally mirrored or rotated.
-	 * Transparent tiles still overwrite.
+	 * Its tiles stack over what is already on the layer (see `stack`).
 	 */
 	stamp(prefab: Prefab, x: number, y: number, transform?: Transform): this {
+		if (prefab.parts) {
+			for (const part of prefab.parts) this.stamp(part.prefab, x + part.dx, y + part.dy, transform);
+			return this;
+		}
 		this.stamped.push(prefab);
 		const t = transform ? TRANSFORMS[transform] : null;
 		const place = (dx: number, dy: number): [number, number] => (t ? t.at(dx, dy, prefab.w, prefab.h) : [dx, dy]);
@@ -143,7 +160,8 @@ export class MapCanvas {
 			const layer: LayerName = prefab.rowLayers?.[dy] ?? (dy < prefab.aboveRows ? "above" : prefab.flat ? "ground2" : "below");
 			for (let dx = 0; dx < prefab.w; dx++) {
 				const [tx, ty] = place(dx, dy);
-				this.put(layer, x + tx, y + ty, { sheet: prefab.sheet, col: prefab.col + dx, row: prefab.row + dy, ...(t ? { flip: t.flags } : {}) });
+				// Stacked over whatever is there, so overlapping objects keep each other whole.
+				this.stack(layer, x + tx, y + ty, { sheet: prefab.sheet, col: prefab.col + dx, row: prefab.row + dy, ...(t ? { flip: t.flags } : {}) });
 			}
 		}
 		const rows =

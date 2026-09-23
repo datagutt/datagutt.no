@@ -4,7 +4,7 @@
     {~The crops are up today.|Rain's coming. Good for the commits.|Still counting? Me too.}
 - else:
     Hei! This field grows code. # nod
-    Every tile is a day of Thomas's last year. Taller crops, more commits.
+    Every tile is a day of Thomas's last half year, a week to a column. Taller crops, more commits.
 }
 - (topics)
 * [How was the harvest?]

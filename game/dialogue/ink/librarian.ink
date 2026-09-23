@@ -27,3 +27,17 @@
 { i >= repo_count(): -> topics }
 "{repo_name(i)}". {repo_desc(i)} {repo_lang(i) != "": Written in {repo_lang(i)}.} {repo_stars(i)} {repo_stars(i) == 1: star|stars}.
 -> shelf(i + 1)
+
+// The featured shelf in the library, read as a sign: one book per pinned repo (live).
+=== featured_shelf ===
+{ repo_count() == 0:
+    \* The featured shelf is bare today. A card says the books are "on their way".
+    -> END
+}
+\* The featured shelf. {repo_count()} books, one for each project Thomas has pinned.
+-> book(0)
+
+= book(i)
+{ i >= repo_count(): -> END }
+\* "{repo_name(i)}"{repo_lang(i) != "":, bound in {repo_lang(i)}}. {repo_desc(i)}
+-> book(i + 1)

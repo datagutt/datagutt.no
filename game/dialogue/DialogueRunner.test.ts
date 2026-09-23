@@ -125,5 +125,19 @@ describe("DialogueRunner", () => {
 			throw new Error(`${id} did not finish in 200 steps`);
 		},
 	);
-});
 
+	it("reads the featured shelf from live data, and copes without it", () => {
+		const repo = { author: "datagutt", name: "fjord", description: "A town.", language: "TypeScript", languageColor: "#3178c6", stars: 3, forks: 0 };
+		const live = new DialogueRunner(json, { ...ctx, world: { ...EMPTY_WORLD_STATE, repos: [repo, { ...repo, name: "boat", language: "" }] } });
+		live.start("featured_shelf");
+		const { lines, last } = read(live);
+		expect(lines[0]).toContain("2 books");
+		expect(lines[1]).toBe('* "fjord", bound in TypeScript. A town.');
+		expect(lines[2]).toBe('* "boat". A town.');
+		expect(last.type).toBe("end");
+
+		const empty = new DialogueRunner(json, ctx);
+		empty.start("featured_shelf");
+		expect(read(empty).lines[0]).toContain("bare today");
+	});
+});

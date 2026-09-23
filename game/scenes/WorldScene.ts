@@ -20,6 +20,8 @@ import { CollisionGrid, directionBetween, neighbour, type Point } from "../world
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement";
 import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects";
 import { addLights } from "../fx/Lights";
+import { fieldLevels } from "../live/field";
+import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 
 type Door = Extract<MapObject, { type: "door" }>;
@@ -91,9 +93,11 @@ export class WorldScene extends Phaser.Scene {
 		this.grid = new CollisionGrid(map.width, map.height);
 
 		// Layer order matters: `collision` then `manual_collision`, whose clear tiles unblock.
+		const layers = new Map<string, Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer>();
 		for (const layerData of map.layers) {
 			const layer = map.createLayer(layerData.name, tileset);
 			if (!layer) continue;
+			layers.set(layerData.name, layer);
 			const collisionOnly = layerData.name === "collision" || layerData.name === "manual_collision";
 			layer.setVisible(!collisionOnly);
 			layer.setDepth(layerData.name.includes("above") ? 50_000 : -1);
@@ -118,6 +122,8 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") this.signs.set(tileKey(obj), obj);
 			if (obj.type === "light") lights.push(obj);
+			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
+			if (obj.type === "books") this.stockShelf(obj);
 			if (obj.type === "npc") {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
@@ -348,6 +354,34 @@ export class WorldScene extends Phaser.Scene {
 		return id && id !== PLAYER_ID ? this.npcs.get(id) : undefined;
 	}
 
+	/** Ola's field: one tile per day of the last weeks, crops as tall as the commits. */
+	private plantField(area: Extract<MapObject, { type: "crops" }>, decal?: Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer) {
+		const days = this.services.world.contributions;
+		// Without live data the generator's sample crops stay.
+		if (!decal || !days.length) return;
+		const stages = area.stages.split(",").map(Number);
+		fieldLevels(days, area.w).forEach((row, dy) => {
+			if (dy >= area.h) return;
+			row.forEach((level, dx) => {
+				const x = area.x + dx;
+				const y = area.y + dy;
+				if (!level) decal.removeTileAt(x, y);
+				else decal.putTileAt(stages[Math.min(level, stages.length) - 1], x, y);
+			});
+		});
+	}
+
+	/** The library's featured shelf: a spine per pinned repo, in its language colour. */
+	private stockShelf(area: Extract<MapObject, { type: "books" }>) {
+		const g = this.add.graphics().setDepth(-0.5);
+		for (const s of spines(this.services.world.repos, area.w * TILE, area.h * TILE - 2)) {
+			const x = area.x * TILE + s.x;
+			const y = area.y * TILE + s.y;
+			g.fillStyle(s.edge).fillRect(x, y, s.w, s.h);
+			g.fillStyle(s.color).fillRect(x, y + 1, s.w - 1, s.h - 1);
+		}
+	}
+
 	private interactAhead() {
 		const { tile, facing } = this.player.mover;
 		const ahead = neighbour(tile, facing);
@@ -374,24 +408,37 @@ export class WorldScene extends Phaser.Scene {
 			return;
 		}
 		const sign = this.signs.get(tileKey(p));
-		if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
+		if (sign?.dialogue) this.playKnot(sign.dialogue, null, () => this.save());
+		else if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
 	}
 
 	/** Play an NPC's Ink knot beat by beat until it ends. */
 	private talk(npc: NpcDef) {
+		this.playKnot(npc.dialogue, npc, () => {
+			this.finishedTalking(npc.id);
+			this.save();
+		});
+	}
+
+	/**
+	 * Play an Ink knot to its end: spoken by `npc` (portrait, name, voice), or narrated
+	 * when `npc` is null (a sign reading live content).
+	 */
+	private playKnot(knot: string, npc: NpcDef | null, onEnd: () => void) {
 		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
-		runner.start(npc.dialogue);
+		runner.start(knot);
 		const step = () => {
 			const beat = runner.next();
 			if (beat.type === "line") {
 				const gesture = beat.tags.includes("nod") ? "nod" : beat.tags.includes("shake") ? "shake" : null;
 				// A `# speaker:` tag means someone else is talking: no portrait for them yet.
-				const portrait = beat.speaker ? null : npc.character;
-				const voice = voiceFor(beat.speaker ? null : npc.character);
+				const character = npc && !beat.speaker ? npc.character : null;
+				const voice = voiceFor(character);
 				const onChar = (text: string, i: number) => shouldBlip(text, i, voice.every) && this.blips.play(voice);
 				const link = beat.tags.map(resolveLink).find((l) => l && !("error" in l));
 				const next = link && !("error" in link) ? () => this.offerLink(link.url, link.label, step) : step;
-				this.dialogue.say(beat.text, beat.speaker ?? rosterNpc(npc.id)?.name ?? npc.name, next, { portrait, gesture, onChar });
+				const name = beat.speaker ?? (npc ? (rosterNpc(npc.id)?.name ?? npc.name) : null);
+				this.dialogue.say(beat.text, name, next, { portrait: character, gesture, onChar });
 			} else if (beat.type === "choices") {
 				this.dialogue.choose(beat.choices, (i) => {
 					runner.choose(i);
@@ -399,8 +446,7 @@ export class WorldScene extends Phaser.Scene {
 				});
 			} else {
 				this.dialogue.close();
-				this.finishedTalking(npc.id);
-				this.save();
+				onEnd();
 			}
 		};
 		step();

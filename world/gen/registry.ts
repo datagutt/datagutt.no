@@ -14,7 +14,24 @@ export const ATLAS_CAPACITY = 128 * 128;
 
 export type RegistryFile = { tiles: string[] };
 
-export const refKey = (ref: TileRef) => `${ref.sheet}:${ref.col},${ref.row}`;
+const simpleKey = (ref: TileRef) => `${ref.sheet}:${ref.col},${ref.row}`;
+
+/**
+ * A tile's registry key: "sheet:col,row". Stacked tiles join their parts bottom to top
+ * with "|", each part carrying its flip as "~n" (a stack's own gid is never flipped).
+ */
+export const refKey = (ref: TileRef): string =>
+	ref.parts ? ref.parts.map((p) => simpleKey(p) + (p.flip ? `~${p.flip}` : "")).join("|") : simpleKey(ref);
+
+/** The layers of a registry key, bottom to top, each with its flip (0 for plain keys). */
+export function keyParts(key: string): (TileRef & { flip: number })[] | null {
+	const parts = key.split("|").map((k) => {
+		const [base, flip] = k.split("~");
+		const ref = parseKey(base);
+		return ref ? { ...ref, flip: Number(flip ?? 0) } : null;
+	});
+	return parts.every(Boolean) ? (parts as (TileRef & { flip: number })[]) : null;
+}
 
 export function parseKey(key: string): TileRef | null {
 	// A sheet id, or "sheet#n" for LimeZu single n of that sheet (world/art/singles.ts).

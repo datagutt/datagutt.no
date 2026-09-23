@@ -3,8 +3,8 @@
 import sharp from "sharp";
 import { beamAlpha, glowAlpha, hexRgb } from "../../game/fx/lightShapes.ts";
 import { parseMapObject, type MapObject, type TiledObject } from "../../game/world/objects.ts";
-import { blitTile, type SheetCache } from "./atlas.ts";
-import { CLEAR_ID, COLLISION_ID, parseKey } from "./registry.ts";
+import { drawKey, type SheetCache } from "./atlas.ts";
+import { CLEAR_ID, COLLISION_ID } from "./registry.ts";
 import { decodeGid, type Tmj } from "./tmj.ts";
 
 const T = 16;
@@ -41,9 +41,9 @@ export async function renderTmj(
 		const blend = (props.find((p) => p.name === "blend")?.value ?? "normal") as "normal" | "multiply" | "add";
 		for (let i = 0; i < data.length; i++) {
 			const { gid, flip } = decodeGid(data[i]);
-			const ref = gid ? parseKey(tiles[gid - 1] ?? "") : null;
-			if (!ref) continue;
-			blitTile(await sheets.get(ref.sheet), ref.col * T, ref.row * T, out, (i % tmj.width) * T, Math.floor(i / tmj.width) * T, flip, blend);
+			const key = gid ? tiles[gid - 1] : undefined;
+			if (!key || key.startsWith("@")) continue;
+			await drawKey(key, sheets, out, (i % tmj.width) * T, Math.floor(i / tmj.width) * T, flip, blend);
 		}
 	}
 

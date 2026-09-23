@@ -262,6 +262,9 @@ for (const { id, objects } of mapObjects) {
 }
 for (const { id, objects } of mapObjects) {
 	for (const obj of objects) {
+		if (obj.type === "sign" && obj.dialogue && !dialogue.knots.includes(obj.dialogue)) {
+			throw new Error(`${id}: sign at (${obj.x}, ${obj.y}) uses dialogue "${obj.dialogue}", which is not a knot.`);
+		}
 		if (obj.type === "npc" && !dialogue.knots.includes(obj.dialogue)) {
 			throw new Error(`${id}: NPC "${obj.id}" uses dialogue "${obj.dialogue}", which is not a knot. Knots: ${dialogue.knots.join(", ")}`);
 		}

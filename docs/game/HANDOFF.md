@@ -83,6 +83,13 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
     checks everything is reachable from the entrance/ferry and that signs sit on solid
     things. Rooms are 16 wide with two-tile aisles; the house stairs were unreachable
     before this. Doors must sit on the door art (the office's and gym's were a column off).
+  - Overlaps: prefab tiles **stack** (`MapCanvas.stack`): where objects overlap, the
+    atlas gets a composite tile ("a|b~flip" registry keys) instead of one replacing the
+    other. Stamping order is drawing order (stamp chairs before their table).
+    Modular LimeZu objects are assembled with `assemble(parts)` (the side sofas: backrest
+    top, seat, end; the sheet stores those parts out of order).
+  - Coverage counts only near-opaque pixels (alpha >= 200), so baked drop shadows don't
+    block (user hit an invisible wall along the farmhouse's shadow).
   - User ideas queued in PLAN.md: M3.12 closed doors read as closed, M5.10 interaction
     prompts, M5.11 title screen v2.
   - **Art handling rules are in docs/game/ART.md** (user found half-cut sprites): use

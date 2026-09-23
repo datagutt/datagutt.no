@@ -1,7 +1,7 @@
 // Furniture and indoor props from the LimeZu Interiors theme sheets (PLAN M3.8).
 // Most block their whole footprint; rugs are flat and walkable.
 import type { Prefab } from "../gen/canvas.ts";
-import { flatSingle, sheetCoverage, single } from "./singles.ts";
+import { assemble, flatSingle, sheetCoverage, single } from "./singles.ts";
 
 /** A piece cut from a sheet; it blocks only where its art is solid (catalogue coverage). */
 const solid = (sheet: string, col: number, row: number, w: number, h: number, aboveRows = 0): Prefab => ({
@@ -43,8 +43,18 @@ export const FURNITURE = {
 	 */
 	tv: single("basement", 164, { collision: [], rowLayers: ["below", "above"] }),
 	/** Side-view sofas (a matching pair); each sprite sits to one side of its 2×4 block. */
-	sofaFacingRight: { sheet: "living", col: 9, row: 32, w: 2, h: 4, aboveRows: 0, collision: ["#.", "#.", "#."] },
-	sofaFacingLeft: { sheet: "living", col: 7, row: 32, w: 2, h: 4, aboveRows: 0, collision: [".#", ".#", ".#"] },
+	// Side-view sofas are modular in LimeZu's basement set: a backrest top (2×2), seat
+	// sections (2×1, repeatable) and an end (2×1). The sheet stores them out of order.
+	sofaFacingRight: assemble([
+		{ prefab: single("basement", 36), dx: 0, dy: 0 },
+		{ prefab: single("basement", 37), dx: 0, dy: 2 },
+		{ prefab: single("basement", 38), dx: 0, dy: 3 },
+	]),
+	sofaFacingLeft: assemble([
+		{ prefab: single("basement", 33), dx: 0, dy: 0 },
+		{ prefab: single("basement", 34), dx: 0, dy: 2 },
+		{ prefab: single("basement", 35), dx: 0, dy: 3 },
+	]),
 	/** One long desk with three computers side by side. */
 	deskTriple: solid("classroom", 3, 10, 4, 3),
 	bedHeadboard: single("bedroom", 237),

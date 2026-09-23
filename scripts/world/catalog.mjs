@@ -118,7 +118,8 @@ function detect(sheet, gap = 0) {
 
 /**
  * How much of each 16×16 tile is filled, as one character per tile: "#" at least a
- * quarter opaque (solid enough to walk into), "+" a little, "." empty. Rows joined with
+ * quarter near-opaque (solid enough to walk into; shadows don't count), "+" a little,
+ * "." empty. Rows joined with
  * "/". Metadata only; default collision is derived from it (world/art/singles.ts).
  */
 function coverage(img, x0 = 0, y0 = 0, w = img.width, h = img.height) {
@@ -131,7 +132,9 @@ function coverage(img, x0 = 0, y0 = 0, w = img.width, h = img.height) {
 				for (let px = 0; px < T; px++) {
 					const x = x0 + tx * T + px;
 					const y = y0 + ty * T + py;
-					if (x < img.width && y < img.height && img.data[(y * img.width + x) * 4 + 3] > 0) n++;
+					// Only near-opaque pixels count: LimeZu's baked drop shadows are translucent
+					// and must not block the ground they fall on.
+					if (x < img.width && y < img.height && img.data[(y * img.width + x) * 4 + 3] >= SOLID_ALPHA) n++;
 				}
 			}
 			line += n >= (T * T) / 4 ? "#" : n > 0 ? "+" : ".";
@@ -140,6 +143,9 @@ function coverage(img, x0 = 0, y0 = 0, w = img.width, h = img.height) {
 	}
 	return rows.join("/");
 }
+
+/** Alpha from which a pixel is part of the object rather than its shadow. */
+const SOLID_ALPHA = 200;
 
 const toTiles = (b) => {
 	const col = Math.floor(b.x / T);

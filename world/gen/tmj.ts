@@ -3,7 +3,7 @@
 // Tiled and are carried over untouched, after the generated layers (DESIGN.md §10).
 import { toTiledObject } from "../../game/world/objects.ts";
 import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";
-import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, type TileRegistry } from "./registry.ts";
+import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, parseKey, type TileRegistry } from "./registry.ts";
 
 const TILE = 16;
 export const WORLD_TILESET = "world";
@@ -60,7 +60,11 @@ export function canvasToTmj(
 	for (const obj of canvas.objects) {
 		if (!canvas.inBounds(obj.x, obj.y)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) is outside the map`);
 	}
-	const objects = canvas.objects.map((obj, i) => toTiledObject(obj, i + 1, TILE));
+	// Crop growth stages are tile keys in the generator and gids in the map.
+	const resolved = canvas.objects.map((obj) =>
+		obj.type === "crops" ? { ...obj, stages: obj.stages.split("|").map((k) => String(registry.id(parseKey(k)!) + 1)).join(",") } : obj,
+	);
+	const objects = resolved.map((obj, i) => toTiledObject(obj, i + 1, TILE));
 	layers.push({ id: 0, name: "objects", type: "objectgroup", x: 0, y: 0, opacity: 1, visible: true, draworder: "topdown", objects });
 
 	let nextObjectId = objects.length + 1;

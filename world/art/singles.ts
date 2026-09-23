@@ -58,3 +58,10 @@ export function single(sheet: SheetId | keyof typeof DERIVED, key: string | numb
 
 /** A single that lies flat (rugs, mats): drawn under everything, walkable. */
 export const flatSingle = (sheet: SheetId | keyof typeof DERIVED, key: string | number) => single(sheet, key, { flat: true, collision: [] });
+
+/** An object assembled from parts (LimeZu's modular sofas and counters), top-left first. */
+export function assemble(parts: { prefab: Prefab; dx: number; dy: number }[]): Prefab {
+	const w = Math.max(...parts.map((p) => p.dx + p.prefab.w));
+	const h = Math.max(...parts.map((p) => p.dy + p.prefab.h));
+	return { sheet: "parts", col: 0, row: 0, w, h, aboveRows: 0, parts };
+}
