@@ -6226,6 +6226,10 @@
 		"workplace:8,31|workplace:14,27|workplace:1,10",
 		"workplace:11,29|workplace:8,27|workplace:1,10",
 		"workplace:5,31|workplace:11,27|workplace:1,8",
-		"workplace:8,29|workplace:8,27|workplace:1,8"
+		"workplace:8,29|workplace:8,27|workplace:1,8",
+		"kitchen#280:0,0|kitchen:3,15",
+		"kitchen#370:0,0|kitchen:5,15",
+		"kitchen#280:0,1|kitchen:3,16",
+		"kitchen#370:0,1|kitchen:5,16"
 	]
 }

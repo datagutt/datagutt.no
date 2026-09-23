@@ -195,7 +195,6 @@ export const FURNITURE = {
 	backpackTan: single("workplace", 335),
 	/** An espresso machine on a counter, cups and a grinder beside it. */
 	coffeeBar: single("workplace", 320),
-	officeChair: single("workplace", 112),
 	whiteboard: single("workplace", 170, { collision: [] }),
 	whiteboardChart: single("workplace", 171, { collision: [] }),
 	whiteboardPie: single("workplace", 172, { collision: [] }),

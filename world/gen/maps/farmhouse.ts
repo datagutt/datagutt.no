@@ -21,7 +21,7 @@ export function farmhouse(): MapCanvas {
 	// The table, chairs turned in, a round rug by it.
 	c.stamp(F.roundRug, 9, 5);
 	// Chairs first, so the table's edge draws over them (tiles stack in stamping order).
-	c.stamp(F.chairRedRight, 5, 4).stamp(F.chairRedLeft, 9, 4).stamp(F.farmTable, 6, 4);
+	c.stamp(F.chairRedRight, 6, 4).stamp(F.chairRedLeft, 8, 4).stamp(F.farmTable, 6, 4);
 	shadowUnder(c, F.farmTable, 6, 4);
 	// Ledger on the sideboard, vegetables by the door.
 	c.stamp(F.sideboard, 2, 6);

@@ -19,7 +19,8 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   Modern Office singles 323 and 328 are printer desks, not computers (`printerDesk`).
   Of the four office chairs per colour in the sheet (rows 8 and 10), column 1 is the
   back view (a plain shell); columns 0, 2 and 3 face the viewer and look turned away
-  from the desk.
+  from the desk. Every other seat in the game faces the right way (checked 2026-09-23).
+  Side chairs pair with the 4-wide `table` at the table's own x and x + 3, as in the house.
   The user asked for a looser layout (pairs, rows out of step, bags on the floor), plus
   arcade machines and ping pong from the basement sheet in the lounge.
 - **Town hall basement (M3.8), waiting on the user's review.** The plain door by the

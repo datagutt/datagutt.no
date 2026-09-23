@@ -72,7 +72,7 @@ export function office(): MapCanvas {
 	officeDesk(c, 25, 9, F.deskLilac, F.setupPhone);
 	c.stamp(F.backpackTan, 27, 5);
 	// Kitchen: a table for lunch, chairs turned in.
-	c.stamp(F.chairFacingRight, 32, 7).stamp(F.chairFacingLeft, 37, 7).stamp(F.table, 33, 6);
+	c.stamp(F.chairFacingRight, 33, 6).stamp(F.chairFacingLeft, 36, 6).stamp(F.table, 33, 6);
 	shadowUnder(c, F.table, 33, 6, true);
 
 	// The glass wall across the floor, with ways through.
