@@ -60,7 +60,8 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		const onKey = (e: KeyboardEvent) => {
 			if (e.metaKey || e.ctrlKey || e.altKey) return;
 			if (screen === "splash") {
-				if (e.key === "Tab") return;
+				// Tab moves focus, and Enter on the Journal link follows it.
+				if (e.key === "Tab" || document.activeElement instanceof HTMLAnchorElement) return;
 				e.preventDefault();
 				setScreen("menu");
 				return;
@@ -104,6 +105,9 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 	}, [playing]);
 
 	const enter = (fresh: boolean) => {
+		// Focus moves from the menu to the game: the game ignores keys while a page control
+		// has focus, and Tab from the game goes on to the Journal link after it.
+		containerRef.current?.focus({ preventScroll: true });
 		handleRef.current?.start({ fresh });
 		setPhase("playing");
 	};
@@ -115,20 +119,34 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		<div ref={rootRef} className="fixed inset-0 overflow-hidden bg-[#3f7fe0]">
 			<div
 				ref={containerRef}
-				className="absolute inset-0"
+				tabIndex={-1}
+				className="absolute inset-0 outline-none"
 				role="application"
-				aria-label="Fjord Town, a game version of datagutt's portfolio. The normal website has the same content as plain text."
+				aria-label="Fjord Town, a game version of datagutt's portfolio. The Journal link after it has the same content as a normal web page."
 			/>
+			{/* The first link on the page, and the next stop when Tab leaves the game, so a
+			    screen reader or keyboard reaches the Journal in one step. While playing it is
+			    the corner button on phones; elsewhere it shows when focused. */}
+			<Link
+				href="/journal"
+				aria-label="Journal: read it as a normal website"
+				className={`z-20 border-2 border-[#e8f5e9]/70 bg-[#0b1320]/80 px-3 py-1.5 font-pixel text-xs uppercase tracking-wider text-[#e8f5e9] ${
+					playing ? "absolute right-3 top-3 md:sr-only md:focus:not-sr-only" : "sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3"
+				}`}
+			>
+				Journal
+			</Link>
 
 			<div
 				className={`absolute inset-0 transition-opacity duration-700 ${playing ? "pointer-events-none opacity-0" : "opacity-100"}`}
 				aria-hidden={playing}
+				inert={playing}
 				onClick={screen === "splash" ? () => setScreen("menu") : undefined}
 			>
 				{titleArt}
 				<div className="absolute inset-x-0 top-[9vh] flex flex-col items-center px-4 text-center">
 					<h1 className="title-logo font-pixel text-6xl uppercase tracking-[0.12em] text-[#fff4d6] sm:text-8xl">datagutt</h1>
-					<p className="mt-4 border-2 border-[#1b2440] bg-[#e8505b] px-4 py-1 font-pixel text-base uppercase tracking-[0.3em] text-[#fff4d6] shadow-[3px_3px_0_#1b2440] sm:text-lg">
+					<p className="mt-4 border-2 border-[#1b2440] bg-[#b83a38] px-4 py-1 font-pixel text-base uppercase tracking-[0.3em] text-[#fff4d6] shadow-[3px_3px_0_#1b2440] sm:text-lg">
 						Fjord Town
 					</p>
 				</div>
@@ -216,15 +234,6 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 					</noscript>
 				</div>
 			</div>
-
-			{playing && (
-				<Link
-					href="/journal"
-					className="absolute right-3 top-3 border-2 border-[#e8f5e9]/70 bg-[#0b1320]/80 px-3 py-1.5 font-pixel text-xs uppercase tracking-wider text-[#e8f5e9] md:hidden"
-				>
-					Journal
-				</Link>
-			)}
 		</div>
 	);
 }

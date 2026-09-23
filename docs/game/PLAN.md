@@ -349,10 +349,14 @@ Goal: ship v1 to production.
       (Built: `lib/site.ts`, `app/sitemap.ts`, `app/robots.ts`, and a preview image drawn
       by `pnpm assets` as a small title card, `scripts/assets/og.mjs`. Check Bluesky and
       Discord once live, at M6.7.)
-- [ ] **M6.3** Accessibility of the game shell: canvas has an accessible name pointing to
+- [x] **M6.3** Accessibility of the game shell: canvas has an accessible name pointing to
       the Journal, the title screen is fully keyboard operable, reduced motion honoured,
       focus is never trapped. *Done when* a screen-reader pass reaches the Journal in one
       step.
+      (The Journal link is the first link on the page and the next stop when Tab leaves
+      the game; entering the game focuses it; the game stops capturing keys and ignores
+      them while a page control has focus. e2e/a11y.spec.ts plays by keyboard alone and
+      runs axe on the title.)
 - [ ] **M6.4** Credits: LimeZu attribution (required) in the START menu, the finale and
       the Journal footer; CC0 audio sources. *Done when* visible in all three.
 - [ ] **M6.5** Remove the legacy site: `app/_legacy/`, old section components, canvases

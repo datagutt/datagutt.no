@@ -15,6 +15,10 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   title card in miniature, drawn by `scripts/assets/og.mjs` from the same shapes as the
   title SVG (`components/game/titleScene.ts`, shared so the two never drift) and the
   game's pixel font; placeholder builds have none.
+  M6.3 done. Gotcha: `InputController` calls `disableGlobalCapture()` and skips keys while
+  a link or button has focus, so Enter on the Journal link works mid-game. Anything that
+  enters the game must move focus to the game container (GameShell's `enter` does),
+  or the game will ignore the keyboard.
 - **Title screen v2 (M5.11), approved by the user 2026-09-24.**
   - Backdrop (`components/game/TitleArt.tsx`): a summer day, drawn on a grid of game
     pixels. A wide screen sees 512×288 (18 tiles tall, like the game); a tall phone sees

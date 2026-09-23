@@ -28,7 +28,7 @@ const DY = OG.h - 288;
 const NAVY = hex("1b2440");
 const INK = hex("0b1320");
 const CREAM = hex("fff4d6");
-const RED = hex("e8505b");
+const RED = hex("b83a38");
 
 /** Blend `over` onto the pixel with the given opacity. */
 function blend(img, x, y, over, alpha) {

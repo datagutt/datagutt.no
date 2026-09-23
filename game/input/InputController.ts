@@ -44,6 +44,12 @@ const TAP_SLOP = 12;
 /** Holding interact or a pointer this long is a hold, not a press. */
 const HOLD_MS = 400;
 
+/** A link, button or form field on the page has keyboard focus, not the game. */
+function focusOnPageControl(): boolean {
+	const el = document.activeElement;
+	return el instanceof HTMLElement && el.closest("a, button, input, select, textarea, [contenteditable]") !== null;
+}
+
 export class InputController {
 	private readonly stack = new DirectionStack();
 	private readonly keys: Record<string, Phaser.Input.Keyboard.Key> = {};
@@ -62,27 +68,35 @@ export class InputController {
 	constructor(private readonly scene: Phaser.Scene) {
 		const kb = scene.input.keyboard;
 		if (kb) {
+			// Keys reach the game only while focus is on the game itself. On a link or button
+			// (Tab to the Journal link, say) they do what the page does: Enter follows the
+			// link. The page never scrolls, so the game needn't swallow any keys either.
+			kb.disableGlobalCapture();
+			const onDown = (key: Phaser.Input.Keyboard.Key, fn: () => void) =>
+				key.on("down", () => {
+					if (!focusOnPageControl()) fn();
+				});
 			kb.on("keydown", () => (this.device = "keyboard"));
 			for (const [name, dir] of KEY_DIRS) {
-				const key = kb.addKey(name);
-				key.on("down", () => {
+				const key = kb.addKey(name, false);
+				onDown(key, () => {
 					this.stack.press(dir);
 					this.dirPressQueue.push(dir);
 				});
 				key.on("up", () => this.stack.release(dir));
 				this.keys[name] = key;
 			}
-			this.keys.SHIFT = kb.addKey("SHIFT");
+			this.keys.SHIFT = kb.addKey("SHIFT", false);
 			for (const name of ["E", "SPACE", "Z"]) {
-				const key = kb.addKey(name);
-				key.on("down", () => {
+				const key = kb.addKey(name, false);
+				onDown(key, () => {
 					this.interactQueued = true;
 					this.startHold();
 				});
 				key.on("up", () => (this.interactSince = null));
 			}
-			for (const name of ["X", "ESC", "BACKSPACE"]) kb.addKey(name).on("down", () => (this.backQueued = true));
-			kb.addKey("ENTER").on("down", () => (this.menuQueued = true));
+			for (const name of ["X", "ESC", "BACKSPACE"]) onDown(kb.addKey(name, false), () => (this.backQueued = true));
+			onDown(kb.addKey("ENTER", false), () => (this.menuQueued = true));
 			// Losing focus (alt-tab) must not leave a direction stuck down.
 			scene.game.events.on(Phaser.Core.Events.BLUR, () => this.stack.clear());
 		}

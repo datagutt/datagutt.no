@@ -13,7 +13,7 @@ test("title screen boots the game, and New game from its menu enters the world",
 
 	await expect(page.getByRole("heading", { name: "datagutt" })).toBeVisible();
 	await page.getByRole("button", { name: /press start/i }).click();
-	await expect(page.getByRole("link", { name: "Read it as a normal website" })).toBeVisible();
+	await expect(page.getByRole("link", { name: "Read it as a normal website", exact: true })).toBeVisible();
 
 	const start = page.getByRole("button", { name: /new game/i });
 	await expect(start).toBeEnabled({ timeout: 30_000 });
