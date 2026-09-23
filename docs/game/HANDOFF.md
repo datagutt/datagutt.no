@@ -4,6 +4,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.2 water shader built** (waiting on the user's look by day and night).
+  `game/fx/Water.ts`: one Phaser `Shader` quad over the map with drifting ripple lines
+  in the sky's colour and sparse glints, whole pixels only. The generator writes a hidden
+  `water` layer (collision tile = open water, clear tile = sea under a pier or boat);
+  the game turns it into a 1 px per tile mask texture. Shore tiles are skipped: their
+  LimeZu art already holds the beach and its foam, and a tile-edge foam band landed on
+  the sand. No WebGL, no shader. Gotchas: a Phaser canvas texture is sampled upside down
+  in a Shader (flip the row), and `ShaderQuadConfig` needs a `name`.
 - **M5.5 game feel built** (waiting on the user's hand review with reduced motion on and
   off). `game/fx/Feel.ts`: dust puffs at the heels on each step, a 2 px lean and a low
   thud (`playBump`) on bumping into things, a squash on stepping through a door, a camera

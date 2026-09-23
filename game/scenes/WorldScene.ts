@@ -28,6 +28,7 @@ import { parseMapObject, type Facing, type LightObject, type MapObject, type Til
 import { addLights } from "../fx/Lights";
 import { DayNight } from "../fx/DayNight";
 import { Weather } from "../fx/Weather";
+import { Water } from "../fx/Water";
 import { Feel } from "../fx/Feel";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
@@ -53,6 +54,7 @@ export class WorldScene extends Phaser.Scene {
 	private thomas!: LiveThomas;
 	private dayNight!: DayNight;
 	private weather: Weather | null = null;
+	private water: Water | null = null;
 	private prompt!: Prompt;
 	private feel!: Feel;
 	private ghosts!: GhostLayer;
@@ -121,6 +123,11 @@ export class WorldScene extends Phaser.Scene {
 			if (!layer) continue;
 			layers.set(layerData.name, layer);
 			const collisionOnly = layerData.name === "collision" || layerData.name === "manual_collision";
+			// The water layer only tells the water shader where the open water is.
+			if (layerData.name === "water") {
+				layer.setVisible(false);
+				continue;
+			}
 			layer.setVisible(!collisionOnly);
 			layer.setDepth(layerData.name.includes("above") ? 50_000 : -1);
 			// Blended layers (the `shade` layer multiplies) say so in a layer property.
@@ -159,6 +166,8 @@ export class WorldScene extends Phaser.Scene {
 		const outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
 		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, this.services.hours, this.services.month);
 		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion) : null;
+		this.water = Water.create(this, map.getLayer("water") ?? undefined, () => this.dayNight.current);
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.water?.destroy());
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.weather?.destroy());
 
 		const spawn = this.target.spawn ? spawns.get(this.target.spawn) : undefined;
@@ -275,6 +284,7 @@ export class WorldScene extends Phaser.Scene {
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
 		this.dayNight.update(time);
+		this.water?.update();
 		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open) this.prompt.hide();
 		this.updateDebug();
 

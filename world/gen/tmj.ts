@@ -60,6 +60,8 @@ export function canvasToTmj(
 	}
 	const properties = { ...options.properties, ...(options.seasons ? seasonTables(canvas, registry) : {}) };
 	layers.push(tileLayer("collision", [...canvas.collision].map((b) => (b ? gid(COLLISION_ID) : 0)), false));
+	const water = waterCells(canvas);
+	if (water.some(Boolean)) layers.push(tileLayer(WATER_LAYER, water.map((w) => (w === "open" ? gid(COLLISION_ID) : w === "covered" ? gid(CLEAR_ID) : 0)), false));
 
 	for (const obj of canvas.objects) {
 		if (!canvas.inBounds(obj.x, obj.y)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) is outside the map`);
@@ -124,6 +126,22 @@ export function canvasToTmj(
 			},
 		],
 	};
+}
+
+/**
+ * Hidden layer for the water shader (game/fx/Water.ts), reusing the two reserved tiles:
+ * the collision tile marks open water, the clear tile sea with something over it.
+ */
+export const WATER_LAYER = "water";
+const WATER_SHEETS = new Set(["sea", "seaCorners"]);
+
+/**
+ * Sea cells: "open", or "covered" by a pier or boat, where the shader draws nothing but
+ * which still count as sea, so foam forms only against the shore.
+ */
+function waterCells(canvas: MapCanvas): ("open" | "covered" | null)[] {
+	const isSea = (ref: TileRef | null) => Boolean(ref && (ref.parts ?? [ref]).some((p) => WATER_SHEETS.has(p.sheet)));
+	return canvas.layers.decal.map((ref, i) => (!isSea(ref) ? null : canvas.layers.below[i] || canvas.layers.above[i] ? "covered" : "open"));
 }
 
 /**

@@ -293,6 +293,7 @@ Goal: the Celeste-level feel.
       light layer. *Done when* `?time=` in debug shows all phases.
 - [ ] **M5.2** Water shader: fjord shimmer, shoreline foam, reflections of the sky
       colour. Low-quality fallback. *Done when* it looks good at night and day.
+      (Built in `game/fx/Water.ts`; waiting on the user's look at night and day.)
 - [ ] **M5.3** Aurora shader: animated curtains on the night sky, stronger in winter,
       site-green palette. *Done when* it runs at 60 fps on a mid-range phone.
 - [x] **M5.4** Season effects: falling snow particles and frost vignette in winter,
