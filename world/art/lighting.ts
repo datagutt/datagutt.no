@@ -37,6 +37,7 @@ export const GLOWS = {
 	readingLamp: { radius: 2.4, color: "ffd08a", intensity: 0.2, flicker: false },
 	screen: { radius: 1.6, color: "78b4ff", intensity: 0.35, flicker: false },
 	onAir: { radius: 1.2, color: "ff4038", intensity: 0.55, flicker: false },
+	neon: { radius: 1.8, color: "ff5cc8", intensity: 0.5, flicker: false },
 	studio: { radius: 3, color: "fff4e0", intensity: 0.3, flicker: false },
 	greenSpill: { radius: 2.2, color: "78ff8c", intensity: 0.22, flicker: false },
 } satisfies Record<string, Glow>;

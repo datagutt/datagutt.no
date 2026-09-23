@@ -154,6 +154,39 @@ export const CHARACTERS = {
 		layers: ["Bodies/Body_01.png", "Eyes/Eyes_03.png", "Outfits/Outfit_18_03.png", "Hairstyles/Hairstyle_09_07.png"],
 		placeholder: "b8322c",
 	},
+
+	// Background coworkers at the Nettbureau office: no portrait, a one-liner each
+	// (game/dialogue/ink/office.ink). Startup casual: snapbacks, beanies, hoodies.
+	officeDev: {
+		layers: ["Bodies/Body_02.png", "Eyes/Eyes_02.png", "Outfits/Outfit_05_02.png", "Hairstyles/Hairstyle_13_03.png", "Accessories/Accessory_04_Snapback_02.png"],
+		portrait: false,
+		placeholder: "3a5a8a",
+	},
+	officeDesigner: {
+		layers: ["Bodies/Body_04.png", "Eyes/Eyes_03.png", "Outfits/Outfit_24_03.png", "Hairstyles/Hairstyle_17_03.png", "Accessories/Accessory_15_Glasses_01.png"],
+		portrait: false,
+		placeholder: "c46a9a",
+	},
+	officeSupport: {
+		layers: ["Bodies/Body_07.png", "Eyes/Eyes_04.png", "Outfits/Outfit_10_03.png", "Hairstyles/Hairstyle_02_02.png"],
+		portrait: false,
+		placeholder: "5a9a5a",
+	},
+	officeGrowth: {
+		layers: ["Bodies/Body_01.png", "Eyes/Eyes_07.png", "Outfits/Outfit_29_02.png", "Hairstyles/Hairstyle_24_04.png"],
+		portrait: false,
+		placeholder: "d88a2a",
+	},
+	officeData: {
+		layers: ["Bodies/Body_03.png", "Eyes/Eyes_01.png", "Outfits/Outfit_19_01.png", "Hairstyles/Hairstyle_07_02.png", "Accessories/Accessory_11_Beanie_03.png", "Accessories/Accessory_13_Beard_02.png"],
+		portrait: false,
+		placeholder: "6a4a8a",
+	},
+	officeFinance: {
+		layers: ["Bodies/Body_04.png", "Eyes/Eyes_05.png", "Outfits/Outfit_02_02.png", "Hairstyles/Hairstyle_26_06.png"],
+		portrait: false,
+		placeholder: "2a7a6a",
+	},
 } satisfies Record<string, CharacterRecipe>;
 
 export type CharacterId = keyof typeof CHARACTERS;

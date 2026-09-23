@@ -225,7 +225,7 @@ Goal: the real town, painted, in all seasons.
       2026-09-23; `world/gen/maps/overworld.ts` is the live `town`, with name signs on
       every building.)
 - [ ] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
-      studio, radio tower hut, kiosk, office, town hall and basement server room,
+      studio, radio tower hut, kiosk, office (a big open floor), town hall and its basement IT department,
       gym (was the smithy), library, farmhouse, post office. *Done when* the user approves each render.
 - [x] **M3.9** Seasonal variants: generator emits season layers (snow ground and roof
       caps, autumn foliage, spring flowers), runtime picks the season from the Norwegian
@@ -371,7 +371,7 @@ Goal: ship v1 to production.
 - [ ] **B3** Secrets and achievements: hidden cat, fourth-wall lines when walking off the
       map edge, achievement list in the passport.
 - [ ] **B4** Music: pick or commission tracks per area with day and night variants.
-- [ ] **B5** Buy Modern Office if interiors need more variety.
+- [x] **B5** Buy Modern Office if interiors need more variety. *(Bought 2026-09-23; used by the office.)*
 
 ## v2 backlog
 

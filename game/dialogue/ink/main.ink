@@ -30,5 +30,6 @@ INCLUDE trainer.ink
 INCLUDE librarian.ink
 INCLUDE farmer.ink
 INCLUDE postmaster.ink
+INCLUDE office.ink
 
 -> END

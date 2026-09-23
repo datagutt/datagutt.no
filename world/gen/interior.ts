@@ -57,6 +57,8 @@ export const FLOORS = {
 	marble: { col: 8, row: 22 },
 	carpetGrey: { col: 10, row: 7, sheet: "officeRooms" },
 	carpetTan: { col: 13, row: 7, sheet: "officeRooms" },
+	carpetRed: { col: 10, row: 11, sheet: "officeRooms" },
+	carpetDark: { col: 10, row: 9, sheet: "officeRooms" },
 } satisfies Record<string, FloorStyle>;
 
 // The thin wall-top border as a 9-slice (combined Room Builder sheet).
@@ -98,6 +100,16 @@ export function room(c: MapCanvas, r: Room, style: { wall: WallStyle; floor: Flo
 	c.put("above", x - 1, y + h, BORDER.bl).put("above", x + w, y + h, BORDER.br);
 	for (let dy = 0; dy <= h; dy++) c.block(x - 1, y + dy).block(x + w, y + dy);
 	return { x, y: y + 2, w, h: h - 2 };
+}
+
+/**
+ * A patch of another floor inside a room (a department's carpet, a kitchen's tiles): the
+ * style's plain tile, without the wall shadows.
+ */
+export function floorPatch(c: MapCanvas, r: Room, style: FloorStyle) {
+	for (let y = r.y; y < r.y + r.h; y++) {
+		for (let x = r.x; x < r.x + r.w; x++) c.put("ground", x, y, t(style.sheet ?? "rbFloors", style.col + 1, style.row + 1));
+	}
 }
 
 /** A way out through the bottom border at column `x`: the gap tile is the door. */

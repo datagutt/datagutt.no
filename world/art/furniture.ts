@@ -171,6 +171,7 @@ export const FURNITURE = {
 	workstation: single("workplace", 323),
 	workstationPale: single("workplace", 328),
 	officeChair: single("workplace", 112),
+	whiteboard: single("workplace", 170, { collision: [] }),
 	whiteboardChart: single("workplace", 171, { collision: [] }),
 	whiteboardPie: single("workplace", 172, { collision: [] }),
 	waterCooler: single("workplace", 173),
@@ -179,7 +180,15 @@ export const FURNITURE = {
 	beanBagBlue: single("workplace", 196),
 	beanBagYellow: single("workplace", 199),
 	loungeSofa: single("workplace", 205),
+	loungeSofaWide: single("workplace", 200),
+	/** A white desk run and its corner, for reception. */
+	deskRun: single("workplace", 263),
+	deskCorner: single("workplace", 264),
 	moneyPile: single("workplace", 339),
+	/** A bright poster of pixel faces, lit up as the office's neon sign. */
+	posterFaces: single("workplace", 164, { collision: [] }),
+	/** A 2-wide pane of a glass wall on its rail. */
+	glassWall: single("workplace", 208),
 } satisfies Record<string, Prefab>;
 
 /**
