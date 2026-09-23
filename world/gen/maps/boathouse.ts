@@ -6,6 +6,7 @@ import { NPCS } from "../../../game/npcs.ts";
 import { variant } from "../../art/autotile.ts";
 import { DOCK_TRIM, TERRAIN } from "../../art/palette.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
+import { glow, GLOWS } from "../../art/lighting.ts";
 import { FLIP, MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 import { Region } from "../layout.ts";
@@ -43,6 +44,10 @@ export function boathouse(): MapCanvas {
 	c.stamp(F.softbox, 11, 2, "flipX").stamp(F.softbox, 16, 2);
 	c.stamp(F.armchair, 13, 5);
 	c.stamp(F.studioCamera, 14, 8);
+
+	// Light: the set is lit from both sides. (The dock lip draws its own shadow on the water.)
+	c.add(glow(7, 2, GLOWS.onAir)).add(glow(9, 2, GLOWS.screen));
+	c.add(glow(12, 4, GLOWS.studio)).add(glow(16, 4, GLOWS.studio)).add(glow(14, 4, GLOWS.greenSpill));
 
 	exitDoor(c, r, 10, { toMap: "town", toSpawn: "boathouse_door" });
 	const sunniva = NPCS.find((n) => n.id === "streamer")!;

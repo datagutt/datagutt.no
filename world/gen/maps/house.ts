@@ -7,6 +7,7 @@
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "../../art/furniture.ts";
+import { glow, GLOWS, SHADE, windowLight } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";
 import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
 
@@ -31,6 +32,10 @@ export function house(): MapCanvas {
 	c.stamp(F.scaleModel, 13, 7);
 	c.stamp(F.plant, 15, 9).stamp(F.palm, 2, 8);
 	c.stamp(F.doormat, 8, floor.y + floor.h - 2);
+
+	// Light: daylight from the window, the fire, the TV. Shade under the table and sofas.
+	c.add(windowLight(7, 3)).add(glow(12, 3, GLOWS.fire)).add(glow(9, 3, GLOWS.screen));
+	c.stamp(SHADE.blob, 3, 8).stamp(SHADE.blob, 7, 8).stamp(SHADE.blob, 10, 8);
 
 	// The second step up the stairs is the door upstairs.
 	c.block(14, 2, false).add({ type: "door", x: 14, y: 2, toMap: "house-up", toSpawn: "stairs" });
@@ -58,6 +63,11 @@ export function houseUpstairs(): MapCanvas {
 	c.stamp(F.bedHeadboard, 2, 5);
 	c.stamp(F.rug, 6, 6);
 	c.stamp(F.dresser, 13, 7);
+
+	// Light: the three screens, daylight through the curtains. Shade under the bed.
+	c.add(glow(5, 4, GLOWS.screen)).add(glow(6, 4, GLOWS.screen)).add(glow(7, 4, GLOWS.screen));
+	c.add(windowLight(2, 3, 3, 3));
+	c.stamp(SHADE.blob, 2, 9);
 
 	// Stairs down in the back-right corner, railed on three sides, open at the bottom.
 	c.stamp(F.stairsDown, 13, 3).stamp(F.stairwellRail, 13, 3);

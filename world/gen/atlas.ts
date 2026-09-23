@@ -4,6 +4,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { DERIVED, SHEETS, type SheetId } from "../art/sheets.ts";
 import { FLIP } from "./canvas.ts";
+import { fxSheet } from "./fx.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, parseKey, RESERVED } from "./registry.ts";
 
 const T = 16;
@@ -24,6 +25,7 @@ export class SheetCache {
 	async get(id: string): Promise<Raw> {
 		const cached = this.sheets.get(id);
 		if (cached) return cached;
+		if (id === "fx") return fxSheet();
 		const derived = DERIVED[id];
 		const raw = derived ? recolor(await this.get(derived.from), derived.recolor) : await this.load(id);
 		this.sheets.set(id, raw);
@@ -59,7 +61,7 @@ function recolor(src: Raw, swaps: Record<string, string>): Raw {
  * Alpha-composite a 16×16 tile from `src` at pixel (sx, sy) into `dst` at (dx, dy).
  * `flip` uses Tiled's order: transpose (D), then mirror horizontally (H), then vertically (V).
  */
-export function blitTile(src: Raw, sx: number, sy: number, dst: Raw, dx: number, dy: number, flip = 0) {
+export function blitTile(src: Raw, sx: number, sy: number, dst: Raw, dx: number, dy: number, flip = 0, blend: "normal" | "multiply" | "add" = "normal") {
 	for (let py = 0; py < T; py++) {
 		for (let px = 0; px < T; px++) {
 			// Undo the transform to find the source pixel for this destination pixel.
@@ -72,8 +74,13 @@ export function blitTile(src: Raw, sx: number, sy: number, dst: Raw, dx: number,
 			const a = src.data[si + 3] / 255;
 			if (a === 0) continue;
 			const di = ((dy + py) * dst.width + dx + px) * 4;
-			for (let c = 0; c < 3; c++) dst.data[di + c] = Math.round(src.data[si + c] * a + dst.data[di + c] * (1 - a));
-			dst.data[di + 3] = Math.max(dst.data[di + 3], src.data[si + 3]);
+			for (let c = 0; c < 3; c++) {
+				const s = src.data[si + c];
+				const d = dst.data[di + c];
+				const mixed = blend === "multiply" ? (s * d) / 255 : blend === "add" ? Math.min(255, d + s) : s;
+				dst.data[di + c] = Math.round(mixed * a + d * (1 - a));
+			}
+			if (blend === "normal") dst.data[di + 3] = Math.max(dst.data[di + 3], src.data[si + 3]);
 		}
 	}
 }
@@ -126,7 +133,7 @@ export async function tileColors(tiles: string[], sheets: SheetCache): Promise<T
 	const out: TileColors = {};
 	for (const key of tiles) {
 		const ref = parseKey(key);
-		if (!ref) continue;
+		if (!ref || ref.sheet === "fx") continue;
 		const src = await sheets.get(ref.sheet);
 		const cells: string[] = [];
 		for (let by = 0; by < 2; by++) {
@@ -155,9 +162,15 @@ export async function buildPlaceholderAtlas(tiles: string[], colors: TileColors)
 	const atlas = emptyAtlas();
 	drawReserved(atlas);
 	for (const [id, key] of tiles.entries()) {
+		const [ox, oy] = slot(id);
+		const ref = parseKey(key);
+		// Light and shade tiles are generated, not LimeZu art: draw them for real.
+		if (ref?.sheet === "fx") {
+			blitTile(fxSheet(), ref.col * T, ref.row * T, atlas, ox, oy);
+			continue;
+		}
 		const sketch = colors[key];
 		if (!sketch) continue;
-		const [ox, oy] = slot(id);
 		for (let cell = 0; cell < 4; cell++) {
 			const rgba = [0, 2, 4, 6].map((o) => parseInt(sketch.slice(cell * 8 + o, cell * 8 + o + 2), 16));
 			// Mostly-transparent blocks are dropped so sprites keep a crisp-ish outline.

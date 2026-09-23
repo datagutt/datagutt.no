@@ -6,9 +6,18 @@ import type { MapCanvas } from "./canvas.ts";
 
 const t = (sheet: string, col: number, row: number): TileRef => ({ sheet, col, row });
 
-/** A wall style: the top-left of a 3×2 group in Room_Builder_Walls (row 0 top, row 1 base). */
+/**
+ * A wall style: the top-left of a 3×2 group in Room_Builder_Walls (row 0 top, row 1 base).
+ * Its columns are a left end, a seamless middle and a right end, each outlined on its
+ * outer side, so only the room's corners use the ends.
+ */
 export type WallStyle = { col: number; row: number };
-/** A floor style: the top-left of a 3×2 group in Room_Builder_Floors. */
+/**
+ * A floor style: the top-left of a 3×2 group in Room_Builder_Floors. The group is not a
+ * repeating pattern: (1,1) is the plain tile, and the others have wall shadows baked in,
+ * (1,0) along the top, (0,1) down the left, (0,0) in the corner (the sheet's first two
+ * rows are the template). Checked by brightness: (1,1) is the lightest in 68 of 72 groups.
+ */
 export type FloorStyle = { col: number; row: number };
 
 export const WALLS = {
@@ -52,10 +61,14 @@ export function room(c: MapCanvas, r: Room, style: { wall: WallStyle; floor: Flo
 	const { x, y, w, h } = r;
 	for (let dx = 0; dx < w; dx++) {
 		for (let dy = 0; dy < 2; dy++) {
-			c.put("ground", x + dx, y + dy, t("rbWalls", style.wall.col + ((x + dx) % 3), style.wall.row + dy)).block(x + dx, y + dy);
+			const piece = dx === 0 ? 0 : dx === w - 1 ? 2 : 1;
+			c.put("ground", x + dx, y + dy, t("rbWalls", style.wall.col + piece, style.wall.row + dy)).block(x + dx, y + dy);
 		}
 		for (let dy = 2; dy < h; dy++) {
-			c.put("ground", x + dx, y + dy, t("rbFloors", style.floor.col + ((x + dx) % 3), style.floor.row + ((y + dy) % 2)));
+			// Shadow from the back wall on the first floor row, from the left wall in the first column.
+			const fx = dx === 0 ? 0 : 1;
+			const fy = dy === 2 ? 0 : 1;
+			c.put("ground", x + dx, y + dy, t("rbFloors", style.floor.col + fx, style.floor.row + fy));
 		}
 	}
 	// The border: over the top wall row, down both sides, and along the bottom.

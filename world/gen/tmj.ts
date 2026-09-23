@@ -2,7 +2,7 @@
 // every run; layers named `manual_*` in the previous file are the user's touch-ups in
 // Tiled and are carried over untouched, after the generated layers (DESIGN.md §10).
 import { toTiledObject } from "../../game/world/objects.ts";
-import { FLIP, LAYERS, type MapCanvas } from "./canvas.ts";
+import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, type TileRegistry } from "./registry.ts";
 
 const TILE = 16;
@@ -49,7 +49,11 @@ export function canvasToTmj(
 
 	for (const name of LAYERS) {
 		const data = canvas.layers[name].map((ref) => (ref ? gid(registry.id(ref)) + flipBits(ref.flip ?? 0) : 0));
-		layers.push(tileLayer(name, data));
+		const layer = tileLayer(name, data);
+		// The game reads the blend mode from this property (Tiled shows it too).
+		const blend = LAYER_BLEND[name];
+		if (blend) layer.properties = [{ name: "blend", type: "string", value: blend }];
+		layers.push(layer);
 	}
 	layers.push(tileLayer("collision", [...canvas.collision].map((b) => (b ? gid(COLLISION_ID) : 0)), false));
 

@@ -26,6 +26,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		NEIGHBOURS.some(([dx, dy]) => walkable(o.x + dx, o.y + dy) && !occupied.has(`${o.x + dx},${o.y + dy}`));
 
 	for (const o of objects) {
+		if (o.type === "light") continue; // lights sit anywhere, on top of other things
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const key = `${o.x},${o.y}`;
 		const other = at.get(key);

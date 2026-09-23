@@ -18,7 +18,8 @@ import type { DialogueRunner } from "../dialogue/DialogueRunner";
 import { DIALOGUE_KEY } from "./PreloadScene";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid";
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement";
-import { parseMapObject, type Facing, type MapObject, type TiledObject } from "../world/objects";
+import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects";
+import { addLights } from "../fx/Lights";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 
 type Door = Extract<MapObject, { type: "door" }>;
@@ -96,6 +97,10 @@ export class WorldScene extends Phaser.Scene {
 			const collisionOnly = layerData.name === "collision" || layerData.name === "manual_collision";
 			layer.setVisible(!collisionOnly);
 			layer.setDepth(layerData.name.includes("above") ? 50_000 : -1);
+			// Blended layers (the `shade` layer multiplies) say so in a layer property.
+			const blend = (layerData.properties as { name: string; value: unknown }[] | undefined)?.find((p) => p.name === "blend")?.value;
+			if (blend === "multiply") layer.setBlendMode(Phaser.BlendModes.MULTIPLY);
+			if (blend === "add") layer.setBlendMode(Phaser.BlendModes.ADD);
 			layer.forEachTile((tile) => {
 				if (tile.index < 0) return;
 				if (tile.properties?.collides) this.grid.setBlocked(tile.x, tile.y);
@@ -106,17 +111,21 @@ export class WorldScene extends Phaser.Scene {
 		const spawns = new Map<string, Extract<MapObject, { type: "spawn" }>>();
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
+		const lights: LightObject[] = [];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") this.signs.set(tileKey(obj), obj);
+			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "npc") {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
 				this.grid.occupy(obj.x, obj.y, obj.id);
 			}
 		}
+
+		addLights(this, lights, this.progress.reducedMotion);
 
 		const spawn = this.target.spawn ? spawns.get(this.target.spawn) : undefined;
 		const startAt = this.target.tile ?? spawn ?? [...spawns.values()][0];

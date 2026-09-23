@@ -8,7 +8,17 @@ export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
 	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string }
 	| { type: "sign"; x: number; y: number; text: string }
-	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string };
+	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
+	| LightObject;
+
+/**
+ * A light, drawn additively over the map and characters (game/fx/Lights.ts). A glow is
+ * centred on its tile with a radius in tiles; a beam covers w×h tiles from its tile.
+ * `color` is rrggbb, `intensity` 0..1.
+ */
+export type LightObject =
+	| { type: "light"; shape: "glow"; x: number; y: number; radius: number; color: string; intensity: number; flicker: boolean }
+	| { type: "light"; shape: "beam"; x: number; y: number; w: number; h: number; color: string; intensity: number };
 
 export type TiledProperty = { name: string; type: "string" | "int" | "bool"; value: string | number | boolean };
 
@@ -52,6 +62,17 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			return { type: "sign", x, y, text: str("text") };
 		case "npc":
 			return { type: "npc", id: obj.name || str("id"), character: str("character"), x, y, facing: facing(), name: str("name"), dialogue: str("dialogue") };
+		case "light": {
+			const num = (name: string) => {
+				const v = Number(props.get(name));
+				if (!Number.isFinite(v)) throw new Error(`light object ${obj.id} needs a numeric "${name}"`);
+				return v;
+			};
+			const shape = str("shape");
+			if (shape === "glow") return { type: "light", shape, x, y, radius: num("radius"), color: str("color"), intensity: num("intensity"), flicker: props.get("flicker") === "true" };
+			if (shape === "beam") return { type: "light", shape, x, y, w: num("w"), h: num("h"), color: str("color"), intensity: num("intensity") };
+			throw new Error(`light object ${obj.id} has unknown shape "${shape}"`);
+		}
 		default:
 			throw new Error(`Unknown map object type "${obj.type}" (object ${obj.id})`);
 	}
