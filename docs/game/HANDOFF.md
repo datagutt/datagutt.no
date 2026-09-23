@@ -77,8 +77,9 @@ Last updated: 2026-09-23 (session 1: design, planning, M0 to M2, M3 generator an
   - Unused but useful: the games-room sheet (`gameRoom`, 14_Basement) has arcade
     cabinets for the v1.1 canvases-as-arcade-machines idea; the museum sheet has
     paintings, statues and pillars for the town hall.
-  - Measuring sprites: scratchpad `sprites.mjs <sheet> col row w h [minPx]` prints
-    pixel-exact connected sprites as tile rects; much faster than eyeballing crops.
+  - **Art handling rules are in docs/game/ART.md** (user found half-cut sprites): use
+    LimeZu singles via `single(sheet, key)`, pick them from the contact sheets that
+    `pnpm world:catalog` writes, and `world:gen` fails on prefabs that cut an object.
   - Every building has a notice-board sign with its name and a line of flavour
     (user request). NPCs stand outside their buildings for now; M3.8 moves each one
     indoors as its interior is built (Arne stays on the pier, Ola in the field).

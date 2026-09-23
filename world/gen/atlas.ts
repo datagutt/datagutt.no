@@ -2,7 +2,9 @@
 // sheets or, without the private art, from a committed table of tile colours.
 import path from "node:path";
 import sharp from "sharp";
-import { DERIVED, SHEETS, type SheetId } from "../art/sheets.ts";
+import fs from "node:fs";
+import { DERIVED, SHEETS, SINGLES, type SheetId } from "../art/sheets.ts";
+import { singleKeys } from "../art/singleKey.ts";
 import { FLIP } from "./canvas.ts";
 import { fxSheet } from "./fx.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, parseKey, RESERVED } from "./registry.ts";
@@ -26,10 +28,37 @@ export class SheetCache {
 		const cached = this.sheets.get(id);
 		if (cached) return cached;
 		if (id === "fx") return fxSheet();
+		if (id.includes("#")) {
+			// A single, possibly of a recoloured sheet ("villaRed#Villa_5").
+			const [sheet, key] = id.split("#");
+			const derived = DERIVED[sheet];
+			const raw = derived ? recolor(await this.get(`${derived.from}#${key}`), derived.recolor) : await this.loadSingle(id);
+			this.sheets.set(id, raw);
+			return raw;
+		}
 		const derived = DERIVED[id];
 		const raw = derived ? recolor(await this.get(derived.from), derived.recolor) : await this.load(id);
 		this.sheets.set(id, raw);
 		return raw;
+	}
+
+	private singleFiles = new Map<string, Map<string, string>>();
+
+	/** "living#100": single 100 of the living room sheet, as its own image. */
+	private async loadSingle(id: string): Promise<Raw> {
+		const [sheet, key] = id.split("#");
+		const folder = SINGLES[sheet as SheetId];
+		if (!folder) throw new Error(`Sheet "${sheet}" has no singles (in "${id}")`);
+		const dir = path.join(this.artDir, "limezu", folder);
+		let files = this.singleFiles.get(sheet);
+		if (!files) {
+			files = singleKeys(fs.readdirSync(dir).filter((f) => f.endsWith(".png")));
+			this.singleFiles.set(sheet, files);
+		}
+		const file = files.get(key);
+		if (!file) throw new Error(`No single "${key}" for sheet "${sheet}"`);
+		const { data, info } = await sharp(path.join(dir, file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+		return { data, width: info.width, height: info.height };
 	}
 
 	private async load(id: string): Promise<Raw> {

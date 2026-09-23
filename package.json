@@ -17,7 +17,8 @@
     "assets": "node scripts/assets/fetch.mjs && node scripts/assets/build.mjs",
     "world:gen": "node scripts/world/gen.mjs",
     "world:render": "node scripts/world/gen.mjs --render",
-    "world:check": "node scripts/world/gen.mjs --check"
+    "world:check": "node scripts/world/gen.mjs --check",
+    "world:catalog": "node scripts/world/catalog.mjs"
   },
   "dependencies": {
     "@spissvinkel/simplex-noise": "^1.0.1",

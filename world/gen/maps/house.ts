@@ -67,7 +67,7 @@ export function houseUpstairs(): MapCanvas {
 	// Light: the three screens, daylight through the curtains. Shade under the bed.
 	c.add(glow(5, 4, GLOWS.screen)).add(glow(6, 4, GLOWS.screen)).add(glow(7, 4, GLOWS.screen));
 	c.add(windowLight(2, 3, 3, 3));
-	c.stamp(SHADE.blob, 2, 9);
+	c.stamp(SHADE.blob, 2, 8);
 
 	// Stairs down in the back-right corner, railed on three sides, open at the bottom.
 	c.stamp(F.stairsDown, 13, 3).stamp(F.stairwellRail, 13, 3);

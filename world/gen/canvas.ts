@@ -34,6 +34,8 @@ export type Prefab = {
 	door?: [number, number];
 	/** Per-row layers, top to bottom, overriding `aboveRows` and `flat`. */
 	rowLayers?: LayerName[];
+	/** A deliberate crop of an object (say why); the cut check lets it through. */
+	allowCut?: string;
 };
 
 /** Tiled's tile transform flags, as bits of a TileRef's `flip` (and of a gid, shifted up). */
@@ -60,6 +62,8 @@ export class MapCanvas {
 	readonly layers: Record<LayerName, (TileRef | null)[]>;
 	readonly collision: Uint8Array;
 	readonly objects: MapObject[] = [];
+	/** Every prefab stamped, for checking that none cuts an object in half (cuts.ts). */
+	readonly stamped: Prefab[] = [];
 
 	constructor(width: number, height: number) {
 		this.width = width;
@@ -126,6 +130,7 @@ export class MapCanvas {
 	 * Transparent tiles still overwrite.
 	 */
 	stamp(prefab: Prefab, x: number, y: number, transform?: Transform): this {
+		this.stamped.push(prefab);
 		const t = transform ? TRANSFORMS[transform] : null;
 		const place = (dx: number, dy: number): [number, number] => (t ? t.at(dx, dy, prefab.w, prefab.h) : [dx, dy]);
 		for (let dy = 0; dy < prefab.h; dy++) {

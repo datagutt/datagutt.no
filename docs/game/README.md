@@ -42,3 +42,5 @@ The portfolio is being rebuilt as a top-down pixel-art game on the `game` branch
 - Phaser 4 changed APIs from Phaser 3. Check the installed package's docs and types
   rather than memory.
 - Credit to LimeZu is a licence requirement, not a nicety.
+
+Working with LimeZu art (singles, the catalogue, the cut check): see [ART.md](ART.md).

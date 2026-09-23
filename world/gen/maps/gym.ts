@@ -25,7 +25,7 @@ export function gym(): MapCanvas {
 	c.stamp(F.gymMat, 2, 5);
 	c.stamp(F.warmupRack, 3, 6); // everyday tools
 	c.stamp(F.treadmill, 14, 5); // cloud and DevOps
-	c.stamp(F.powerRack, 11, 5).stamp(F.weightPlates, 9, 7); // the heavy rack
+	c.stamp(F.benchPress, 10, 5).stamp(F.weightPlates, 9, 8); // the heavy rack
 	c.stamp(SHADE.blob, 10, 9);
 
 	// Front desk by the door (payments), with the lights on over it.

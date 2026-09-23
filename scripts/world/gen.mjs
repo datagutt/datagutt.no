@@ -18,6 +18,7 @@ import { canvasToTmj, formatTmj, isManual } from "../../world/gen/tmj.ts";
 import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
 import { renderTmj } from "../../world/gen/render.ts";
 import { validateMap } from "../../world/gen/validate.ts";
+import { checkCuts } from "../../world/gen/cuts.ts";
 import { resolveAssetSource } from "../assets/source.mjs";
 
 const root = process.cwd();
@@ -52,8 +53,9 @@ const problems = [];
 for (const map of GENERATED_MAPS) {
 	if (only && map.id !== only) continue;
 	const file = path.join(files.maps, `${map.id}.tmj`);
-	const tmj = canvasToTmj(map.id, map.build(), registry, { properties: map.properties, previous: readJson(file) });
-	problems.push(...validateMap(map.id, tmj));
+	const canvas = map.build();
+	const tmj = canvasToTmj(map.id, canvas, registry, { properties: map.properties, previous: readJson(file) });
+	problems.push(...validateMap(map.id, tmj), ...checkCuts(map.id, canvas.stamped));
 	outputs.set(file, formatTmj(tmj));
 }
 if (problems.length) {

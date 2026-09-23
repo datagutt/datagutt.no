@@ -1,17 +1,17 @@
 // Furniture and indoor props from the LimeZu Interiors theme sheets (PLAN M3.8).
 // Most block their whole footprint; rugs are flat and walkable.
 import type { Prefab } from "../gen/canvas.ts";
+import { flatSingle, single } from "./singles.ts";
 
 const solid = (sheet: string, col: number, row: number, w: number, h: number, aboveRows = 0): Prefab => ({ sheet, col, row, w, h, aboveRows });
 const flat = (sheet: string, col: number, row: number, w: number, h: number): Prefab => ({ sheet, col, row, w, h, aboveRows: 0, flat: true, collision: [] });
 
 export const FURNITURE = {
-	bed: solid("bedroom", 12, 20, 2, 4),
 	pcDesk: solid("classroom", 7, 10, 2, 3),
 	fridge: solid("classroom", 12, 5, 1, 2),
 	sofa: solid("living", 1, 28, 3, 2),
-	bookcase: solid("living", 10, 24, 2, 3),
-	fireplace: solid("living", 4, 24, 2, 3),
+	bookcase: single("classroom", 45),
+	fireplace: single("living", 113),
 	plant: solid("generic", 6, 57, 1, 2),
 	scaleModel: solid("bedroom", 9, 18, 2, 2),
 	rug: flat("generic", 9, 7, 4, 3),
@@ -22,8 +22,8 @@ export const FURNITURE = {
 	/** A wooden table drawn across the middle of a 4×3 block. */
 	table: { sheet: "generic", col: 0, row: 5, w: 4, h: 3, aboveRows: 0, collision: [".##.", ".##."] },
 	/** Kitchen chairs drawn from the side: one faces right, the other left. */
-	chairFacingRight: solid("kitchen", 7, 11, 1, 2),
-	chairFacingLeft: solid("kitchen", 4, 13, 1, 2),
+	chairFacingRight: single("kitchen", 283),
+	chairFacingLeft: single("kitchen", 368),
 	/** A low cabinet with a fruit bowl: the kitchen counter. */
 	counter: solid("living", 0, 11, 3, 2),
 	tvCabinet: solid("living", 5, 15, 2, 2),
@@ -32,18 +32,18 @@ export const FURNITURE = {
 	 * A flat TV standing on its cabinet: the top row hangs on the wall (below the wall-top
 	 * border), the bottom row draws over the cabinet's top.
 	 */
-	tv: { sheet: "bedroom", col: 9, row: 12, w: 2, h: 2, aboveRows: 0, collision: [], rowLayers: ["below", "above"] },
+	tv: single("basement", 164, { collision: [], rowLayers: ["below", "above"] }),
 	/** Side-view sofas (a matching pair); each sprite sits to one side of its 2×4 block. */
 	sofaFacingRight: { sheet: "living", col: 9, row: 32, w: 2, h: 4, aboveRows: 0, collision: ["#.", "#.", "#."] },
 	sofaFacingLeft: { sheet: "living", col: 7, row: 32, w: 2, h: 4, aboveRows: 0, collision: [".#", ".#", ".#"] },
 	/** One long desk with three computers side by side. */
 	deskTriple: solid("classroom", 3, 10, 4, 3),
-	bedHeadboard: solid("bedroom", 9, 0, 2, 4),
-	dresser: solid("bedroom", 12, 9, 3, 3),
+	bedHeadboard: single("bedroom", 237),
+	dresser: single("bedroom", 538),
 	/** Window with grey-blue curtains, drawn straddling tile edges. */
 	curtainWindow: flat("generic", 8, 45, 3, 3),
 	shelf: solid("classroom", 4, 13, 2, 3),
-	plantTall: solid("living", 12, 0, 1, 3),
+	plantTall: single("living", 13),
 
 	// Boathouse studio: TV-studio and fishing sets.
 	greenScreen: solid("studio", 0, 4, 3, 4),
@@ -65,8 +65,8 @@ export const FURNITURE = {
 	globe: solid("classroom", 13, 1, 1, 2),
 	/** A reception desk seen from the front; talk across it. */
 	receptionDesk: solid("conference", 0, 4, 5, 1),
-	chairDarkRight: solid("kitchen", 5, 11, 1, 2),
-	chairDarkLeft: solid("kitchen", 6, 13, 1, 2),
+	chairDarkRight: single("kitchen", 282),
+	chairDarkLeft: single("kitchen", 369),
 
 	// Kiosk (grocery sheet).
 	drinksCooler: solid("grocery", 6, 16, 2, 3),
@@ -78,7 +78,6 @@ export const FURNITURE = {
 	openSign: flat("grocery", 1, 49, 1, 2),
 
 	// Post office (post office exterior sheet, plus a counter and a noticeboard).
-	parcelCage: solid("post", 8, 11, 4, 2),
 	parcelStack: solid("post", 5, 13, 2, 2),
 	parcels: solid("post", 3, 13, 2, 2),
 	redLetterBox: solid("post", 8, 13, 1, 2),
@@ -91,7 +90,7 @@ export const FURNITURE = {
 	warmupRack: solid("gym", 8, 25, 2, 2),
 	barbellRack: solid("gym", 11, 4, 4, 2),
 	treadmill: solid("gym", 11, 8, 3, 4),
-	powerRack: solid("gym", 13, 25, 2, 4),
+	benchPress: single("gym", 193),
 	weightPlates: solid("gym", 9, 23, 2, 2),
 	weightBench: solid("gym", 11, 1, 2, 3),
 	punchingBag: solid("gym", 6, 0, 1, 3),
@@ -110,35 +109,36 @@ export const FURNITURE = {
 	// Town hall (museum and conference sheets).
 	stage: flat("conference", 5, 6, 5, 3),
 	lectern: solid("conference", 8, 2, 1, 2),
-	pillar: solid("museumSheet", 4, 29, 1, 4),
-	pillarBlue: solid("museumSheet", 5, 29, 1, 4),
-	portraitWave: flat("museumSheet", 4, 27, 2, 2),
-	portraitStars: flat("museumSheet", 6, 27, 2, 2),
-	monaLisa: flat("museumSheet", 12, 27, 2, 3),
-	museumBench: solid("museumSheet", 0, 9, 2, 1),
-	vasePedestal: solid("museumSheet", 2, 11, 2, 3),
-	redRug: flat("generic", 4, 22, 2, 2),
+	pillar: solid("museum", 4, 29, 1, 4),
+	pillarBlue: solid("museum", 5, 29, 1, 4),
+	portraitWave: flat("museum", 4, 27, 2, 2),
+	portraitStars: flat("museum", 6, 27, 2, 2),
+	monaLisa: flat("museum", 12, 27, 2, 3),
+	museumBench: solid("museum", 0, 9, 2, 1),
+	vasePedestal: solid("museum", 2, 11, 2, 3),
+	/** The generic rugs are modular pieces; (3,22) 2×2 is a complete small one. */
+	redRug: flat("generic", 3, 22, 2, 2),
 	plainDoor: flat("generic", 0, 40, 1, 2),
 
 	// Farmhouse.
 	farmTable: solid("kitchen", 3, 15, 3, 3),
-	chairRedRight: solid("kitchen", 4, 11, 1, 2),
-	chairRedLeft: solid("kitchen", 7, 13, 1, 2),
+	chairRedRight: single("kitchen", 280),
+	chairRedLeft: single("kitchen", 370),
 	kitchenCounter: solid("kitchen", 2, 8, 6, 1),
 	bakingOven: solid("grocery", 9, 35, 2, 3),
 	redCurtainWindow: flat("generic", 5, 45, 3, 3),
-	sideboard: solid("living", 5, 11, 3, 2),
-	crates: solid("grocery", 1, 61, 3, 2),
-	roundRug: flat("bedroom", 0, 22, 3, 2),
+	sideboard: single("living", 53),
+	crates: solid("grocery", 1, 60, 3, 3),
+	roundRug: flatSingle("bedroom", 383),
 	pottedTree: solid("generic", 8, 56, 2, 3),
 
 	/** A rowboat seen from above, bow up; it floats, so it doesn't block (the water does). */
-	rowboatUp: { sheet: "camping", col: 2, row: 31, w: 2, h: 4, aboveRows: 0, collision: [] },
+	rowboatUp: single("vehicles", "Boat_1_Down_1", { collision: [] }),
 	/** Staircase going up; walk up its middle column. */
 	stairsUp: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
 	/** Stairs going down, seen from above: a railing on three sides around the steps. */
-	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 3, aboveRows: 0, collision: ["#.#", "#.#", "#.#"] },
-	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 3, aboveRows: 3, collision: [] },
+	stairsDown: { sheet: "upstairs", col: 0, row: 18, w: 3, h: 4, aboveRows: 0, collision: ["#.#", "#.#", "#.#", "#.#"] },
+	stairwellRail: { sheet: "upstairs", col: 9, row: 18, w: 3, h: 3, aboveRows: 3, collision: [], allowCut: "leave off the railing's bottom bar so the stairwell is open" },
 } satisfies Record<string, Prefab>;
 
 /**

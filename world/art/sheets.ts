@@ -34,13 +34,49 @@ export const SHEETS = {
 	studio: "interiors/Theme_Sorter/23_Television_and_Film_Studio.png",
 	upstairs: "interiors/Theme_Sorter/17_Visibile_Upstairs_System_16x16.png",
 	gym: "interiors/Theme_Sorter/8_Gym_16x16.png",
-	gameRoom: "interiors/Theme_Sorter/14_Basement_16x16.png",
-	museumSheet: "interiors/Theme_Sorter/22_Museum.png",
 	sea: "exteriors/Animated_16x16/Animated_Terrains_16x16/Sea_Water_Tileset_Basic_16x16.png",
 	seaCorners: "exteriors/Animated_16x16/Animated_Terrains_16x16/Sea_Water_Tileset_Outer_Corners_16x16.png",
 } as const;
 
 export type SheetId = keyof typeof SHEETS;
+
+/**
+ * LimeZu's "Singles": every object in a sheet as its own PNG. `pnpm world:catalog` finds
+ * where each one sits in its sheet (world/art/catalog/), so prefabs can be whole objects
+ * instead of hand-measured rectangles. Sheets without singles get sprites detected from
+ * their pixels instead.
+ */
+export const SINGLES: Partial<Record<SheetId, string>> = {
+	terrain: "exteriors/ME_Theme_Sorter_16x16/1_Terrains_and_Fences_Singles_16x16",
+	city: "exteriors/ME_Theme_Sorter_16x16/2_City_Terrains_Singles_16x16",
+	props: "exteriors/ME_Theme_Sorter_16x16/3_City_Props_Singles_16x16",
+	buildings: "exteriors/ME_Theme_Sorter_16x16/4_Generic_Building_Singles_16x16",
+	office: "exteriors/ME_Theme_Sorter_16x16/16_Office_Singles_16x16",
+	garden: "exteriors/ME_Theme_Sorter_16x16/17_Garden_Singles_16x16",
+	beach: "exteriors/ME_Theme_Sorter_16x16/21_Beach_Singles_16x16",
+	post: "exteriors/ME_Theme_Sorter_16x16/22_Post_Office_Singles_16x16",
+	houses: "exteriors/ME_Theme_Sorter_16x16/24_Additional_Houses_Singles_16x16",
+	villas: "exteriors/ME_Theme_Sorter_16x16/7_Villas_Singles_16x16",
+	camping: "exteriors/ME_Theme_Sorter_16x16/11_Camping_Singles_16x16",
+	shops: "exteriors/ME_Theme_Sorter_16x16/9_Shopping_Center_and_Markets_Singles_16x16",
+	worksite: "exteriors/ME_Theme_Sorter_16x16/8_Worksite_Singles_16x16",
+	vehicles: "exteriors/ME_Theme_Sorter_16x16/10_Vehicles_Singles_16x16",
+	living: "interiors/Theme_Sorter_Singles/2_Living_Room_Singles",
+	bathroom: "interiors/Theme_Sorter_Singles/3_Bathroom_Singles",
+	bedroom: "interiors/Theme_Sorter_Singles/4_Bedroom_Singles",
+	classroom: "interiors/Theme_Sorter_Singles/5_Classroom_and_Library_Singles",
+	fishing: "interiors/Theme_Sorter_Singles/9_Fishing_Singles",
+	kitchen: "interiors/Theme_Sorter_Singles/12_Kitchen_Singles",
+	conference: "interiors/Theme_Sorter_Singles/13_Conference_Hall_Singles",
+	basement: "interiors/Theme_Sorter_Singles/14_Basement_Singles",
+	grocery: "interiors/Theme_Sorter_Singles/16_Grocery_Store_Singles",
+	museum: "interiors/Theme_Sorter_Singles/22_Museum_Singles",
+	studio: "interiors/Theme_Sorter_Singles/23_Television_and_Film_Studio_SIngles",
+	gym: "interiors/Theme_Sorter_Singles/8_Gym_Singles",
+};
+
+/** Furniture sheets without singles: their sprites are detected from the pixels. */
+export const AUTO_CATALOG: SheetId[] = ["generic", "upstairs"];
 
 /**
  * Recoloured copies of sheets: `from` with exact colour swaps (rrggbb to rrggbb, or to

@@ -17,7 +17,8 @@ export type RegistryFile = { tiles: string[] };
 export const refKey = (ref: TileRef) => `${ref.sheet}:${ref.col},${ref.row}`;
 
 export function parseKey(key: string): TileRef | null {
-	const m = /^([a-zA-Z0-9]+):(\d+),(\d+)$/.exec(key);
+	// A sheet id, or "sheet#n" for LimeZu single n of that sheet (world/art/singles.ts).
+	const m = /^([a-zA-Z0-9]+(?:#[A-Za-z0-9_]+)?):(\d+),(\d+)$/.exec(key);
 	return m ? { sheet: m[1], col: Number(m[2]), row: Number(m[3]) } : null;
 }
 

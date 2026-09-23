@@ -21,7 +21,7 @@ export function postOffice(): MapCanvas {
 	c.add(windowLight(5, 3, 2, 3));
 
 	// Behind the counter (right): parcels waiting to go out.
-	c.stamp(F.parcelCage, 8, 1).stamp(F.parcelStack, 12, 2).stamp(F.parcels, 14, 2);
+	c.stamp(F.parcelStack, 8, 2).stamp(F.parcels, 10, 2).stamp(F.parcelStack, 12, 2).stamp(F.parcels, 14, 2);
 	// Parcels close off the staff side, from the wall down to the counter.
 	c.stamp(F.parcelStack, 6, 3).stamp(F.parcels, 6, 5);
 	c.stamp(F.serviceCounter, 8, 5).stamp(F.serviceCounter, 11, 5);
