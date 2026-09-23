@@ -118,7 +118,7 @@ export class GhostLayer {
 				shown.emoteUntil = 0;
 				shown.bubble.show(null);
 			}
-			shown.bubble.update(timeMs, actor.sprite.x + actor.sprite.width / 2, actor.headTop);
+			shown.bubble.update(timeMs, actor.centerX, actor.headTop);
 		});
 		this.updateLabel(timeMs);
 	}
@@ -175,11 +175,10 @@ export class GhostLayer {
 			this.label.setVisible(false);
 			return;
 		}
-		const { sprite } = shown.actor;
 		this.label
 			.setText(shown.ghost.name)
 			.setTint(parseInt(shown.ghost.tint, 16))
-			.setPosition(Math.round(sprite.x + sprite.width / 2), Math.round(shown.actor.headTop - 2))
+			.setPosition(Math.round(shown.actor.centerX), Math.round(shown.actor.headTop - 2))
 			.setVisible(true);
 	}
 

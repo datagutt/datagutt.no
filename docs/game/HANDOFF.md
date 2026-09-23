@@ -4,6 +4,13 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **M5.5 game feel built** (waiting on the user's hand review with reduced motion on and
+  off). `game/fx/Feel.ts`: dust puffs at the heels on each step, a 2 px lean and a low
+  thud (`playBump`) on bumping into things, a squash on stepping through a door, a camera
+  shake on a new stamp, and a camera that eases after the player (lerp 0.14) and looks a
+  little ahead while walking. Reduced motion: no shake, no look-ahead, one puff. Actors
+  now have their origin at the middle of their feet (`Actor.centerX`), so the squash
+  keeps them standing.
 - **M5.4 season effects done.** `game/fx/Weather.ts`, outdoors only: snow and a pale
   frost vignette (a camera filter) in winter, pink petals in spring, drifting pollen in
   summer, tumbling leaves in autumn; tiny baked pixel sprites, screen-space emitters under

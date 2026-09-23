@@ -74,3 +74,21 @@ export function playTick(output: AudioOutput, pitch = 880): void {
 	osc.start(now);
 	osc.stop(now + 0.05);
 }
+
+/** A soft low thud for walking into something. */
+export function playBump(output: AudioOutput): void {
+	const out = running(output);
+	if (!out) return;
+	const { context: ctx, destination } = out;
+	const now = ctx.currentTime;
+	const osc = ctx.createOscillator();
+	const gain = ctx.createGain();
+	osc.type = "triangle";
+	osc.frequency.setValueAtTime(140, now);
+	osc.frequency.exponentialRampToValueAtTime(70, now + 0.08);
+	gain.gain.setValueAtTime(0.08, now);
+	gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+	osc.connect(gain).connect(destination);
+	osc.start(now);
+	osc.stop(now + 0.12);
+}

@@ -274,7 +274,7 @@ export class LiveThomas {
 	}
 
 	private updateBubbles(actor: Actor, timeMs: number): void {
-		const x = actor.sprite.x + actor.sprite.width / 2;
+		const x = actor.centerX;
 		const player = this.host.playerTile();
 		const near = Math.abs(player.x - actor.mover.tile.x) + Math.abs(player.y - actor.mover.tile.y) <= SPEECH_RANGE;
 		// Words when the player is close enough to read them, the emote otherwise.

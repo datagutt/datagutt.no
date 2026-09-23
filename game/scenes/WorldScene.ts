@@ -10,7 +10,7 @@ import { EmoteBubble } from "../ui/Bubbles";
 import { SimulatedGhosts } from "../dev/simulatedGhosts";
 import { InputController, type FrameInput, type InputDevice } from "../input/InputController";
 import { browserStorage, writeSave } from "../save/save";
-import { playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
+import { playBump, playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
 import { stampForNpc } from "../progress/passport";
 import { PROGRESS_KEY, type Progress } from "../progress/Progress";
 import { StampToast } from "../ui/Passport";
@@ -28,6 +28,7 @@ import { parseMapObject, type Facing, type LightObject, type MapObject, type Til
 import { addLights } from "../fx/Lights";
 import { DayNight } from "../fx/DayNight";
 import { Weather } from "../fx/Weather";
+import { Feel } from "../fx/Feel";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -53,6 +54,7 @@ export class WorldScene extends Phaser.Scene {
 	private dayNight!: DayNight;
 	private weather: Weather | null = null;
 	private prompt!: Prompt;
+	private feel!: Feel;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -238,7 +240,8 @@ export class WorldScene extends Phaser.Scene {
 		});
 		this.stampToast = new StampToast(this);
 		this.fitCamera();
-		this.cameras.main.startFollow(this.player.sprite, true);
+		this.feel = new Feel(this, this.player, () => this.progress.reducedMotion);
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.feel.destroy());
 		this.cameras.main.fadeIn(180, 11, 19, 32);
 		this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
@@ -329,6 +332,7 @@ export class WorldScene extends Phaser.Scene {
 		this.ghosts.update(dt, time, this.player.mover.tile);
 		this.updateSelfEmote(time);
 		this.updatePrompt(input.device);
+		this.feel.update();
 
 	}
 
@@ -349,8 +353,7 @@ export class WorldScene extends Phaser.Scene {
 	private openEmoteWheel() {
 		this.clearPath();
 		const cam = this.cameras.main;
-		const sprite = this.player.sprite;
-		this.wheel.show(sprite.x + sprite.width / 2 - cam.worldView.x, this.player.headTop - 8 - cam.worldView.y, (emote) => {
+		this.wheel.show(this.player.centerX - cam.worldView.x, this.player.headTop - 8 - cam.worldView.y, (emote) => {
 			if (!emote) return;
 			this.selfEmote.show(emote);
 			this.selfEmoteUntil = this.time.now + 3_000;
@@ -363,8 +366,7 @@ export class WorldScene extends Phaser.Scene {
 			this.selfEmoteUntil = 0;
 			this.selfEmote.show(null);
 		}
-		const sprite = this.player.sprite;
-		this.selfEmote.update(time, sprite.x + sprite.width / 2, this.player.headTop);
+		this.selfEmote.update(time, this.player.centerX, this.player.headTop);
 	}
 
 	/**
@@ -424,6 +426,7 @@ export class WorldScene extends Phaser.Scene {
 				// The player holds only the tile they are heading into.
 				this.grid.vacate(e.from.x, e.from.y, PLAYER_ID);
 				this.grid.occupy(e.to.x, e.to.y, PLAYER_ID);
+				this.feel.step(e.from);
 			} else if (e.type === "stepEnded") {
 				this.pathMarkers.shift()?.destroy();
 				const door = this.doors.get(tileKey(e.at));
@@ -439,6 +442,8 @@ export class WorldScene extends Phaser.Scene {
 				}
 			} else if (e.type === "bumped") {
 				this.clearPath();
+				this.feel.bump(e.facing);
+				playBump(this.audioOut);
 			}
 		}
 	}
@@ -563,8 +568,7 @@ export class WorldScene extends Phaser.Scene {
 		this.thomas.quiet = npc?.def.id === THOMAS_ID;
 		if (!target) return this.prompt.hide();
 		if (npc) {
-			const { sprite } = npc.actor;
-			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, sprite.x + sprite.width / 2, npc.actor.headTop - 3);
+			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, npc.actor.centerX, npc.actor.headTop - 3);
 		}
 		const x = (target.x + 0.5) * TILE;
 		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
@@ -640,6 +644,7 @@ export class WorldScene extends Phaser.Scene {
 		const result = this.progress.stamp(stampForNpc(npcId));
 		if (!result.newStamp) return;
 		playStamp(this.audioOut);
+		this.feel.shake();
 		this.stampToast.show(result.newStamp, result.stamps.length, this.progress.reducedMotion);
 	}
 
@@ -656,6 +661,7 @@ export class WorldScene extends Phaser.Scene {
 	private enterDoor(door: Door) {
 		this.transitioning = true;
 		this.clearPath();
+		this.feel.squash();
 		const cam = this.cameras.main;
 		cam.fadeOut(160, 11, 19, 32);
 		cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {

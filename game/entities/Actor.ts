@@ -1,5 +1,6 @@
 // A character on the map: a 16×32 sprite driven by a GridMover. The sprite's feet sit
 // on the bottom of its tile and it depth-sorts by its feet so it walks behind things.
+// Its origin is the middle of its feet, so squash and stretch keep it standing.
 import Phaser from "phaser";
 import { TILE } from "../constants";
 import { ANIMS, animKey, type AnimName } from "../characters/sheet";
@@ -25,16 +26,21 @@ export class Actor {
 		config: MoverConfig,
 	) {
 		this.mover = new GridMover(tile, facing, config);
-		this.sprite = scene.add.sprite(0, 0, `char:${character}`).setOrigin(0, 1);
+		this.sprite = scene.add.sprite(0, 0, `char:${character}`).setOrigin(0.5, 1);
 		this.sync();
 	}
 
 	/** Move the sprite to the mover's position and pick the right animation. */
 	sync(): void {
 		const { x, y } = this.mover.position;
-		this.sprite.setPosition(Math.round(x * TILE) + this.offset.x, Math.round((y + 1) * TILE) + this.offset.y);
+		this.sprite.setPosition(Math.round(x * TILE) + TILE / 2 + this.offset.x, Math.round((y + 1) * TILE) + this.offset.y);
 		this.sprite.setDepth(this.sprite.y);
 		this.play(this.asleep ? "sleep" : this.mover.moving ? "walk" : "idle");
+	}
+
+	/** The middle of the sprite across, in world pixels. */
+	get centerX(): number {
+		return this.sprite.x;
 	}
 
 	/** Top of the head in world pixels, for bubbles. Frames leave some air above it. */
