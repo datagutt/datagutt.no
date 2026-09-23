@@ -33,8 +33,8 @@ Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF
   blond (yellow) hair, pale skin, thick black square glasses, light stubble, light-blue
   top. Built from the closest character-generator and portrait-generator layers, with
   the hair recoloured yellow and the stock glasses recoloured black (not thickened by
-  hand: see the changelog). The original avatar also appears as-is on the title screen,
-  in the Journal and as the framed photo in the house.
+  hand: see the changelog). The original avatar also appears as-is in the Journal and as
+  the framed photo in the house (the user left it off the title screen).
 
 ## 4. Setting
 

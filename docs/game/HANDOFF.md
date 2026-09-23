@@ -4,7 +4,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
-- **Title screen v2 (M5.11), waiting on the user's review on desktop and phone.**
+- **Title screen v2 (M5.11), approved by the user 2026-09-24.**
   - Backdrop (`components/game/TitleArt.tsx`): a summer day, drawn on a grid of game
     pixels. A wide screen sees 512×288 (18 tiles tall, like the game); a tall phone sees
     extra sky above, at about the game's phone zoom. Sky, sun, drifting clouds, gulls,
@@ -20,7 +20,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
     settings, and plays the ferry intro without a reload (`PreloadScene.beginStory`).
   - The page is 42.6 KB gzipped. Next sends the SVG twice (HTML and RSC payload), so
     keep its paths compact.
-  - DESIGN says the original avatar appears on the title screen; v2 doesn't show it yet.
+  - No avatar on the title: the user's choice.
 - **Nettbureau office (M3.8), waiting on the user's review.** LimeZu's Modern Office
   pack: 16×16 files in datagutt-assets `limezu/office/` (licence in
   `licenses/modern_office/`), sheets `workplace` (furniture singles, all 2×3 canvases,

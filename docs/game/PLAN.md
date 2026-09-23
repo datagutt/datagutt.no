@@ -327,12 +327,12 @@ Goal: the Celeste-level feel.
       prompt shows the button and the action ("E  Talk", "E  Enter", "E  Read"), matching
       the input in use (keyboard key, gamepad button, a tap hint on touch). *Done when*
       every NPC, sign and door shows the right prompt on all three inputs.
-- [ ] **M5.11** Title screen v2 (user idea): a pixel-art sky and fjord built from the
+- [x] **M5.11** Title screen v2 (user idea): a pixel-art sky and fjord built from the
       game's own sprites where possible, with the energy of Sonic, Undertale and Terraria
       title screens (parallax, drifting clouds, a hint of motion). Logo in a Geist Pixel
       variant with a chunky drop shadow. "Press start" first, then a menu: Continue, New
       game, Credits, and a clearly worded way to the plain site (not just "Journal", e.g.
-      "Read it as a normal website"). *Done when* the user approves it on desktop and phone.
+      "Read it as a normal website"). *Done when* the user approves it on desktop and phone. *(Approved 2026-09-24.)*
 
 ## M6: Journal, accessibility and launch
 
