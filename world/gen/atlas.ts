@@ -2,7 +2,7 @@
 // sheets or, without the private art, from a committed table of tile colours.
 import path from "node:path";
 import sharp from "sharp";
-import { SHEETS, type SheetId } from "../art/sheets.ts";
+import { DERIVED, SHEETS, type SheetId } from "../art/sheets.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, parseKey, RESERVED } from "./registry.ts";
 
 const T = 16;
@@ -23,13 +23,31 @@ export class SheetCache {
 	async get(id: string): Promise<Raw> {
 		const cached = this.sheets.get(id);
 		if (cached) return cached;
-		const file = SHEETS[id as SheetId];
-		if (!file) throw new Error(`Unknown sheet "${id}"`);
-		const { data, info } = await sharp(path.join(this.artDir, "limezu", file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-		const raw = { data, width: info.width, height: info.height };
+		const derived = DERIVED[id];
+		const raw = derived ? recolor(await this.get(derived.from), derived.recolor) : await this.load(id);
 		this.sheets.set(id, raw);
 		return raw;
 	}
+
+	private async load(id: string): Promise<Raw> {
+		const file = SHEETS[id as SheetId];
+		if (!file) throw new Error(`Unknown sheet "${id}"`);
+		const { data, info } = await sharp(path.join(this.artDir, "limezu", file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+		return { data, width: info.width, height: info.height };
+	}
+}
+
+function recolor(src: Raw, swaps: Record<string, string>): Raw {
+	const table = new Map(Object.entries(swaps).map(([from, to]) => [parseInt(from, 16), parseInt(to, 16)]));
+	const data = Buffer.from(src.data);
+	for (let i = 0; i < data.length; i += 4) {
+		const to = table.get((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
+		if (to === undefined) continue;
+		data[i] = to >> 16;
+		data[i + 1] = (to >> 8) & 255;
+		data[i + 2] = to & 255;
+	}
+	return { ...src, data };
 }
 
 /** Alpha-composite a 16×16 tile from `src` at pixel (sx, sy) into `dst` at (dx, dy). */

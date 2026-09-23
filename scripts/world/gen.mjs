@@ -6,13 +6,15 @@
 //
 //   node scripts/world/gen.mjs            regenerate
 //   node scripts/world/gen.mjs --check    fail if the committed maps are out of date
+//   node scripts/world/gen.mjs --prune    rebuild the tile registry from scratch (only
+//                                         while no map has manual layers)
 //   node scripts/world/gen.mjs --render   also write world/out/<map>.png
-//     [--collision] [--objects] [--scale=N] [--only=<map>]
+//     [--collision] [--objects] [--grid] [--scale=N] [--only=<map>]
 import fs from "node:fs";
 import path from "node:path";
 import { GENERATED_MAPS } from "../../world/gen/maps/index.ts";
 import { TileRegistry } from "../../world/gen/registry.ts";
-import { canvasToTmj, formatTmj } from "../../world/gen/tmj.ts";
+import { canvasToTmj, formatTmj, isManual } from "../../world/gen/tmj.ts";
 import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
 import { renderTmj } from "../../world/gen/render.ts";
 import { resolveAssetSource } from "../assets/source.mjs";
@@ -31,7 +33,14 @@ const files = {
 };
 const readJson = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null);
 
-const registry = new TileRegistry(readJson(files.registry) ?? undefined);
+if (flag("prune")) {
+	const edited = GENERATED_MAPS.filter((m) => readJson(path.join(files.maps, `${m.id}.tmj`))?.layers.some(isManual));
+	if (edited.length) {
+		console.error(`[world] Can't prune: ${edited.map((m) => m.id).join(", ")} have manual layers that use today's tile ids.`);
+		process.exit(1);
+	}
+}
+const registry = new TileRegistry(flag("prune") ? undefined : (readJson(files.registry) ?? undefined));
 const only = opt("only");
 const outputs = new Map();
 for (const map of GENERATED_MAPS) {
@@ -40,7 +49,7 @@ for (const map of GENERATED_MAPS) {
 	const tmj = canvasToTmj(map.id, map.build(), registry, { properties: map.properties, previous: readJson(file) });
 	outputs.set(file, formatTmj(tmj));
 }
-outputs.set(files.registry, JSON.stringify(registry.toJSON(), null, "\t").replace(/\n\t\t/g, "\n\t\t") + "\n");
+outputs.set(files.registry, JSON.stringify(registry.toJSON(), null, "\t") + "\n");
 
 if (flag("check")) {
 	const stale = [...outputs].filter(([file, text]) => !fs.existsSync(file) || fs.readFileSync(file, "utf8") !== text);
@@ -65,9 +74,8 @@ if (!source.dir) {
 	process.exit(0);
 }
 const sheets = new SheetCache(source.dir);
-const colors = { ...readJson(files.colors), ...(await tileColors(registry.tiles, sheets)) };
-const sorted = Object.fromEntries(registry.tiles.filter((k) => colors[k]).map((k) => [k, colors[k]]));
-fs.writeFileSync(files.colors, JSON.stringify(sorted, null, "\t") + "\n");
+const colors = await tileColors(registry.tiles, sheets);
+fs.writeFileSync(files.colors, JSON.stringify(colors, null, "\t") + "\n");
 fs.mkdirSync(files.tilesetDir, { recursive: true });
 fs.writeFileSync(path.join(files.tilesetDir, "world.png"), await buildAtlas(registry.tiles, sheets));
 
@@ -78,6 +86,7 @@ if (flag("render")) {
 		const png = await renderTmj(JSON.parse(text), registry.tiles, sheets, {
 			collision: flag("collision"),
 			objects: flag("objects"),
+			grid: flag("grid"),
 			scale: Number(opt("scale") ?? 1),
 		});
 		const target = path.join(files.out, path.basename(file, ".tmj") + ".png");

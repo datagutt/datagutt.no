@@ -31,8 +31,8 @@ describe("TileRegistry", () => {
 describe("canvasToTmj", () => {
 	it("writes generated layers, a hidden collision layer and objects", () => {
 		const tmj = canvasToTmj("t", small(), new TileRegistry());
-		expect(tmj.layers.map((l) => l.name)).toEqual(["ground", "ground2", "below", "above", "collision", "objects"]);
-		expect(tmj.layers[4].visible).toBe(false);
+		expect(tmj.layers.map((l) => l.name)).toEqual(["ground", "ground2", "decal", "below", "above", "collision", "objects"]);
+		expect(tmj.layers[5].visible).toBe(false);
 		expect([...collisionOf(tmj)]).toEqual([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]);
 	});
 
@@ -47,10 +47,10 @@ describe("canvasToTmj", () => {
 
 		const again = canvasToTmj("t", small(), reg, { previous: edited });
 		expect(again.layers.map((l) => l.name)).toEqual([
-			"ground", "ground2", "below", "above", "collision", "objects", "manual_above", "manual_collision", "manual_objects",
+			"ground", "ground2", "decal", "below", "above", "collision", "objects", "manual_above", "manual_collision", "manual_objects",
 		]);
-		expect(again.layers[6].data).toEqual(manualTiles.data);
-		expect((again.layers[8].objects as { id: number }[])[0].id).toBe(2);
+		expect(again.layers[7].data).toEqual(manualTiles.data);
+		expect((again.layers[9].objects as { id: number }[])[0].id).toBe(2);
 		expect([...collisionOf(again)]).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
 	});
 

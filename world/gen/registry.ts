@@ -9,8 +9,8 @@ export const COLLISION_ID = 0;
 export const CLEAR_ID = 1;
 
 /** The packed tileset has a fixed size so maps don't change when the registry grows. */
-export const ATLAS_COLUMNS = 64;
-export const ATLAS_CAPACITY = 64 * 64;
+export const ATLAS_COLUMNS = 128;
+export const ATLAS_CAPACITY = 128 * 128;
 
 export type RegistryFile = { tiles: string[] };
 

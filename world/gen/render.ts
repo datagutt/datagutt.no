@@ -27,7 +27,7 @@ export async function renderTmj(
 	tmj: Tmj,
 	tiles: string[],
 	sheets: SheetCache,
-	options: { collision?: boolean; scale?: number; objects?: boolean } = {},
+	options: { collision?: boolean; scale?: number; objects?: boolean; grid?: boolean } = {},
 ): Promise<Buffer> {
 	const W = tmj.width * T;
 	const H = tmj.height * T;
@@ -70,8 +70,19 @@ export async function renderTmj(
 	}
 
 	const scale = options.scale ?? 1;
-	return sharp(out.data, { raw: { width: W, height: H, channels: 4 } })
-		.resize(W * scale, H * scale, { kernel: "nearest" })
-		.png()
-		.toBuffer();
+	const image = sharp(out.data, { raw: { width: W, height: H, channels: 4 } }).resize(W * scale, H * scale, { kernel: "nearest" });
+	if (!options.grid) return image.png().toBuffer();
+	// Faint tile grid with coordinates every 5 tiles, for talking about positions.
+	const s = T * scale;
+	let svg = `<svg width="${W * scale}" height="${H * scale}" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="${Math.max(9, 5 * scale)}">`;
+	for (let x = 0; x <= tmj.width; x++) svg += `<line x1="${x * s}" y1="0" x2="${x * s}" y2="${H * scale}" stroke="#000" stroke-opacity="${x % 5 ? 0.08 : 0.3}"/>`;
+	for (let y = 0; y <= tmj.height; y++) svg += `<line x1="0" y1="${y * s}" x2="${W * scale}" y2="${y * s}" stroke="#000" stroke-opacity="${y % 5 ? 0.08 : 0.3}"/>`;
+	for (let y = 0; y < tmj.height; y += 5) {
+		for (let x = 0; x < tmj.width; x += 5) {
+			svg += `<text x="${x * s + 2}" y="${y * s + 10}" fill="#fff" stroke="#000" stroke-width="2" paint-order="stroke">${x},${y}</text>`;
+		}
+	}
+	svg += "</svg>";
+	const base = await image.png().toBuffer();
+	return sharp(base).composite([{ input: Buffer.from(svg) }]).png().toBuffer();
 }

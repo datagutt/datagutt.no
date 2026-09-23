@@ -3,8 +3,11 @@
 import type { MapObject } from "../../game/world/objects.ts";
 import { pieceAt, variant, type AutotileSet, type Mask, type TileRef } from "../art/autotile.ts";
 
-/** Drawing order, bottom to top. `above` draws over characters (roofs, tree tops). */
-export const LAYERS = ["ground", "ground2", "below", "above"] as const;
+/**
+ * Drawing order, bottom to top: base terrain, terrain transitions, paving and small
+ * details, then things that stand up. `above` draws over characters (roofs, tree tops).
+ */
+export const LAYERS = ["ground", "ground2", "decal", "below", "above"] as const;
 export type LayerName = (typeof LAYERS)[number];
 
 /** A multi-tile piece cut from a sheet: a building, tree or prop. */
@@ -23,6 +26,8 @@ export type Prefab = {
 	collision?: string[];
 	/** Put the lower part on `ground2` instead of `below` (rugs, flat things). */
 	flat?: boolean;
+	/** The door tile, relative to the top-left corner. It stays walkable. */
+	door?: [number, number];
 };
 
 export class MapCanvas {
@@ -103,6 +108,7 @@ export class MapCanvas {
 		const rows = prefab.collision ?? Array.from({ length: prefab.h - prefab.aboveRows }, () => "#".repeat(prefab.w));
 		const top = prefab.h - rows.length;
 		rows.forEach((row, dy) => [...row].forEach((c, dx) => c === "#" && this.block(x + dx, y + top + dy)));
+		if (prefab.door) this.block(x + prefab.door[0], y + prefab.door[1], false);
 		return this;
 	}
 
