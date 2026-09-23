@@ -166,6 +166,20 @@ export const FURNITURE = {
 	/** One side post of the railing frame, without any bar. */
 	stairwellPostLeft: { sheet: "upstairs", col: 9, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
 	stairwellPostRight: { sheet: "upstairs", col: 11, row: 19, w: 1, h: 1, aboveRows: 1, collision: [], allowCut: "a bare post from the railing's side" },
+	// Modern Office pack (the Nettbureau office). Its singles are all 2×3 canvases.
+	/** A desk with a monitor, a printer and papers, seen from the chair's side. */
+	workstation: single("workplace", 323),
+	workstationPale: single("workplace", 328),
+	officeChair: single("workplace", 112),
+	whiteboardChart: single("workplace", 171, { collision: [] }),
+	whiteboardPie: single("workplace", 172, { collision: [] }),
+	waterCooler: single("workplace", 173),
+	vendingMachine: single("workplace", 175),
+	lockers: single("workplace", 176),
+	beanBagBlue: single("workplace", 196),
+	beanBagYellow: single("workplace", 199),
+	loungeSofa: single("workplace", 205),
+	moneyPile: single("workplace", 339),
 } satisfies Record<string, Prefab>;
 
 /**

@@ -11,14 +11,14 @@ const t = (sheet: string, col: number, row: number): TileRef => ({ sheet, col, r
  * Its columns are a left end, a seamless middle and a right end, each outlined on its
  * outer side, so only the room's corners use the ends.
  */
-export type WallStyle = { col: number; row: number };
+export type WallStyle = { col: number; row: number; sheet?: string };
 /**
  * A floor style: the top-left of a 3×2 group in Room_Builder_Floors. The group is not a
  * repeating pattern: (1,1) is the plain tile, and the others have wall shadows baked in,
  * (1,0) along the top, (0,1) down the left, (0,0) in the corner (the sheet's first two
  * rows are the template). Checked by brightness: (1,1) is the lightest in 68 of 72 groups.
  */
-export type FloorStyle = { col: number; row: number };
+export type FloorStyle = { col: number; row: number; sheet?: string };
 
 export const WALLS = {
 	woodPanel: { col: 11, row: 0 },
@@ -35,6 +35,9 @@ export const WALLS = {
 	mint: { col: 22, row: 20 },
 	industrial: { col: 11, row: 6 },
 	burgundy: { col: 22, row: 2 },
+	// Modern Office's own room builder, laid out the same way.
+	officeWhite: { col: 0, row: 11, sheet: "officeRooms" },
+	officeGrey: { col: 0, row: 7, sheet: "officeRooms" },
 } satisfies Record<string, WallStyle>;
 
 export const FLOORS = {
@@ -52,6 +55,8 @@ export const FLOORS = {
 	palePlanks: { col: 0, row: 24 },
 	rubberGrid: { col: 12, row: 22 },
 	marble: { col: 8, row: 22 },
+	carpetGrey: { col: 10, row: 7, sheet: "officeRooms" },
+	carpetTan: { col: 13, row: 7, sheet: "officeRooms" },
 } satisfies Record<string, FloorStyle>;
 
 // The thin wall-top border as a 9-slice (combined Room Builder sheet).
@@ -77,13 +82,13 @@ export function room(c: MapCanvas, r: Room, style: { wall: WallStyle; floor: Flo
 	for (let dx = 0; dx < w; dx++) {
 		for (let dy = 0; dy < 2; dy++) {
 			const piece = dx === 0 ? 0 : dx === w - 1 ? 2 : 1;
-			c.put("ground", x + dx, y + dy, t("rbWalls", style.wall.col + piece, style.wall.row + dy)).block(x + dx, y + dy);
+			c.put("ground", x + dx, y + dy, t(style.wall.sheet ?? "rbWalls", style.wall.col + piece, style.wall.row + dy)).block(x + dx, y + dy);
 		}
 		for (let dy = 2; dy < h; dy++) {
 			// Shadow from the back wall on the first floor row, from the left wall in the first column.
 			const fx = dx === 0 ? 0 : 1;
 			const fy = dy === 2 ? 0 : 1;
-			c.put("ground", x + dx, y + dy, t("rbFloors", style.floor.col + fx, style.floor.row + fy));
+			c.put("ground", x + dx, y + dy, t(style.floor.sheet ?? "rbFloors", style.floor.col + fx, style.floor.row + fy));
 		}
 	}
 	// The border: over the top wall row, down both sides, and along the bottom.

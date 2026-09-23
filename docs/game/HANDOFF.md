@@ -4,6 +4,14 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Current state
 
+- **Office interior, first pass (M3.8).** The user bought LimeZu's Modern Office: 16×16
+  files in datagutt-assets `limezu/office/` (licence in `licenses/modern_office/`),
+  sheets `workplace` (furniture; `office` was taken by the exterior office building,
+  singles catalogued, all 2×3 canvases) and `officeRooms` (room builder; `room()` takes
+  a `sheet` on its wall and floor styles now). `world/gen/maps/office.ts` is a small
+  first version; the user wants it big (Nettbureau has about 60 people in Oslo), a hip
+  startup floor with several departments, and the town hall basement as an IT department
+  instead of a server room. Being redesigned next.
 - **M5.9 performance pass, first half** (the real-phone measuring is the user's).
   - Payload for a first visit, gzipped: the game chunk (Phaser and the game) about
     417 KB, the world atlas about 290 KB, sprites about 100 KB, the town map 25 KB, plus

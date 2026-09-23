@@ -9,6 +9,7 @@ import { postOffice } from "./postOffice.ts";
 import { radioHut } from "./radioHut.ts";
 import { townHall } from "./townHall.ts";
 import { gym } from "./gym.ts";
+import { office } from "./office.ts";
 import { overworld } from "./overworld.ts";
 
 /** `outdoor` maps change with the seasons (game/world/season.ts) and the time of day (game/fx/DayNight.ts). */
@@ -26,4 +27,5 @@ export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "farmhouse", properties: { name: "Farmhouse" }, build: farmhouse },
 	{ id: "radio-hut", properties: { name: "Radio hut" }, build: radioHut },
 	{ id: "town-hall", properties: { name: "Town hall" }, build: townHall },
+	{ id: "office", properties: { name: "Nettbureau office" }, build: office },
 ];

@@ -2,7 +2,7 @@
 
 ## Art
 
-- [LimeZu](https://limezu.itch.io/): Modern Exteriors, Modern Interiors and Modern User Interface. Licensed, kept in a private repository, and not redistributed here.
+- [LimeZu](https://limezu.itch.io/): Modern Exteriors, Modern Interiors, Modern Office and Modern User Interface. Licensed, kept in a private repository, and not redistributed here.
 
 ## Type
 

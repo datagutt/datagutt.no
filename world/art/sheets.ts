@@ -29,6 +29,9 @@ export const SHEETS = {
 	kitchen: "interiors/Theme_Sorter/12_Kitchen_16x16.png",
 	conference: "interiors/Theme_Sorter/13_Conference_Hall_16x16.png",
 	basement: "interiors/Theme_Sorter/14_Basement_16x16.png",
+	// Modern Office pack: the furniture sheet ("office" is the exterior office building).
+	workplace: "office/Modern_Office_16x16.png",
+	officeRooms: "office/Room_Builder_Office_16x16.png",
 	grocery: "interiors/Theme_Sorter/16_Grocery_store_16x16.png",
 	museum: "interiors/Theme_Sorter/22_Museum.png",
 	studio: "interiors/Theme_Sorter/23_Television_and_Film_Studio.png",
@@ -69,6 +72,7 @@ export const SINGLES: Partial<Record<SheetId, string>> = {
 	kitchen: "interiors/Theme_Sorter_Singles/12_Kitchen_Singles",
 	conference: "interiors/Theme_Sorter_Singles/13_Conference_Hall_Singles",
 	basement: "interiors/Theme_Sorter_Singles/14_Basement_Singles",
+	workplace: "office/singles",
 	grocery: "interiors/Theme_Sorter_Singles/16_Grocery_Store_Singles",
 	museum: "interiors/Theme_Sorter_Singles/22_Museum_Singles",
 	studio: "interiors/Theme_Sorter_Singles/23_Television_and_Film_Studio_SIngles",

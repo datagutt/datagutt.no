@@ -79,7 +79,7 @@ export function overworld(): MapCanvas {
 	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
 	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
-	building(c, "office", 69, 22, { closed: "Locked. A note on the door says: \"Back soon. Out testing new office furniture.\"" });
+	building(c, "office", 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
 	const gymDoor = building(c, "logCabin", 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
 	building(c, "villaOrange", 6, 29, { closed: "Nobody answers. Through the window: a very tidy living room, and a cat judging you." });
 	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
@@ -171,7 +171,6 @@ export function overworld(): MapCanvas {
 	sign(c, 85, 37, "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.");
 	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
-	c.add(npc("coworker", 74, 38, "left"));
 	c.add(npc("farmer", 16, 12, "down"));
 	return c;
 }
