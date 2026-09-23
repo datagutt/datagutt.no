@@ -130,14 +130,14 @@ export function overworld(): MapCanvas {
 	meadow(c, open, 17);
 
 	// --- Objects ---------------------------------------------------------------------------
-	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 1, facing: "up" });
+	c.add({ type: "spawn", id: "ferry", x: HARBOUR_X + 1, y: pierEnd - 2, facing: "up" });
 	c.add({ type: "spawn", id: "house_door", x: home.x, y: home.y, facing: "down" });
 	c.add({ type: "spawn", id: "office_door", x: 72, y: 37, facing: "down" });
 	c.add({ type: "sign", x: HARBOUR_X + 3, y: pierTop - 2, text: "Welcome to Fjord Town. Population: small, but opinionated." });
-	c.add(npc("ferryman", HARBOUR_X + 1, pierEnd, "up"));
+	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("streamer", 14, 60, "down"));
 	c.add(npc("technician", 83, 12, "left"));
-	c.add(npc("shopkeeper", 59, 38, "down"));
+	c.add(npc("shopkeeper", 58, 35, "down"));
 	c.add(npc("coworker", 74, 38, "left"));
 	c.add(npc("sysadmin", 47, 27, "down"));
 	c.add(npc("smith", 88, 37, "left"));

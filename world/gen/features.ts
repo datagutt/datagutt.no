@@ -36,13 +36,14 @@ export function plateau(c: MapCanvas, x: number, y: number, w: number, h: number
 	}
 }
 
-/** A pier running south from (x, y0) to y1 inclusive, three tiles wide, walkable. */
+/** A pier running south from (x, y0) to y1 inclusive, three tiles wide, walkable up to its end row. */
 export function pier(c: MapCanvas, x: number, y0: number, y1: number) {
 	for (let y = y0; y <= y1; y++) {
 		const row = y === y1 ? PIER.end : y === y0 ? PIER.top : PIER.body;
 		row.forEach((tile, dx) => {
 			c.put("below", x + dx, y, tile);
-			c.block(x + dx, y, false);
+			// The end row is half water under the planks: nobody stands on it.
+			c.block(x + dx, y, y === y1);
 		});
 	}
 	c.put("below", x - 1, y1, PIER.ring);
