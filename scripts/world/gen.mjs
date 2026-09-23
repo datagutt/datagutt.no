@@ -10,6 +10,7 @@
 //                                         while no map has manual layers)
 //   node scripts/world/gen.mjs --render   also write world/out/<map>.png
 //     [--collision] [--objects] [--grid] [--scale=N] [--only=<map>]
+//     [--season=spring|summer|autumn|winter]   outdoor maps in that season
 import fs from "node:fs";
 import path from "node:path";
 import { GENERATED_MAPS } from "../../world/gen/maps/index.ts";
@@ -19,6 +20,7 @@ import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
 import { renderTmj } from "../../world/gen/render.ts";
 import { validateMap } from "../../world/gen/validate.ts";
 import { checkCuts } from "../../world/gen/cuts.ts";
+import { applySeason, isSeason } from "../../game/world/season.ts";
 import { resolveAssetSource } from "../assets/source.mjs";
 
 const root = process.cwd();
@@ -54,7 +56,7 @@ for (const map of GENERATED_MAPS) {
 	if (only && map.id !== only) continue;
 	const file = path.join(files.maps, `${map.id}.tmj`);
 	const canvas = map.build();
-	const tmj = canvasToTmj(map.id, canvas, registry, { properties: map.properties, previous: readJson(file) });
+	const tmj = canvasToTmj(map.id, canvas, registry, { properties: map.properties, previous: readJson(file), seasons: map.outdoor });
 	problems.push(...validateMap(map.id, tmj), ...checkCuts(map.id, canvas.stamped));
 	outputs.set(file, formatTmj(tmj));
 }
@@ -92,17 +94,22 @@ fs.writeFileSync(files.colors, JSON.stringify(colors, null, "\t") + "\n");
 fs.mkdirSync(files.tilesetDir, { recursive: true });
 fs.writeFileSync(path.join(files.tilesetDir, "world.png"), await buildAtlas(registry.tiles, sheets));
 
+const season = opt("season") ?? "summer";
+if (!isSeason(season)) {
+	console.error(`[world] Unknown season "${season}"`);
+	process.exit(1);
+}
 if (flag("render")) {
 	fs.mkdirSync(files.out, { recursive: true });
 	for (const [file, text] of outputs) {
 		if (!file.endsWith(".tmj")) continue;
-		const png = await renderTmj(JSON.parse(text), registry.tiles, sheets, {
+		const png = await renderTmj(applySeason(JSON.parse(text), season), registry.tiles, sheets, {
 			collision: flag("collision"),
 			objects: flag("objects"),
 			grid: flag("grid"),
 			scale: Number(opt("scale") ?? 1),
 		});
-		const target = path.join(files.out, path.basename(file, ".tmj") + ".png");
+		const target = path.join(files.out, path.basename(file, ".tmj") + (season === "summer" ? "" : `@${season}`) + ".png");
 		fs.writeFileSync(target, png);
 		console.log(`[world] Rendered ${path.relative(root, target)}`);
 	}

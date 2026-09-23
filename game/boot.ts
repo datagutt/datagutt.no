@@ -11,6 +11,7 @@ import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
 import type { Facing } from "./world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
+import { resolveSeason, type Season } from "./world/season";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -60,6 +61,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	start: WorldTarget;
 	/** Live GitHub data embedded by the page; empty in the dev harness. */
 	world: WorldState;
+	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
+	season: Season;
 };
 
 export const SERVICES_KEY = "services";
@@ -77,6 +80,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		startRequested,
 		start: target,
 		world: readWorldState(),
+		season: resolveSeason(window.location.search),
 	};
 	if (new URLSearchParams(window.location.search).has("debug")) {
 		console.info(

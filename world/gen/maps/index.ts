@@ -11,10 +11,11 @@ import { townHall } from "./townHall.ts";
 import { gym } from "./gym.ts";
 import { overworld } from "./overworld.ts";
 
-export type GeneratedMap = { id: string; properties?: Record<string, string>; build: () => MapCanvas };
+/** `outdoor` maps change with the seasons (game/world/season.ts). */
+export type GeneratedMap = { id: string; properties?: Record<string, string>; outdoor?: boolean; build: () => MapCanvas };
 
 export const GENERATED_MAPS: GeneratedMap[] = [
-	{ id: "town", properties: { name: "Fjord Town" }, build: overworld },
+	{ id: "town", properties: { name: "Fjord Town" }, outdoor: true, build: overworld },
 	{ id: "house", properties: { name: "datagutt's house" }, build: house },
 	{ id: "house-up", properties: { name: "datagutt's house, upstairs" }, build: houseUpstairs },
 	{ id: "boathouse", properties: { name: "Boathouse studio" }, build: boathouse },

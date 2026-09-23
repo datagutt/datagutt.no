@@ -2,6 +2,9 @@
 // every run; layers named `manual_*` in the previous file are the user's touch-ups in
 // Tiled and are carried over untouched, after the generated layers (DESIGN.md §10).
 import { toTiledObject } from "../../game/world/objects.ts";
+import { CHANGED_SEASONS, formatSeasonTable, seasonProperty } from "../../game/world/season.ts";
+import type { TileRef } from "../art/autotile.ts";
+import { seasonalTile } from "../art/seasons.ts";
 import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, parseKey, type TileRegistry } from "./registry.ts";
 
@@ -29,7 +32,7 @@ export function canvasToTmj(
 	id: string,
 	canvas: MapCanvas,
 	registry: TileRegistry,
-	options: { properties?: Record<string, string>; previous?: Tmj | null } = {},
+	options: { properties?: Record<string, string>; previous?: Tmj | null; seasons?: boolean } = {},
 ): Tmj {
 	const { width, height } = canvas;
 	const gid = (tileId: number) => tileId + 1;
@@ -55,6 +58,7 @@ export function canvasToTmj(
 		if (blend) layer.properties = [{ name: "blend", type: "string", value: blend }];
 		layers.push(layer);
 	}
+	const properties = { ...options.properties, ...(options.seasons ? seasonTables(canvas, registry) : {}) };
 	layers.push(tileLayer("collision", [...canvas.collision].map((b) => (b ? gid(COLLISION_ID) : 0)), false));
 
 	for (const obj of canvas.objects) {
@@ -98,7 +102,7 @@ export function canvasToTmj(
 		tileheight: TILE,
 		nextlayerid: layers.length + 1,
 		nextobjectid: nextObjectId,
-		properties: Object.entries(options.properties ?? {}).map(([name, value]) => ({ name, type: "string", value })),
+		properties: Object.entries(properties).map(([name, value]) => ({ name, type: "string", value })),
 		layers,
 		tilesets: [
 			{
@@ -120,6 +124,37 @@ export function canvasToTmj(
 			},
 		],
 	};
+}
+
+/**
+ * For each season but summer, which tiles of the map become which (world/art/seasons.ts),
+ * as map properties the game applies on load (game/world/season.ts). Registers the
+ * seasonal tiles.
+ */
+function seasonTables(canvas: MapCanvas, registry: TileRegistry): Record<string, string> {
+	const out: Record<string, string> = {};
+	for (const season of CHANGED_SEASONS) {
+		const table = new Map<number, number>();
+		for (const name of LAYERS) {
+			for (const ref of canvas.layers[name]) {
+				if (!ref) continue;
+				const from = registry.id(ref) + 1;
+				if (table.has(from)) continue;
+				let to: TileRef | null;
+				if (ref.parts) {
+					// A stack keeps its own flip (none) and its parts keep theirs.
+					const parts = ref.parts.map((p) => seasonalTile(p, season)).filter((p): p is TileRef => p !== null);
+					to = parts.length ? { ...ref, parts } : null;
+				} else {
+					to = seasonalTile(ref, season);
+				}
+				const toId = to ? registry.id(to) + 1 : 0;
+				if (toId !== from) table.set(from, toId);
+			}
+		}
+		if (table.size) out[seasonProperty(season)] = formatSeasonTable(table);
+	}
+	return out;
 }
 
 /**

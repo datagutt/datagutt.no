@@ -34,8 +34,9 @@ export function keyParts(key: string): (TileRef & { flip: number })[] | null {
 }
 
 export function parseKey(key: string): TileRef | null {
-	// A sheet id, or "sheet#n" for LimeZu single n of that sheet (world/art/singles.ts).
-	const m = /^([a-zA-Z0-9]+(?:#[A-Za-z0-9_]+)?):(\d+),(\d+)$/.exec(key);
+	// A sheet id, or "sheet#n" for LimeZu single n of that sheet (world/art/singles.ts),
+	// either with an optional "@season" after the sheet (world/art/seasons.ts).
+	const m = /^([a-zA-Z0-9]+(?:@[a-z]+)?(?:#[A-Za-z0-9_]+)?):(\d+),(\d+)$/.exec(key);
 	return m ? { sheet: m[1], col: Number(m[2]), row: Number(m[3]) } : null;
 }
 

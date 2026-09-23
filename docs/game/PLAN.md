@@ -227,9 +227,11 @@ Goal: the real town, painted, in all seasons.
 - [ ] **M3.8** Interiors (10): datagutt's house (with the town scale model), boathouse
       studio, radio tower hut, kiosk, office, town hall and basement server room,
       gym (was the smithy), library, farmhouse, post office. *Done when* the user approves each render.
-- [ ] **M3.9** Seasonal variants: generator emits season layers (snow ground and roof
+- [x] **M3.9** Seasonal variants: generator emits season layers (snow ground and roof
       caps, autumn foliage, spring flowers), runtime picks the season from the Norwegian
       date. *Done when* all four seasons render and switch via `?season=` in debug.
+      (Swap tables per season instead of layers; hand-drawn full snow roofs are
+      overrides in datagutt-assets, drafts await cleanup in Aseprite.)
 - [ ] **M3.10** Character build: composite NPC walk sheets from generator layers per
       recipe; hand-edit the datagutt sprite and portrait to match the avatar (chunky black
       glasses). *Done when* every NPC in the roster has a sprite and portrait.

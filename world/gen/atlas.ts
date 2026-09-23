@@ -3,6 +3,8 @@
 import path from "node:path";
 import sharp from "sharp";
 import fs from "node:fs";
+import type { ChangedSeason } from "../../game/world/season.ts";
+import { paintSnowCaps, seasonalColor } from "../art/seasons.ts";
 import { DERIVED, SHEETS, SINGLES, type SheetId } from "../art/sheets.ts";
 import { singleKeys } from "../art/singleKey.ts";
 import { FLIP } from "./canvas.ts";
@@ -28,6 +30,16 @@ export class SheetCache {
 		const cached = this.sheets.get(id);
 		if (cached) return cached;
 		if (id === "fx") return fxSheet();
+		const seasonal = /^([^@#]+)@([a-z]+)(#.+)?$/.exec(id);
+		if (seasonal) {
+			// "villas@winter#Villa_1": that single in winter, recoloured, then any hand-drawn
+			// overrides pasted over it.
+			const base = seasonal[1] + (seasonal[3] ?? "");
+			const season = seasonal[2] as ChangedSeason;
+			const raw = await this.applyOverrides(seasonRecolor(await this.get(base), base, season), base, season);
+			this.sheets.set(id, raw);
+			return raw;
+		}
 		if (id.includes("#")) {
 			// A single, possibly of a recoloured sheet ("villaRed#Villa_5").
 			const [sheet, key] = id.split("#");
@@ -40,6 +52,30 @@ export class SheetCache {
 		const raw = derived ? recolor(await this.get(derived.from), derived.recolor) : await this.load(id);
 		this.sheets.set(id, raw);
 		return raw;
+	}
+
+	/**
+	 * Hand-drawn seasonal art in datagutt-assets `seasons/<season>/`: "<single>.png"
+	 * (e.g. "villas#Villa_1.png") replaces that single, "<sheet>@<col>,<row>.png" is
+	 * pasted over the sheet with its top-left corner at that tile.
+	 */
+	private async applyOverrides(raw: Raw, base: string, season: ChangedSeason): Promise<Raw> {
+		const dir = path.join(this.artDir, SEASON_OVERRIDES, season);
+		if (!fs.existsSync(dir)) return raw;
+		const out = { ...raw, data: Buffer.from(raw.data) };
+		for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".png"))) {
+			const name = file.slice(0, -4);
+			const patch = name === base ? { col: 0, row: 0 } : parseOverridePatch(name, base);
+			if (!patch) continue;
+			const { data, info } = await sharp(path.join(dir, file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+			const [x0, y0] = [patch.col * T, patch.row * T];
+			if (name === base && (info.width !== raw.width || info.height !== raw.height)) {
+				throw new Error(`${SEASON_OVERRIDES}/${season}/${file} is ${info.width}×${info.height}, but ${base} is ${raw.width}×${raw.height}`);
+			}
+			if (x0 + info.width > raw.width || y0 + info.height > raw.height) throw new Error(`${SEASON_OVERRIDES}/${season}/${file} reaches past ${base}`);
+			for (let y = 0; y < info.height; y++) data.copy(out.data, ((y0 + y) * raw.width + x0) * 4, y * info.width * 4, (y + 1) * info.width * 4);
+		}
+		return out;
 	}
 
 	private singleFiles = new Map<string, Map<string, string>>();
@@ -67,6 +103,31 @@ export class SheetCache {
 		const { data, info } = await sharp(path.join(this.artDir, "limezu", file)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 		return { data, width: info.width, height: info.height };
 	}
+}
+
+/** Hand-drawn seasonal art, relative to the datagutt-assets checkout. */
+export const SEASON_OVERRIDES = "seasons";
+
+/** "houses@16,250" → where that patch of `sheet` goes; null for other sheets. */
+export function parseOverridePatch(name: string, sheet: string): { col: number; row: number } | null {
+	const m = /^(.+)@(\d+),(\d+)$/.exec(name);
+	return m && m[1] === sheet ? { col: Number(m[2]), row: Number(m[3]) } : null;
+}
+
+/** A sheet in another season: snow caps on its roofs in winter, then its greens. */
+export function seasonRecolor(src: Raw, sheet: string, season: ChangedSeason, caps = true): Raw {
+	const out = { ...src, data: Buffer.from(src.data) };
+	if (season === "winter" && caps) paintSnowCaps(out, sheet);
+	const { data } = out;
+	const memo = new Map<number, [number, number, number] | null>();
+	for (let i = 0; i < data.length; i += 4) {
+		if (data[i + 3] === 0) continue;
+		const c = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2];
+		let to = memo.get(c);
+		if (to === undefined) memo.set(c, (to = seasonalColor([data[i], data[i + 1], data[i + 2]], sheet, season)));
+		if (to) [data[i], data[i + 1], data[i + 2]] = to;
+	}
+	return out;
 }
 
 function recolor(src: Raw, swaps: Record<string, string>): Raw {

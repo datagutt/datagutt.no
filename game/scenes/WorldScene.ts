@@ -23,6 +23,7 @@ import { addLights } from "../fx/Lights";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
+import { applySeason } from "../world/season";
 
 type Door = Extract<MapObject, { type: "door" }>;
 type Sign = Extract<MapObject, { type: "sign" }>;
@@ -83,7 +84,7 @@ export class WorldScene extends Phaser.Scene {
 	}
 
 	create() {
-		const map = this.make.tilemap({ key: `map:${this.target.map}` });
+		const map = this.make.tilemap({ key: this.seasonalMapKey() });
 		// Generated maps use the packed "world" tileset; the name comes from the map.
 		const tilesetName = map.tilesets[0]?.name ?? "";
 		const tileset = map.addTilesetImage(tilesetName, `tiles:${tilesetName}`);
@@ -246,6 +247,22 @@ export class WorldScene extends Phaser.Scene {
 
 	}
 
+	/**
+	 * The cache key of this map as it looks in the current season: outdoor maps carry a
+	 * swap table per season (game/world/season.ts), applied once to a copy of the map.
+	 */
+	private seasonalMapKey(): string {
+		const key = `map:${this.target.map}`;
+		const season = this.services.season;
+		if (season === "summer") return key;
+		const seasonal = `${key}@${season}`;
+		if (!this.cache.tilemap.exists(seasonal)) {
+			const entry = this.cache.tilemap.get(key) as { format: number; data: Parameters<typeof applySeason>[0] };
+			this.cache.tilemap.add(seasonal, { ...entry, data: applySeason(entry.data, season) });
+		}
+		return seasonal;
+	}
+
 	/** FPS overlay and window.__fjord state, only with ?debug. Runs every frame. */
 	private updateDebug() {
 		if (!this.debugText) return;
@@ -254,6 +271,7 @@ export class WorldScene extends Phaser.Scene {
 		// Read by e2e tests and dev tooling.
 		(window as unknown as { __fjord?: object }).__fjord = {
 			map: this.target.map,
+			season: this.services.season,
 			tile: { ...p },
 			facing: this.player.mover.facing,
 			moving: this.player.mover.moving,

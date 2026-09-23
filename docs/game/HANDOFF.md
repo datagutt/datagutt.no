@@ -1,8 +1,24 @@
 # Handoff
 
-Last updated: 2026-09-23 (session 1: design through M3; interiors, live field and shelf, ask-again dialogue)
+Last updated: 2026-09-23 (session 1: design through M3; interiors, live field and shelf, ask-again dialogue, seasons)
 
 ## Current state
+
+- **M3.9 seasons done** (docs/game/ART.md, "Seasons"). The generator writes a swap
+  table per season into outdoor maps (`season:<name>` map properties; only `town` is
+  outdoor) and `WorldScene` applies it to a cached copy of the map
+  (`game/world/season.ts`: `seasonOn` uses Europe/Oslo, `?debug&season=` overrides).
+  Seasonal tiles are `<sheet>@<season>` keys recoloured in `SheetCache` from rules in
+  `world/art/seasons.ts`: autumn uses the camping sheet's real autumn trees (+26 rows;
+  oak, round tree and pineMid as larch), olive grass, orange bushes; spring freshens
+  greens and turns grass patches into flowers; winter has flat ground snow, snowy
+  foliage highlights, no flowers, and automatic shaded snow caps along roof tops
+  (`paintSnowCaps`, roof colours in `ROOFS`). Hand-drawn PNGs in datagutt-assets
+  `seasons/<season>/` override everything (`SheetCache.applyOverrides`).
+  - User feedback that shaped it: recolouring whole roofs white didn't work (lost
+    texture, speckles, walls in roof colours got snow) and plain white needs shades.
+    Hence caps + shaded hand-cleaned drafts instead of recoloured roofs.
+  - Furniture shadows: `shadowUnder()` (see Light and shade below).
 
 - **M3 in progress.** The generator works end to end, and the overworld was approved
   ("looks good for now") and is now the live `town` map (M3.7). The greybox town is gone;
@@ -186,15 +202,20 @@ Last updated: 2026-09-23 (session 1: design through M3; interiors, live field an
 
 ## Next step
 
-M3.9 seasons (snow ground and roof caps, autumn foliage from the camping sheet's autumn
-trees, spring flowers; runtime picks the season from the Norwegian date, `?season=` in
-debug), then M3.10 (NPC sprites and datagutt's portrait against the avatar). Two
-interiors wait on art: the Nettbureau office (Modern Office pack) and the town hall
-basement server room (rack art). The e2e passport test picks the goodbye once "ask
-again" appears; keep that in mind when changing dialogue flow. **M0.11 (Vercel token)
-stays deferred** until the user asks.
+M3.10 (NPC sprites and datagutt's portrait against the avatar). Two interiors wait on
+art: the Nettbureau office (Modern Office pack) and the town hall basement server room
+(rack art). The e2e passport test picks the goodbye once "ask again" appears; keep that in
+mind when changing dialogue flow. **M0.11 (Vercel token) stays deferred** until the user
+asks.
 
 ## Blockers and things waiting on the user
+
+- **Snow roof drafts to clean up in Aseprite** (user's choice): `pnpm world:snow` drafted
+  13 full snow roofs into datagutt-assets `seasons/winter/` (review sheet:
+  `world/out/snow-drafts.png`). Known rough spots: the farmhouse porch roof's right slope
+  has no snow, the town hall's slate roofs and the library's lower roof are patchy, the
+  gym only has snow on its upper roof, the post office has none. Once cleaned, commit
+  in datagutt-assets and run `pnpm world:gen`. Never `--force` over cleaned files.
 
 - LimeZu packs worth buying (research 2026-09-23): **Modern Farm** (barns, 19 crops,
   animals, tools; good for the farm and M3.11) and **Modern Office**. Office previews

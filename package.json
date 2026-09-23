@@ -18,7 +18,8 @@
     "world:gen": "node scripts/world/gen.mjs",
     "world:render": "node scripts/world/gen.mjs --render",
     "world:check": "node scripts/world/gen.mjs --check",
-    "world:catalog": "node scripts/world/catalog.mjs"
+    "world:catalog": "node scripts/world/catalog.mjs",
+    "world:snow": "node scripts/world/snow-drafts.mjs"
   },
   "dependencies": {
     "@spissvinkel/simplex-noise": "^1.0.1",
