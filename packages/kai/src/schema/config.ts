@@ -21,6 +21,8 @@ export const kaiConfigSchema = z.object({
 			return false;
 		}
 	}, "not an IANA time zone"),
+	/** Where a new game starts: a place id from the game's places. */
+	startPlace: id,
 	assets: z.object({
 		/** The private art repository on GitHub, as "owner/name". */
 		repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, 'use "owner/name"'),

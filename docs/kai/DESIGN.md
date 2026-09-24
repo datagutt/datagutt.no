@@ -142,3 +142,6 @@ Visitors must not notice the refactor.
 - 2026-09-24: the content bundle gets no generated `.d.ts`. Its type is `ContentOf` the
   collections' Zod schemas, imported type-only, which gives the same safety without a
   code generator, and Zod still never reaches the client bundle.
+- 2026-09-24: places are each game's own collection, not an engine one: what a place
+  means differs per game (in Fjord Town, the content it presents). The engine only needs
+  a place's id, name, stamp and entrance. The ambience mix stays engine code.

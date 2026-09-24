@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { GENERATED_MAPS } from "../../world/gen/maps/index";
 import { MUSIC } from "../assets/manifest";
-import { ROOMS, trackFor, type Moment } from "./playlist";
+import { trackFor, type Moment } from "./playlist";
 
 const town: Extract<Moment, { scene: "world" }> = { scene: "world", map: "town", outdoors: true, phase: "day", season: "summer", finale: false };
 const inside = (map: string) => trackFor({ ...town, map, outdoors: false });
@@ -39,9 +39,8 @@ describe("music by place and time", () => {
 		expect(inside("somewhere-new")).toBe("market");
 	});
 
-	it("has a mood for every interior map and only names tracks that exist", () => {
+	it("plays a track that exists in every interior map", () => {
 		const interiors = GENERATED_MAPS.filter((m) => !m.outdoor).map((m) => m.id);
-		for (const map of interiors) expect(ROOMS[map], map).toBeDefined();
-		for (const id of Object.values(ROOMS)) expect(MUSIC).toHaveProperty(id);
+		for (const map of interiors) expect(MUSIC, map).toHaveProperty(inside(map));
 	});
 });

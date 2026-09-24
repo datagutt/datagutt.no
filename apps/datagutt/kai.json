@@ -2,6 +2,7 @@
   "id": "datagutt",
   "title": "Fjord Town",
   "timezone": "Europe/Oslo",
+  "startPlace": "dock",
   "assets": {
     "repo": "datagutt/datagutt-assets",
     "branch": "main",

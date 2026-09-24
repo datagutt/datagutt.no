@@ -1,0 +1,255 @@
+{
+  "$schema": "../.kai/schema/characters.json",
+  "player": {
+    "description": "The visitor: a traveller with a backpack.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_01.png",
+      "Outfits/Outfit_01_05.png",
+      "Hairstyles/Hairstyle_05_03.png",
+      "Accessories/Accessory_03_Backpack_01.png"
+    ],
+    "portrait": false,
+    "placeholder": "4f8a5b"
+  },
+  "datagutt": {
+    "description": "datagutt, matched to public/images/avatar.png: pale skin, short flat yellow hair, black glasses, light-blue sweater. Hair and glasses are recoloured from stock; the two darkest hair swaps are shades only the portrait layers use.",
+    "layers": [
+      "Bodies/Body_02.png",
+      "Eyes/Eyes_01.png",
+      "Outfits/Outfit_14_04.png",
+      "Hairstyles/Hairstyle_20_01.png",
+      "Accessories/Accessory_15_Glasses_01.png"
+    ],
+    "recolor": {
+      "cc9659": "f7d768",
+      "b37b3f": "e6bb3a",
+      "ab6736": "c4952a",
+      "9f4c25": "a8791f",
+      "3f271b": "6b4e14",
+      "58616f": "1b1b24"
+    },
+    "placeholder": "e6bb3a"
+  },
+  "ferryman": {
+    "description": "Arne: thirty years on the fjord. Grey beard, fisherman's beanie, sailor's jumper.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_02.png",
+      "Outfits/Outfit_17_01.png",
+      "Hairstyles/Hairstyle_08_05.png",
+      {
+        "file": "Accessories/Accessory_11_Beanie_01.png",
+        "portrait": "Accessories/PG_Accessory_11_Beanie_Small_1.png"
+      },
+      "Accessories/Accessory_13_Beard_04.png"
+    ],
+    "placeholder": "3d6f8e"
+  },
+  "streamer": {
+    "description": "Sunniva: pink cat-ear hair (reads as a streaming headset) and a guac-green hoodie.",
+    "layers": [
+      "Bodies/Body_07.png",
+      "Eyes/Eyes_03.png",
+      "Outfits/Outfit_20_03.png",
+      "Hairstyles/Hairstyle_28_01.png"
+    ],
+    "placeholder": "5c9e48"
+  },
+  "technician": {
+    "description": "Kjell: field engineer with a moustache and an orange hi-vis tee.",
+    "layers": [
+      "Bodies/Body_04.png",
+      "Eyes/Eyes_02.png",
+      "Outfits/Outfit_16_02.png",
+      "Hairstyles/Hairstyle_12_04.png",
+      "Accessories/Accessory_12_Mustache_01.png"
+    ],
+    "placeholder": "e07b39"
+  },
+  "shopkeeper": {
+    "description": "Randi: ginger bun and a red kiosk apron.",
+    "layers": [
+      "Bodies/Body_02.png",
+      "Eyes/Eyes_04.png",
+      "Outfits/Outfit_09_01.png",
+      "Hairstyles/Hairstyle_11_01.png"
+    ],
+    "placeholder": "e06a4a"
+  },
+  "coworker": {
+    "description": "Ida: office casual, a teal cardigan over a white tee.",
+    "layers": [
+      "Bodies/Body_01.png",
+      "Eyes/Eyes_05.png",
+      "Outfits/Outfit_07_03.png",
+      "Hairstyles/Hairstyle_04_04.png"
+    ],
+    "placeholder": "2f8a8a"
+  },
+  "sysadmin": {
+    "description": "Bjørn: retired sysadmin. Grey hair and beard, glasses, an old knitted vest.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_06.png",
+      "Outfits/Outfit_22_02.png",
+      "Hairstyles/Hairstyle_01_05.png",
+      "Accessories/Accessory_13_Beard_04.png",
+      "Accessories/Accessory_15_Glasses_01.png"
+    ],
+    "placeholder": "7d8594"
+  },
+  "trainer": {
+    "description": "Tor: gym bro. Gelled blond spikes, a ginger beard and a red training tee.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_02.png",
+      "Outfits/Outfit_16_03.png",
+      "Hairstyles/Hairstyle_21_01.png",
+      "Accessories/Accessory_13_Beard_03.png"
+    ],
+    "placeholder": "9a5a32"
+  },
+  "librarian": {
+    "description": "Solveig: grey bun with a hair stick, red reading glasses, a lilac cardigan.",
+    "layers": [
+      "Bodies/Body_02.png",
+      "Eyes/Eyes_07.png",
+      "Outfits/Outfit_11_01.png",
+      "Hairstyles/Hairstyle_11_05.png",
+      "Accessories/Accessory_15_Glasses_02.png"
+    ],
+    "placeholder": "b87a9a"
+  },
+  "farmer": {
+    "description": "Ola: a green farm-supply cap, denim overalls and a ginger beard. LimeZu's straw hat reads more farmer but hides his eyes in the portrait.",
+    "layers": [
+      "Bodies/Body_07.png",
+      "Eyes/Eyes_01.png",
+      "Outfits/Outfit_26_03.png",
+      "Hairstyles/Hairstyle_20_01.png",
+      {
+        "file": "Accessories/Accessory_04_Snapback_03.png",
+        "portrait": "Accessories/PG_Accessory_04_Snapback_Small_3.png"
+      },
+      "Accessories/Accessory_13_Beard_03.png"
+    ],
+    "placeholder": "4a6fa8"
+  },
+  "postmaster": {
+    "description": "Liv: a Posten-red uniform jacket and long dark hair.",
+    "layers": [
+      "Bodies/Body_01.png",
+      "Eyes/Eyes_03.png",
+      "Outfits/Outfit_18_03.png",
+      "Hairstyles/Hairstyle_09_07.png"
+    ],
+    "placeholder": "b8322c"
+  },
+  "officeDev": {
+    "description": "A background coworker at the Nettbureau office (startup casual). No portrait; a one-liner in office.ink.",
+    "layers": [
+      "Bodies/Body_02.png",
+      "Eyes/Eyes_02.png",
+      "Outfits/Outfit_05_02.png",
+      "Hairstyles/Hairstyle_13_03.png",
+      "Accessories/Accessory_04_Snapback_02.png"
+    ],
+    "portrait": false,
+    "placeholder": "3a5a8a"
+  },
+  "officeDesigner": {
+    "description": "A background coworker at the Nettbureau office. No portrait.",
+    "layers": [
+      "Bodies/Body_04.png",
+      "Eyes/Eyes_03.png",
+      "Outfits/Outfit_24_03.png",
+      "Hairstyles/Hairstyle_17_03.png",
+      "Accessories/Accessory_15_Glasses_01.png"
+    ],
+    "portrait": false,
+    "placeholder": "c46a9a"
+  },
+  "officeSupport": {
+    "description": "A background coworker at the Nettbureau office. No portrait.",
+    "layers": [
+      "Bodies/Body_07.png",
+      "Eyes/Eyes_04.png",
+      "Outfits/Outfit_10_03.png",
+      "Hairstyles/Hairstyle_02_02.png"
+    ],
+    "portrait": false,
+    "placeholder": "5a9a5a"
+  },
+  "officeGrowth": {
+    "description": "A background coworker at the Nettbureau office. No portrait.",
+    "layers": [
+      "Bodies/Body_01.png",
+      "Eyes/Eyes_07.png",
+      "Outfits/Outfit_29_02.png",
+      "Hairstyles/Hairstyle_24_04.png"
+    ],
+    "portrait": false,
+    "placeholder": "d88a2a"
+  },
+  "officeData": {
+    "description": "A background coworker at the Nettbureau office. No portrait.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_01.png",
+      "Outfits/Outfit_19_01.png",
+      "Hairstyles/Hairstyle_07_02.png",
+      "Accessories/Accessory_11_Beanie_03.png",
+      "Accessories/Accessory_13_Beard_02.png"
+    ],
+    "portrait": false,
+    "placeholder": "6a4a8a"
+  },
+  "officeFinance": {
+    "description": "A background coworker at the Nettbureau office. No portrait.",
+    "layers": [
+      "Bodies/Body_04.png",
+      "Eyes/Eyes_05.png",
+      "Outfits/Outfit_02_02.png",
+      "Hairstyles/Hairstyle_26_06.png"
+    ],
+    "portrait": false,
+    "placeholder": "2a7a6a"
+  },
+  "youthWorker": {
+    "description": "Siv, who runs the youth club.",
+    "layers": [
+      "Bodies/Body_03.png",
+      "Eyes/Eyes_05.png",
+      "Outfits/Outfit_29_02.png",
+      "Hairstyles/Hairstyle_24_04.png",
+      "Accessories/Accessory_15_Glasses_01.png"
+    ],
+    "portrait": false,
+    "placeholder": "8a6ac4"
+  },
+  "clubGamer": {
+    "description": "A youth club regular.",
+    "layers": [
+      "Bodies/Body_01.png",
+      "Eyes/Eyes_02.png",
+      "Outfits/Outfit_19_01.png",
+      "Hairstyles/Hairstyle_07_02.png",
+      "Accessories/Accessory_04_Snapback_02.png"
+    ],
+    "portrait": false,
+    "placeholder": "3a8a6a"
+  },
+  "clubLounger": {
+    "description": "A youth club regular.",
+    "layers": [
+      "Bodies/Body_07.png",
+      "Eyes/Eyes_03.png",
+      "Outfits/Outfit_10_03.png",
+      "Hairstyles/Hairstyle_17_03.png",
+      "Accessories/Accessory_11_Beanie_03.png"
+    ],
+    "portrait": false,
+    "placeholder": "c48a3a"
+  }
+}

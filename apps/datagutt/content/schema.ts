@@ -52,6 +52,31 @@ export const collections = {
 		}),
 		{ body: "description" },
 	),
+	/**
+	 * The town's places and what each one presents (docs/game/DESIGN.md §5): passport
+	 * stamps, `?at=` deep links, the Journal's "visit in game" links, and the check that
+	 * every piece of content has a home.
+	 */
+	places: json(
+		z.object({
+			list: z.array(
+				z.object({
+					id: text,
+					name: text,
+					presents: z.array(
+						z.discriminatedUnion("kind", [
+							z.object({ kind: z.enum(["profile", "skills", "repos", "stats", "contact"]) }),
+							z.object({ kind: z.enum(["project", "experience"]), id: text }),
+						]),
+					),
+					/** Gives a Fjord Passport stamp when its main NPC has been talked to. */
+					stamp: z.boolean(),
+					/** Where `?at=<id>` puts the player: outside its door. */
+					entrance: z.object({ map: text, spawn: text }).optional(),
+				}),
+			),
+		}),
+	),
 	/** Jobs, one Markdown file each. */
 	experience: markdown(z.object({ id: text, company: text, role: text, period: text, description: text, tech: z.array(text) }), {
 		body: "description",

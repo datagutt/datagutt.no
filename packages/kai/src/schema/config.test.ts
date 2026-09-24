@@ -14,6 +14,7 @@ const valid = {
 	id: "demo",
 	title: "Demo",
 	timezone: "Europe/Oslo",
+	startPlace: "dock",
 	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN" },
 	ui: { frame: { file: "ui.png", x: 0, y: 0, width: 8, height: 8 }, emotes: "emotes.png" },
 	font: { module: "geist/font/pixel", file: "f.woff2", unitsPerPixel: 76 },

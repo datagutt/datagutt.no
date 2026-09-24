@@ -1,0 +1,45 @@
+{
+  "$schema": "../.kai/schema/music.json",
+  "tracks": {
+    "welcome": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/01 Welcome To Towballs Crossing Deluxe! (Loopable Version).mp3"
+    },
+    "sunrise": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/02 Enjoying the Sunrise (Loopable Version).mp3"
+    },
+    "market": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/05 At the Farmers Market (Loopable Version).mp3"
+    },
+    "taxOffice": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/06 Tax Office (Loopable Version).mp3"
+    },
+    "boredom": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/07 Afternoon Boredom (Loopable Version).mp3"
+    },
+    "snowedIn": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/09 Snowed In (Loopable Version).mp3"
+    },
+    "goodnight": {
+      "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/10 Goodnight and Sweet Dreams (Loopable Version).mp3"
+    }
+  },
+  "playlist": {
+    "title": "welcome",
+    "credits": "welcome",
+    "outdoors": {
+      "day": "sunrise",
+      "night": "goodnight",
+      "winter": "snowedIn"
+    },
+    "indoors": {
+      "default": "market",
+      "maps": {
+        "office": "taxOffice",
+        "town-hall": "taxOffice",
+        "town-hall-basement": "taxOffice",
+        "radio-hut": "taxOffice",
+        "library": "boredom"
+      }
+    }
+  }
+}

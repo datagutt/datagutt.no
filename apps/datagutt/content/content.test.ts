@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { credits } from "./credits";
 import { experience } from "./experience";
-import { places, placeFromSearch } from "./places";
+import { places, placeFromSearch, START_PLACE } from "./places";
 import { projects } from "./projects";
 
 describe("content", () => {
@@ -25,6 +25,10 @@ describe("content", () => {
 				if (ref.kind === "experience") expect(experience.map((x) => x.id)).toContain(ref.id);
 			}
 		}
+	});
+
+	it("starts the game at a place that exists", () => {
+		expect(places.map((p) => p.id)).toContain(START_PLACE);
 	});
 
 	it("uses unique ids", () => {

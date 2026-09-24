@@ -107,9 +107,14 @@ Goal: every hardcoded piece of content is a JSON or Markdown resource, validated
       the failing field. (No `.d.ts`: the bundle's type is `ContentOf` the schemas,
       imported type-only, see the DESIGN changelog. JSON files are objects so they can
       carry `$schema`; Markdown files are `NN-id.md`.)
-- [ ] **K4.2** Engine content: NPC roster and voices, places, achievements, unlock ids,
+- [x] **K4.2** Engine content: NPC roster and voices, places, achievements, unlock ids,
       character recipes, music tracks and playlist rules, credits, ambience layers.
-      *Done when* none of them is a TypeScript constant.
+      *Done when* none of them is a TypeScript constant. (Engine collections: characters,
+      npcs, music with a declarative playlist, achievements, unlocks with declarative
+      conditions, credits. Places are the game's own collection, and `startPlace` is in
+      `kai.json`. The ambience mix stays code: it is the engine's audio model over
+      layers synthesised in code, not content. The edge lines and the blocks target
+      follow in K4.5 and K5.4. Asset output and the Journal's text are unchanged.)
 - [x] **K4.3** Site content: profile, socials, skills (JSON), projects and experience
       (Markdown). The Journal reads the bundle. *Done when* `/journal` renders the same
       HTML as before. (The visible text of `/journal` is identical before and after; the
