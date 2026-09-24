@@ -92,6 +92,12 @@ export function jsonSchemas(collections: Collections): Record<string, unknown> {
 	return out;
 }
 
+/** kai.json as validated, defaults filled in, for the game to read at runtime (.kai/config.json). */
+export function writeConfig(appDir: string, config: unknown): void {
+	fs.mkdirSync(path.join(appDir, BUNDLE_DIR), { recursive: true });
+	fs.writeFileSync(path.join(appDir, BUNDLE_DIR, "config.json"), JSON.stringify(config, null, "\t") + "\n");
+}
+
 /** Writes the bundle and the editor schemas under `<appDir>/.kai/`. */
 export function writeContent(appDir: string, collections: Collections, content: Record<string, unknown>): void {
 	const out = path.join(appDir, BUNDLE_DIR);

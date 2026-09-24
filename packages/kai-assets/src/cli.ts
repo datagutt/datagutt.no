@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // The kai command line, run from a game's folder (the one with kai.json):
 //
-//   kai content                       check content/ against its schemas, write .kai/
+//   kai content                       check content/ and kai.json, write .kai/
 //   kai assets                        fetch the art, then build public/<basePath>
 //   kai world gen|check|render [...]  generate, check or render the maps (see world/gen.ts)
 //   kai characters                    contact sheet of every character (world/out/)
@@ -12,7 +12,7 @@ import { fetchArt } from "./art/fetch.ts";
 import { localArtDir } from "./art/source.ts";
 import { buildAssets } from "./build/assets.ts";
 import { reviewCharacters } from "./characters/review.ts";
-import { compileContent, ContentError, writeContent } from "./content/compile.ts";
+import { compileContent, ContentError, writeConfig, writeContent } from "./content/compile.ts";
 import { loadCollections } from "./content/load.ts";
 import { devHarness } from "./dev/harness.ts";
 import { worldGen } from "./world/gen.ts";
@@ -24,6 +24,7 @@ const commands: Record<string, () => Promise<void>> = {
 	async content() {
 		const collections = await loadCollections(appDir);
 		writeContent(appDir, collections, compileContent(appDir, collections));
+		writeConfig(appDir, loadApp(appDir).config);
 		console.log(`[content] ${Object.keys(collections).length} collections checked`);
 	},
 	async assets() {

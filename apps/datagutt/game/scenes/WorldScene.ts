@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices, type WorldTarget } from "../boot";
 import { TILE } from "../constants";
 import { Actor } from "../entities/Actor";
-import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
 import { GhostLayer } from "../entities/Ghosts";
 import { EmoteWheel } from "../ui/EmoteWheel";
 import { Prompt } from "../ui/Prompt";
@@ -12,6 +11,7 @@ import { InputController, type FrameInput, type InputDevice } from "../input/Inp
 import { browserStorage, writeSave } from "../save/save";
 import { playBump, playPaper, playStamp, playTick, type AudioOutput } from "../audio/sfx";
 import { stampForNpc } from "../progress/passport";
+import type { KaiPlugin, NpcDef, ObjectOf, Takeover, TileLayer, Usable, World } from "../plugins/api";
 import { PROGRESS_KEY, type Progress } from "../progress/Progress";
 import { StampToast } from "../ui/Passport";
 import { MenuButton, StartMenu } from "../ui/StartMenu";
@@ -36,26 +36,16 @@ import { trackFor } from "../audio/playlist";
 import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
 import { FrameWatch, qualityFor, type Quality } from "../fx/quality";
-import { Intro } from "./Intro";
-import { CreditsRoll } from "../ui/CreditsRoll";
-import { ArcadeScreen } from "../ui/ArcadeScreen";
-import { makeArcade } from "../arcade";
-import { isArcadeId } from "../arcade/ids";
 import { isUnlocked } from "../progress/unlocks";
-import { ACHIEVEMENTS, achievement, BLOCKS_TARGET, type AchievementId } from "../progress/achievements";
-import { fieldLevels } from "../live/field";
-import { spines } from "../live/shelf";
+import { ACHIEVEMENTS, achievement } from "../progress/achievements";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 import { applySeason } from "@datagutt/kai/world/season";
 import { resolveWeather, weatherSound } from "../world/weather";
-import type { WeatherNow } from "@datagutt/kai-live";
-import { CALM_WEATHER } from "../../content/live";
-import { statusLines } from "../live/datagutt";
+import { calmWeather, type WeatherNow } from "@datagutt/kai-live";
 import { t } from "../strings";
 
-type Door = Extract<MapObject, { type: "door" }>;
-type Sign = Extract<MapObject, { type: "sign" }>;
-type NpcDef = Extract<MapObject, { type: "npc" }>;
+type Door = ObjectOf<"door">;
+type Sign = ObjectOf<"sign">;
 
 const PLAYER_ID = "player";
 const tileKey = (p: Point) => `${p.x},${p.y}`;
@@ -70,25 +60,29 @@ export class WorldScene extends Phaser.Scene {
 	private grid!: CollisionGrid;
 	private player!: Actor;
 	private npcs = new Map<string, { actor: Actor; def: NpcDef }>();
-	private thomas!: LiveThomas;
+	/** NPCs a plugin moves and syncs itself. */
+	private managed = new Set<string>();
 	private dayNight!: DayNight;
 	private weather: Weather | null = null;
-	/** Oslo's weather, or the debug override; it rains on indoor maps too, for the ambience. */
-	private weatherNow: WeatherNow = CALM_WEATHER;
+	/** The visitor's weather, or the debug override; it rains on indoor maps too, for the ambience. */
+	private weatherNow!: WeatherNow;
 	private water: Water | null = null;
 	private aurora: Aurora | null = null;
 	private prompt!: Prompt;
 	private feel!: Feel;
-	private intro: Intro | null = null;
 	private readonly frameWatch = new FrameWatch();
-	private credits: CreditsRoll | null = null;
-	/** A cabinet being played (game/ui/ArcadeScreen.ts). */
-	private arcade: { screen: ArcadeScreen; title: string } | null = null;
-	private cabinets = new Map<string, Extract<MapObject, { type: "arcade" }>>();
-	/** Where the hidden cat lies (B3). */
-	private cats = new Set<string>();
-	/** Fourth-wall lines at the map's edge: which is next, and when it may speak again. */
-	private edgeQuietUntil = 0;
+	/** A plugin has the frame (a cutscene, a cabinet, the credits). */
+	private takeover: Takeover | null = null;
+	private kaiPlugins: KaiPlugin[] = [];
+	private world!: World;
+	private spawns = new Map<string, ObjectOf<"spawn">>();
+	private spots = new Map<string, ObjectOf<"spot">>();
+	private areas = new Map<string, ObjectOf<"area">>();
+	private layers = new Map<string, TileLayer>();
+	private outdoors = false;
+	private start: Point = { x: 0, y: 0 };
+	/** The NPC under the interaction prompt. */
+	private promptNpc: string | null = null;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -125,12 +119,17 @@ export class WorldScene extends Phaser.Scene {
 	init(target: WorldTarget) {
 		this.target = target;
 		this.services = this.registry.get(SERVICES_KEY) as GameServices;
+		this.kaiPlugins = this.services.plugins;
 		this.npcs = new Map();
+		this.managed = new Set();
 		this.doors = new Map();
 		this.signs = new Map();
-		this.cabinets = new Map();
-		this.cats = new Set();
-		this.arcade = null;
+		this.spawns = new Map();
+		this.spots = new Map();
+		this.areas = new Map();
+		this.layers = new Map();
+		this.takeover = null;
+		this.promptNpc = null;
 		this.path = [];
 		this.pathMarkers = [];
 		this.onArrive = null;
@@ -156,7 +155,7 @@ export class WorldScene extends Phaser.Scene {
 		this.grid = new CollisionGrid(map.width, map.height);
 
 		// Layer order matters: `collision` then `manual_collision`, whose clear tiles unblock.
-		const layers = new Map<string, Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer>();
+		const layers = this.layers;
 		for (const layerData of map.layers) {
 			const layer = map.createLayer(layerData.name, tileset);
 			if (!layer) continue;
@@ -180,45 +179,38 @@ export class WorldScene extends Phaser.Scene {
 			});
 		}
 
-		const spawns = new Map<string, Extract<MapObject, { type: "spawn" }>>();
-		const spots = new Map<string, Extract<MapObject, { type: "spot" }>>();
-		const areas = new Map<string, Extract<MapObject, { type: "area" }>>();
+		this.outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
+		this.world = this.makeWorld();
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		const lights: LightObject[] = [];
-		const signs: Extract<MapObject, { type: "sign" }>[] = [];
-		const gates: Extract<MapObject, { type: "gate" }>[] = [];
+		const signs: Sign[] = [];
+		const gates: ObjectOf<"gate">[] = [];
+		const placed: MapObject[] = [];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
-			if (obj.type === "spawn") spawns.set(obj.id, obj);
-			if (obj.type === "spot") spots.set(obj.id, obj);
-			if (obj.type === "area") areas.set(obj.id, obj);
-			if (obj.type === "door") {
+			if (obj.type === "spawn") this.spawns.set(obj.id, obj);
+			else if (obj.type === "spot") this.spots.set(obj.id, obj);
+			else if (obj.type === "area") this.areas.set(obj.id, obj);
+			else if (obj.type === "door") {
 				// A locked warp is solid ground until it opens, whatever the map around it
 				// allows: nobody slips round a gate onto it.
 				if (obj.unlock && !isUnlocked(obj.unlock, this.progress)) this.grid.setBlocked(obj.x, obj.y);
 				else this.doors.set(tileKey(obj), obj);
-			}
-			if (obj.type === "sign") signs.push(obj);
-			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
-			if (obj.type === "gate") gates.push(obj);
-			if (obj.type === "cat") {
-				// The cat lies across its tile and the next one east (the frame is 48 wide,
-				// the cat about 26 of it, centred at x 22.5).
-				for (const x of [obj.x, obj.x + 1]) {
-					this.cats.add(tileKey({ x, y: obj.y }));
-					this.grid.occupy(x, obj.y, "cat");
-				}
-				this.add.sprite((obj.x + 1) * TILE, (obj.y + 1) * TILE, "ui:cat").setOrigin(22.5 / 48, 1).setDepth((obj.y + 1) * TILE).play("cat");
-			}
-			if (obj.type === "light") lights.push(obj);
-			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
-			if (obj.type === "books") this.stockShelf(obj);
-			if (obj.type === "npc") {
+			} else if (obj.type === "sign") signs.push(obj);
+			else if (obj.type === "gate") gates.push(obj);
+			else if (obj.type === "light") lights.push(obj);
+			else if (obj.type === "npc") {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
 				this.grid.occupy(obj.x, obj.y, obj.id);
-			}
+			} else placed.push(obj);
+		}
+		// Every other type belongs to the plugin that places it.
+		for (const obj of placed) {
+			const place = this.kaiPlugins.map((p) => p.objects?.[obj.type] as ((world: World, o: MapObject) => void) | undefined).find(Boolean);
+			if (place) place(this.world, obj);
+			else console.warn(`[world] ${this.target.map}: no plugin places "${obj.type}" objects`);
 		}
 		// A shut gate reads like a sign; an open one clears its barriers off the map.
 		for (const gate of gates) {
@@ -243,13 +235,13 @@ export class WorldScene extends Phaser.Scene {
 		}
 
 		const images = addLights(this, lights, this.progress.reducedMotion);
-		const outdoors = (map.properties as { name: string; value: unknown }[] | undefined)?.some((p) => p.name === "outdoor" && p.value === "true") ?? false;
-		// The finale is always at night.
-		const hours = this.services.finale ? () => 23 : this.services.hours;
+		const outdoors = this.outdoors;
+		// A story night stays at night, under a clear sky, whatever the clock and the weather.
+		const hours = this.services.night ? () => 23 : this.services.hours;
 		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, hours, this.services.month);
 		const low = this.quality === "low";
-		// The finale keeps its clear night sky whatever the weather.
-		this.weatherNow = this.services.finale ? CALM_WEATHER : resolveWeather(window.location.search, this.services.world.weather);
+		const weather = this.services.world.weather;
+		this.weatherNow = this.services.night ? calmWeather(weather.place) : resolveWeather(window.location.search, weather);
 		this.weather = outdoors ? new Weather(this, this.services.season, this.weatherNow, this.progress.reducedMotion, low) : null;
 		const clearSky = this.weatherNow.kind === "clear";
 		this.aurora = outdoors && !low && clearSky ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
@@ -258,29 +250,14 @@ export class WorldScene extends Phaser.Scene {
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.water?.destroy());
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.weather?.destroy());
 
-		const spawn = this.target.spawn ? spawns.get(this.target.spawn) : undefined;
-		const startAt = this.target.tile ?? spawn ?? [...spawns.values()][0];
+		const spawn = this.target.spawn ? this.spawns.get(this.target.spawn) : undefined;
+		const startAt = this.target.tile ?? spawn ?? [...this.spawns.values()][0];
 		if (!startAt) throw new Error(`Map ${this.target.map} has no spawn point`);
 		const start = { x: startAt.x, y: startAt.y };
+		this.start = start;
 		const facing = this.target.facing ?? spawn?.facing ?? "down";
 		this.player = new Actor(this, PLAYER_ID, "player", start, facing, PLAYER_MOVEMENT);
 		this.grid.occupy(start.x, start.y, PLAYER_ID);
-		this.thomas = new LiveThomas(
-			{
-				scene: this,
-				map: this.target.map,
-				grid: this.grid,
-				spots,
-				doors: this.doors,
-				addNpc: (def, actor) => this.npcs.set(def.id, { actor, def }),
-				removeNpc: (id) => this.npcs.delete(id),
-				playerTile: () => this.player.mover.tile,
-			},
-			this.services.presence,
-			rosterNpc(THOMAS_ID)?.name ?? "Thomas",
-			this.services.finale ? { place: "pier", asleep: false, wanders: false, emote: null, says: null, dialogue: "datagutt_finale" } : null,
-		);
-		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.thomas.destroy());
 
 		// Other visitors: this map's room, joined at the player's tile.
 		this.ghosts = new GhostLayer(this, this.target.map);
@@ -340,21 +317,14 @@ export class WorldScene extends Phaser.Scene {
 				this.save();
 				if (effectsChanged) this.applyQuality();
 			},
-			status: () => statusLines(this.services.presence.current),
-			openJournal: () => {
-				this.save();
-				window.location.href = "/journal";
-			},
+			items: () => this.kaiPlugins.flatMap((p) => p.menuItems?.(this.world) ?? []),
 			sound: (kind) => (kind === "open" ? playPaper(this.audioOut) : playTick(this.audioOut, kind === "select" ? 660 : 880)),
 		});
 		this.stampToast = new StampToast(this);
-		// Saves from before achievements with a full passport get it quietly.
-		if (isUnlocked("passport", this.progress)) this.progress.achieve("passport");
-		if (this.target.map === "mountain") this.time.delayedCall(600, () => this.achieve("summit"));
 		this.fitCamera();
 		this.feel = new Feel(this, this.player, () => this.progress.reducedMotion);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.feel.destroy());
-		this.startIntro(areas.get("ferry"), start, [layers.get("below"), layers.get("above")]);
+		for (const plugin of this.kaiPlugins) plugin.mapCreated?.(this.world);
 		this.cameras.main.fadeIn(180, 11, 19, 32);
 		this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
@@ -395,26 +365,19 @@ export class WorldScene extends Phaser.Scene {
 			this.applyQuality();
 		}
 		this.water?.update();
-		this.aurora?.update(this.dayNight.current.dark, this.services.finale);
+		this.aurora?.update(this.dayNight.current.dark, this.services.night);
 		this.updateAmbience(time);
 		this.weather?.update(this.dayNight.current.dark);
-		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open || this.arcade) this.prompt.hide();
+		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open || this.takeover) this.prompt.hide();
 		this.updateDebug();
 
 		if (this.transitioning) return;
-		if (this.credits && !this.dialogue.open) {
-			this.credits.update(dt, input);
-			this.player.sync();
-			return;
-		}
-		if (this.intro?.active && !this.dialogue.open) {
-			this.intro.update(input);
-			for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
-			return;
-		}
-		if (this.arcade) {
-			if (!this.arcade.screen.update(dt, input)) this.arcade = null;
-			this.player.sync();
+		// A takeover pauses while it has dialogue on screen (a cutscene's conversation).
+		if (this.takeover && !this.dialogue.open) {
+			const takeover = this.takeover;
+			if (!takeover.update(dt, input) && this.takeover === takeover) this.takeover = null;
+			if (takeover.syncNpcs) this.syncNpcs();
+			else this.player.sync();
 			return;
 		}
 		if (this.menu.open) {
@@ -464,8 +427,8 @@ export class WorldScene extends Phaser.Scene {
 		}
 
 		this.player.sync();
-		for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
-		this.thomas.update(dt, time);
+		this.syncNpcs();
+		for (const plugin of this.kaiPlugins) plugin.update?.(this.world, dt, time);
 		this.simulated?.update(dt);
 		this.ghosts.update(dt, time, this.player.mover.tile);
 		this.updateSelfEmote(time);
@@ -474,29 +437,9 @@ export class WorldScene extends Phaser.Scene {
 
 	}
 
-	/** On a first visit, arriving at the dock: sail in on the ferry and meet Arne. */
-	private startIntro(ferry: Extract<MapObject, { type: "area" }> | undefined, spawn: Point, layers: (Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer | undefined)[]) {
-		const arne = this.npcs.get("ferryman");
-		const forced = new URLSearchParams(window.location.search).has("intro");
-		if (!ferry || !arne || !this.services.firstVisit || this.target.spawn !== "ferry" || (this.progress.flags.intro && !forced)) return;
-		this.intro = new Intro(
-			this,
-			this.player,
-			ferry,
-			layers.filter((l) => l !== undefined),
-			spawn,
-			this.progress.reducedMotion,
-			(done) => {
-				arne.actor.mover.face("left");
-				this.playKnot("ferryman_intro", arne.def, () => {
-					this.progress.flags.intro = true;
-					this.services.firstVisit = false;
-					this.save();
-					done();
-				});
-			},
-			() => (this.intro = null),
-		);
+	/** The map NPCs' sprites follow their movers; plugins sync the NPCs they manage. */
+	private syncNpcs() {
+		for (const [id, { actor }] of this.npcs) if (!this.managed.has(id)) actor.sync();
 	}
 
 	/** How far the sea, the forest and any fire are from every tile, for the ambience. */
@@ -537,9 +480,10 @@ export class WorldScene extends Phaser.Scene {
 			}),
 		);
 		const { muted, music } = this.progress.settings;
-		const moment = this.credits
-			? ({ scene: "credits" } as const)
-			: { scene: "world" as const, map: this.target.map, outdoors: s.outdoors, phase: this.dayNight.current.phase, season: this.services.season, finale: this.services.finale };
+		const moment =
+			this.takeover?.music === "credits"
+				? ({ scene: "credits" } as const)
+				: { scene: "world" as const, map: this.target.map, outdoors: s.outdoors, phase: this.dayNight.current.phase, season: this.services.season, night: this.services.night };
 		// Muted or switched off: nothing plays, and nothing downloads.
 		this.services.music.play(muted || !music ? null : trackFor(moment));
 	}
@@ -625,14 +569,9 @@ export class WorldScene extends Phaser.Scene {
 			quality: this.quality,
 			ambience: this.ambience.levels,
 			music: this.services.music.current,
-			presence: this.services.presence.current,
-			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
-			intro: this.intro?.active ?? false,
-			arcade: this.arcade?.title ?? null,
-			credits: this.credits !== null,
-			finale: this.services.finale,
+			takeover: this.takeover?.name ?? null,
 			prompt: this.prompt.text,
 			tile: { ...p },
 			facing: this.player.mover.facing,
@@ -646,6 +585,7 @@ export class WorldScene extends Phaser.Scene {
 			menu: this.menu.currentView,
 			audio: this.sound instanceof Phaser.Sound.WebAudioSoundManager ? this.sound.context.state : "none",
 			camera: { x: this.cameras.main.worldView.x, y: this.cameras.main.worldView.y, zoom: this.scale.zoom },
+			...Object.assign({}, ...this.kaiPlugins.map((p) => p.debug?.(this.world) ?? {})),
 		};
 	}
 
@@ -676,7 +616,9 @@ export class WorldScene extends Phaser.Scene {
 				}
 			} else if (e.type === "bumped") {
 				const ahead = neighbour(this.player.mover.tile, e.facing);
-				if (ahead.x < 0 || ahead.y < 0 || ahead.x >= this.mapWidth || ahead.y >= this.mapHeight) this.bumpedEdge();
+				if (ahead.x < 0 || ahead.y < 0 || ahead.x >= this.mapWidth || ahead.y >= this.mapHeight) {
+					for (const plugin of this.kaiPlugins) plugin.bumpedEdge?.(this.world);
+				}
 				this.clearPath();
 				this.feel.bump(e.facing);
 				playBump(this.audioOut);
@@ -705,7 +647,7 @@ export class WorldScene extends Phaser.Scene {
 
 		const npc = this.npcAt(target);
 		const sign = this.signs.get(tileKey(target));
-		if (npc || sign) {
+		if (npc || sign || this.usableAt(target)) {
 			const path = findPathAdjacent(walkable, from, target);
 			if (!path) return;
 			this.setPath(path, () => {
@@ -744,34 +686,6 @@ export class WorldScene extends Phaser.Scene {
 		return id && id !== PLAYER_ID ? this.npcs.get(id) : undefined;
 	}
 
-	/** Ola's field: one tile per day of the last weeks, crops as tall as the commits. */
-	private plantField(area: Extract<MapObject, { type: "crops" }>, decal?: Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer) {
-		const days = this.services.world.contributions;
-		// Without live data the generator's sample crops stay.
-		if (!decal || !days.length) return;
-		const stages = area.stages.split(",").map(Number);
-		fieldLevels(days, area.w).forEach((row, dy) => {
-			if (dy >= area.h) return;
-			row.forEach((level, dx) => {
-				const x = area.x + dx;
-				const y = area.y + dy;
-				if (!level) decal.removeTileAt(x, y);
-				else decal.putTileAt(stages[Math.min(level, stages.length) - 1], x, y);
-			});
-		});
-	}
-
-	/** The library's featured shelf: a spine per pinned repo, in its language colour. */
-	private stockShelf(area: Extract<MapObject, { type: "books" }>) {
-		const g = this.add.graphics().setDepth(-0.5);
-		for (const s of spines(this.services.world.repos, area.w * TILE, area.h * TILE - 2)) {
-			const x = area.x * TILE + s.x;
-			const y = area.y * TILE + s.y;
-			g.fillStyle(s.edge).fillRect(x, y, s.w, s.h);
-			g.fillStyle(s.color).fillRect(x, y + 1, s.w - 1, s.h - 1);
-		}
-	}
-
 	/**
 	 * What interact would use: the tile ahead, or across a counter, Pokémon style (up to
 	 * two blocked tiles with nothing on them, and someone standing right behind).
@@ -779,7 +693,7 @@ export class WorldScene extends Phaser.Scene {
 	private targetAhead(): Point {
 		const { tile, facing } = this.player.mover;
 		const ahead = neighbour(tile, facing);
-		const isCounter = (p: Point) => !this.npcAt(p) && !this.signs.has(tileKey(p)) && !this.grid.isWalkable(p.x, p.y, PLAYER_ID);
+		const isCounter = (p: Point) => !this.npcAt(p) && !this.signs.has(tileKey(p)) && !this.usableAt(p) && !this.grid.isWalkable(p.x, p.y, PLAYER_ID);
 		for (let p = ahead, depth = 0; depth < 2 && isCounter(p); depth++) {
 			p = neighbour(p, facing);
 			if (this.npcAt(p)) return p;
@@ -790,7 +704,7 @@ export class WorldScene extends Phaser.Scene {
 	private interactAhead() {
 		const target = this.targetAhead();
 		// A door ahead: interact walks through it, as the prompt promises.
-		if (this.doors.has(tileKey(target)) && !this.npcAt(target) && !this.signs.has(tileKey(target))) {
+		if (this.doors.has(tileKey(target)) && !this.npcAt(target) && !this.signs.has(tileKey(target)) && !this.usableAt(target)) {
 			this.handleEvents(this.player.mover.walk(this.player.mover.facing, false, (p) => this.grid.isWalkable(p.x, p.y, PLAYER_ID)));
 			return;
 		}
@@ -801,15 +715,15 @@ export class WorldScene extends Phaser.Scene {
 	private updatePrompt(device: InputDevice) {
 		const target = this.player.mover.moving || this.path.length ? null : this.targetAhead();
 		const npc = target && this.npcAt(target);
-		this.thomas.quiet = npc?.def.id === THOMAS_ID;
+		this.promptNpc = npc ? npc.def.id : null;
 		if (!target) return this.prompt.hide();
 		if (npc) {
-			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, npc.actor.centerX, npc.actor.headTop - 3);
+			const action = this.kaiPlugins.map((p) => p.promptFor?.(this.world, npc.def)).find(Boolean) ?? "Talk";
+			return this.prompt.show(action, device, npc.actor.centerX, npc.actor.headTop - 3);
 		}
 		const x = (target.x + 0.5) * TILE;
-		if (this.cats.has(tileKey(target))) return this.prompt.show("Pet", device, x, target.y * TILE - 1);
-		const cabinet = this.cabinets.get(tileKey(target));
-		if (cabinet) return this.prompt.show(cabinet.game === "stargazing" ? "Look" : cabinet.game === "screensaver" ? "Use" : "Play", device, x, target.y * TILE - 1);
+		const usable = this.usableAt(target);
+		if (usable) return this.prompt.show(usable.prompt, device, x, target.y * TILE - 1);
 		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
 		if (this.doors.has(tileKey(target))) return this.prompt.show("Enter", device, x, target.y * TILE - 1);
 		this.prompt.hide();
@@ -823,69 +737,44 @@ export class WorldScene extends Phaser.Scene {
 			this.talk(npc.def);
 			return;
 		}
-		if (this.cats.has(tileKey(p))) {
-			this.playKnot("cat_petted", null, () => this.achieve("cat"));
-			return;
+		const usable = this.usableAt(p);
+		if (usable) {
+			this.clearPath();
+			return usable.use();
 		}
-		const cabinet = this.cabinets.get(tileKey(p));
-		if (cabinet) return this.playCabinet(cabinet);
 		const sign = this.signs.get(tileKey(p));
 		if (sign?.dialogue) this.playKnot(sign.dialogue, null, () => this.save());
 		else if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
 	}
 
 	/** Earn an achievement once: a banner (unless `announce` is false) and a save. */
-	private achieve(id: AchievementId, announce = true) {
+	private achieve(id: string, announce = true) {
 		if (!this.progress.achieve(id)) return;
 		if (announce) this.stampToast.showAchievement(achievement(id).name, this.progress.reducedMotion);
 		this.save();
 	}
 
-	/** Walking into the edge of the map: a fourth-wall line now and then (B3). */
-	private bumpedEdge() {
-		if (this.time.now < this.edgeQuietUntil || this.dialogue.open) return;
-		this.edgeQuietUntil = this.time.now + 20_000;
-		this.playKnot("edge_of_world", null, () => this.achieve("edge"));
-	}
-
-	/** Step up to a cabinet: its game takes the input until the player leaves (back). */
-	private playCabinet(cabinet: Extract<MapObject, { type: "arcade" }>) {
-		// The binoculars only show stars once it's dark (or on the finale's night).
-		if (cabinet.game === "stargazing" && this.dayNight.current.dark < 0.5 && !this.services.finale) {
-			this.playKnot("binoculars_by_day", null, () => {});
-			return;
+	/** What a plugin lets the player use on `p`, if anything. */
+	private usableAt(p: Point): Usable | null {
+		for (const plugin of this.kaiPlugins) {
+			const usable = plugin.usableAt?.(this.world, p);
+			if (usable) return usable;
 		}
-		if (!isArcadeId(cabinet.game)) return;
-		if (cabinet.game === "stargazing") this.achieve("stars");
-		const progress = this.progress;
-		const game = makeArcade(cabinet.game, {
-			best: (name) => progress.records[name] ?? 0,
-			record: (name, score) => {
-				if (progress.record(name, score)) this.save();
-				if (name === "blocks" && score >= BLOCKS_TARGET) this.achieve("blocks");
-			},
-		});
-		this.clearPath();
-		this.arcade = { screen: new ArcadeScreen(this, game, () => this.save()), title: game.title };
+		return null;
 	}
 
 	/** Play an NPC's Ink knot beat by beat until it ends. */
 	private talk(npc: NpcDef) {
-		if (npc.dialogue === "datagutt_finale") return this.playFinale(npc);
-		// Each NPC's own knot has their id. Another knot first (Thomas asleep) only counts
+		if (this.kaiPlugins.some((p) => p.talk?.(this.world, npc))) return;
+		// Each NPC's own knot has their id. Another knot first (someone asleep) only counts
 		// as talking to them if it leads there.
 		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
 		const visits = runner.visits(npc.id);
 		const knot = npc.dialogue;
 		this.playKnot(knot, npc, () => {
-			if (runner.visits(npc.id) > visits) {
-				// Woken up and talked to: he gets out of bed rather than lying back down.
-				if (npc.id === THOMAS_ID && knot === "datagutt_asleep") {
-					this.thomas.wokenByPlayer();
-					this.achieve("wake");
-				}
-				this.finishedTalking(npc.id);
-			}
+			const reached = runner.visits(npc.id) > visits;
+			for (const plugin of this.kaiPlugins) plugin.talked?.(this.world, npc, knot, reached);
+			if (reached) this.finishedTalking(npc.id);
 			this.save();
 		});
 	}
@@ -935,34 +824,7 @@ export class WorldScene extends Phaser.Scene {
 		playStamp(this.audioOut);
 		this.feel.shake();
 		this.stampToast.show(result.newStamp, result.stamps.length, this.progress.reducedMotion);
-		// The last stamp: once the toast has had its moment, the finale begins.
-		// The last stamp's banner and the finale celebrate it; the achievement comes quietly.
-		if (result.complete) this.achieve("passport", false);
-		if (result.complete && !this.progress.flags.finale) this.time.delayedCall(1600, () => this.beginFinale());
-	}
-
-	/** A full passport: a note from Thomas, then night falls and he waits on the pier. */
-	private beginFinale() {
-		this.playKnot("finale_note", null, () => {
-			this.services.finale = true;
-			this.goTo({ map: "town", spawn: "finale" });
-		});
-	}
-
-	/** Thomas on the pier: his goodbye, the credits, and how to reach him. */
-	private playFinale(npc: NpcDef) {
-		this.playKnot(npc.dialogue, npc, () => {
-			this.credits = new CreditsRoll(this, this.progress.reducedMotion, () => {
-				this.credits = null;
-				this.achieve("credits");
-				this.playKnot("datagutt_contact", npc, () => {
-					// This night stays until the player moves on; the next map is back to normal.
-					this.progress.flags.finale = true;
-					this.services.finale = false;
-					this.save();
-				});
-			});
-		});
+		for (const plugin of this.kaiPlugins) plugin.stamped?.(this.world, result.newStamp, result.complete);
 	}
 
 	/** "Open github.com?" after a line with a `# link:` tag. */
@@ -988,6 +850,68 @@ export class WorldScene extends Phaser.Scene {
 		const cam = this.cameras.main;
 		cam.fadeOut(fadeMs, 11, 19, 32);
 		cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.restart(target));
+	}
+
+	/** The world as plugins see it: live views of this scene's state. */
+	private makeWorld(): World {
+		const scene = this;
+		return {
+			scene,
+			get map() {
+				return scene.target.map;
+			},
+			get outdoors() {
+				return scene.outdoors;
+			},
+			get grid() {
+				return scene.grid;
+			},
+			get player() {
+				return scene.player;
+			},
+			get services() {
+				return scene.services;
+			},
+			get progress() {
+				return scene.progress;
+			},
+			get daylight() {
+				return scene.dayNight.current;
+			},
+			layers: scene.layers,
+			spawns: scene.spawns,
+			spots: scene.spots,
+			areas: scene.areas,
+			doors: scene.doors,
+			get arrival() {
+				return { target: scene.target, tile: scene.start };
+			},
+			get dialogueOpen() {
+				return scene.dialogue.open;
+			},
+			get promptNpc() {
+				return scene.promptNpc;
+			},
+			addNpc(def, actor, options) {
+				scene.npcs.set(def.id, { actor, def });
+				if (options?.managed) scene.managed.add(def.id);
+			},
+			removeNpc(id) {
+				scene.npcs.delete(id);
+				scene.managed.delete(id);
+			},
+			npc: (id) => scene.npcs.get(id),
+			playKnot: (knot, npc, onEnd) => scene.playKnot(knot, npc, onEnd),
+			achieve: (id, announce) => scene.achieve(id, announce),
+			save: () => scene.save(),
+			goTo: (target, fadeMs) => scene.goTo(target, fadeMs),
+			takeOver(takeover) {
+				scene.clearPath();
+				scene.takeover = takeover;
+			},
+			clearPath: () => scene.clearPath(),
+			onShutdown: (fn) => scene.events.once(Phaser.Scenes.Events.SHUTDOWN, fn),
+		};
 	}
 
 	private save() {

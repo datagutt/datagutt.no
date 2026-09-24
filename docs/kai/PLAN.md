@@ -142,18 +142,29 @@ Goal: every hardcoded piece of content is a JSON or Markdown resource, validated
 
 Goal: `@datagutt/kai` holds no Fjord Town behaviour.
 
+Order: the plugin API and the triggers are built inside the app first (K5.2, K5.3), and
+each piece of Fjord Town behaviour moves into a plugin there (K5.4, K5.5) with e2e green
+after each. Only then does the now generic runtime move into the package (K5.1): moving
+it first would make the package import app code.
+
 - [ ] **K5.1** `@datagutt/kai`: move the engine parts of `game/`. `createGame({ config,
       content, plugins })` replaces `bootGame`. `ArcadeScreen` moves to `kai-arcade`, which
       then depends on `kai`. *Done when* the app boots through `createGame`.
 - [ ] **K5.2** `KaiPlugin` API: setup, map enter, interaction, update, map object types,
       Ink externals, start menu items. *Done when* the API has unit tests with a fake
-      scene.
-- [ ] **K5.3** Declarative triggers in content (enter map, talk to NPC, finish knot,
+      scene. (The API is in `game/plugins/api.ts` and runs Fjord Town; it moves with the
+      runtime in K5.1. Still open: its unit tests.)
+- [x] **K5.3** Declarative triggers in content (enter map, talk to NPC, finish knot,
       flag set) that grant achievements and set flags. *Done when* `summit` comes from a
-      trigger.
-- [ ] **K5.4** Move Fjord Town behaviour out of `WorldScene` into app plugins: the
+      trigger. (`content/triggers.json`: `enterMap`, `bumpEdge`, `passportFull`, each able
+      to play a knot, grant and set a flag. Summit, the edge lines and the passport
+      achievement are triggers.)
+- [x] **K5.4** Move Fjord Town behaviour out of `WorldScene` into app plugins: the
       ferry intro, the cat, edge lines, the finale, the passport, the credits link.
-      *Done when* `WorldScene` names no NPC, map or knot of Fjord Town.
+      *Done when* `WorldScene` names no NPC, map or knot of Fjord Town. (Plugins in
+      `game/plugins/`: triggers, cat, arcade, github, ferry intro, finale, presence,
+      journal. The finale's night is the engine's generic `services.night`. The passport
+      itself stays engine: stamps are a place's `stamp` flag.)
 - [ ] **K5.5** `presenceNpc`, `githubField` and `repoShelf` plugins in `kai-live`,
       configured by `content/presence.json` and `kai.json`. The mock presences move to
       JSON. *Done when* the `?presence=` e2e pass.

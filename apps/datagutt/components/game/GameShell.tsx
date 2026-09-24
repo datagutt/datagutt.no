@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { credits } from "@/content/credits";
-import type { GameHandle } from "@/game/boot";
+import type { GameHandle } from "@/game";
 
 type Phase = "loading" | "ready" | "playing" | "failed";
 /** Where the title screen is: the "Press start" splash, its menu, or a page off the menu. */
@@ -28,10 +28,10 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 
 	useEffect(() => {
 		let cancelled = false;
-		import("@/game/boot")
-			.then(({ bootGame }) => {
+		import("@/game")
+			.then(({ startFjordTown }) => {
 				if (cancelled || !containerRef.current) return;
-				const handle = bootGame(containerRef.current, {
+				const handle = startFjordTown(containerRef.current, {
 					onProgress: (p) => setProgress(p),
 					onReady: () => setPhase((current) => (current === "loading" ? "ready" : current)),
 				});

@@ -1,6 +1,8 @@
 // Walks the compiled Ink story one beat at a time for the dialogue UI.
 import { Story } from "inkjs";
-import { bindExternals, type ExternalContext } from "./externals";
+
+/** Implementations of the story's EXTERNAL functions, by name. */
+export type ExternalFunctions = Record<string, (...args: never[]) => unknown>;
 
 export type Beat =
 	| { type: "line"; text: string; tags: string[]; speaker: string | null }
@@ -10,9 +12,10 @@ export type Beat =
 export class DialogueRunner {
 	private readonly story: InstanceType<typeof Story>;
 
-	constructor(json: string | object, ctx: ExternalContext, savedState?: string) {
+	constructor(json: string | object, externals: ExternalFunctions, savedState?: string) {
 		this.story = new Story(typeof json === "string" ? json : JSON.stringify(json));
-		bindExternals(this.story as never, ctx);
+		// Lookahead-safe: they only read, so Ink may call them while looking ahead.
+		for (const [name, fn] of Object.entries(externals)) this.story.BindExternalFunction(name, fn, true);
 		if (savedState) {
 			try {
 				this.story.state.LoadJson(savedState);

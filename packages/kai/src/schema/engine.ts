@@ -95,6 +95,29 @@ export const unlockCondition = z.object({ stamps: z.literal("all") });
 
 export type CharacterRecipe = z.output<typeof characterRecipe>;
 
+/** What a trigger does: play a knot (narrated), then grant an achievement and set a flag. */
+const effects = {
+	knot: text.optional(),
+	grant: id.optional(),
+	/** Show the achievement's banner. */
+	announce: z.boolean().default(true),
+	flag: text.optional(),
+};
+
+/**
+ * A rule that needs no code. `enterMap` fires as the player arrives on `map` (after
+ * `delay` ms), `bumpEdge` when they walk into the map's edge (at most once per `cooldown`
+ * ms), and `passportFull` whenever the passport is checked and every stamp is in (on every
+ * map load and after each stamp), so keep it to granting.
+ */
+export const trigger = z.discriminatedUnion("on", [
+	z.object({ on: z.literal("enterMap"), map: id, delay: z.int().min(0).default(0), ...effects }),
+	z.object({ on: z.literal("bumpEdge"), cooldown: z.int().min(0).default(0), ...effects }),
+	z.object({ on: z.literal("passportFull"), ...effects }),
+]);
+
+export type Trigger = z.output<typeof trigger>;
+
 export const credits = z.object({
 	title: text,
 	byline: text,
@@ -114,6 +137,8 @@ export const ENGINE_COLLECTIONS = {
 	unlocks: json(z.record(id, unlockCondition).default({})),
 	/** The credits page and the credits roll. */
 	credits: json(credits),
+	/** Declarative rules: achievements and flags without code. */
+	triggers: json(z.object({ list: z.array(trigger) }).default({ list: [] })),
 	/** Overrides of the engine's UI copy by key (@datagutt/kai/ui/strings). An unknown key is an error. */
 	strings: json(
 		z

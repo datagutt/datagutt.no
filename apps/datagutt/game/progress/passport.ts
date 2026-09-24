@@ -25,3 +25,6 @@ export function awardStamp(stamps: readonly string[], place: string | null): Sta
 	const next = [...current, place];
 	return { stamps: next, newStamp: place, complete: next.length === known.size };
 }
+
+/** Every stamp is in. */
+export const passportFull = (progress: { hasStamp(place: string): boolean }): boolean => STAMP_PLACES.every((p) => progress.hasStamp(p.id));

@@ -79,14 +79,10 @@ export function externalDeclarations(): string {
 		.join("\n");
 }
 
-/** Minimal surface of an inkjs Story needed to bind functions (keeps this file Node-friendly). */
-type Bindable = { BindExternalFunction(name: string, fn: (...args: never[]) => unknown, lookaheadSafe?: boolean): void };
-
 export type ExternalContext = {
 	world: WorldState;
 	hasStamp(place: string): boolean;
 	isUnlocked(name: UnlockId): boolean;
-	lanyardActivity(): string;
 };
 
 const find = <T extends { id: string }>(list: readonly T[], id: string, what: string): T => {
@@ -103,9 +99,13 @@ export function asSentence(text: string): string {
 	return /[.!?…)]$/.test(capital) ? capital : `${capital}.`;
 }
 
-export function bindExternals(story: Bindable, ctx: ExternalContext): void {
+/**
+ * Fjord Town's dialogue functions, reading the content and `ctx`. `lanyard_activity`
+ * comes from the presence plugin.
+ */
+export function fjordExternals(ctx: ExternalContext): Record<Exclude<ExternalName, "lanyard_activity">, (...args: never[]) => unknown> {
 	const repo = (i: number) => ctx.world.repos[Math.trunc(i)];
-	const impl: Record<ExternalName, (...args: never[]) => unknown> = {
+	const impl: Record<Exclude<ExternalName, "lanyard_activity">, (...args: never[]) => unknown> = {
 		profile: (field: string) => String(profile[field as (typeof PROFILE_FIELDS)[number]] ?? ""),
 		about: (i: number) => profile.about[Math.trunc(i)] ?? "",
 		project_name: (id: string) => find(projects, id, "project").name,
@@ -129,7 +129,6 @@ export function bindExternals(story: Bindable, ctx: ExternalContext): void {
 		contributions_total: () => ctx.world.contributions.reduce((sum, d) => sum + d.count, 0),
 		has_stamp: (place: string) => ctx.hasStamp(place),
 		unlocked: (name: string) => ctx.isUnlocked(name as UnlockId),
-		lanyard_activity: () => ctx.lanyardActivity(),
 	};
-	for (const [name, fn] of Object.entries(impl)) story.BindExternalFunction(name, fn, true);
+	return impl;
 }

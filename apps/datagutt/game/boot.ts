@@ -6,7 +6,6 @@ import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
 import { readWorldState, type WorldState } from "@datagutt/kai-live";
 import { EMPTY_WORLD_STATE } from "../content/live";
-import config from "../kai.json";
 import { browserStorage, clearSave, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
@@ -14,9 +13,10 @@ import type { Facing } from "@datagutt/kai/world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "@datagutt/kai/world/season";
 import { clock, monthNow } from "./world/dayNight";
-import { LanyardClient, PresenceFeed } from "@datagutt/kai-live";
-import { MOCK_PRESENCES } from "./live/datagutt";
 import { GhostClient, ghostsDisabled, worldSocketUrl } from "@datagutt/kai-net/client";
+import type { KaiPlugin } from "./plugins/api";
+import type { Progress } from "./progress/Progress";
+import type { KaiConfig } from "@datagutt/kai/schema";
 import { Music } from "./audio/Music";
 import { trackFor } from "./audio/playlist";
 
@@ -24,7 +24,7 @@ import { trackFor } from "./audio/playlist";
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
 
 /**
- * Deep link first (`?at=office`), then the saved position, then the ferry dock.
+ * Deep link first (`?at=<place>`), then the saved position, then the start place's entrance.
  * `deepLinked` lets the page skip the title screen.
  */
 export function resolveStart(search: string): { target: WorldTarget; deepLinked: boolean; hasSave: boolean } {
@@ -39,7 +39,18 @@ export function resolveStart(search: string): { target: WorldTarget; deepLinked:
 	return { target: { ...place(START_PLACE).entrance! }, deepLinked: false, hasSave: false };
 }
 
+/** What the game's dialogue functions can read: the live data, the player's progress. */
+export type ExternalsContext = { world: WorldState; progress: Progress; services: GameServices };
+/** The implementations of the game's Ink external functions, by name. */
+export type Externals = Record<string, (...args: never[]) => unknown>;
+
 export type BootOptions = {
+	/** kai.json as the content build validated it (.kai/config.json). */
+	config: KaiConfig;
+	/** The game's own behaviour. */
+	plugins?: KaiPlugin[];
+	/** Binds the game's Ink external functions (its dialogue host names them). */
+	externals?: (ctx: ExternalsContext) => Externals;
 	/** URL prefix where the built game assets live. */
 	assetBase?: string;
 	/** Loading progress from 0 to 1. */
@@ -53,7 +64,7 @@ export type BootOptions = {
 export type GameHandle = {
 	/**
 	 * Enter the world. Safe to call before loading finishes; it starts when ready.
-	 * `fresh` is the title's New game: the save is forgotten (settings kept) and the ferry
+	 * `fresh` is the title's New game: the save is forgotten (settings kept) and the game
 	 * brings the player in as on a first visit.
 	 */
 	start(options?: { fresh?: boolean }): void;
@@ -69,7 +80,7 @@ export type GameHandle = {
 	hasSave: boolean;
 };
 
-export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
+export type GameServices = Required<Pick<BootOptions, "config" | "assetBase" | "plugins" | "externals">> & {
 	onProgress: (progress: number) => void;
 	onReady: () => void;
 	/** Resolves when the player has asked to start. */
@@ -77,16 +88,16 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	start: WorldTarget;
 	/** Live GitHub data embedded by the page; empty in the dev harness. */
 	world: WorldState;
-	/** The season outdoors: today's in Norway, or `?debug&season=<name>`. */
+	/** The season outdoors: today's in the game's time zone, or `?debug&season=<name>`. */
 	season: Season;
 	/**
-	 * The finale is on: night, the aurora, Thomas at the end of the pier. Set once the
-	 * passport is full, or with `?debug&finale`.
+	 * A story night: the clock stays at 23:00, the sky is clear and the aurora is out, on
+	 * every map until a plugin ends it.
 	 */
-	finale: boolean;
+	night: boolean;
 	/** The "auto" effects setting found frames running slow this visit (fx/quality.ts). */
 	autoLow: boolean;
-	/** No save and no deep link: the ferry intro plays (or `?debug&intro` forces it). */
+	/** No save and no deep link: a first visit, which an intro can greet. */
 	firstVisit: boolean;
 	/** New game over a save: the story loaded from the save is replaced before the world starts. */
 	fresh: boolean;
@@ -94,8 +105,6 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	hours: () => number;
 	/** The month on the visitor's clock (1–12), or `?debug&month=`. */
 	month: () => number;
-	/** Thomas's live Discord presence (Lanyard); empty until the first update. */
-	presence: PresenceFeed;
 	/**
 	 * Other visitors (the world socket), or null when switched off with `rx_off`. The World
 	 * scene starts and stops it by the "Other visitors" setting.
@@ -107,7 +116,7 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 
 export const SERVICES_KEY = "services";
 
-export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHandle {
+export function bootGame(parent: HTMLElement, options: BootOptions): GameHandle {
 	let requestStart!: () => void;
 	const startRequested = new Promise<void>((resolve) => (requestStart = resolve));
 	const { target, deepLinked, hasSave } = resolveStart(window.location.search);
@@ -116,14 +125,16 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 	const assetBase = options.assetBase ?? "/game/";
 	const services: GameServices = {
 		assetBase,
+		config: options.config,
+		plugins: options.plugins ?? [],
+		externals: options.externals ?? (() => ({})),
 		onProgress: options.onProgress ?? (() => {}),
 		onReady: options.onReady ?? (() => {}),
 		startRequested,
 		start: target,
 		world: readWorldState(EMPTY_WORLD_STATE),
-		season: resolveSeason(window.location.search, config.timezone),
-		presence: new PresenceFeed(),
-		finale: false,
+		season: resolveSeason(window.location.search, options.config.timezone),
+		night: false,
 		autoLow: false,
 		fresh: false,
 		firstVisit: (!hasSave && !deepLinked) || (new URLSearchParams(window.location.search).has("debug") && new URLSearchParams(window.location.search).has("intro")),
@@ -135,32 +146,19 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 			return sound instanceof Phaser.Sound.WebAudioSoundManager ? { context: sound.context, destination: sound.destination } : null;
 		}, assetBase),
 	};
-	const debug = new URLSearchParams(window.location.search).has("debug");
-	if (debug && new URLSearchParams(window.location.search).has("finale")) {
-		services.finale = true;
-		services.start = { map: "town", spawn: "finale" };
-		requestStart();
-	}
+	const params = new URLSearchParams(window.location.search);
+	const debug = params.has("debug");
 	if (debug) {
 		console.info(
 			`[game] world state from ${services.world.fetchedAt}: ${services.world.repos.length} repos`,
 			services.world.repos.map((r) => r.name),
 		);
-		services.presence.subscribe((p) => console.info("[game] presence", p));
 	}
-	// `?debug&presence=<name>` stands in a fixed presence (MOCK_PRESENCES) for Lanyard, and
-	// window.__fjordPresence(name) switches it live, to watch Thomas move.
-	const mock = debug ? new URLSearchParams(window.location.search).get("presence") : null;
-	const lanyard = new LanyardClient(services.world.discordId, (p) => services.presence.set(p));
-	if (mock && MOCK_PRESENCES[mock]) services.presence.set(MOCK_PRESENCES[mock]);
-	else lanyard.start();
-	if (debug) {
-		(window as unknown as { __fjordPresence?: (name: string) => void }).__fjordPresence = (name) => {
-			if (!MOCK_PRESENCES[name]) throw new Error(`No mock presence "${name}": ${Object.keys(MOCK_PRESENCES).join(", ")}`);
-			lanyard.stop();
-			services.ghosts?.stop();
-			services.presence.set(MOCK_PRESENCES[name]);
-		};
+	const stops: (() => void)[] = [];
+	for (const plugin of services.plugins) {
+		const booted = plugin.boot?.(services, params);
+		if (booted?.start) requestStart();
+		if (booted?.stop) stops.push(booted.stop);
 	}
 
 	const dpr = () => window.devicePixelRatio || 1;
@@ -228,7 +226,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		deepLinked,
 		hasSave,
 		destroy() {
-			lanyard.stop();
+			for (const stop of stops) stop();
 			services.music.destroy();
 			observer.disconnect();
 			dprQuery?.removeEventListener("change", onDprChange);

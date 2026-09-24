@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices } from "../boot";
 import { EMOTE_FRAME } from "@datagutt/kai/ui/emotes";
-import { nowDoing } from "../live/datagutt";
 import { CHARACTERS } from "../assets/manifest";
 import {
 	ANIMS,
@@ -19,7 +18,6 @@ import {
 } from "@datagutt/kai/characters/sheet";
 import { DialogueRunner } from "../dialogue/DialogueRunner";
 import { Progress, PROGRESS_KEY } from "../progress/Progress";
-import { isUnlocked } from "../progress/unlocks";
 import { browserStorage, loadSave, type SaveData } from "../save/save";
 
 export const DIALOGUE_KEY = "dialogue";
@@ -39,8 +37,10 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
 		this.load.image("ui:frame", "ui/frame.png");
 		this.load.spritesheet("ui:emotes", "ui/emotes.png", { frameWidth: EMOTE_FRAME, frameHeight: EMOTE_FRAME });
-		// 12 frames of 48×16; the cat lies across the middle two tiles of each.
-		this.load.spritesheet("ui:cat", "ui/cat.png", { frameWidth: 48, frameHeight: 16 });
+		// Animated strips from kai.json `sprites`, for plugins to place.
+		for (const [name, sprite] of Object.entries(services.config.sprites)) {
+			this.load.spritesheet(`sprite:${name}`, `ui/${name}.png`, { frameWidth: sprite.frameWidth, frameHeight: sprite.frameHeight });
+		}
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
 			if (!("portrait" in recipe && recipe.portrait === false)) {
@@ -77,7 +77,9 @@ export class PreloadScene extends Phaser.Scene {
 				});
 			}
 		}
-		this.anims.create({ key: "cat", frames: this.anims.generateFrameNumbers("ui:cat", {}), frameRate: 8, repeat: -1 });
+		for (const [name, sprite] of Object.entries(services.config.sprites)) {
+			this.anims.create({ key: `sprite:${name}`, frames: this.anims.generateFrameNumbers(`sprite:${name}`, {}), frameRate: sprite.frameRate, repeat: -1 });
+		}
 		// One story for the whole game, so visit counts survive map changes and reloads.
 		const saved = loadSave(browserStorage());
 		this.beginStory(services, saved);
@@ -98,12 +100,9 @@ export class PreloadScene extends Phaser.Scene {
 		const progress = new Progress(saved);
 		if (settings) progress.settings = settings;
 		this.registry.set(PROGRESS_KEY, progress);
-		const runner = new DialogueRunner(this.cache.json.get("dialogue"), {
-			world: services.world,
-			hasStamp: (place) => progress.hasStamp(place),
-			isUnlocked: (name) => isUnlocked(name, progress),
-			lanyardActivity: () => nowDoing(services.presence.current),
-		}, saved?.dialogue.main);
+		const ctx = { world: services.world, progress, services };
+		const externals = Object.assign({}, services.externals(ctx), ...services.plugins.map((p) => p.externals?.(ctx) ?? {}));
+		const runner = new DialogueRunner(this.cache.json.get("dialogue"), externals, saved?.dialogue.main);
 		this.registry.set(DIALOGUE_KEY, runner);
 	}
 }

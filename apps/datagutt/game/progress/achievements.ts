@@ -10,9 +10,6 @@ export type AchievementId = string;
 /** In the order the passport lists them (content/achievements.json). `how` shows once earned; before that, "???". */
 export const ACHIEVEMENTS: Achievement[] = content.achievements.list;
 
-/** The falling blocks score that earns "High score". */
-export const BLOCKS_TARGET = 1000;
-
 export const achievementFlag = (id: AchievementId) => `achievement:${id}`;
 
 export function achievement(id: AchievementId): Achievement {

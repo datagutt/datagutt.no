@@ -57,7 +57,14 @@ export const kaiConfigSchema = z.object({
 	sprites: z
 		.record(
 			id,
-			z.object({ file: artPath, frameWidth: z.int().positive(), frameHeight: z.int().positive(), frames: z.int().positive() }),
+			z.object({
+				file: artPath,
+				frameWidth: z.int().positive(),
+				frameHeight: z.int().positive(),
+				frames: z.int().positive(),
+				/** The game plays it as a loop, texture and animation `sprite:<name>`, at this rate. */
+				frameRate: z.number().positive().default(8),
+			}),
 		)
 		.default({}),
 	/** The in-game bitmap font, drawn from a web font in an npm package. */

@@ -5,7 +5,7 @@ import path from "node:path";
 import { EMPTY_WORLD_STATE } from "../../content/live";
 import { profile } from "../../content/profile";
 import { projects } from "../../content/projects";
-import { externalDeclarations } from "./externals";
+import { externalDeclarations, fjordExternals } from "./externals";
 import { NPCS } from "../npcs";
 import { DialogueRunner, type Beat } from "./DialogueRunner";
 
@@ -22,7 +22,9 @@ beforeAll(() => {
 	json = new Compiler(main, new CompilerOptions("main.ink", [], false, null, fileHandler)).Compile().ToJson()!;
 });
 
-const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, isUnlocked: () => false, lanyardActivity: () => "offline" };
+const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, isUnlocked: () => false };
+/** The game's functions, and the presence plugin's as it answers when Thomas is offline. */
+const externals = (c: typeof ctx) => ({ ...fjordExternals(c), lanyard_activity: () => "" });
 
 function read(runner: DialogueRunner): { lines: string[]; last: Beat } {
 	const out: string[] = [];
@@ -37,7 +39,7 @@ const choicesOf = (beat: Beat) => (beat.type === "choices" ? beat.choices : []);
 
 describe("DialogueRunner", () => {
 	it("fills facts in from content", () => {
-		const runner = new DialogueRunner(json, ctx);
+		const runner = new DialogueRunner(json, externals(ctx));
 		runner.start("datagutt");
 		const { lines: said, last } = read(runner);
 		expect(said[0]).toContain(profile.firstName);
@@ -47,7 +49,7 @@ describe("DialogueRunner", () => {
 	});
 
 	it("keeps unasked questions available, within a visit and on the next one", () => {
-		const first = new DialogueRunner(json, ctx);
+		const first = new DialogueRunner(json, externals(ctx));
 		first.start("datagutt");
 		let options = choicesOf(read(first).last);
 		expect(options).toContain("What are you working on?");
@@ -60,7 +62,7 @@ describe("DialogueRunner", () => {
 		first.choose(options.indexOf("See you around."));
 		expect(read(first).last.type).toBe("end");
 
-		const second = new DialogueRunner(json, ctx, first.saveState());
+		const second = new DialogueRunner(json, externals(ctx), first.saveState());
 		second.start("datagutt");
 		const again = read(second);
 		expect(again.lines[0]).not.toContain(profile.about[0]);
@@ -71,7 +73,7 @@ describe("DialogueRunner", () => {
 	});
 
 	it("tags lines that offer a link", () => {
-		const runner = new DialogueRunner(json, ctx);
+		const runner = new DialogueRunner(json, externals(ctx));
 		runner.start("datagutt");
 		const options = choicesOf(read(runner).last);
 		runner.choose(options.indexOf("Where can I find you online?"));
@@ -80,10 +82,10 @@ describe("DialogueRunner", () => {
 	});
 
 	it("greets returning visitors briefly", () => {
-		const first = new DialogueRunner(json, ctx);
+		const first = new DialogueRunner(json, externals(ctx));
 		first.start("ferryman");
 		expect(read(first).lines[0]).toMatch(/Welcome ashore/);
-		const second = new DialogueRunner(json, ctx, first.saveState());
+		const second = new DialogueRunner(json, externals(ctx), first.saveState());
 		second.start("ferryman");
 		expect(read(second).lines[0]).not.toMatch(/Welcome ashore/);
 	});
@@ -101,7 +103,7 @@ describe("DialogueRunner", () => {
 	it.each(NPCS.flatMap((n) => [{ id: n.id, world: "live" }, { id: n.id, world: "empty" }]))(
 		"$id: every question can be asked and the conversation ends ($world data)",
 		({ id, world }) => {
-			const runner = new DialogueRunner(json, { ...ctx, world: world === "live" ? sampleWorld : EMPTY_WORLD_STATE });
+			const runner = new DialogueRunner(json, externals({ ...ctx, world: world === "live" ? sampleWorld : EMPTY_WORLD_STATE }));
 			runner.start(id);
 			const said: string[] = [];
 			const asked = new Set<string>();
@@ -128,7 +130,7 @@ describe("DialogueRunner", () => {
 
 	it("reads the featured shelf from live data, and copes without it", () => {
 		const repo = { author: "datagutt", name: "fjord", description: "A town.", language: "TypeScript", languageColor: "#3178c6", stars: 3, forks: 0 };
-		const live = new DialogueRunner(json, { ...ctx, world: { ...EMPTY_WORLD_STATE, repos: [repo, { ...repo, name: "boat", language: "" }] } });
+		const live = new DialogueRunner(json, externals({ ...ctx, world: { ...EMPTY_WORLD_STATE, repos: [repo, { ...repo, name: "boat", language: "" }] } }));
 		live.start("featured_shelf");
 		const { lines, last } = read(live);
 		expect(lines[0]).toContain("2 books");
@@ -136,13 +138,13 @@ describe("DialogueRunner", () => {
 		expect(lines[2]).toBe('* "boat". A town.');
 		expect(last.type).toBe("end");
 
-		const empty = new DialogueRunner(json, ctx);
+		const empty = new DialogueRunner(json, externals(ctx));
 		empty.start("featured_shelf");
 		expect(read(empty).lines[0]).toContain("bare today");
 	});
 
 	it("offers every question again once all have been asked", () => {
-		const runner = new DialogueRunner(json, ctx);
+		const runner = new DialogueRunner(json, externals(ctx));
 		runner.start("ferryman");
 		let last = read(runner).last;
 		// Ask both questions.
@@ -172,14 +174,14 @@ describe("the world's own lines", () => {
 			["cat_petted", "* Mjau."],
 			["binoculars_by_day", "* Just the town"],
 		]) {
-			const runner = new DialogueRunner(json, ctx);
+			const runner = new DialogueRunner(json, externals(ctx));
 			runner.start(knot);
 			expect(read(runner).lines[0].startsWith(start), knot).toBe(true);
 		}
 	});
 
 	it("says a different edge line each time, in turn", () => {
-		const runner = new DialogueRunner(json, ctx);
+		const runner = new DialogueRunner(json, externals(ctx));
 		const lines = Array.from({ length: 5 }, () => {
 			runner.start("edge_of_world");
 			return read(runner).lines[0];

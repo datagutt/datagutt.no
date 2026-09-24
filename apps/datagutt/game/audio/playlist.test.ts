@@ -3,7 +3,7 @@ import { GENERATED_MAPS } from "../../world/gen/maps/index";
 import { MUSIC } from "../assets/manifest";
 import { trackFor, type Moment } from "./playlist";
 
-const town: Extract<Moment, { scene: "world" }> = { scene: "world", map: "town", outdoors: true, phase: "day", season: "summer", finale: false };
+const town: Extract<Moment, { scene: "world" }> = { scene: "world", map: "town", outdoors: true, phase: "day", season: "summer", night: false };
 const inside = (map: string) => trackFor({ ...town, map, outdoors: false });
 
 describe("music by place and time", () => {
@@ -25,8 +25,8 @@ describe("music by place and time", () => {
 		expect(trackFor({ ...town, season: "autumn" })).toBe("sunrise");
 	});
 
-	it("plays the night track for the finale, whatever the season", () => {
-		expect(trackFor({ ...town, finale: true, season: "winter" })).toBe("goodnight");
+	it("plays the night track on a story night, whatever the season", () => {
+		expect(trackFor({ ...town, night: true, season: "winter" })).toBe("goodnight");
 	});
 
 	it("gives each room its mood, day or night", () => {

@@ -1,0 +1,8 @@
+{
+  "$schema": "../.kai/schema/triggers.json",
+  "list": [
+    { "on": "enterMap", "map": "mountain", "delay": 600, "grant": "summit" },
+    { "on": "bumpEdge", "cooldown": 20000, "knot": "edge_of_world", "grant": "edge" },
+    { "on": "passportFull", "grant": "passport", "announce": false }
+  ]
+}
