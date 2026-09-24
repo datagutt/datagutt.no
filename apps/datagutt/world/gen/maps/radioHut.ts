@@ -3,10 +3,10 @@
 // back wall, the screens showing signal bars, a retro PC, a spare transceiver and
 // status lights blinking. Kjell's lines are about bonded cables and signal bars.
 import { NPCS } from "../../../game/npcs.ts";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function radioHut(): MapCanvas {
 	const c = new MapCanvas(14, 10);

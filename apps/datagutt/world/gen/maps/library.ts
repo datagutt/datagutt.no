@@ -3,10 +3,10 @@
 // repos; M3.11 fills it from live data) lit in the middle, book aisles on the left, a
 // reading corner on the right, and Solveig's desk facing the door.
 import { NPCS } from "../../../game/npcs.ts";
-import { bookcase, FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { bookcase, FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function library(): MapCanvas {
 	const c = new MapCanvas(26, 14);

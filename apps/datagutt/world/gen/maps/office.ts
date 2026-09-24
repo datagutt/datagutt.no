@@ -10,10 +10,10 @@
 //   bottom: Customer service (x 3-15) | reception by the door | Growth (x 23-29) | Lounge
 import { NPCS } from "../../../game/npcs.ts";
 import type { MapObject } from "@datagutt/kai/world/objects";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
-import { MapCanvas, type Prefab } from "../canvas.ts";
-import { exitDoor, floorPatch, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas, type Prefab } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, floorPatch, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 /**
  * One desk, LimeZu style: the desk top, a computer set laid on it, and a chair pulled up

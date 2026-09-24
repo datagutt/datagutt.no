@@ -5,14 +5,14 @@
 //       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "@datagutt/kai/world/objects";
-import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
-import { refKey } from "../registry.ts";
-import { glow, NIGHT_LIGHTS } from "../../art/lighting.ts";
-import { PREFABS } from "../../art/prefabs.ts";
-import { variant } from "../../art/autotile.ts";
-import { MapCanvas } from "../canvas.ts";
-import { building, fence, forest, meadow, pier, plateau, sign } from "../features.ts";
-import { Region, wobble } from "../layout.ts";
+import { COBBLE, CROPS, GRASS, TERRAIN } from "@datagutt/kai-limezu/palette";
+import { refKey } from "@datagutt/kai-worldgen/registry";
+import { glow, NIGHT_LIGHTS } from "@datagutt/kai-limezu/lighting";
+import { PREFABS } from "../prefabs.ts";
+import { variant } from "@datagutt/kai-worldgen/autotile";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { building, fence, forest, meadow, pier, plateau, sign } from "@datagutt/kai-limezu/features";
+import { Region, wobble } from "@datagutt/kai-worldgen/layout";
 
 export const W = 96;
 export const H = 76;
@@ -73,13 +73,13 @@ export function overworld(): MapCanvas {
 
 	// --- Radio hill ------------------------------------------------------------------------
 	plateau(c, 63, 5, 27, 10, [66, 67]);
-	const hutDoor = building(c, "hut", 75, 9, { link: { toMap: "radio-hut", toSpawn: "entrance" } });
+	const hutDoor = building(c, PREFABS.hut, 75, 9, { link: { toMap: "radio-hut", toSpawn: "entrance" } });
 
 	// --- Buildings -------------------------------------------------------------------------
-	const farmDoor = building(c, "farmhouse", 5, 14, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
+	const farmDoor = building(c, PREFABS.farmhouse, 5, 14, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
 	c.stamp(PREFABS.windmill, 23, 15);
-	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
-	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
+	const libraryDoor = building(c, PREFABS.library, 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
+	const hallDoor = building(c, PREFABS.townHall, 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
 	// The mountain trail (B6): barriers and a rockfall shut it until the passport is full;
 	// then the game clears the gate and the way north leads up to the hytte.
@@ -100,18 +100,18 @@ export function overworld(): MapCanvas {
 	c.stamp(PREFABS.bench, 69, 12).stamp(PREFABS.binoculars, 70, 12);
 	c.add({ type: "arcade", x: 70, y: 13, game: "stargazing" });
 	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
-	building(c, "office", 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
-	const gymDoor = building(c, "logCabin", 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
-	building(c, "villaOrange", 6, 29, { closed: "Nobody answers. Through the window: a very tidy living room, and a cat judging you." });
-	const home = building(c, "homeVilla", 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
-	building(c, "villaBlue", 26, 29, { closed: "Nobody's home. A note says the neighbours are out on the fjord." });
-	const kioskDoor = building(c, "kiosk", 57, 30, { link: { toMap: "kiosk", toSpawn: "entrance" } });
-	const postDoor = building(c, "postOffice", 37, 44, { link: { toMap: "post-office", toSpawn: "entrance" } });
-	const boathouseDoor = building(c, "boathouse", 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
+	building(c, PREFABS.office, 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
+	const gymDoor = building(c, PREFABS.logCabin, 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
+	building(c, PREFABS.villaOrange, 6, 29, { closed: "Nobody answers. Through the window: a very tidy living room, and a cat judging you." });
+	const home = building(c, PREFABS.homeVilla, 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
+	building(c, PREFABS.villaBlue, 26, 29, { closed: "Nobody's home. A note says the neighbours are out on the fjord." });
+	const kioskDoor = building(c, PREFABS.kiosk, 57, 30, { link: { toMap: "kiosk", toSpawn: "entrance" } });
+	const postDoor = building(c, PREFABS.postOffice, 37, 44, { link: { toMap: "post-office", toSpawn: "entrance" } });
+	const boathouseDoor = building(c, PREFABS.boathouse, 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
 	pier(c, 22, shore[22] - 1, shore[22] + 3);
-	const clubDoor = building(c, "youthClub", 53, 46, { link: { toMap: "youth-club", toSpawn: "entrance" } });
-	building(c, "villaPurple", 64, 45, { closed: "You knock. Somewhere inside, a radio is playing. Nobody comes." });
-	building(c, "villaBrown", 76, 45, { closed: "Locked. There's a pair of skis leaning by the door, waiting for winter." });
+	const clubDoor = building(c, PREFABS.youthClub, 53, 46, { link: { toMap: "youth-club", toSpawn: "entrance" } });
+	building(c, PREFABS.villaPurple, 64, 45, { closed: "You knock. Somewhere inside, a radio is playing. Nobody comes." });
+	building(c, PREFABS.villaBrown, 76, 45, { closed: "Locked. There's a pair of skis leaning by the door, waiting for winter." });
 
 	// --- Harbour -------------------------------------------------------------------------
 	const pierTop = shore[HARBOUR_X] - 1;
@@ -153,9 +153,9 @@ export function overworld(): MapCanvas {
 		.rect(91, 0, 5, 60)
 		.rect(64, 5, 25, 2) // the back of the radio hill
 		.subtract(sand);
-	forest(c, edge, 3, ["pineTall", "pineMid", "pineSmall", "pineMid"], 0.9, taken);
+	forest(c, edge, 3, [PREFABS.pineTall, PREFABS.pineMid, PREFABS.pineSmall, PREFABS.pineMid], 0.9, taken);
 	const groves = new Region(W, H).rect(5, 5, 58, 2).rect(30, 44, 6, 12).rect(76, 17, 14, 8).rect(88, 17, 3, 40);
-	forest(c, groves.subtract(sand), 5, ["oak", "roundTree", "pineMid"], 0.25, taken);
+	forest(c, groves.subtract(sand), 5, [PREFABS.oak, PREFABS.roundTree, PREFABS.pineMid], 0.25, taken);
 	// The trail runs up a rocky gully: boulders on both sides from the barricade to the map's
 	// edge, so the gate is the only way in (the forest band is walkable between trunks).
 	const gully = ["rockBig", "rock", "rockLong", "rockSmall"] as const;

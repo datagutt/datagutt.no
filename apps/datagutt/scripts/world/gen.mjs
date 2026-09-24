@@ -14,14 +14,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { GENERATED_MAPS } from "../../world/gen/maps/index.ts";
-import { TileRegistry } from "../../world/gen/registry.ts";
-import { canvasToTmj, formatTmj, isManual } from "../../world/gen/tmj.ts";
-import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
-import { renderTmj } from "../../world/gen/render.ts";
-import { validateMap } from "../../world/gen/validate.ts";
-import { checkCuts } from "../../world/gen/cuts.ts";
+import { TileRegistry } from "@datagutt/kai-worldgen/registry";
+import { canvasToTmj, formatTmj, isManual } from "@datagutt/kai-worldgen/tmj";
+import { buildAtlas, tileColors } from "@datagutt/kai-worldgen/atlas";
+import { renderTmj } from "@datagutt/kai-worldgen/render";
+import { validateMap } from "@datagutt/kai-worldgen/validate";
+import { checkCuts } from "@datagutt/kai-limezu/cuts";
+import { seasonalTile } from "@datagutt/kai-limezu/seasons";
+import { LimeZuSheets } from "@datagutt/kai-limezu/source";
 import { applySeason, isSeason } from "@datagutt/kai/world/season";
-import { localArtDir } from "../assets/source.mjs";
+import { localArtDir, SEASON_OVERRIDES } from "../assets/source.mjs";
 
 const root = process.cwd();
 const args = process.argv.slice(2);
@@ -56,7 +58,7 @@ for (const map of GENERATED_MAPS) {
 	if (only && map.id !== only) continue;
 	const file = path.join(files.maps, `${map.id}.tmj`);
 	const canvas = map.build();
-	const tmj = canvasToTmj(map.id, canvas, registry, { properties: { ...map.properties, ...(map.outdoor ? { outdoor: "true" } : {}) }, previous: readJson(file), seasons: map.outdoor });
+	const tmj = canvasToTmj(map.id, canvas, registry, { properties: { ...map.properties, ...(map.outdoor ? { outdoor: "true" } : {}) }, previous: readJson(file), ...(map.outdoor ? { seasonal: seasonalTile } : {}) });
 	problems.push(...validateMap(map.id, tmj), ...checkCuts(map.id, canvas.stamped));
 	outputs.set(file, formatTmj(tmj));
 }
@@ -84,7 +86,7 @@ if (!artDir) {
 	console.log(`[world] Wrote ${outputs.size - 1} maps. No art checkout, so no colours, tileset or renders.`);
 	process.exit(0);
 }
-const sheets = new SheetCache(artDir);
+const sheets = new LimeZuSheets(artDir, { overridesDir: SEASON_OVERRIDES });
 const colors = await tileColors(registry.tiles, sheets);
 fs.writeFileSync(files.colors, JSON.stringify(colors, null, "\t") + "\n");
 fs.mkdirSync(files.tilesetDir, { recursive: true });

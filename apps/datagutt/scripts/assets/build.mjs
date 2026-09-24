@@ -12,11 +12,12 @@ import { parseMapObject } from "@datagutt/kai/world/objects";
 import { isArcadeId } from "../../game/arcade/ids.ts";
 import { isUnlockId } from "../../game/progress/unlockIds.ts";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
-import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
-import { TileRegistry } from "../../world/gen/registry.ts";
-import { renderTmj } from "../../world/gen/render.ts";
+import { buildAtlas, buildPlaceholderAtlas } from "@datagutt/kai-worldgen/atlas";
+import { TileRegistry } from "@datagutt/kai-worldgen/registry";
+import { renderTmj } from "@datagutt/kai-worldgen/render";
+import { canvasToTmj } from "@datagutt/kai-worldgen/tmj";
+import { LimeZuSheets } from "@datagutt/kai-limezu/source";
 import { titleScene } from "../../world/gen/title.ts";
-import { canvasToTmj } from "../../world/gen/tmj.ts";
 import { composeCharacter, composePortrait, placeholderCharacter, placeholderPortrait } from "./characters.mjs";
 import { buildBitmapFont } from "./font.mjs";
 import { buildOgImage } from "./og.mjs";
@@ -24,6 +25,7 @@ import { compileDialogue } from "./ink.mjs";
 import { buildMusic } from "./music.mjs";
 import { Raster, hex } from "./raster.mjs";
 import { shrinkPng } from "./png.mjs";
+import { SEASON_OVERRIDES } from "./source.mjs";
 
 const TILE = 16;
 const root = process.cwd();
@@ -66,7 +68,7 @@ const registry = JSON.parse(fs.readFileSync(path.join(worldDir, "tile-ids.json")
 const worldAtlas =
 	source.mode === "placeholder"
 		? await buildPlaceholderAtlas(registry.tiles, JSON.parse(fs.readFileSync(path.join(worldDir, "tile-colors.json"), "utf8")))
-		: await buildAtlas(registry.tiles, new SheetCache(source.dir));
+		: await buildAtlas(registry.tiles, new LimeZuSheets(source.dir, { overridesDir: SEASON_OVERRIDES }));
 fs.writeFileSync(path.join(outDir, "tilesets/world.png"), await shrinkPng(worldAtlas));
 const generatedMaps = generated.map((file) => {
 	const tmj = JSON.parse(fs.readFileSync(path.join(worldDir, "maps", file), "utf8"));
@@ -145,7 +147,7 @@ fs.rmSync(path.join(outDir, "og.png"), { force: true });
 if (source.mode !== "placeholder") {
 	const titleTiles = new TileRegistry(registry);
 	const tmj = canvasToTmj("title", titleScene(), titleTiles);
-	waterfront = await renderTmj(tmj, titleTiles.tiles, new SheetCache(source.dir));
+	waterfront = await renderTmj(tmj, titleTiles.tiles, new LimeZuSheets(source.dir, { overridesDir: SEASON_OVERRIDES }));
 	fs.writeFileSync(path.join(outDir, "ui/title.png"), await shrinkPng(waterfront));
 }
 

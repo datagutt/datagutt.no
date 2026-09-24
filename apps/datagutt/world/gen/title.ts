@@ -3,12 +3,12 @@
 // painted above the tree line, so the page's drawn sky and mountains show through it
 // (components/game/TitleArt.tsx). Its horizontal middle, the pier, lines up with the
 // middle of the sky.
-import { variant } from "../art/autotile.ts";
-import { GRASS, TERRAIN } from "../art/palette.ts";
-import { PREFABS } from "../art/prefabs.ts";
-import { MapCanvas } from "./canvas.ts";
-import { pier } from "./features.ts";
-import { Region, wobble } from "./layout.ts";
+import { variant } from "@datagutt/kai-worldgen/autotile";
+import { GRASS, TERRAIN } from "@datagutt/kai-limezu/palette";
+import { PREFABS } from "./prefabs.ts";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { pier } from "@datagutt/kai-limezu/features";
+import { Region, wobble } from "@datagutt/kai-worldgen/layout";
 
 export const TITLE_W = 40;
 export const TITLE_H = 10;

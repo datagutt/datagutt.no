@@ -1,5 +1,5 @@
 // Every map the generator owns. `bun run world:gen` writes each to world/maps/<id>.tmj.
-import type { MapCanvas } from "../canvas.ts";
+import type { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { boathouse } from "./boathouse.ts";
 import { farmhouse } from "./farmhouse.ts";
 import { house, houseUpstairs } from "./house.ts";

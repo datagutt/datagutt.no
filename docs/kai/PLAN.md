@@ -73,15 +73,22 @@ the character recipes and music tracks as content, not as app TypeScript.
       now; the runtime fields (save key, timezone, base path, kill switch) join in K5.1,
       when the runtime can receive them. The art repository's game folder is the config's
       `id`. The asset build output was byte-identical before and after.)
-- [ ] **K3.2** `@datagutt/kai-limezu`: sheets, catalog, palette, singles, furniture,
+- [x] **K3.2** `@datagutt/kai-limezu`: sheets, catalog, palette, singles, furniture,
       lighting presets, seasons, autotile, the character sheet layout. Prefabs specific
       to the town (the datagutt house, the town hall) move to the app. *Done when* no
-      file in the package names a Fjord Town place.
-- [ ] **K3.3** `@datagutt/kai-worldgen`: the `world/gen` toolkit. Map builders, the map
+      file in the package names a Fjord Town place. (Town buildings are in
+      `apps/datagutt/world/gen/prefabs.ts`. `features.building()` and `forest()` take
+      prefabs, not ids. The character sheet layout goes to the runtime in K5.1 (DESIGN
+      changelog), and the LimeZu layer composition moves with the asset CLI in K3.4.)
+- [x] **K3.3** `@datagutt/kai-worldgen`: the `world/gen` toolkit. Map builders, the map
       index, the title waterfront and the snow drafts move to
       `apps/datagutt/world/maps/`. The tile registry and colours move to
       `apps/datagutt/world/`. *Done when* `world:check` passes and the rendered maps
-      match the old renders pixel for pixel.
+      match the old renders pixel for pixel. (The builders stay in
+      `apps/datagutt/world/gen/`, since `world/maps/` holds the generated `.tmj`. The map
+      objects, seasons and light shapes moved to `@datagutt/kai` first, with arcade and
+      unlock ids as strings checked by the asset build. The asset output, including the
+      title render, and `world:gen` are byte-identical.)
 - [ ] **K3.4** `@datagutt/kai-assets` and the `kai` CLI on Bun: `kai assets`,
       `kai world gen|check|render|catalog`, the dev harness. The link preview image stays
       an app script. *Done when* `public/game/` from the CLI matches the old build.

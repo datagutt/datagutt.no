@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Builds the sprite catalogue (world/art/catalog/<sheet>.json), metadata only (no
+// Builds the sprite catalogue (@datagutt/kai-limezu catalog/<sheet>.json), metadata only (no
 // pixels, so it is committed): the whole objects of each LimeZu sheet. Needs the art.
 //
 // Sheets with a "Singles" folder: LimeZu's singles are the finished objects, and some are
 // assembled from parts laid out separately in the sheet, so maps use the singles
-// themselves (world/art/singles.ts). The catalogue records each single's size in tiles
+// themselves (@datagutt/kai-limezu singles.ts). The catalogue records each single's size in tiles
 // and, when its pixels appear as-is in the sheet, its tile position there (the validator
 // uses that to catch prefabs cut from the sheet that slice an object in half).
 // Sheets without singles (AUTO_CATALOG) get objects detected from their pixels, with
@@ -17,8 +17,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { AUTO_CATALOG, SHEETS, SINGLES } from "../../world/art/sheets.ts";
-import { singleKeys } from "../../world/art/singleKey.ts";
+import { fileURLToPath } from "node:url";
+import { AUTO_CATALOG, SHEETS, SINGLES } from "@datagutt/kai-limezu/sheets";
+import { singleKeys } from "@datagutt/kai-limezu/singleKey";
 import { localArtDir } from "../assets/source.mjs";
 
 const T = 16;
@@ -30,7 +31,8 @@ if (!source.dir) {
 	process.exit(1);
 }
 const art = (p) => path.join(source.dir, "limezu", p);
-const outJson = path.join(root, "world/art/catalog");
+// The catalogue belongs to the LimeZu adapter, which every LimeZu game shares.
+const outJson = fileURLToPath(new URL("catalog", import.meta.resolve("@datagutt/kai-limezu/sheets")));
 const outPng = path.join(root, "world/out/catalog");
 fs.mkdirSync(outJson, { recursive: true });
 fs.mkdirSync(outPng, { recursive: true });
@@ -116,7 +118,7 @@ function detect(sheet, gap = 0) {
  * How much of each 16×16 tile is filled, as one character per tile: "#" at least a
  * quarter near-opaque (solid enough to walk into; shadows don't count), "+" a little,
  * "." empty. Rows joined with
- * "/". Metadata only; default collision is derived from it (world/art/singles.ts).
+ * "/". Metadata only; default collision is derived from it (@datagutt/kai-limezu singles.ts).
  */
 function coverage(img, x0 = 0, y0 = 0, w = img.width, h = img.height) {
 	const rows = [];

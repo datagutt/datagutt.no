@@ -5,10 +5,10 @@
 // of the house itself by the door.
 // Upstairs, cooler and more personal: Thomas at one long desk with three computers, the
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder, windowLight } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function house(): MapCanvas {
 	const c = new MapCanvas(20, 14);

@@ -34,8 +34,10 @@
         "@axe-core/playwright": "^4.13.0",
         "@builder.io/partytown": "^0.10.3",
         "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-limezu": "workspace:*",
         "@datagutt/kai-tsconfig": "workspace:*",
         "@datagutt/kai-vitest-config": "workspace:*",
+        "@datagutt/kai-worldgen": "workspace:*",
         "@ffmpeg-installer/ffmpeg": "^1.1.0",
         "@playwright/test": "^1.63",
         "@types/node": "^24.13.6",
@@ -85,6 +87,24 @@
         "vitest": "^5",
       },
     },
+    "packages/kai-limezu": {
+      "name": "@datagutt/kai-limezu",
+      "version": "0.0.0",
+      "dependencies": {
+        "@datagutt/kai": "workspace:*",
+        "@datagutt/kai-worldgen": "workspace:*",
+        "sharp": "^0.35.4",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "@types/node": "^24.13.6",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
+      },
+    },
     "packages/kai-live": {
       "name": "@datagutt/kai-live",
       "version": "0.0.0",
@@ -113,6 +133,23 @@
         "@datagutt/kai-vitest-config": "workspace:*",
         "@types/node": "^24.13.6",
         "@types/ws": "^8.18.1",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
+      },
+    },
+    "packages/kai-worldgen": {
+      "name": "@datagutt/kai-worldgen",
+      "version": "0.0.0",
+      "dependencies": {
+        "@datagutt/kai": "workspace:*",
+        "sharp": "^0.35.4",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "@types/node": "^24.13.6",
         "eslint": "^9",
         "typescript": "^5.9.3",
         "vitest": "^5",
@@ -186,6 +223,8 @@
 
     "@datagutt/kai-eslint-config": ["@datagutt/kai-eslint-config@workspace:tooling/eslint-config"],
 
+    "@datagutt/kai-limezu": ["@datagutt/kai-limezu@workspace:packages/kai-limezu"],
+
     "@datagutt/kai-live": ["@datagutt/kai-live@workspace:packages/kai-live"],
 
     "@datagutt/kai-net": ["@datagutt/kai-net@workspace:packages/kai-net"],
@@ -193,6 +232,8 @@
     "@datagutt/kai-tsconfig": ["@datagutt/kai-tsconfig@workspace:tooling/tsconfig"],
 
     "@datagutt/kai-vitest-config": ["@datagutt/kai-vitest-config@workspace:tooling/vitest-config"],
+
+    "@datagutt/kai-worldgen": ["@datagutt/kai-worldgen@workspace:packages/kai-worldgen"],
 
     "@emnapi/core": ["@emnapi/core@1.10.0", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.1", "tslib": "^2.4.0" } }, "sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw=="],
 

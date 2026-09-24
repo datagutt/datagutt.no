@@ -5,6 +5,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { loadKaiConfig } from "@datagutt/kai/schema";
 
+/** The game's hand-drawn seasonal art, relative to the art checkout. */
+export const SEASON_OVERRIDES = "seasons";
+
 /** Where a clone of `repo` goes, relative to the app. */
 export const cloneDir = (repo) => `.assets-cache/${repo.split("/")[1]}`;
 

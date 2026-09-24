@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Which LimeZu singles make up a prefab cut from a sheet? For each named prefab in
-// world/art/prefabs.ts or furniture.ts, searches every singles folder for images whose
+// world/gen/prefabs.ts or @datagutt/kai-limezu furniture.ts, searches every singles folder for images whose
 // pixels appear exactly inside the prefab's rectangle (± 1 tile), since sheets borrow
 // objects from other themes. Needs the art.
 //
@@ -8,10 +8,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { PREFABS } from "../../world/art/prefabs.ts";
-import { FURNITURE } from "../../world/art/furniture.ts";
-import { SHEETS, SINGLES } from "../../world/art/sheets.ts";
-import { singleKeys } from "../../world/art/singleKey.ts";
+import { FURNITURE } from "@datagutt/kai-limezu/furniture";
+import { SHEETS, SINGLES } from "@datagutt/kai-limezu/sheets";
+import { singleKeys } from "@datagutt/kai-limezu/singleKey";
+import { PREFABS } from "../../world/gen/prefabs.ts";
 import { localArtDir } from "../assets/source.mjs";
 const A = path.join(localArtDir(process.cwd()), "limezu");
 const raw = async (f) => { const { data, info } = await sharp(f).ensureAlpha().raw().toBuffer({ resolveWithObject: true }); return { data, width: info.width, height: info.height }; };

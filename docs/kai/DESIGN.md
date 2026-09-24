@@ -39,17 +39,23 @@ stay free for other projects.
 
 - `@datagutt/kai`: the runtime. Scenes, entities, effects, audio, input, UI, the dialogue
   runner, saves, the progress system, world runtime (grid, pathfinding, map objects,
-  seasons), the plugin API and declarative triggers. Phaser is a peer dependency.
+  seasons), the character sheet layout, the plugin API and declarative triggers. Phaser
+  is a peer dependency. The `kai.json` and content schemas live under
+  `@datagutt/kai/schema`, which only build tools import.
 - `@datagutt/kai-net`: the ghost room protocol, the client, reconnect logic, and the room
   server. Client and server share the protocol, so they live together.
 - `@datagutt/kai-live`: live data. The Lanyard client, the MET Norway weather fetcher,
   GitHub fetchers, the composable WorldState payload, and the `presenceNpc`,
   `githubField` and `repoShelf` plugins.
 - `@datagutt/kai-arcade`: the cabinet games and the arcade screen.
-- `@datagutt/kai-worldgen`: the map toolkit (layout, autotile use, prefabs placement,
-  `.tmj` writer, validation, rendering, cut checks). Build time only.
-- `@datagutt/kai-limezu`: the LimeZu adapter. Sheet catalog, palette, generic prefabs,
-  furniture, lighting presets, seasonal colour rules, the character sheet layout.
+- `@datagutt/kai-worldgen`: the art-agnostic map toolkit (autotile math, the map canvas,
+  layout, the tile registry, the `.tmj` writer, validation, rendering, the atlas packer).
+  Art reaches it through a `SheetSource`, and seasonal tiles through a function. Build
+  time only.
+- `@datagutt/kai-limezu`: the LimeZu adapter. Terrain blocks, sheets and singles, the
+  catalog, palette, generic prefabs, furniture, lighting presets, seasonal rules,
+  interiors, landscape features, cut checks and the `LimeZuSheets` source. Prefabs named
+  for their role in one game (a town hall, a library) belong to that game.
 - `@datagutt/kai-assets`: the asset pipeline and the `kai` CLI (`kai assets`,
   `kai content`, `kai world gen|check|render`, the dev harness).
 - `@datagutt/kai-next`: React and Next host glue. The game shell core, the world state
@@ -130,3 +136,6 @@ Visitors must not notice the refactor.
 ## Changelog
 
 - 2026-09-24: first version, from the grilling session.
+- 2026-09-24: the character sheet layout belongs to the runtime, not to kai-limezu: the
+  runtime animates characters by it, and runtime packages never import build-time ones.
+  kai-limezu keeps the LimeZu layer composition.

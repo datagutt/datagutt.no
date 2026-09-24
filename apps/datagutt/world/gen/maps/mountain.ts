@@ -1,12 +1,12 @@
 // Up the mountain trail (docs/game/PLAN.md B6): open once the passport is full. A path
 // climbs from the trailhead through a meadow ringed with pines to the hytte, with a bench
 // at a lookout over the fjord. The hytte is locked for now: later quests start here.
-import { variant } from "../../art/autotile.ts";
-import { GRASS, TERRAIN } from "../../art/palette.ts";
-import { PREFABS } from "../../art/prefabs.ts";
-import { MapCanvas } from "../canvas.ts";
-import { building, forest, meadow, sign } from "../features.ts";
-import { Region } from "../layout.ts";
+import { variant } from "@datagutt/kai-worldgen/autotile";
+import { GRASS, TERRAIN } from "@datagutt/kai-limezu/palette";
+import { PREFABS } from "../prefabs.ts";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { building, forest, meadow, sign } from "@datagutt/kai-limezu/features";
+import { Region } from "@datagutt/kai-worldgen/layout";
 
 const W = 40;
 const H = 30;
@@ -21,7 +21,7 @@ export function mountain(): MapCanvas {
 	c.autotile("ground2", trail.drawable(), TERRAIN.dirt);
 
 	// The hytte at the top; its door stays shut with a note for now.
-	const hytte = building(c, "hytte", 15, 1);
+	const hytte = building(c, PREFABS.hytte, 15, 1);
 	const door = { x: hytte.x, y: hytte.y - 1 };
 	c.block(door.x, door.y).add({
 		type: "sign",
@@ -55,8 +55,8 @@ export function mountain(): MapCanvas {
 		return c.collision[i] === 1 || c.layers.below[i] !== null || c.layers.above[i] !== null;
 	}).union(trail.grow(1));
 	const edge = new Region(W, H).rect(0, 0, W, 3).rect(0, 0, 5, H).rect(W - 5, 0, 5, H).rect(0, H - 3, 17, 3).rect(24, H - 3, 16, 3);
-	forest(c, edge, 11, ["pineTall", "pineMid", "pineSmall", "pineMid"], 0.85, taken);
-	forest(c, new Region(W, H).rect(5, 3, 30, 24), 12, ["pineMid", "pineSmall", "oak"], 0.12, taken);
+	forest(c, edge, 11, [PREFABS.pineTall, PREFABS.pineMid, PREFABS.pineSmall, PREFABS.pineMid], 0.85, taken);
+	forest(c, new Region(W, H).rect(5, 3, 30, 24), 12, [PREFABS.pineMid, PREFABS.pineSmall, PREFABS.oak], 0.12, taken);
 
 	const open = Region.from(W, H, (x, y) => {
 		const i = y * W + x;

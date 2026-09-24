@@ -2,17 +2,17 @@
 // Drafts fully snowed roofs for the town's buildings into datagutt-assets
 // `seasons/winter/`, as the starting point for hand-drawn winter art (clean them up in
 // Aseprite and commit them there). The world build uses whatever is in that folder over
-// the automatic snow caps (world/gen/atlas.ts). Existing files are kept: they may be
+// the automatic snow caps (@datagutt/kai-limezu source.ts). Existing files are kept: they may be
 // hand-edited. Also writes world/out/snow-drafts.png, every draft side by side.
 //
 //   node scripts/world/snow-drafts.mjs [--force] [--only=<prefab>]
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { PREFABS } from "../../world/art/prefabs.ts";
-import { SEASON_OVERRIDES, SheetCache, seasonRecolor } from "../../world/gen/atlas.ts";
-import { fullRoofMask, paintSnowRoof } from "../../world/gen/snowDraft.ts";
-import { localArtDir } from "../assets/source.mjs";
+import { LimeZuSheets, seasonRecolor } from "@datagutt/kai-limezu/source";
+import { fullRoofMask, paintSnowRoof } from "@datagutt/kai-limezu/snowDraft";
+import { PREFABS } from "../../world/gen/prefabs.ts";
+import { localArtDir, SEASON_OVERRIDES } from "../assets/source.mjs";
 
 /** The town's buildings with roofs. */
 const BUILDINGS = [
@@ -42,7 +42,7 @@ if (!source.dir) {
 }
 const outDir = path.join(source.dir, SEASON_OVERRIDES, "winter");
 fs.mkdirSync(outDir, { recursive: true });
-const sheets = new SheetCache(source.dir);
+const sheets = new LimeZuSheets(source.dir, { overridesDir: SEASON_OVERRIDES });
 const T = 16;
 
 const drafts = [];
@@ -54,7 +54,7 @@ for (const name of BUILDINGS.filter((b) => !only || b === only)) {
 	const img = seasonRecolor(base, prefab.sheet, "winter", false);
 	const mask = fullRoofMask(base, prefab.sheet);
 	if (!mask) {
-		console.warn(`[snow] ${name}: no roof colours for ${prefab.sheet} (world/art/seasons.ts ROOFS)`);
+		console.warn(`[snow] ${name}: no roof colours for ${prefab.sheet} (@datagutt/kai-limezu seasons.ts ROOFS)`);
 		continue;
 	}
 	paintSnowRoof(img, prefab.sheet, mask);

@@ -3,13 +3,13 @@
 // and fishing gear. Right, the studio: green screen, lights on both sides, a camera on
 // her, the stream on the wall monitor and the ON AIR lamp.
 import { NPCS } from "../../../game/npcs.ts";
-import { variant } from "../../art/autotile.ts";
-import { DOCK_TRIM, TERRAIN } from "../../art/palette.ts";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS } from "../../art/lighting.ts";
-import { FLIP, MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
-import { Region } from "../layout.ts";
+import { variant } from "@datagutt/kai-worldgen/autotile";
+import { DOCK_TRIM, TERRAIN } from "@datagutt/kai-limezu/palette";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS } from "@datagutt/kai-limezu/lighting";
+import { FLIP, MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { Region } from "@datagutt/kai-worldgen/layout";
 
 export function boathouse(): MapCanvas {
 	const W = 20;

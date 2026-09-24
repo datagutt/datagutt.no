@@ -3,10 +3,10 @@
 // dark boards; the cabinets along the back wall, the TV corner with its rug and bean bags,
 // a pool table, and Siv who runs the place.
 import type { MapObject } from "@datagutt/kai/world/objects";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 const person = (id: string, name: string, x: number, y: number, facing: "up" | "down" | "left" | "right"): MapObject => ({
 	type: "npc",

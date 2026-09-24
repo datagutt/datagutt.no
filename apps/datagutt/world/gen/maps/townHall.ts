@@ -4,11 +4,11 @@
 // down to the basement: the municipal IT department, where Bjørn still keeps the servers
 // and, mostly, the printers running.
 import { NPCS } from "../../../game/npcs.ts";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { officeDesk } from "./office.ts";
-import { exitDoor, floorPatch, FLOORS, room, WALLS } from "../interior.ts";
+import { exitDoor, floorPatch, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function townHall(): MapCanvas {
 	const c = new MapCanvas(24, 14);

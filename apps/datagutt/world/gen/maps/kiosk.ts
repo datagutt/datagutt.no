@@ -4,10 +4,10 @@
 // pick-and-mix island in the middle; Randi works the till behind the counter in the
 // corner, closed off by the Kroneis freezer.
 import { NPCS } from "../../../game/npcs.ts";
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function kiosk(): MapCanvas {
 	const c = new MapCanvas(18, 12);

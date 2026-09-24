@@ -1,10 +1,10 @@
 // The farmhouse (places: farm): Ola's home. He works out in the field (the live
 // contribution crops, M3.11), so the house holds his harvest ledger. A country kitchen:
 // gingham walls, pale planks, a baking oven, a big table with the chairs turned in.
-import { FURNITURE as F } from "../../art/furniture.ts";
-import { glow, GLOWS, shadowUnder, windowLight } from "../../art/lighting.ts";
-import { MapCanvas } from "../canvas.ts";
-import { exitDoor, FLOORS, room, WALLS } from "../interior.ts";
+import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
+import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
+import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 
 export function farmhouse(): MapCanvas {
 	const c = new MapCanvas(18, 11);

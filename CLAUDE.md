@@ -50,7 +50,7 @@ Phaser 4 scenes (`game/scenes/`), entities, input, UI, effects (`game/fx/`), aud
 
 ### World (`world/`)
 
-Maps are generated, not drawn: `world/gen/maps/*.ts` build each map from LimeZu sheet references (`world/art/`), and `bun run world:gen` writes `world/maps/*.tmj`. Pixels never enter this repository; the art lives in the private `datagutt/datagutt-assets` repo, fetched by `bun run assets` (locally from `../datagutt-assets` next to the repository, in CI with `ASSETS_REPO_TOKEN`). Without it the build uses placeholder art.
+Maps are generated, not drawn: `world/gen/maps/*.ts` build each map with `@datagutt/kai-worldgen` (the art-agnostic toolkit) from LimeZu sheet references (`@datagutt/kai-limezu`; the town's own buildings are in `world/gen/prefabs.ts`), and `bun run world:gen` writes `world/maps/*.tmj`. `kai.json` configures the art source, UI sheets, font and live settings. Pixels never enter this repository; the art lives in the private `datagutt/datagutt-assets` repo, fetched by `bun run assets` (locally from `../datagutt-assets` next to the repository, in CI with `ASSETS_REPO_TOKEN`). Without it the build uses placeholder art.
 
 ### Data Fetching (lib/github.ts)
 
