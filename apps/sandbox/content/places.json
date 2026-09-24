@@ -1,0 +1,4 @@
+{
+  "$schema": "../.kai/schema/places.json",
+  "list": [{ "id": "workshop", "name": "Workshop", "stamp": true, "entrance": { "map": "workshop", "spawn": "start" } }]
+}

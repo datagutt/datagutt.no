@@ -118,6 +118,19 @@ export const trigger = z.discriminatedUnion("on", [
 
 export type Trigger = z.output<typeof trigger>;
 
+/**
+ * What the engine reads of a place, for a game's own places collection (which may extend
+ * it): a stamp for the passport, and an entrance for `?at=<id>` and the start place.
+ */
+export const placeInfo = z.object({
+	id,
+	name: text,
+	/** Gives a passport stamp when its main NPC has been talked to. */
+	stamp: z.boolean(),
+	/** Where `?at=<id>` puts the player: outside its door. */
+	entrance: z.object({ map: text, spawn: text }).optional(),
+});
+
 export const credits = z.object({
 	title: text,
 	byline: text,

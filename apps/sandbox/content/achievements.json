@@ -1,0 +1,7 @@
+{
+  "$schema": "../.kai/schema/achievements.json",
+  "list": [
+    { "id": "arrived", "name": "Arrived", "how": "Walked into the workshop." },
+    { "id": "passport", "name": "Stamped", "how": "Got the workshop's stamp." }
+  ]
+}

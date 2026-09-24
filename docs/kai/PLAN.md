@@ -192,11 +192,15 @@ Goal: a second app proves the engine needs nothing from datagutt.
       `worldSocketHandler`, and `'use cache'` wrappers over `kai-live`'s now
       framework-free GitHub and MET fetchers. The app keeps its choice of data: which
       GitHub user, the fallback place.)
-- [ ] **K6.2** `apps/sandbox`: one generated map, one NPC, one Ink knot, one trigger,
+- [x] **K6.2** `apps/sandbox`: one generated map, one NPC, one Ink knot, one trigger,
       placeholder art, booted by the kai dev harness. *Done when* it runs without the
-      assets token.
-- [ ] **K6.3** A Playwright smoke test for the sandbox (walk to the NPC, talk) in CI.
-      *Done when* CI runs it.
+      assets token. (It uses the licensed art when the checkout is there, placeholders
+      otherwise. Building it found two engine bugs: Ink visits were only counted for knots
+      the story referred to, and an app's own turbo.json was taken for the repository
+      root.)
+- [x] **K6.3** A Playwright smoke test for the sandbox (walk to the NPC, talk) in CI.
+      *Done when* CI runs it. (`turbo run test:e2e` runs it beside datagutt's, against
+      the kai dev harness; it also checks the stamp.)
 - [ ] **K6.4** Boundary lint: `packages/** ↛ apps/**`, runtime packages ↛ build-time
       packages, `kai` ↛ Next and React. *Done when* a deliberate bad import fails CI.
 

@@ -1,0 +1,5 @@
+{
+  "extends": "@datagutt/kai-tsconfig/base.json",
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

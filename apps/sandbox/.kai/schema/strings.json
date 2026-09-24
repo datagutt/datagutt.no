@@ -1,0 +1,187 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"default": {},
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"menu.title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.button": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.passport": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.status": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.journal": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.settings": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.credits": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.close": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.back": {
+			"type": "string",
+			"minLength": 1
+		},
+		"menu.backHint": {
+			"type": "string",
+			"minLength": 1
+		},
+		"status.title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"credits.title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.sound": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.music": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.visitors": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.effects": {
+			"type": "string",
+			"minLength": 1
+		},
+		"settings.reducedMotion": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value.on": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value.off": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value.auto": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value.high": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value.low": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.achievements": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.pageHint": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.stampsHint": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.fullHint": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.achievementsHint": {
+			"type": "string",
+			"minLength": 1
+		},
+		"passport.unknown": {
+			"type": "string",
+			"minLength": 1
+		},
+		"toast.stamped": {
+			"type": "string",
+			"minLength": 1
+		},
+		"toast.achievement": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.talk": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.read": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.enter": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.wake": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.play": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.look": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.use": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt.pet": {
+			"type": "string",
+			"minLength": 1
+		},
+		"link.open": {
+			"type": "string",
+			"minLength": 1
+		},
+		"link.notNow": {
+			"type": "string",
+			"minLength": 1
+		},
+		"arcade.leave": {
+			"type": "string",
+			"minLength": 1
+		},
+		"arcade.leaveTouch": {
+			"type": "string",
+			"minLength": 1
+		}
+	},
+	"additionalProperties": false
+}

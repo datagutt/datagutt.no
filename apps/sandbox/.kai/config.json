@@ -1,0 +1,39 @@
+{
+	"id": "sandbox",
+	"title": "Kai Sandbox",
+	"timezone": "UTC",
+	"startPlace": "workshop",
+	"saveKey": "kai-sandbox.save",
+	"visitorsOffKey": "kai_sandbox_visitors_off",
+	"basePath": "/game/",
+	"paths": {
+		"maps": "world/maps.ts",
+		"ink": "dialogue",
+		"dialogueHost": "dialogue/host.ts",
+		"harness": "src/main.ts"
+	},
+	"assets": {
+		"repo": "datagutt/datagutt-assets",
+		"branch": "main",
+		"localPath": "../datagutt-assets",
+		"tokenEnv": "KAI_SANDBOX_ASSETS_TOKEN",
+		"adapter": "@datagutt/kai-limezu/adapter"
+	},
+	"ui": {
+		"frame": {
+			"file": "limezu/ui/Modern_UI_Style_1.png",
+			"x": 58,
+			"y": 129,
+			"width": 28,
+			"height": 29
+		},
+		"emotes": "limezu/interiors/ui_elements/UI_thinking_emotes_animation_16x16.png"
+	},
+	"sprites": {},
+	"font": {
+		"module": "geist/font/pixel",
+		"file": "fonts/geist-pixel/GeistPixel-Square.woff2",
+		"unitsPerPixel": 76
+	},
+	"live": {}
+}

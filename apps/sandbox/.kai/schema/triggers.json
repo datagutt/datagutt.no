@@ -1,0 +1,123 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"default": {
+		"list": []
+	},
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"list": {
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"type": "object",
+						"properties": {
+							"on": {
+								"type": "string",
+								"const": "enterMap"
+							},
+							"map": {
+								"type": "string",
+								"pattern": "^[a-zA-Z0-9_-]+$"
+							},
+							"delay": {
+								"default": 0,
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 9007199254740991
+							},
+							"knot": {
+								"type": "string",
+								"minLength": 1
+							},
+							"grant": {
+								"type": "string",
+								"pattern": "^[a-zA-Z0-9_-]+$"
+							},
+							"announce": {
+								"default": true,
+								"type": "boolean"
+							},
+							"flag": {
+								"type": "string",
+								"minLength": 1
+							}
+						},
+						"required": [
+							"on",
+							"map"
+						]
+					},
+					{
+						"type": "object",
+						"properties": {
+							"on": {
+								"type": "string",
+								"const": "bumpEdge"
+							},
+							"cooldown": {
+								"default": 0,
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 9007199254740991
+							},
+							"knot": {
+								"type": "string",
+								"minLength": 1
+							},
+							"grant": {
+								"type": "string",
+								"pattern": "^[a-zA-Z0-9_-]+$"
+							},
+							"announce": {
+								"default": true,
+								"type": "boolean"
+							},
+							"flag": {
+								"type": "string",
+								"minLength": 1
+							}
+						},
+						"required": [
+							"on"
+						]
+					},
+					{
+						"type": "object",
+						"properties": {
+							"on": {
+								"type": "string",
+								"const": "passportFull"
+							},
+							"knot": {
+								"type": "string",
+								"minLength": 1
+							},
+							"grant": {
+								"type": "string",
+								"pattern": "^[a-zA-Z0-9_-]+$"
+							},
+							"announce": {
+								"default": true,
+								"type": "boolean"
+							},
+							"flag": {
+								"type": "string",
+								"minLength": 1
+							}
+						},
+						"required": [
+							"on"
+						]
+					}
+				]
+			}
+		}
+	},
+	"required": [
+		"list"
+	]
+}

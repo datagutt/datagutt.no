@@ -1,6 +1,7 @@
 // The schemas of Fjord Town's own content collections, beside the engine's. `kai content`
 // checks content/ against them; content/index.ts gives the compiled bundle their types.
 import { ENGINE_COLLECTIONS, json, markdown, z, type ContentOf } from "@datagutt/kai/schema";
+import { placeInfo } from "@datagutt/kai/schema/engine";
 import { presenceConfig } from "@datagutt/kai-live/presence/config";
 
 const text = z.string().min(1);
@@ -61,19 +62,14 @@ export const collections = {
 	places: json(
 		z.object({
 			list: z.array(
-				z.object({
-					id: text,
-					name: text,
+				placeInfo.extend({
+					/** The site's content this place shows in town. */
 					presents: z.array(
 						z.discriminatedUnion("kind", [
 							z.object({ kind: z.enum(["profile", "skills", "repos", "stats", "contact"]) }),
 							z.object({ kind: z.enum(["project", "experience"]), id: text }),
 						]),
 					),
-					/** Gives a Fjord Passport stamp when its main NPC has been talked to. */
-					stamp: z.boolean(),
-					/** Where `?at=<id>` puts the player: outside its door. */
-					entrance: z.object({ map: text, spawn: text }).optional(),
 				}),
 			),
 		}),

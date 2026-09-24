@@ -1,0 +1,30 @@
+{
+	"tiles": [
+		"@collision",
+		"@clear",
+		"rbWalls:0,16",
+		"rbWalls:1,16",
+		"rbWalls:2,16",
+		"rbWalls:0,17",
+		"rbWalls:1,17",
+		"rbWalls:2,17",
+		"rbFloors:4,12",
+		"rbFloors:5,12",
+		"rbFloors:4,13",
+		"rbFloors:5,13",
+		"classroom:1,10",
+		"classroom:2,10",
+		"classroom:0,10",
+		"classroom:1,11",
+		"classroom:2,11",
+		"classroom:0,11",
+		"roomBuilder:11,1",
+		"roomBuilder:12,1",
+		"roomBuilder:13,1",
+		"roomBuilder:11,2",
+		"roomBuilder:13,2",
+		"roomBuilder:11,3",
+		"roomBuilder:12,3",
+		"roomBuilder:13,3"
+	]
+}

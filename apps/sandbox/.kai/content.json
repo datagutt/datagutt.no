@@ -1,0 +1,127 @@
+{
+	"characters": {
+		"player": {
+			"description": "The visitor.",
+			"layers": [
+				"Bodies/Body_03.png",
+				"Eyes/Eyes_01.png",
+				"Outfits/Outfit_01_05.png",
+				"Hairstyles/Hairstyle_05_03.png"
+			],
+			"placeholder": "4f8a5b",
+			"portrait": false
+		},
+		"keeper": {
+			"description": "The keeper: an apron over a checked shirt.",
+			"layers": [
+				"Bodies/Body_02.png",
+				"Eyes/Eyes_04.png",
+				"Outfits/Outfit_09_01.png",
+				"Hairstyles/Hairstyle_11_01.png"
+			],
+			"placeholder": "c46a3a"
+		}
+	},
+	"npcs": {
+		"keeper": {
+			"name": "Keeper",
+			"place": "workshop",
+			"personality": "Keeps the workshop tidy and explains the engine to anyone who asks.",
+			"voice": {
+				"wave": "triangle",
+				"pitch": 330,
+				"variance": 0.05,
+				"volume": 0.07,
+				"every": 2
+			}
+		}
+	},
+	"music": {
+		"tracks": {
+			"theme": {
+				"file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/05 At the Farmers Market (Loopable Version).mp3"
+			}
+		},
+		"playlist": {
+			"title": "theme",
+			"credits": "theme",
+			"outdoors": {
+				"day": "theme",
+				"night": "theme",
+				"winter": "theme"
+			},
+			"indoors": {
+				"default": "theme",
+				"maps": {}
+			}
+		}
+	},
+	"achievements": {
+		"list": [
+			{
+				"id": "arrived",
+				"name": "Arrived",
+				"how": "Walked into the workshop."
+			},
+			{
+				"id": "passport",
+				"name": "Stamped",
+				"how": "Got the workshop's stamp."
+			}
+		]
+	},
+	"unlocks": {},
+	"credits": {
+		"title": "Kai Sandbox",
+		"byline": "The smallest kai game",
+		"sections": [
+			{
+				"heading": "Art",
+				"lines": [
+					"LimeZu (limezu.itch.io)",
+					"or placeholders"
+				]
+			},
+			{
+				"heading": "Code",
+				"lines": [
+					"GPL-3.0 on GitHub",
+					"datagutt/datagutt.no"
+				]
+			}
+		],
+		"thanks": "Now make your own."
+	},
+	"triggers": {
+		"list": [
+			{
+				"on": "enterMap",
+				"map": "workshop",
+				"delay": 300,
+				"grant": "arrived",
+				"announce": true
+			},
+			{
+				"on": "passportFull",
+				"grant": "passport",
+				"announce": true
+			}
+		]
+	},
+	"strings": {
+		"passport.title": "Workshop pass"
+	},
+	"places": {
+		"list": [
+			{
+				"id": "workshop",
+				"name": "Workshop",
+				"stamp": true,
+				"entrance": {
+					"map": "workshop",
+					"spawn": "start"
+				}
+			}
+		]
+	}
+}
