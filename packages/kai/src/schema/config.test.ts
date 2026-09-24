@@ -1,0 +1,33 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import { loadKaiConfig } from "./index.ts";
+
+function appWith(config: unknown) {
+	const dir = fs.mkdtempSync(path.join(os.tmpdir(), "kai-config-"));
+	fs.writeFileSync(path.join(dir, "kai.json"), JSON.stringify(config));
+	return dir;
+}
+
+const valid = {
+	id: "demo",
+	title: "Demo",
+	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN" },
+	ui: { frame: { file: "ui.png", x: 0, y: 0, width: 8, height: 8 }, emotes: "emotes.png" },
+	font: { module: "geist/font/pixel", file: "f.woff2", unitsPerPixel: 76 },
+};
+
+describe("loadKaiConfig", () => {
+	it("fills in the defaults", () => {
+		const config = loadKaiConfig(appWith(valid));
+		expect(config.assets.branch).toBe("main");
+		expect(config.sprites).toEqual({});
+		expect(config.live).toEqual({});
+	});
+
+	it("names every problem with its path", () => {
+		const broken = { ...valid, id: "Demo Game", assets: { ...valid.assets, repo: "art" } };
+		expect(() => loadKaiConfig(appWith(broken))).toThrow(/kai\.json › id: .*\n.*kai\.json › assets\.repo: use "owner\/name"/s);
+	});
+});

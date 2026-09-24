@@ -12,7 +12,7 @@ import sharp from "sharp";
 import { PREFABS } from "../../world/art/prefabs.ts";
 import { SEASON_OVERRIDES, SheetCache, seasonRecolor } from "../../world/gen/atlas.ts";
 import { fullRoofMask, paintSnowRoof } from "../../world/gen/snowDraft.ts";
-import { resolveAssetSource } from "../assets/source.mjs";
+import { localArtDir } from "../assets/source.mjs";
 
 /** The town's buildings with roofs. */
 const BUILDINGS = [
@@ -35,13 +35,9 @@ const root = process.cwd();
 const args = process.argv.slice(2);
 const force = args.includes("--force");
 const only = args.find((a) => a.startsWith("--only="))?.split("=")[1];
-const source = resolveAssetSource({
-	env: { ...process.env, ASSETS_REPO_TOKEN: undefined },
-	cwd: root,
-	isAssetsDir: (dir) => fs.existsSync(path.join(dir, "limezu")),
-});
+const source = { dir: localArtDir(root) };
 if (!source.dir) {
-	console.error("[snow] Needs the art checkout (../datagutt-assets).");
+	console.error("[snow] Needs a local checkout of the art repository (kai.json assets.localPath).");
 	process.exit(1);
 }
 const outDir = path.join(source.dir, SEASON_OVERRIDES, "winter");

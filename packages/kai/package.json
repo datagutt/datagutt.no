@@ -1,0 +1,27 @@
+{
+  "name": "@datagutt/kai",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@datagutt/kai-eslint-config": "workspace:*",
+    "@datagutt/kai-tsconfig": "workspace:*",
+    "@datagutt/kai-vitest-config": "workspace:*",
+    "@types/node": "^24.13.6",
+    "eslint": "^9",
+    "typescript": "^5.9.3",
+    "vitest": "^5"
+  }
+}

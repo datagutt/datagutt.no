@@ -1,0 +1,25 @@
+{
+  "id": "datagutt",
+  "title": "Fjord Town",
+  "assets": {
+    "repo": "datagutt/datagutt-assets",
+    "branch": "main",
+    "localPath": "../datagutt-assets",
+    "tokenEnv": "ASSETS_REPO_TOKEN"
+  },
+  "ui": {
+    "frame": { "file": "limezu/ui/Modern_UI_Style_1.png", "x": 58, "y": 129, "width": 28, "height": 29 },
+    "emotes": "limezu/interiors/ui_elements/UI_thinking_emotes_animation_16x16.png"
+  },
+  "sprites": {
+    "cat": { "file": "limezu/interiors/animated/animated_cat.png", "frameWidth": 48, "frameHeight": 16, "frames": 12 }
+  },
+  "font": { "module": "geist/font/pixel", "file": "fonts/geist-pixel/GeistPixel-Square.woff2", "unitsPerPixel": 76 },
+  "live": {
+    "weather": {
+      "fallback": { "city": "Oslo", "lat": 59.9139, "lon": 10.7522 },
+      "userAgent": "datagutt.no github.com/datagutt/datagutt.no"
+    },
+    "github": { "user": "datagutt" }
+  }
+}

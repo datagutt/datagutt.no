@@ -9,16 +9,12 @@ import sharp from "sharp";
 import { CHARACTERS } from "../../game/assets/manifest.ts";
 import { DIRECTIONS, FRAME_HEIGHT, FRAME_WIDTH, PORTRAIT_CROP } from "../../game/characters/sheet.ts";
 import { composeCharacter, composePortrait } from "./characters.mjs";
-import { resolveAssetSource } from "./source.mjs";
+import { localArtDir } from "./source.mjs";
 
 const root = process.cwd();
-const source = resolveAssetSource({
-	env: { ...process.env, ASSETS_REPO_TOKEN: undefined },
-	cwd: root,
-	isAssetsDir: (dir) => fs.existsSync(path.join(dir, "limezu")),
-});
+const source = { dir: localArtDir(root) };
 if (!source.dir) {
-	console.error("[characters] Needs the art checkout (../datagutt-assets).");
+	console.error("[characters] Needs a local checkout of the art repository (kai.json assets.localPath).");
 	process.exit(1);
 }
 const charactersDir = path.join(source.dir, "limezu/characters");

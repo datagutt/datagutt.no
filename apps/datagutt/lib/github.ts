@@ -1,9 +1,10 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { parse } from "node-html-parser";
 import type { ContributionDay, GitHubStats, PinnedRepo } from "@datagutt/kai-live";
+import { kaiConfig } from "@/lib/kai";
 import { profile } from "@/content/profile";
 
-const GITHUB_USERNAME = "datagutt";
+const GITHUB_USERNAME = kaiConfig.live.github.user;
 const YEARS_CODING_SINCE = profile.codingSince;
 
 export type { PinnedRepo, GitHubStats, ContributionDay };

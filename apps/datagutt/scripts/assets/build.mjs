@@ -4,8 +4,9 @@
 // does both. Placeholder mode produces files of the same shape without LimeZu art.
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import sharp from "sharp";
+import { loadKaiConfig } from "@datagutt/kai/schema";
 import { CHARACTERS, MUSIC } from "../../game/assets/manifest.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
@@ -26,6 +27,7 @@ const TILE = 16;
 const root = process.cwd();
 const outDir = path.join(root, "public/game");
 const sourceFile = path.join(root, ".assets-cache/source.json");
+const config = loadKaiConfig(root);
 
 if (!fs.existsSync(sourceFile)) {
 	console.error("[assets] .assets-cache/source.json is missing: run `bun run assets` (fetch + build) instead.");
@@ -71,12 +73,12 @@ const generatedMaps = generated.map((file) => {
 });
 const mapIds = generatedMaps.map((m) => m.id);
 
-// Dialogue frame for a nine-slice: LimeZu's wood-rimmed parchment box (Modern UI style 1),
-// or a drawn stand-in of the same size and palette in placeholder mode.
-const FRAME = { left: 58, top: 129, width: 28, height: 29 };
+// Dialogue frame for a nine-slice, cut from a sheet (kai.json ui.frame), or a drawn
+// stand-in of the same size in placeholder mode.
+const FRAME = { left: config.ui.frame.x, top: config.ui.frame.y, width: config.ui.frame.width, height: config.ui.frame.height };
 async function buildUiFrame() {
 	if (source.mode !== "placeholder") {
-		return sharp(path.join(source.dir, "limezu/ui/Modern_UI_Style_1.png")).extract(FRAME).png().toBuffer();
+		return sharp(path.join(source.dir, config.ui.frame.file)).extract(FRAME).png().toBuffer();
 	}
 	const img = new Raster(FRAME.width, FRAME.height);
 	const edge = hex("3b2a3a");
@@ -89,11 +91,11 @@ async function buildUiFrame() {
 }
 fs.writeFileSync(path.join(outDir, "ui/frame.png"), await buildUiFrame());
 
-// Emote bubbles (game/ui/emotes.ts): LimeZu's thinking-emotes sheet as it is, or in
+// Emote bubbles (game/ui/emotes.ts): the sheet from kai.json ui.emotes as it is, or in
 // placeholder mode white bubbles with a coloured mark in the frames the game uses.
 async function buildEmotes() {
 	if (source.mode !== "placeholder") {
-		return sharp(path.join(source.dir, "limezu/interiors/ui_elements/UI_thinking_emotes_animation_16x16.png")).png().toBuffer();
+		return sharp(path.join(source.dir, config.ui.emotes)).png().toBuffer();
 	}
 	const size = EMOTE_FRAME * EMOTE_COLUMNS;
 	const img = new Raster(size, size);
@@ -116,15 +118,22 @@ async function buildEmotes() {
 }
 fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await shrinkPng(await buildEmotes()));
 
-// The hidden cat (B3): LimeZu's animated cat, 12 frames of 48×16 (the cat lies across
-// two tiles in the middle of each), or a grey loaf that breathes in placeholder mode.
-async function buildCat() {
-	if (source.mode !== "placeholder") return sharp(path.join(source.dir, "limezu/interiors/animated/animated_cat.png")).png().toBuffer();
-	const img = new Raster(48 * 12, 16);
-	for (let f = 0; f < 12; f++) img.rect(f * 48 + 11, f % 4 < 2 ? 9 : 10, 24, f % 4 < 2 ? 6 : 5, hex("8a8fa8"));
+// Animated sprite strips (kai.json sprites) as they are, or in placeholder mode a grey
+// shape in the lower middle of each frame that breathes.
+async function buildSprite({ file, frameWidth, frameHeight, frames }) {
+	if (source.mode !== "placeholder") return sharp(path.join(source.dir, file)).png().toBuffer();
+	const img = new Raster(frameWidth * frames, frameHeight);
+	const width = Math.max(2, Math.round(frameWidth / 2));
+	const height = Math.max(2, Math.round(frameHeight * 0.4));
+	for (let f = 0; f < frames; f++) {
+		const inhale = f % 4 < 2 ? 1 : 0;
+		img.rect(f * frameWidth + Math.round((frameWidth - width) / 2), frameHeight - height - 1 + (1 - inhale), width, height - 1 + inhale, hex("8a8fa8"));
+	}
 	return img.toPng();
 }
-fs.writeFileSync(path.join(outDir, "ui/cat.png"), await shrinkPng(await buildCat()));
+for (const [name, sprite] of Object.entries(config.sprites)) {
+	fs.writeFileSync(path.join(outDir, `ui/${name}.png`), await shrinkPng(await buildSprite(sprite)));
+}
 
 // The title screen's waterfront (world/gen/title.ts) and the link-preview image, drawn
 // from the same sheets as the maps. Placeholder builds have no sheets to draw them from:
@@ -138,9 +147,10 @@ if (source.mode !== "placeholder") {
 	fs.writeFileSync(path.join(outDir, "ui/title.png"), await shrinkPng(waterfront));
 }
 
-// Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
-const geistDist = path.dirname(fileURLToPath(import.meta.resolve("geist/font/pixel")));
-const font = await buildBitmapFont(path.join(geistDist, "fonts/geist-pixel/GeistPixel-Square.woff2"), 76, "pixel");
+// The web font from kai.json font (for datagutt, Geist Pixel from the geist package, OFL)
+// as a 1-bit bitmap font for in-game text.
+const fontDir = path.dirname(createRequire(path.join(root, "package.json")).resolve(config.font.module));
+const font = await buildBitmapFont(path.join(fontDir, config.font.file), config.font.unitsPerPixel, "pixel");
 fs.writeFileSync(path.join(outDir, "fonts/pixel.png"), font.png);
 fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
 if (waterfront) fs.writeFileSync(path.join(outDir, "og.png"), await shrinkPng(await buildOgImage(waterfront, font)));

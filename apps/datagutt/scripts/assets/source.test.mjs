@@ -1,10 +1,12 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { CLONE_DIR, DEFAULT_LOCAL_DIR, findRepoRoot, resolveAssetSource } from "./source.mjs";
+import { cloneDir, findRepoRoot, resolveAssetSource as resolve } from "./source.mjs";
 
 const repoRoot = "/work/datagutt";
 const cwd = `${repoRoot}/apps/datagutt`;
-const sibling = path.resolve(repoRoot, DEFAULT_LOCAL_DIR);
+const assets = { repo: "datagutt/datagutt-assets", localPath: "../datagutt-assets", tokenEnv: "ASSETS_REPO_TOKEN" };
+const sibling = path.resolve(repoRoot, assets.localPath);
+const resolveAssetSource = (opts) => resolve({ assets, ...opts });
 const onlyExists = (...dirs) => (dir) => dirs.includes(dir);
 
 describe("resolveAssetSource", () => {
@@ -36,7 +38,7 @@ describe("resolveAssetSource", () => {
 
 	it("clones when only a token is available", () => {
 		const source = resolveAssetSource({ env: { ASSETS_REPO_TOKEN: "t" }, cwd, repoRoot, isAssetsDir: onlyExists() });
-		expect(source).toEqual({ mode: "clone", dir: path.resolve(cwd, CLONE_DIR) });
+		expect(source).toEqual({ mode: "clone", dir: path.resolve(cwd, cloneDir(assets.repo)) });
 	});
 
 	it("falls back to placeholders outside production", () => {

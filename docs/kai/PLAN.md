@@ -63,10 +63,16 @@ Goal: shared presets, and the three packages with the fewest ties to Fjord Town.
 
 Goal: map building and asset building as packages, driven by `kai.json`.
 
-- [ ] **K3.1** `kai.json` schema and the datagutt `kai.json` (asset source, save key,
+Order: K3.1 to K3.3, then K4.1 and K4.2, then K3.4 and K3.5. The generic asset CLI needs
+the character recipes and music tracks as content, not as app TypeScript.
+
+- [x] **K3.1** `kai.json` schema and the datagutt `kai.json` (asset source, save key,
       timezone, base path, UI sheets, font, weather fallback, GitHub user). *Done when*
       nothing in the build reads `datagutt/datagutt-assets` or `../datagutt-assets` from
-      code.
+      code. (The schema is in `@datagutt/kai/schema`. It holds the build and live fields
+      now; the runtime fields (save key, timezone, base path, kill switch) join in K5.1,
+      when the runtime can receive them. The art repository's game folder is the config's
+      `id`. The asset build output was byte-identical before and after.)
 - [ ] **K3.2** `@datagutt/kai-limezu`: sheets, catalog, palette, singles, furniture,
       lighting presets, seasons, autotile, the character sheet layout. Prefabs specific
       to the town (the datagutt house, the town hall) move to the app. *Done when* no

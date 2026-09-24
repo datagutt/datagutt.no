@@ -21,7 +21,7 @@ import { renderTmj } from "../../world/gen/render.ts";
 import { validateMap } from "../../world/gen/validate.ts";
 import { checkCuts } from "../../world/gen/cuts.ts";
 import { applySeason, isSeason } from "../../game/world/season.ts";
-import { resolveAssetSource } from "../assets/source.mjs";
+import { localArtDir } from "../assets/source.mjs";
 
 const root = process.cwd();
 const args = process.argv.slice(2);
@@ -79,16 +79,12 @@ if (flag("check")) {
 fs.mkdirSync(files.maps, { recursive: true });
 for (const [file, text] of outputs) fs.writeFileSync(file, text);
 
-const source = resolveAssetSource({
-	env: { ...process.env, ASSETS_REPO_TOKEN: undefined },
-	cwd: root,
-	isAssetsDir: (dir) => fs.existsSync(path.join(dir, "limezu")),
-});
-if (!source.dir) {
+const artDir = localArtDir(root);
+if (!artDir) {
 	console.log(`[world] Wrote ${outputs.size - 1} maps. No art checkout, so no colours, tileset or renders.`);
 	process.exit(0);
 }
-const sheets = new SheetCache(source.dir);
+const sheets = new SheetCache(artDir);
 const colors = await tileColors(registry.tiles, sheets);
 fs.writeFileSync(files.colors, JSON.stringify(colors, null, "\t") + "\n");
 fs.mkdirSync(files.tilesetDir, { recursive: true });

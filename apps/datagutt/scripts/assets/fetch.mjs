@@ -1,17 +1,20 @@
 #!/usr/bin/env node
-// Makes the licensed LimeZu source art available to the asset pipeline and records
-// where it came from in .assets-cache/source.json. See docs/game/DESIGN.md §9.
+// Makes the licensed source art available to the asset pipeline and records where it
+// came from in .assets-cache/source.json. See docs/game/DESIGN.md §9. kai.json's
+// `assets` names the repository, and in order this uses:
 //
-//   ASSETS_DIR=<path>        use this checkout of datagutt-assets (must exist)
-//   ../datagutt-assets       next to the repository, used automatically when present
-//   ASSETS_REPO_TOKEN=<tok>  shallow-clone the private repo (Vercel builds)
+//   ASSETS_DIR=<path>        this checkout of the art repository (must exist)
+//   assets.localPath         a local checkout, relative to the monorepo root, when present
+//   $<assets.tokenEnv>       a token to shallow-clone the repository (Vercel builds)
 //   otherwise                placeholder mode (coloured rectangles), never in production
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { ASSETS_REPO, findRepoRoot, resolveAssetSource } from "./source.mjs";
+import { loadKaiConfig } from "@datagutt/kai/schema";
+import { findRepoRoot, resolveAssetSource } from "./source.mjs";
 
 const cwd = process.cwd();
+const { assets } = loadKaiConfig(cwd);
 const cacheDir = path.join(cwd, ".assets-cache");
 
 const isAssetsDir = (dir) =>
@@ -28,27 +31,27 @@ function git(args, token) {
 		);
 	} catch (err) {
 		const stderr = String(err.stderr ?? "").replaceAll(token, "***").replaceAll(auth, "***");
-		throw new Error(`git ${args[0]} failed for ${ASSETS_REPO}:\n${stderr.trim()}`);
+		throw new Error(`git ${args[0]} failed for ${assets.repo}:\n${stderr.trim()}`);
 	}
 }
 
 function cloneOrUpdate(dir, token) {
-	const url = `https://github.com/${ASSETS_REPO}.git`;
+	const url = `https://github.com/${assets.repo}.git`;
 	if (fs.existsSync(path.join(dir, ".git"))) {
-		git(["-C", dir, "fetch", "--depth", "1", "origin", "main"], token);
+		git(["-C", dir, "fetch", "--depth", "1", "origin", assets.branch], token);
 		git(["-C", dir, "reset", "--hard", "FETCH_HEAD"], token);
 	} else {
 		fs.mkdirSync(path.dirname(dir), { recursive: true });
-		git(["clone", "--depth", "1", "--branch", "main", url, dir], token);
+		git(["clone", "--depth", "1", "--branch", assets.branch, url, dir], token);
 	}
 	if (!isAssetsDir(dir)) {
-		throw new Error(`Cloned ${ASSETS_REPO}, but ${dir} has no limezu/ folder or LICENSES.md.`);
+		throw new Error(`Cloned ${assets.repo}, but ${dir} has no limezu/ folder or LICENSES.md.`);
 	}
 }
 
 try {
-	const source = resolveAssetSource({ env: process.env, cwd, repoRoot: findRepoRoot(cwd), isAssetsDir });
-	if (source.mode === "clone") cloneOrUpdate(source.dir, process.env.ASSETS_REPO_TOKEN);
+	const source = resolveAssetSource({ env: process.env, cwd, repoRoot: findRepoRoot(cwd), assets, isAssetsDir });
+	if (source.mode === "clone") cloneOrUpdate(source.dir, process.env[assets.tokenEnv]);
 
 	fs.mkdirSync(cacheDir, { recursive: true });
 	fs.writeFileSync(path.join(cacheDir, "source.json"), JSON.stringify(source, null, "\t") + "\n");
@@ -56,8 +59,8 @@ try {
 	if (source.mode === "placeholder") {
 		console.warn(
 			"[assets] No licensed art found: building in PLACEHOLDER mode (coloured rectangles).\n" +
-				"[assets] Clone the private assets repo next to this repository (../datagutt-assets), set ASSETS_DIR, " +
-				"or set ASSETS_REPO_TOKEN.",
+				`[assets] Check out ${assets.repo} at ${assets.localPath} (from the repository root), set ASSETS_DIR, ` +
+				`or set ${assets.tokenEnv}.`,
 		);
 	} else {
 		console.log(`[assets] Using licensed art (${source.mode}) from ${source.dir}`);

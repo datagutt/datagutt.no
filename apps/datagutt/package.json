@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@datagutt/kai": "workspace:*",
     "@datagutt/kai-arcade": "workspace:*",
     "@datagutt/kai-live": "workspace:*",
     "@datagutt/kai-net": "workspace:*",

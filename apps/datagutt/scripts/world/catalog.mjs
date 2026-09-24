@@ -19,18 +19,14 @@ import path from "node:path";
 import sharp from "sharp";
 import { AUTO_CATALOG, SHEETS, SINGLES } from "../../world/art/sheets.ts";
 import { singleKeys } from "../../world/art/singleKey.ts";
-import { resolveAssetSource } from "../assets/source.mjs";
+import { localArtDir } from "../assets/source.mjs";
 
 const T = 16;
 const root = process.cwd();
 const only = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
-const source = resolveAssetSource({
-	env: { ...process.env, ASSETS_REPO_TOKEN: undefined },
-	cwd: root,
-	isAssetsDir: (dir) => fs.existsSync(path.join(dir, "limezu")),
-});
+const source = { dir: localArtDir(root) };
 if (!source.dir) {
-	console.error("[catalog] Needs the art checkout (../datagutt-assets).");
+	console.error("[catalog] Needs a local checkout of the art repository (kai.json assets.localPath).");
 	process.exit(1);
 }
 const art = (p) => path.join(source.dir, "limezu", p);

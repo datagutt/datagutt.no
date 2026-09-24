@@ -1,13 +1,13 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { fetchWeather, placeFromHeaders, type WeatherNow, type WeatherPlace } from "@datagutt/kai-live";
 import { FALLBACK_PLACE } from "@/content/live";
+import { kaiConfig } from "@/lib/kai";
 
 // The game's sky follows the visitor's weather (docs/game/PLAN.md C2), placed by Vercel's
 // IP location headers. Without those (local runs, or a place Vercel can't tell) the sky
 // is Oslo's.
 
-// MET Norway's terms of service block requests that don't identify the site and a contact.
-const USER_AGENT = "datagutt.no github.com/datagutt/datagutt.no";
+const USER_AGENT = kaiConfig.live.weather.userAgent;
 
 /**
  * How long a good forecast is kept. MET updates hourly and asks clients not to poll more
