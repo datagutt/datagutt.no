@@ -54,12 +54,20 @@ export function resolveAssetSource(opts: {
 	return { mode: "placeholder", dir: null };
 }
 
-/** The monorepo root: the nearest directory above `from` that holds turbo.json. */
-export function findRepoRoot(from: string, exists: (file: string) => boolean = fs.existsSync): string {
+/**
+ * The monorepo root: the nearest directory above `from` whose package.json declares
+ * `workspaces`. (Not the nearest turbo.json: an app may have its own.)
+ */
+export function findRepoRoot(from: string, readPackage: (file: string) => string | null = readIfExists): string {
 	for (let dir = path.resolve(from); ; dir = path.dirname(dir)) {
-		if (exists(path.join(dir, "turbo.json"))) return dir;
-		if (path.dirname(dir) === dir) throw new Error(`No turbo.json above ${from}.`);
+		const text = readPackage(path.join(dir, "package.json"));
+		if (text && "workspaces" in JSON.parse(text)) return dir;
+		if (path.dirname(dir) === dir) throw new Error(`No workspace root (a package.json with "workspaces") above ${from}.`);
 	}
+}
+
+function readIfExists(file: string): string | null {
+	return fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
 }
 
 /**

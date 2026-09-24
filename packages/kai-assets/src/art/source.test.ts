@@ -57,8 +57,11 @@ describe("resolveAssetSource", () => {
 });
 
 describe("findRepoRoot", () => {
-	it("walks up to the directory with turbo.json", () => {
-		const exists = (file: string) => file === "/work/datagutt/turbo.json";
-		expect(findRepoRoot("/work/datagutt/apps/datagutt", exists)).toBe("/work/datagutt");
+	it("walks up to the workspace root, past an app's own package.json", () => {
+		const packages: Record<string, string> = {
+			"/work/datagutt/apps/sandbox/package.json": JSON.stringify({ name: "sandbox" }),
+			"/work/datagutt/package.json": JSON.stringify({ workspaces: ["apps/*"] }),
+		};
+		expect(findRepoRoot("/work/datagutt/apps/sandbox", (file) => packages[file] ?? null)).toBe("/work/datagutt");
 	});
 });
