@@ -39,6 +39,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@builder.io/partytown": "^0.10.3",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@playwright/test": "^1.63",
     "@types/node": "^24.13.6",
     "@types/pngjs": "^6.0.5",

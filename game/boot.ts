@@ -16,6 +16,8 @@ import { clock, monthNow } from "./world/dayNight";
 import { LanyardClient, PresenceFeed } from "./net/lanyard";
 import { MOCK_PRESENCES } from "./live/datagutt";
 import { GhostClient, ghostsDisabled, worldSocketUrl } from "./net/ghosts";
+import { Music } from "./audio/Music";
+import { trackFor } from "./audio/playlist";
 
 /** Where the World scene should put the player. */
 export type WorldTarget = { map: string; spawn?: string; tile?: Point; facing?: Facing };
@@ -54,6 +56,11 @@ export type GameHandle = {
 	 * brings the player in as on a first visit.
 	 */
 	start(options?: { fresh?: boolean }): void;
+	/**
+	 * The title's music. Call it from the title's first gesture (Press start): browsers
+	 * play sound only after one, and Phaser unlocks its audio on the same gesture.
+	 */
+	playTitleMusic(): void;
 	destroy(): void;
 	/** The page was opened with a valid `?at=` link, so the title can be skipped. */
 	deepLinked: boolean;
@@ -93,6 +100,8 @@ export type GameServices = Required<Pick<BootOptions, "assetBase">> & {
 	 * scene starts and stops it by the "Other visitors" setting.
 	 */
 	ghosts: GhostClient | null;
+	/** The background music, one for the whole game so it plays on across maps. */
+	music: Music;
 };
 
 export const SERVICES_KEY = "services";
@@ -103,8 +112,9 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 	const { target, deepLinked, hasSave } = resolveStart(window.location.search);
 	if (options.autoStart || deepLinked) requestStart();
 
+	const assetBase = options.assetBase ?? "/game/";
 	const services: GameServices = {
-		assetBase: options.assetBase ?? "/game/",
+		assetBase,
 		onProgress: options.onProgress ?? (() => {}),
 		onReady: options.onReady ?? (() => {}),
 		startRequested,
@@ -119,6 +129,10 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		hours: clock(window.location.search),
 		month: monthNow(window.location.search),
 		ghosts: ghostsDisabled(safeLocalStorage()) ? null : new GhostClient(worldSocketUrl(window.location)),
+		music: new Music(() => {
+			const sound = game.sound;
+			return sound instanceof Phaser.Sound.WebAudioSoundManager ? { context: sound.context, destination: sound.destination } : null;
+		}, assetBase),
 	};
 	const debug = new URLSearchParams(window.location.search).has("debug");
 	if (debug && new URLSearchParams(window.location.search).has("finale")) {
@@ -206,10 +220,15 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 			}
 			requestStart();
 		},
+		playTitleMusic() {
+			const settings = loadSave(browserStorage())?.settings;
+			if (!settings?.muted && settings?.music !== false) services.music.play(trackFor({ scene: "title" }));
+		},
 		deepLinked,
 		hasSave,
 		destroy() {
 			lanyard.stop();
+			services.music.destroy();
 			observer.disconnect();
 			dprQuery?.removeEventListener("change", onDprChange);
 			game.destroy(true);

@@ -15,7 +15,7 @@ const ACCENT = 0x8a3c1a;
 const FADED = 0x9c8a78;
 const DEPTH = 120_000;
 
-export type MenuSettings = { muted: boolean; reducedMotion: boolean | null; showVisitors: boolean; effects: EffectsSetting };
+export type MenuSettings = { muted: boolean; music: boolean; reducedMotion: boolean | null; showVisitors: boolean; effects: EffectsSetting };
 
 export type MenuHooks = {
 	stamps(): readonly string[];
@@ -110,6 +110,7 @@ export class StartMenu {
 			const motion = s.reducedMotion === null ? "Auto" : s.reducedMotion ? "On" : "Off";
 			return [
 				{ label: `Sound: ${s.muted ? "Off" : "On"}`, run: () => this.hooks.changeSettings({ ...s, muted: !s.muted }) },
+				{ label: `Music: ${s.music ? "On" : "Off"}`, run: () => this.hooks.changeSettings({ ...s, music: !s.music }) },
 				{ label: `Other visitors: ${s.showVisitors ? "On" : "Off"}`, run: () => this.hooks.changeSettings({ ...s, showVisitors: !s.showVisitors }) },
 				{
 					label: `Effects: ${s.effects === "auto" ? "Auto" : s.effects === "high" ? "High" : "Low"}`,

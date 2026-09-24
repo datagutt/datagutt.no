@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { CHARACTERS } from "../../game/assets/manifest.ts";
+import { CHARACTERS, MUSIC } from "../../game/assets/manifest.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
@@ -17,6 +17,7 @@ import { composeCharacter, composePortrait, placeholderCharacter, placeholderPor
 import { buildBitmapFont } from "./font.mjs";
 import { buildOgImage } from "./og.mjs";
 import { compileDialogue } from "./ink.mjs";
+import { buildMusic } from "./music.mjs";
 import { Raster, hex } from "./raster.mjs";
 import { shrinkPng } from "./png.mjs";
 
@@ -34,7 +35,7 @@ const charactersDir = source.dir && path.join(source.dir, "limezu/characters");
 const portraitsDir = source.dir && path.join(source.dir, "limezu/portraits");
 const portraitExists = (file) => fs.existsSync(path.join(portraitsDir, file));
 
-for (const sub of ["characters", "portraits", "tilesets", "maps", "fonts", "dialogue", "ui"]) {
+for (const sub of ["characters", "portraits", "tilesets", "maps", "fonts", "dialogue", "ui", "music"]) {
 	fs.rmSync(path.join(outDir, sub), { recursive: true, force: true });
 	fs.mkdirSync(path.join(outDir, sub), { recursive: true });
 }
@@ -162,6 +163,12 @@ for (const { id, objects } of mapObjects) {
 	}
 }
 
+// Music (scripts/assets/music.mjs). Placeholder builds have none, and the game stays quiet.
+const music =
+	source.mode === "placeholder"
+		? {}
+		: await buildMusic({ tracks: MUSIC, musicDir: path.join(source.dir, "music"), outDir: path.join(outDir, "music"), cacheDir: path.join(root, ".assets-cache/music") });
+
 const manifest = {
 	mode: source.mode,
 	builtAt: new Date().toISOString(),
@@ -171,9 +178,10 @@ const manifest = {
 	tilesets: ["world"],
 	fonts: ["pixel"],
 	dialogue: dialogue.files,
+	music,
 };
 fs.writeFileSync(path.join(outDir, "assets.json"), JSON.stringify(manifest, null, "\t") + "\n");
 console.log(
 	`[assets] Built ${manifest.characters.length} characters, ${manifest.maps.length} maps, ` +
-		`${manifest.tilesets.length} tilesets (${source.mode} art) in ${Date.now() - started} ms`,
+		`${manifest.tilesets.length} tilesets, ${Object.keys(music).length} music tracks (${source.mode} art) in ${Date.now() - started} ms`,
 );

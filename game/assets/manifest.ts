@@ -190,3 +190,25 @@ export const CHARACTERS = {
 } satisfies Record<string, CharacterRecipe>;
 
 export type CharacterId = keyof typeof CHARACTERS;
+
+/** A music track: a loop from datagutt-assets, path relative to its music/ folder. */
+export type MusicTrack = { file: string };
+
+// Towball's Crossing: Deluxe! by Towball, CC BY 4.0 (credited in content/credits.ts). The
+// assets repo's music/towballs-crossing-deluxe/TRACKS.md says why these seven. The build
+// cuts each to its exact loop and writes public/game/music/<id>.ogg and .mp3.
+const DELUXE = "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks";
+export const MUSIC = {
+	welcome: { file: `${DELUXE}/01 Welcome To Towballs Crossing Deluxe! (Loopable Version).mp3` },
+	sunrise: { file: `${DELUXE}/02 Enjoying the Sunrise (Loopable Version).mp3` },
+	market: { file: `${DELUXE}/05 At the Farmers Market (Loopable Version).mp3` },
+	taxOffice: { file: `${DELUXE}/06 Tax Office (Loopable Version).mp3` },
+	boredom: { file: `${DELUXE}/07 Afternoon Boredom (Loopable Version).mp3` },
+	snowedIn: { file: `${DELUXE}/09 Snowed In (Loopable Version).mp3` },
+	goodnight: { file: `${DELUXE}/10 Goodnight and Sweet Dreams (Loopable Version).mp3` },
+} satisfies Record<string, MusicTrack>;
+
+export type MusicId = keyof typeof MUSIC;
+
+/** Where a built track loops, in seconds from the start of its file (assets.json `music`). */
+export type MusicLoop = { loopStart: number; loopEnd: number };

@@ -41,6 +41,11 @@ describe("credits", () => {
 	it("credit LimeZu for the art", () => {
 		expect(credits.sections.find((s) => s.heading === "Art")?.lines.join(" ")).toMatch(/LimeZu/);
 	});
+
+	// So does the music's (CC BY 4.0).
+	it("credit Towball for the music", () => {
+		expect(credits.sections.find((s) => s.heading === "Music")?.lines.join(" ")).toBe("Towball's Crossing: Deluxe! by Towball (towball.itch.io), CC BY 4.0");
+	});
 });
 
 describe("placeFromSearch", () => {

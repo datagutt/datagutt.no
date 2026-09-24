@@ -90,6 +90,12 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		menu.querySelector<HTMLElement>("[data-menu-item]")?.focus();
 	}, [screen, hasSave]);
 
+	// Press start is the page's first gesture, and browsers play sound only after one, so the
+	// title music starts with the menu (or once the game has loaded, if that comes later).
+	useEffect(() => {
+		if (screen !== "splash" && phase !== "playing") handleRef.current?.playTitleMusic();
+	}, [screen, phase]);
+
 	// Parallax: the backdrop's layers lean away from the pointer (TitleArt.tsx).
 	useEffect(() => {
 		const root = rootRef.current;

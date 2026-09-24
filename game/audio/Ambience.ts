@@ -1,8 +1,9 @@
 // The sound of the town (docs/game/PLAN.md M5.6; DESIGN §15), all synthesised with Web
 // Audio: no recordings to load or license. Buses: master into Phaser's output (so the mute
-// setting holds), then ambience, effects and music (music comes in v1.1). Ambience layers
-// run all the time and glide to the levels mix.ts asks for, so walking about, and through
-// doors, crossfades by itself. A recorded CC0 loop can later replace any layer's source.
+// setting holds), then ambience and effects; the music has its own (Music.ts). Ambience
+// layers run all the time and glide to the levels mix.ts asks for, so walking about, and
+// through doors, crossfades by itself. A recorded CC0 loop can later replace any layer's
+// source.
 import type { AudioOutput } from "./sfx";
 import { LAYERS, type Layer, type Mix } from "./mix";
 
@@ -11,7 +12,7 @@ const PEAK: Mix = { waves: 0.3, wind: 0.1, gulls: 0.07, birds: 0.05, fire: 0.22,
 /** Seconds for a level change to mostly settle: a gentle crossfade. */
 const GLIDE = 1.2;
 
-type Graph = { ctx: AudioContext; master: GainNode; buses: { ambience: GainNode; effects: GainNode; music: GainNode }; layers: Record<Layer, GainNode> };
+type Graph = { ctx: AudioContext; master: GainNode; buses: { ambience: GainNode; effects: GainNode }; layers: Record<Layer, GainNode> };
 
 export class Ambience {
 	private graph: Graph | null = null;
@@ -55,7 +56,7 @@ export class Ambience {
 			return g;
 		};
 		const master = gain(1, out.destination);
-		const buses = { ambience: gain(0.8, master), effects: gain(1, master), music: gain(0.6, master) };
+		const buses = { ambience: gain(0.8, master), effects: gain(1, master) };
 		const layer = () => gain(0, buses.ambience);
 		const layers = { waves: layer(), wind: layer(), gulls: layer(), birds: layer(), fire: layer(), room: layer() };
 		this.graph = { ctx, master, buses, layers };

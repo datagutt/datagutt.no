@@ -8,9 +8,13 @@
 
 - Geist Pixel by Vercel, under the SIL Open Font License.
 
+## Music
+
+- "Towball's Crossing: Deluxe!" by [Towball](https://towball.itch.io/) ([towball.itch.io/towballs-crossing-deluxe](https://towball.itch.io/towballs-crossing-deluxe)), under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Seven of its loopable tracks play in the game. Changes: the asset build cuts each track to its exact loop, turns it down to an even loudness and re-encodes it (Opus and MP3). The source files live in the private assets repository with the art, not here.
+
 ## Sound
 
-Every sound in the game is synthesised in code with Web Audio: the ambience (waves, wind, gulls, birdsong, a fire, the hum of a room) in `game/audio/Ambience.ts`, the effects in `game/audio/sfx.ts` and the dialogue blips in `game/audio/blips.ts`. No recordings are used yet. Any CC0 recording added later is listed here with its source and author.
+Apart from the music, every sound in the game is synthesised in code with Web Audio: the ambience (waves, wind, gulls, birdsong, a fire, the hum of a room) in `game/audio/Ambience.ts`, the effects in `game/audio/sfx.ts` and the dialogue blips in `game/audio/blips.ts`. No recorded effects or ambience are used yet. Any CC0 recording added later is listed here with its source and author.
 
 ## Code
 

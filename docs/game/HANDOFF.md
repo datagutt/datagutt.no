@@ -4,6 +4,19 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **Music (B4), 2026-09-24.** Seven loops from Towball's Crossing: Deluxe! (CC BY 4.0,
+  in the credits). `game/audio/playlist.ts` picks the track (title and credits: Welcome;
+  town by day: Sunrise, in winter Snowed In; town at night and the finale: Goodnight;
+  homes and shops: Farmers Market; office, town hall and radio hut: Tax Office; library:
+  Afternoon Boredom). `game/audio/Music.ts` crossfades on its own bus, loads a track only
+  when first wanted and keeps two decoded. The title track starts on Press start
+  (`GameHandle.playTitleMusic`). Settings: "Music: On/Off" (`settings.music`); muted or
+  off, nothing downloads. `window.__fjord.music` names the track. Build:
+  `scripts/assets/music.mjs` (ffmpeg from `@ffmpeg-installer/ffmpeg`, cached in
+  `.assets-cache/music`) cuts only the codec's delay and padding, never a rest (the loops
+  are whole bars), levels to -19.5 LUFS and writes Opus (4.5 MB for all seven) and MP3
+  (6 MB) with 0.1 s of wrap around each loop. Placeholder builds have no music. The joins
+  are checked by numbers in Chromium and Firefox, not yet by ear.
 - **Collision and hitbox pass (user reports, 2026-09-24).**
   - Buildings: `footprint()` in `world/art/prefabs.ts` blocks every row from its first
     to its last solid catalogue tile, keeps the door column open below the door, and

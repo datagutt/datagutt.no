@@ -32,6 +32,7 @@ import { Water } from "../fx/Water";
 import { Aurora } from "../fx/Aurora";
 import { Ambience } from "../audio/Ambience";
 import { ambienceMix } from "../audio/mix";
+import { trackFor } from "../audio/playlist";
 import { distanceField, FAR } from "../world/distance";
 import { Feel } from "../fx/Feel";
 import { FrameWatch, qualityFor, type Quality } from "../fx/quality";
@@ -273,8 +274,8 @@ export class WorldScene extends Phaser.Scene {
 		this.menu = new StartMenu(this, {
 			stamps: () => this.progress.stamps,
 			settings: () => {
-				const { muted, reducedMotion, showVisitors, effects } = this.progress.settings;
-				return { muted, reducedMotion, showVisitors, effects };
+				const { muted, music, reducedMotion, showVisitors, effects } = this.progress.settings;
+				return { muted, music, reducedMotion, showVisitors, effects };
 			},
 			changeSettings: (next) => {
 				const effectsChanged = next.effects !== this.progress.settings.effects;
@@ -453,7 +454,7 @@ export class WorldScene extends Phaser.Scene {
 		};
 	}
 
-	/** A few times a second: the ambience for where the player stands. */
+	/** A few times a second: the ambience for where the player stands, and the music. */
 	private updateAmbience(time: number) {
 		if (time < this.ambienceAt) return;
 		this.ambienceAt = time + 250;
@@ -464,6 +465,12 @@ export class WorldScene extends Phaser.Scene {
 		this.ambience.set(
 			ambienceMix({ outdoors: s.outdoors, water: at(s.water), forest: at(s.forest), fire, dark: this.dayNight.current.dark, season: this.services.season }),
 		);
+		const { muted, music } = this.progress.settings;
+		const moment = this.credits
+			? ({ scene: "credits" } as const)
+			: { scene: "world" as const, map: this.target.map, outdoors: s.outdoors, phase: this.dayNight.current.phase, season: this.services.season, finale: this.services.finale };
+		// Muted or switched off: nothing plays, and nothing downloads.
+		this.services.music.play(muted || !music ? null : trackFor(moment));
 	}
 
 	private get quality(): Quality {
@@ -545,6 +552,7 @@ export class WorldScene extends Phaser.Scene {
 			daylight: this.dayNight.current,
 			quality: this.quality,
 			ambience: this.ambience.levels,
+			music: this.services.music.current,
 			presence: this.services.presence.current,
 			thomas: this.thomas.state,
 			ghosts: this.ghosts.count,

@@ -15,7 +15,7 @@ export type SaveData = {
 	flags: Record<string, boolean>;
 	/** Ink visit state per dialogue, stored as the runtime's JSON (M2). */
 	dialogue: Record<string, string>;
-	settings: { muted: boolean; showVisitors: boolean; reducedMotion: boolean | null; effects: EffectsSetting };
+	settings: { muted: boolean; music: boolean; showVisitors: boolean; reducedMotion: boolean | null; effects: EffectsSetting };
 	updatedAt: string;
 };
 
@@ -49,6 +49,7 @@ function validate(raw: unknown): SaveData | null {
 		dialogue,
 		settings: {
 			muted: s.muted === true,
+			music: s.music !== false,
 			showVisitors: s.showVisitors !== false,
 			reducedMotion: typeof s.reducedMotion === "boolean" ? s.reducedMotion : null,
 			effects: s.effects === "high" || s.effects === "low" ? s.effects : "auto",

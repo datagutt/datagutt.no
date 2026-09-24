@@ -56,11 +56,12 @@ Issue: see README.md (issue links table).
 - [x] **M0.10** Test setup: `pnpm test` (vitest) for pure logic and `pnpm test:e2e`
       (Playwright) for smoke tests of `/` and `/journal`. *Done when* one trivial test of
       each kind passes.
-- [ ] **M0.11** Vercel: add `ASSETS_REPO_TOKEN` (fine-grained, read-only, single repo)
+- [x] **M0.11** Vercel: add `ASSETS_REPO_TOKEN` (fine-grained, read-only, single repo)
       for Preview and Production. (`pnpm build` already runs the fetch step first; pnpm
       skips `pre*` scripts, so it is chained in `build`. Add the pipeline in M1.3.)
       **Needs the user** to create the token. *Done when* a preview deployment of `game`
       builds with real art.
+      (Done by the user 2026-09-24: the token is in Vercel and deployments build with the art.)
 
 ## M1: Engine core (greybox)
 
@@ -383,8 +384,22 @@ Goal: ship v1 to production.
       starfield at night.
 - [ ] **B3** Secrets and achievements: hidden cat, fourth-wall lines when walking off the
       map edge, achievement list in the passport.
-- [ ] **B4** Music: pick or commission tracks per area with day and night variants.
+- [x] **B4** Music: pick or commission tracks per area with day and night variants.
+      (Seven loops from Towball's Crossing: Deluxe!, CC BY 4.0, credited: town by day, by
+      night (and the finale) and in winter, three moods for rooms, the main theme on the
+      title and under the credits. Crossfades at doors, dusk and dawn; a Music setting.
+      `game/audio/playlist.ts` picks, `Music.ts` plays, `scripts/assets/music.mjs` builds.
+      Nobody has listened to the joins yet.)
 - [x] **B5** Buy Modern Office if interiors need more variety. *(Bought 2026-09-23; used by the office.)*
+- [ ] **B6** Beyond the town: a mountain trail north out of the forest to a small map
+      with a hytte and a view over the fjord (the user's choice). A wooden barrier and a
+      sign ("Trail closed: rockfall") shut it until the passport is full; then the barrier
+      is gone. Build the lock as a general rule (a condition on a door or path, read from
+      progress) so later quests can gate more places. The player must know both states:
+      townsfolk mention the closed trail while stamps are missing, and once the passport
+      is full the news spreads (a line from Arne or whoever is near, and the finale's
+      contact prompt points up the trail). *Done when* the way stays shut with an in-world
+      reason before the last stamp, opens after it, and the game says so.
 
 ## v2 backlog
 

@@ -20,7 +20,7 @@ const sample = {
 	stamps: ["library"],
 	flags: { metFerryman: true },
 	dialogue: {},
-	settings: { muted: false, showVisitors: true, reducedMotion: null, effects: "auto" as const },
+	settings: { muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" as const },
 };
 
 describe("save", () => {
@@ -28,6 +28,8 @@ describe("save", () => {
 		const storage = memoryStorage();
 		expect(writeSave(storage, sample)).toBe(true);
 		expect(loadSave(storage)).toMatchObject(sample);
+		writeSave(storage, { ...sample, settings: { ...sample.settings, music: false } });
+		expect(loadSave(storage)?.settings.music).toBe(false);
 	});
 
 	it("treats missing, corrupt or foreign data as no save", () => {
@@ -61,7 +63,7 @@ describe("save", () => {
 		});
 		const save = loadSave(storage)!;
 		expect(save.stamps).toEqual(["a"]);
-		expect(save.settings).toEqual({ muted: false, showVisitors: true, reducedMotion: null, effects: "auto" });
+		expect(save.settings).toEqual({ muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" });
 	});
 });
 

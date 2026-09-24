@@ -13,6 +13,8 @@ export const credits = {
 		{ heading: "Built with", lines: [stack.join(", ")] },
 		{ heading: "Art", lines: ["LimeZu (limezu.itch.io)", "Modern Exteriors, Modern Interiors,", "Modern Office, Modern User Interface"] },
 		{ heading: "Type", lines: ["Geist Pixel by Vercel", "(SIL Open Font License)"] },
+		// CC BY 4.0 asks for the title, the author, the source and the licence (links in CREDITS.md).
+		{ heading: "Music", lines: ["Towball's Crossing: Deluxe!", "by Towball (towball.itch.io),", "CC BY 4.0"] },
 		{ heading: "Sound", lines: ["Made in code with Web Audio"] },
 		{ heading: "Code", lines: ["GPL-3.0 on GitHub", "datagutt/datagutt.no"] },
 	] satisfies CreditSection[],
