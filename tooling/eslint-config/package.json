@@ -1,0 +1,19 @@
+{
+  "name": "@datagutt/kai-eslint-config",
+  "version": "0.0.0",
+  "dependencies": {
+    "eslint-config-next": "16.3.6",
+    "typescript-eslint": "^8.70.1"
+  },
+  "exports": {
+    "./base": "./base.js",
+    "./phaser": "./phaser.js",
+    "./next": "./next.js"
+  },
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "type": "module",
+  "peerDependencies": {
+    "eslint": "^9"
+  }
+}

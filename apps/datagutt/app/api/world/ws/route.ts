@@ -10,7 +10,6 @@ const PING_INTERVAL_MS = 30_000;
 
 declare global {
 	// One set of rooms per server instance, across module reloads.
-	// eslint-disable-next-line no-var
 	var __worldRooms: WorldRooms | undefined;
 }
 const rooms = (globalThis.__worldRooms ??= new WorldRooms());

@@ -1,13 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { STAMP_PLACES } from "@/game/progress/passport";
-import { browserStorage, loadSave } from "@/game/save/save";
+import { browserStorage, loadSave, SAVE_KEY } from "@/game/save/save";
+
+function subscribe(onChange: () => void) {
+	window.addEventListener("storage", onChange);
+	return () => window.removeEventListener("storage", onChange);
+}
+
+// The raw text is the snapshot because it compares by value; a parsed save is a new
+// object on every read, which useSyncExternalStore would take as a change.
+const readSaveText = () => browserStorage()?.getItem(SAVE_KEY) ?? null;
 
 /** The visitor's Fjord Passport from their saved game, if they have played. Nothing without a save or JS. */
 export function PassportProgress() {
-	const [stamps, setStamps] = useState<string[] | null>(null);
-	useEffect(() => setStamps(loadSave(browserStorage())?.stamps ?? null), []);
+	const saveText = useSyncExternalStore(subscribe, readSaveText, () => null);
+	const stamps = saveText ? loadSave(browserStorage())?.stamps : null;
 	if (!stamps) return null;
 
 	const count = STAMP_PLACES.filter((p) => stamps.includes(p.id)).length;

@@ -39,7 +39,7 @@ Goal: the same site, built by Bun and Turborepo from its new place. No behaviour
 
 Goal: shared presets, and the three packages with the fewest ties to Fjord Town.
 
-- [ ] **K2.1** `tooling/tsconfig`, `tooling/eslint-config` (ESLint 9 flat config: `base`,
+- [x] **K2.1** `tooling/tsconfig`, `tooling/eslint-config` (ESLint 9 flat config: `base`,
       `phaser`, `next`) and `tooling/vitest-config`. The app moves to ESLint 9 and
       `eslint-config-next@16`. *Done when* `turbo run lint` passes and a deliberate bad
       import still fails.
