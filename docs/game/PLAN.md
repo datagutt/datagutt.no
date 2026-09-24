@@ -415,5 +415,10 @@ Goal: ship v1 to production.
 
 - [ ] **C1** Terraria-style side-view mine under the hill; tech stack moves there; room
       layout from the dungeon generator.
-- [ ] **C2** Weather: rain, fog, storms, tied to real Norwegian weather or random.
+- [x] **C2** Weather: rain, fog, storms, tied to real Norwegian weather or random.
+      (Real Oslo weather from MET Norway's Locationforecast, fetched on the server by
+      `lib/weather.ts` and cached for half an hour; the calm fallback keeps the seasonal
+      particles. Rain, heavy rain, sleet, snow in any season, fog banks, storms with wind
+      and dim lightning (none with reduced motion). Rain and thunder in the ambience,
+      faintly indoors. `?debug&weather=<kind>`.)
 - [ ] **C3** Multi-instance ghosts: Upstash Redis pub/sub or Durable Objects.

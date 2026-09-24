@@ -4,6 +4,18 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **C2 weather, done; waiting on the user's look.** The sky follows Oslo's real weather.
+  `lib/weather.ts` fetches MET Norway's Locationforecast (compact, with the User-Agent
+  their terms require) and maps the current hour's symbol to `clear | cloudy | rain |
+  heavyRain | snow | sleet | fog | storm`, plus wind and temperature. It rides in the
+  WorldState payload (`weather`), so `getWorldState` now lives half an hour when
+  everything arrived (it was an hour); a failed fetch gives `CALM_WEATHER` and minutes.
+  `game/world/weather.ts` decides the sky (falls, overcast, fog, lightning, wind drift)
+  and the ambience's rain, wind and thunder; `game/fx/Weather.ts` draws it. Snow follows
+  the forecast in any season; a dry winter day has no snowfall unless the forecast is
+  missing (then winter keeps its seasonal snow). The aurora shows only under a clear
+  sky, and the finale is always clear. `?debug&weather=<kind>`; `window.__fjord.weather`.
+  The weather is read once at page load; a long visit keeps that sky.
 - **B3 secrets and achievements, done; waiting on the user's look.**
   - `game/progress/achievements.ts`: eight achievements, kept as `achievement:<id>` flags,
     so old saves need nothing.

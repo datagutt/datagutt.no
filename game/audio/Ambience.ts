@@ -8,17 +8,24 @@ import type { AudioOutput } from "./sfx";
 import { LAYERS, type Layer, type Mix } from "./mix";
 
 /** Loudest each layer gets, before the ambience bus. */
-const PEAK: Mix = { waves: 0.3, wind: 0.1, gulls: 0.07, birds: 0.05, fire: 0.22, room: 0.05 };
+const PEAK: Mix = { waves: 0.3, wind: 0.1, gulls: 0.07, birds: 0.05, fire: 0.22, room: 0.05, rain: 0.12, thunder: 0.5 };
 /** Seconds for a level change to mostly settle: a gentle crossfade. */
 const GLIDE = 1.2;
 
-type Graph = { ctx: AudioContext; master: GainNode; buses: { ambience: GainNode; effects: GainNode }; layers: Record<Layer, GainNode> };
+type Graph = {
+	ctx: AudioContext;
+	master: GainNode;
+	buses: { ambience: GainNode; effects: GainNode };
+	layers: Record<Layer, GainNode>;
+	/** Two seconds of white noise, the raw stuff of most layers. */
+	noise: AudioBuffer;
+};
 
 export class Ambience {
 	private graph: Graph | null = null;
-	private target: Mix = { waves: 0, wind: 0, gulls: 0, birds: 0, fire: 0, room: 0 };
+	private target = Object.fromEntries(LAYERS.map((layer) => [layer, 0])) as Mix;
 	private timer: ReturnType<typeof setInterval> | null = null;
-	private next = { gull: 0, bird: 0, crackle: 0 };
+	private next = { gull: 0, bird: 0, crackle: 0, thunder: 0 };
 
 	/** `output` is Phaser's Web Audio context and output, read lazily (it can change). */
 	constructor(private readonly output: AudioOutput) {}
@@ -57,9 +64,11 @@ export class Ambience {
 		};
 		const master = gain(1, out.destination);
 		const buses = { ambience: gain(0.8, master), effects: gain(1, master) };
-		const layer = () => gain(0, buses.ambience);
-		const layers = { waves: layer(), wind: layer(), gulls: layer(), birds: layer(), fire: layer(), room: layer() };
-		this.graph = { ctx, master, buses, layers };
+		const layers = Object.fromEntries(LAYERS.map((layer) => [layer, gain(0, buses.ambience)])) as Record<Layer, GainNode>;
+		const noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+		const data = noise.getChannelData(0);
+		for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+		this.graph = { ctx, master, buses, layers, noise };
 		this.startBeds();
 		this.timer = setInterval(() => this.schedule(), 100);
 		this.set(this.target);
@@ -68,10 +77,7 @@ export class Ambience {
 
 	/** Continuous layers: filtered noise, some swelling slowly. */
 	private startBeds(): void {
-		const { ctx, layers } = this.graph!;
-		const noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
-		const data = noise.getChannelData(0);
-		for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+		const { ctx, layers, noise } = this.graph!;
 		const source = (to: AudioNode, filter: BiquadFilterType, frequency: number, q = 0.7) => {
 			const src = ctx.createBufferSource();
 			src.buffer = noise;
@@ -104,9 +110,20 @@ export class Ambience {
 		source(layers.fire, "lowpass", 180);
 		// Room: a faint low hum.
 		source(layers.room, "lowpass", 120);
+		// Rain: a bright hiss with the lows and the harshest highs taken out, swelling a little
+		// as showers come and go.
+		const shower = ctx.createGain();
+		shower.gain.value = 0.8;
+		shower.connect(layers.rain);
+		const hiss = ctx.createBiquadFilter();
+		hiss.type = "lowpass";
+		hiss.frequency.value = 5200;
+		hiss.connect(shower);
+		source(hiss, "highpass", 1100);
+		lfo(shower.gain, 0.05, 0.2);
 	}
 
-	/** Sounds that come and go: gull calls, birdsong, crackles of a fire. */
+	/** Sounds that come and go: gull calls, birdsong, crackles of a fire, thunder. */
 	private schedule(): void {
 		const graph = this.graph;
 		if (!graph || graph.ctx.state !== "running") return;
@@ -125,6 +142,12 @@ export class Ambience {
 		if (this.target.fire > 0.05 && now > this.next.crackle) {
 			this.next.crackle = now + 0.03 + Math.random() * 0.2;
 			this.crackle(now);
+		}
+		if (this.target.thunder > 0.05 && now > this.next.thunder) {
+			// The first roll comes soon, so a storm is heard as one.
+			const first = this.next.thunder === 0;
+			this.next.thunder = now + (first ? 3 : 12 + Math.random() * 20);
+			if (!first) this.rumble(now);
 		}
 	}
 
@@ -175,6 +198,25 @@ export class Ambience {
 		env.gain.value = 0.4 + Math.random() * 0.8;
 		src.connect(f).connect(env).connect(layers.fire);
 		src.start(at);
+	}
+
+	/** Distant thunder: low noise that rolls in and dies away over a few seconds. */
+	private rumble(at: number): void {
+		const { ctx, layers, noise } = this.graph!;
+		const src = ctx.createBufferSource();
+		src.buffer = noise;
+		src.loop = true;
+		const f = ctx.createBiquadFilter();
+		f.type = "lowpass";
+		f.frequency.value = 90 + Math.random() * 90;
+		const env = ctx.createGain();
+		const length = 2.5 + Math.random() * 2;
+		env.gain.setValueAtTime(0.0001, at);
+		env.gain.exponentialRampToValueAtTime(1, at + 0.15 + Math.random() * 0.4);
+		env.gain.exponentialRampToValueAtTime(0.0001, at + length);
+		src.connect(f).connect(env).connect(layers.thunder);
+		src.start(at, Math.random());
+		src.stop(at + length + 0.1);
 	}
 
 	destroy(): void {

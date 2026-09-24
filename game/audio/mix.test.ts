@@ -25,4 +25,15 @@ describe("ambience mix", () => {
 		expect(inside).toMatchObject({ room: 1, waves: 0, gulls: 0, birds: 0 });
 		expect(inside.fire).toBeCloseTo(0.5);
 	});
+
+	it("brings the rain and the wind in, faintly indoors, and hushes the birds", () => {
+		const storm = { rain: 1, wind: 1, thunder: true };
+		const out = ambienceMix({ ...base, forest: 0, weather: storm });
+		expect(out).toMatchObject({ rain: 1, thunder: 1, wind: 1 });
+		expect(out.birds).toBeCloseTo(0.2);
+		const inside = ambienceMix({ ...base, outdoors: false, weather: storm });
+		expect(inside.rain).toBeGreaterThan(0);
+		expect(inside.rain).toBeLessThan(0.5);
+		expect(ambienceMix(base)).toMatchObject({ rain: 0, thunder: 0 });
+	});
 });
