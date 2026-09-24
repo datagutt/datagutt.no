@@ -1,7 +1,7 @@
-// Drafts of fully snowed roofs, the starting point for hand-drawn winter overrides
-// (scripts/world/snow-drafts.mjs writes them into datagutt-assets `seasons/winter/` for
-// cleaning up in Aseprite). The game never runs this; roofs without an override get the
-// automatic snow cap (paintSnowCaps).
+// Drafts of fully snowed roofs, the starting point for hand-drawn winter overrides (a
+// game's snow-drafts script writes them into the art repository's
+// `games/<id>/seasons/winter/` for cleaning up in Aseprite). The game never runs this;
+// roofs without an override get the automatic snow cap (paintSnowCaps).
 import { isDark, roofLightness, roofMask, roofSnow, type Img } from "./seasons.ts";
 
 type Polygon = [number, number][];

@@ -53,7 +53,6 @@ example: `components/game/GameShell.tsx` and `app/api/world/ws/route.ts`.
 
 ## Art of its own
 
-Art used only by this game belongs under `games/<id>/` in the art repository; art shared
-by more than one game stays at the repository's root. The build does not read
-`games/<id>/` yet: Fjord Town's season overrides still sit at `seasons/` until task K3.5
-moves them.
+Art used only by this game belongs under `games/<id>/` in the art repository, such as
+its hand-drawn season overrides in `games/<id>/seasons/<season>/`. Art shared by more
+than one game stays at the repository's root.

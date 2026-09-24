@@ -12,8 +12,8 @@ type AssetsConfig = Pick<KaiConfig["assets"], "repo" | "localPath" | "tokenEnv">
 /** Where a clone of `repo` goes, relative to the app. */
 export const cloneDir = (repo: string) => `.assets-cache/${repo.split("/")[1]}`;
 
-/** The game's hand-drawn seasonal art, relative to the art checkout. */
-export const seasonOverridesDir = (_config: Pick<KaiConfig, "id">) => "seasons";
+/** The game's hand-drawn seasonal art, relative to the art checkout, under the folder for art of that game alone. */
+export const seasonOverridesDir = (config: Pick<KaiConfig, "id">) => `games/${config.id}/seasons`;
 
 export function resolveAssetSource(opts: {
 	env: Record<string, string | undefined>;

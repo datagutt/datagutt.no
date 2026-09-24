@@ -4,7 +4,7 @@ Last updated: 2026-09-24 (kai session 1, end)
 
 ## Current state
 
-- Every task in PLAN.md is done except K3.5. CI is green on `kai`.
+- Every task in PLAN.md is done. CI is green on `kai`.
 - The engine is eight packages under `packages/`, documented in `docs/kai/`
   (ARCHITECTURE, PLUGINS, CONTENT, NEW-GAME) and a README per package. Two apps use
   it: `apps/datagutt` (the site and Fjord Town) and `apps/sandbox`.
@@ -17,16 +17,13 @@ Last updated: 2026-09-24 (kai session 1, end)
 
 ## Waiting on the user
 
-- K3.5: moving `seasons/` to `games/datagutt/seasons/` in `datagutt/datagutt-assets` (a
-  push to another repository). After it, `seasonOverridesDir` in
-  `packages/kai-assets/src/art/source.ts` returns `games/<id>/seasons`, and the note
-  under "Art of its own" in NEW-GAME.md goes.
-- Merging `kai` into `game` (a fast-forward), whenever the user wants the engine split
-  on the game branch.
+Merging `kai` into `game` (a fast-forward). Until then, builds of `game` look for season
+overrides at the art repository's old `seasons/` path, which K3.5 moved to
+`games/datagutt/seasons/`: they build fine but lose the hand-drawn snow roofs in winter.
 
 ## Next step
 
-After K3.5 and the merge, the engine work is finished. Game work continues from
+After the merge, the engine work is finished. Game work continues from
 `apps/datagutt/docs/HANDOFF.md` on `game`.
 
 ## Gotchas

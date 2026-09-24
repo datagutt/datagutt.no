@@ -52,7 +52,7 @@ into the map (`season:winter` and friends, tile id to seasonal tile id) and the 
 applies it when the map loads. `?debug&season=winter` picks a season, and
 `bun run world:render --only=town --season=winter` renders one.
 
-Where the seasonal tiles come from, in `world/art/seasons.ts`:
+Where the seasonal tiles come from, in `@datagutt/kai-limezu` (`seasons.ts`):
 
 1. **LimeZu's own seasonal art** where it exists: the camping sheet's autumn trees sit
    26 rows under the green ones. The leafy trees and one of the three conifers turn
@@ -66,13 +66,14 @@ Where the seasonal tiles come from, in `world/art/seasons.ts`:
    are listed in `ROOFS`. Walls often share them, which is why only the top edge is
    automatic.
 4. **Hand-drawn overrides** win over all of it: PNGs in datagutt-assets
-   `seasons/<season>/`. `<single>.png` (for example `villas#Villa_1.png`) replaces a
-   single; `<sheet>@<col>,<row>.png` is pasted over a sheet with its top-left corner at
-   that tile (for buildings cut from a sheet, like `houses@16,250.png`, the boathouse).
+   `games/datagutt/seasons/<season>/`. `<single>.png` (for example
+   `villas#Villa_1.png`) replaces a single; `<sheet>@<col>,<row>.png` is pasted over a
+   sheet with its top-left corner at that tile (for buildings cut from a sheet, like `houses@16,250.png`, the boathouse).
 
 Full snow roofs are overrides. `bun run world:snow` drafts one per building into
-datagutt-assets `seasons/winter/` (shaded snow over the whole roof, known walls cut out
-in `world/gen/snowDraft.ts`) and writes `world/out/snow-drafts.png` to review them. It
+datagutt-assets `games/datagutt/seasons/winter/` (shaded snow over the whole roof, known
+walls cut out in `@datagutt/kai-limezu/snowDraft`) and writes `world/out/snow-drafts.png`
+to review them. It
 never overwrites a file that exists, since it may be hand-edited; `--force` redrafts
 (and `--only=<prefab>` limits it to one building). Clean the drafts up in Aseprite,
 commit them in datagutt-assets, then run `bun run world:gen` to rebuild the atlas.

@@ -98,7 +98,7 @@ the character recipes and music tracks as content, not as app TypeScript.
       The title strip and link preview are `scripts/title.ts`; the snow drafts and
       find-single stay app scripts since they read the town's prefabs. Arcade ids are
       checked by an app test. Output is byte-identical.)
-- [ ] **K3.5** Assets repo: move `seasons/` to `games/datagutt/seasons/` in
+- [x] **K3.5** Assets repo: move `seasons/` to `games/datagutt/seasons/` in
       `datagutt-assets`, in step with the `kai.json` change. **Needs the user** to approve
       the push to the assets repo. *Done when* a clean build with the token finds the
       snow overrides.
