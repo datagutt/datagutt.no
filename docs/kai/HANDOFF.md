@@ -24,11 +24,11 @@ overrides at the art repository's old `seasons/` path, which K3.5 moved to
 
 ## Next step
 
-1. The user played `kai` through and got no finale after the last stamp, though the
-   mountain opened. Not reproduced: e2e and repros with the librarian or a sleeping
-   Thomas as the last stamp all reach the pier. The finale is now owed until it is seen
-   to its end (`game/plugins/finale.ts`) and resumes on the next map. The root cause is
-   still unknown; the user's save (`localStorage` `fjordtown.save`) would tell.
+1. Fixed: the user's playthrough on `kai` got no finale. Their save showed the gym as the
+   last stamp and `finale_note` never visited: the gym door is three tiles from the
+   trainer, and taking a door within the old 1.6 s timer cancelled it. The finale is now
+   owed until seen to its end (`game/plugins/finale.ts`) and resumes on the next map;
+   the user's own save reaches the pier with it.
 2. Map object types, as approved by the user: `defineMapObject(type, { props,
    placement, size })` with placements `standing`, `fixture` and `overlay`. Core types
    become descriptors too; `arcade` moves to `kai-arcade/object`, `crops` and `books` to
