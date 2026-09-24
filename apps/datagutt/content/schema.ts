@@ -1,6 +1,7 @@
 // The schemas of Fjord Town's own content collections, beside the engine's. `kai content`
 // checks content/ against them; content/index.ts gives the compiled bundle their types.
 import { ENGINE_COLLECTIONS, json, markdown, z, type ContentOf } from "@datagutt/kai/schema";
+import { presenceConfig } from "@datagutt/kai-live/presence/config";
 
 const text = z.string().min(1);
 /** A path under public/, such as "/images/avatar.png". */
@@ -82,6 +83,8 @@ export const collections = {
 	 * and shut doors, by map id and key (world/gen/text.ts).
 	 */
 	mapText: json(z.object({ names: z.record(text, text), signs: z.record(text, z.record(text, text)) })),
+	/** The live datagutt NPC: Thomas's Discord presence picks where he is (@datagutt/kai-live). */
+	presence: json(presenceConfig),
 	/** Jobs, one Markdown file each. */
 	experience: markdown(z.object({ id: text, company: text, role: text, period: text, description: text, tech: z.array(text) }), {
 		body: "description",

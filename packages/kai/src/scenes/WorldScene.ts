@@ -548,13 +548,13 @@ export class WorldScene extends Phaser.Scene {
 		return seasonal;
 	}
 
-	/** FPS overlay and window.__fjord state, only with ?debug. Runs every frame. */
+	/** FPS overlay and window.__kai state, only with ?debug. Runs every frame. */
 	private updateDebug() {
 		if (!this.debugText) return;
 		const p = this.player.mover.tile;
 		this.debugText.setText(`${Math.round(this.game.loop.actualFps)} fps  ${this.target.map} ${p.x},${p.y}`);
 		// Read by e2e tests and dev tooling.
-		(window as unknown as { __fjord?: object }).__fjord = {
+		(window as unknown as { __kai?: object }).__kai = {
 			map: this.target.map,
 			season: this.services.season,
 			weather: this.weatherNow.kind,

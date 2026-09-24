@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const moving = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: { tile: { x: number } } }).__fjord?.tile.x ?? null);
+const moving = (page: Page) => page.evaluate(() => (window as unknown as { __kai?: { tile: { x: number } } }).__kai?.tile.x ?? null);
 
 test.describe("game shell accessibility", () => {
 	test.skip(({ isMobile }) => isMobile, "keyboard walkthrough");
@@ -33,7 +33,7 @@ test.describe("game shell accessibility", () => {
 
 		// In the world, on the ferry: skip the crossing and Arne's welcome, then walk.
 		await expect.poll(() => moving(page), { timeout: 30_000 }).not.toBeNull();
-		const talking = () => page.evaluate(() => (window as unknown as { __fjord?: { dialogueOpen: boolean; intro: boolean } }).__fjord);
+		const talking = () => page.evaluate(() => (window as unknown as { __kai?: { dialogueOpen: boolean; intro: boolean } }).__kai);
 		for (let i = 0; i < 30; i++) {
 			const s = await talking();
 			if (i > 2 && s && !s.dialogueOpen && !s.intro) break;

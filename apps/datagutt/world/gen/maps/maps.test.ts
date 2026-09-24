@@ -33,4 +33,16 @@ describe("generated maps", () => {
 		expect(all.filter((key) => !usedMapText().has(key))).toEqual([]);
 		for (const map of GENERATED_MAPS) expect(map.properties?.name, map.id).toBeTruthy();
 	});
+
+	it("have a spot for each of Thomas's places, on its map, and doors along his routes", () => {
+		const { presence } = content;
+		const built = new Map(GENERATED_MAPS.map((m) => [m.id, m.build()]));
+		for (const [place, { map }] of Object.entries(presence.places)) {
+			const spots = built.get(map)!.objects.filter((o) => o.type === "spot" && o.id === `${presence.npc}-${place}`);
+			expect(spots, `${presence.npc}-${place} on ${map}`).toHaveLength(1);
+		}
+		for (const [from, tos] of Object.entries(presence.routes)) {
+			for (const to of tos) expect(built.get(from)!.objects.some((o) => o.type === "door" && o.toMap === to), `door ${from} → ${to}`).toBe(true);
+		}
+	});
 });

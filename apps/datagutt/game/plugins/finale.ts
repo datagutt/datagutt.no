@@ -4,9 +4,8 @@
 import { CreditsRoll } from "@datagutt/kai/ui/CreditsRoll";
 import type { KaiPlugin } from "@datagutt/kai";
 
-export const FINALE_KNOT = "datagutt_finale";
-
-export function finalePlugin(): KaiPlugin {
+/** `knot`: Thomas's words on the pier (content/presence.json `night.dialogue`). */
+export function finalePlugin({ knot }: { knot: string }): KaiPlugin {
 	let rolling = false;
 	return {
 		name: "finale",
@@ -27,7 +26,7 @@ export function finalePlugin(): KaiPlugin {
 			);
 		},
 		talk(world, npc) {
-			if (npc.dialogue !== FINALE_KNOT) return false;
+			if (npc.dialogue !== knot) return false;
 			world.playKnot(npc.dialogue, npc, () => {
 				const roll = new CreditsRoll(world.scene, world.services.data.content.credits, world.progress.reducedMotion, () => {
 					rolling = false;

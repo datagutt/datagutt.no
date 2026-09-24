@@ -1,12 +1,12 @@
-// Live GitHub data drawn into the maps: Ola's field (one tile per day of the last weeks,
-// crops as tall as the commits) and the library's featured shelf (a spine per pinned repo,
-// in its language colour).
+// Live GitHub data drawn into the maps: a field of crops (map `crops` objects: one tile
+// per day of the last weeks, crops as tall as the commits) and a featured shelf (map
+// `books` objects: a spine per pinned repo, in its language colour).
 import { TILE, type KaiPlugin } from "@datagutt/kai";
-import type { WorldState } from "@datagutt/kai-live";
-import { fieldLevels } from "../live/field";
-import { spines } from "../live/shelf";
+import type { ContributionDay, PinnedRepo } from "../github.ts";
+import { fieldLevels } from "./field.ts";
+import { spines } from "./shelf.ts";
 
-export function githubPlugin(live: WorldState): KaiPlugin {
+export function githubObjects(live: { contributions: readonly ContributionDay[]; repos: readonly PinnedRepo[] }): KaiPlugin {
 	return {
 		name: "github",
 		objects: {

@@ -1,6 +1,6 @@
-// The library's featured shelf (M3.11): one book spine per pinned repo, in the repo's
-// language colour, standing on the shelf with a little variety in height and width.
-import type { PinnedRepo } from "@datagutt/kai-live";
+// A featured shelf: one book spine per pinned repo, in the repo's language colour,
+// standing on the shelf with a little variety in height and width.
+import type { PinnedRepo } from "../github.ts";
 
 export type Spine = { x: number; y: number; w: number; h: number; color: number; edge: number };
 
@@ -13,7 +13,7 @@ function shade(hex: string, f: number): number {
 }
 
 /** Spines in pixels, relative to the shelf area's top-left; bottoms rest on `baseline`. */
-export function spines(repos: PinnedRepo[], width: number, baseline: number): Spine[] {
+export function spines(repos: readonly PinnedRepo[], width: number, baseline: number): Spine[] {
 	const out: Spine[] = [];
 	let x = 3;
 	repos.forEach((repo, i) => {

@@ -169,11 +169,16 @@ it first would make the package import app code.
       `game/plugins/`: triggers, cat, arcade, github, ferry intro, finale, presence,
       journal. The finale's night is the engine's generic `services.night`. The passport
       itself stays engine: stamps are a place's `stamp` flag.)
-- [ ] **K5.5** `presenceNpc`, `githubField` and `repoShelf` plugins in `kai-live`,
+- [x] **K5.5** `presenceNpc`, `githubField` and `repoShelf` plugins in `kai-live`,
       configured by `content/presence.json` and `kai.json`. The mock presences move to
-      JSON. *Done when* the `?presence=` e2e pass.
-- [ ] **K5.6** `window.__fjord` becomes `window.__kai`. A new e2e test loads a save
-      in the old format and checks the stamps survive. *Done when* all e2e pass.
+      JSON. *Done when* the `?presence=` e2e pass. (`presenceNpc` with its rules, words,
+      routes, story-night place and mocks in `presence.json`; the field and the shelf are
+      one `githubObjects` plugin, since both only draw map objects from the same data.
+      The plugins sit at `@datagutt/kai-live/presence/plugin` and `.../github/plugin`,
+      off the index the Next server imports.)
+- [x] **K5.6** `window.__fjord` becomes `window.__kai`. A new e2e test loads a save
+      in the old format and checks the stamps survive. *Done when* all e2e pass. (Also
+      `__fjordPresence` → `__kaiPresence` and the debug field `thomas` → `liveNpc`.)
 
 ## K6: Next glue, the sandbox and the boundaries
 

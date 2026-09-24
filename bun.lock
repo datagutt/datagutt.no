@@ -155,6 +155,9 @@
         "typescript": "^5.9.3",
         "vitest": "^5",
       },
+      "peerDependencies": {
+        "phaser": "^4.2.1",
+      },
     },
     "packages/kai-net": {
       "name": "@datagutt/kai-net",

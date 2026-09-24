@@ -42,7 +42,7 @@ export const EXTERNALS = {
 	contributions_total: { params: [], arg: "none", doc: "Contributions in the last year (live)" },
 	has_stamp: { params: ["place"], arg: "place", doc: "Whether the player has that place's passport stamp" },
 	unlocked: { params: ["name"], arg: "unlock", doc: "Whether a locked way is open, e.g. unlocked(\"passport\") once every stamp is in (content/unlocks.json)" },
-	lanyard_activity: { params: [], arg: "none", doc: "What Thomas is up to right now in his own words, or \"\" (live, game/live/datagutt.ts)" },
+	lanyard_activity: { params: [], arg: "none", doc: "What Thomas is up to right now in his own words, or \"\" (live, content/presence.json lines)" },
 } as const satisfies Record<string, ExternalSpec>;
 
 export type ExternalName = keyof typeof EXTERNALS;

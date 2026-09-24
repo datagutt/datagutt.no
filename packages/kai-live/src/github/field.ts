@@ -1,6 +1,6 @@
-// Ola's field from the contribution calendar (docs/game/PLAN.md M3.11): columns are
-// weeks (oldest on the left), rows are weekdays (Sunday on top), like GitHub's grid.
-import type { ContributionDay } from "@datagutt/kai-live";
+// A field of crops from the contribution calendar: columns are weeks (oldest on the
+// left), rows are weekdays (Sunday on top), like GitHub's grid.
+import type { ContributionDay } from "../github.ts";
 
 export type Level = 0 | 1 | 2 | 3 | 4;
 
@@ -8,7 +8,7 @@ export type Level = 0 | 1 | 2 | 3 | 4;
  * The level of each cell of a `weeks`×7 field ending with the week of the newest day,
  * as rows of columns. Days after the newest one (the rest of this week) are null.
  */
-export function fieldLevels(days: ContributionDay[], weeks: number): (Level | null)[][] {
+export function fieldLevels(days: readonly ContributionDay[], weeks: number): (Level | null)[][] {
 	const grid: (Level | null)[][] = Array.from({ length: 7 }, () => Array<Level | null>(weeks).fill(0));
 	if (!days.length) return grid;
 	const byDate = new Map(days.map((d) => [d.date, d.level]));

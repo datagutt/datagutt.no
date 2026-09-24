@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-type FjordState = {
+type KaiState = {
 	map: string;
 	tile: { x: number; y: number };
 	facing: string;
@@ -13,7 +13,8 @@ type FjordState = {
 	stamps: string[];
 	passportOpen: boolean;
 	menu: string;
-	thomas: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
+	/** The live datagutt NPC (the presence plugin). */
+	liveNpc: { place: string; tile: { x: number; y: number } | null; asleep: boolean };
 	emoteWheel: boolean;
 	prompt: string | null;
 	intro: boolean;
@@ -21,7 +22,7 @@ type FjordState = {
 	finale: boolean;
 };
 
-const state = (page: Page) => page.evaluate(() => (window as unknown as { __fjord?: FjordState }).__fjord ?? null);
+const state = (page: Page) => page.evaluate(() => (window as unknown as { __kai?: KaiState }).__kai ?? null);
 
 /** Past "Press start" to the title menu, then pick an item once loading allows it. */
 async function choose(page: Page, item: RegExp) {
@@ -39,7 +40,7 @@ async function holdKey(page: Page, key: string, ms: number) {
 
 /**
  * Start from a save at the given spot, through the title screen's Continue button.
- * `presence` fixes Thomas's Discord presence (game/live/datagutt.ts MOCK_PRESENCES), so
+ * `presence` fixes Thomas's Discord presence (content/presence.json mocks), so
  * where he stands doesn't depend on the real Lanyard feed.
  */
 async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding", stamps: string[] = []) {
@@ -56,6 +57,31 @@ async function continueAt(page: Page, at: { map: string; x: number; y: number; f
 test.describe("world", () => {
 	// Keyboard play only; the phone project covers taps through the title-screen test.
 	test.skip(({ isMobile }) => isMobile, "keyboard walkthrough");
+
+	test("a save from before the engine split still loads, stamps, achievements and records kept", async ({ page }) => {
+		// As the Fjord Town build before kai wrote it: the same key, version 1.
+		const save = {
+			version: 1,
+			updatedAt: "2026-09-20T12:00:00.000Z",
+			map: "town",
+			x: 18,
+			y: 40,
+			facing: "down",
+			stamps: ["library", "farm"],
+			flags: { intro: true, "achievement:cat": true },
+			records: { blocks: 420 },
+			dialogue: {},
+			settings: { muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" },
+		};
+		await page.goto("/?debug&presence=coding");
+		await page.evaluate((s) => localStorage.setItem("fjordtown.save", JSON.stringify(s)), save);
+		await page.goto("/?debug&presence=coding");
+		await choose(page, /continue/i);
+		await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: "town", tile: { x: 18, y: 40 }, stamps: ["library", "farm"] });
+		// The world writes the save back as it starts: still under the same key, nothing lost.
+		const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("fjordtown.save") ?? "{}"));
+		expect(stored).toMatchObject({ version: 1, stamps: ["library", "farm"], records: { blocks: 420 }, flags: { intro: true, "achievement:cat": true } });
+	});
 
 	test("deep link skips the title and doors connect both ways", async ({ page }) => {
 		const errors: string[] = [];
@@ -110,7 +136,7 @@ test.describe("world", () => {
 
 	test("Thomas follows his presence: asleep in bed, awake to talk, then off out", async ({ page }) => {
 		await continueAt(page, { map: "house-up", x: 4, y: 7, facing: "left" }, "offline");
-		await expect.poll(async () => (await state(page))?.thomas).toMatchObject({ place: "bed", asleep: true, tile: { x: 3, y: 7 } });
+		await expect.poll(async () => (await state(page))?.liveNpc).toMatchObject({ place: "bed", asleep: true, tile: { x: 3, y: 7 } });
 
 		// Talking to him asleep offers to wake him.
 		await page.keyboard.press("e");
@@ -128,9 +154,9 @@ test.describe("world", () => {
 		expect((await state(page))?.stamps).not.toContain("home");
 
 		// He comes online with music on: out of bed and off down the stairs to the fjord.
-		await page.evaluate(() => (window as unknown as { __fjordPresence(name: string): void }).__fjordPresence("music"));
-		await expect.poll(async () => (await state(page))?.thomas.asleep).toBe(false);
-		await expect.poll(async () => (await state(page))?.thomas.tile, { timeout: 15_000 }).toBeNull();
+		await page.evaluate(() => (window as unknown as { __kaiPresence(name: string): void }).__kaiPresence("music"));
+		await expect.poll(async () => (await state(page))?.liveNpc.asleep).toBe(false);
+		await expect.poll(async () => (await state(page))?.liveNpc.tile, { timeout: 15_000 }).toBeNull();
 
 		// The START menu says where he went.
 		await page.keyboard.press("Enter");
@@ -218,6 +244,7 @@ test.describe("world", () => {
 				await page.keyboard.press("e");
 				await page.waitForTimeout(200);
 			}
+			if (!(await done())) throw new Error(`Gave up reading; the game is at ${JSON.stringify(await state(page))}`);
 		};
 		await page.keyboard.press("e");
 		// His conversation, the stamp, then the note in the back of the passport.
@@ -229,7 +256,7 @@ test.describe("world", () => {
 		await readUntil(async () => (await state(page))?.credits === true);
 		await page.keyboard.press("x"); // skip the credits
 		await readUntil(async () => !(await state(page))?.dialogueOpen && !(await state(page))?.credits);
-		expect((await state(page))?.finale).toBe(false);
+		await expect.poll(async () => (await state(page))?.finale, { message: JSON.stringify(await state(page)) }).toBe(false);
 		const flags = await page.evaluate(() => JSON.parse(localStorage.getItem("fjordtown.save") ?? "{}").flags);
 		expect(flags.finale).toBe(true);
 	});

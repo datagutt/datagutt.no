@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fieldLevels } from "./field";
+import { fieldLevels } from "./field.ts";
 
 describe("fieldLevels", () => {
 	it("lays days out by week and weekday, newest week on the right", () => {

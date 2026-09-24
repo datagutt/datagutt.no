@@ -109,7 +109,7 @@ export interface KaiPlugin {
 	update?(world: World, dt: number, time: number): void;
 	/** Start menu items, after the Passport. */
 	menuItems?(world: World): MenuItem[];
-	/** Extra fields for the ?debug state (window.__fjord). */
+	/** Extra fields for the ?debug state (window.__kai). */
 	debug?(world: World): Record<string, unknown>;
 }
 

@@ -5,7 +5,8 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -24,5 +25,8 @@
     "eslint": "^9",
     "typescript": "^5.9.3",
     "vitest": "^5"
+  },
+  "peerDependencies": {
+    "phaser": "^4.2.1"
   }
 }

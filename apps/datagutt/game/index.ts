@@ -3,7 +3,10 @@
 import { createGame, type BootOptions, type GameHandle } from "@datagutt/kai";
 import type { KaiConfig } from "@datagutt/kai/schema";
 import { readWorldState } from "@datagutt/kai-live";
+import { githubObjects } from "@datagutt/kai-live/github/plugin";
+import { presenceNpc } from "@datagutt/kai-live/presence/plugin";
 import config from "../.kai/config.json" with { type: "json" };
+import { content } from "../content/index.ts";
 import { EMPTY_WORLD_STATE } from "../content/live";
 import { fjordContent } from "./data";
 import { fjordExternals } from "./dialogue/externals";
@@ -12,11 +15,16 @@ import { arcadePlugin } from "./plugins/arcade";
 import { catPlugin } from "./plugins/cat";
 import { ferryIntroPlugin } from "./plugins/ferryIntro";
 import { finalePlugin } from "./plugins/finale";
-import { githubPlugin } from "./plugins/github";
 import { journalPlugin } from "./plugins/journal";
-import { presencePlugin } from "./plugins/presence";
 
 export type { GameHandle };
+
+/** On the finale's night Thomas waits on the pier with these words (content/presence.json). */
+function finaleKnot(): string {
+	const knot = content.presence.night?.dialogue;
+	if (!knot) throw new Error("content/presence.json has no `night`: the finale needs Thomas on the pier");
+	return knot;
+}
 
 export function startFjordTown(parent: HTMLElement, options: Omit<BootOptions, "config" | "content" | "live" | "links" | "plugins" | "externals"> = {}): GameHandle {
 	// The live data the page embedded (GitHub, the weather), or empty data in the dev harness.
@@ -28,7 +36,15 @@ export function startFjordTown(parent: HTMLElement, options: Omit<BootOptions, "
 		live: world,
 		links: resolveLink,
 		// In the order their start menu items appear: the status page, then the Journal.
-		plugins: [catPlugin(), arcadePlugin(), githubPlugin(world), ferryIntroPlugin(), finalePlugin(), presencePlugin(world), journalPlugin()],
+		plugins: [
+			catPlugin(),
+			arcadePlugin(),
+			githubObjects(world),
+			ferryIntroPlugin(),
+			finalePlugin({ knot: finaleKnot() }),
+			presenceNpc(content.presence, { discordId: world.discordId }),
+			journalPlugin(),
+		],
 		externals: ({ progress, services }) =>
 			fjordExternals({ world, hasStamp: (place) => progress.hasStamp(place), isUnlocked: (name) => services.data.isUnlocked(name, progress) }),
 	});
