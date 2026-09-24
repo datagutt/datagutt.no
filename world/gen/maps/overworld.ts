@@ -80,6 +80,9 @@ export function overworld(): MapCanvas {
 	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
+	// A bench at the hill's edge, binoculars left on it: the stars at night (B2).
+	c.stamp(PREFABS.bench, 69, 12).stamp(PREFABS.binoculars, 70, 12);
+	c.add({ type: "arcade", x: 70, y: 13, game: "stargazing" });
 	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
 	building(c, "office", 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
 	const gymDoor = building(c, "logCabin", 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });

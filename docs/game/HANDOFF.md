@@ -4,7 +4,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
-- **B1 arcade, playable; waiting on the user's look.** `game/arcade/`: the old site's five
+- **B1 arcade and B2 (screensaver, stargazing), done; waiting on the user's look.** `game/arcade/`: the old site's five
   canvases as small games on one 160×120 screen (`ArcadeGame`: step, draw; no Phaser).
   Falling blocks is really playable (the old autoplay is its attract mode); Life,
   Terrain, Dungeon and Starfield are watchable and react to the arrows and A. The youth
@@ -13,8 +13,10 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   map `youth-club` with five cabinets (`arcade` map objects), a TV corner, a pool table,
   Siv who runs it and two regulars. `game/ui/ArcadeScreen.ts` shows a cabinet over the
   room; touch taps steer and a tap outside leaves. Best scores go in the save's new
-  `records` (`Progress.record`). Next: B2 (the PC screensaver and the hill telescope,
-  using Life and a quiet Starfield).
+  `records` (`Progress.record`). B2: Thomas's left PC is an `arcade` object running Life as
+  a screensaver; binoculars on a bench at the radio hill's edge (`stargazing`, a quiet
+  Starfield in night colours) show stars only when it's dark. Next: B3 secrets and
+  achievements, B6 the mountain trail, C2 Oslo weather, M6.6 Firefox.
 - **Thomas asleep:** the wake/let-sleep choices are sticky (once-only ones ran out and
   softlocked the dialogue), and waking him in conversation gets him out of bed until his
   presence moves him (`LiveThomas.wokenByPlayer`).

@@ -21,5 +21,9 @@ export function makeArcade(id: ArcadeId, records: Records): ArcadeGame {
 			return new Dungeon();
 		case "starfield":
 			return new Starfield();
+		case "screensaver":
+			return new Life(Date.now(), false);
+		case "stargazing":
+			return new Starfield(Date.now(), true);
 	}
 }

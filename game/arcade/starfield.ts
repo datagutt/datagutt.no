@@ -16,12 +16,15 @@ const LAYERS = [
 	{ count: 18, speed: 28, color: GREENS[6] },
 ];
 
+/** Real night-sky colours for the binoculars' view, one per layer, far to near. */
+const NIGHT = ["#3a4a78", "#9fb3d9", "#fff7d6"];
+
 type Star = { x: number; y: number; layer: number; twinkle: number };
 type Sprite = { x: number; y: number; vx: number; vy: number; shape: number };
 
 export class Starfield implements ArcadeGame {
-	readonly title = "Starfield";
-	readonly hint = "arrows: steer  A: flare";
+	readonly title: string;
+	readonly hint: string;
 	private stars: Star[] = [];
 	private sprites: Sprite[] = [];
 	private heading = { x: -1, y: 0 };
@@ -29,10 +32,13 @@ export class Starfield implements ArcadeGame {
 
 	constructor(
 		seed = Date.now(),
-		/** Just the stars, no invaders: the telescope's view. */
+		/** Just the stars, slow and in their own colours: the binoculars on the radio hill. */
 		private readonly quiet = false,
 	) {
+		this.title = quiet ? "The night sky" : "Starfield";
+		this.hint = quiet ? "arrows: look around" : "arrows: steer  A: flare";
 		this.random = rng(seed);
+		if (quiet) this.heading = { x: -0.15, y: 0 };
 		LAYERS.forEach((l, layer) => {
 			for (let i = 0; i < l.count; i++) this.stars.push({ x: this.random() * SCREEN_W, y: this.random() * SCREEN_H, layer, twinkle: this.random() * 6 });
 		});
@@ -71,12 +77,12 @@ export class Starfield implements ArcadeGame {
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = SCREEN_BG;
+		ctx.fillStyle = this.quiet ? "#050a18" : SCREEN_BG;
 		ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
 		for (const star of this.stars) {
 			// Twinkling: now and then a star dims for a moment.
 			if (Math.sin(star.twinkle) > 0.92) continue;
-			ctx.fillStyle = LAYERS[star.layer].color;
+			ctx.fillStyle = this.quiet ? NIGHT[star.layer] : LAYERS[star.layer].color;
 			ctx.fillRect(Math.floor(star.x), Math.floor(star.y), 1, 1);
 		}
 		for (const sp of this.sprites) {

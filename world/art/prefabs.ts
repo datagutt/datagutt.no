@@ -99,6 +99,8 @@ export const PREFABS = {
 	lamp: { sheet: "props", col: 20, row: 0, w: 1, h: 4, aboveRows: 3 },
 	parkLamp: { sheet: "props", col: 1, row: 28, w: 3, h: 4, aboveRows: 3, collision: [".#."] },
 	bench: { sheet: "props", col: 21, row: 0, w: 2, h: 2, aboveRows: 0 },
+	/** A pair of binoculars, left lying about (on the radio hill's bench). */
+	binoculars: single("camping", "Binoculars_1", { collision: [] }),
 	benchLong: { sheet: "props", col: 21, row: 2, w: 3, h: 2, aboveRows: 0 },
 	fountain: { sheet: "props", col: 11, row: 28, w: 2, h: 3, aboveRows: 1 },
 	bigFountain: { sheet: "garden", col: 12, row: 16, w: 4, h: 5, aboveRows: 1 },

@@ -67,3 +67,18 @@ describe("dungeon", () => {
 		}
 	});
 });
+
+describe("every cabinet", () => {
+	it("builds, runs and draws for each id a map can name", async () => {
+		const { ARCADE_IDS } = await import("./ids");
+		const { makeArcade } = await import("./index");
+		const ctx = new Proxy({}, { get: () => () => {}, set: () => true }) as unknown as CanvasRenderingContext2D;
+		const input: ArcadeInput = { held: new Set(["left"]), pressed: new Set(["up"]), a: true };
+		for (const id of ARCADE_IDS) {
+			const game = makeArcade(id, { best: () => 0, record: () => {} });
+			expect(game.title, id).toBeTruthy();
+			for (let i = 0; i < 30; i++) game.step(33, i === 0 ? input : NO_INPUT);
+			expect(() => game.draw(ctx), id).not.toThrow();
+		}
+	});
+});

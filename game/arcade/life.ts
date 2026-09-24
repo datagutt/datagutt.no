@@ -29,8 +29,8 @@ export function lifeStep(cells: Uint8Array, cols: number, rows: number): Uint8Ar
 type Pulse = { row: number; head: number; speed: number; dir: 1 | -1 };
 
 export class Life implements ArcadeGame {
-	readonly title = "Life";
-	readonly hint = "A: reseed  arrows: sow";
+	readonly title: string;
+	readonly hint: string;
 	private cells: Uint8Array = new Uint8Array(COLS * ROWS);
 	/** How long each cell has been alive, for its brightness. */
 	private age = new Uint8Array(COLS * ROWS);
@@ -44,6 +44,8 @@ export class Life implements ArcadeGame {
 		/** The cursor is for the cabinet; the PC's screensaver has none. */
 		private readonly withCursor = true,
 	) {
+		this.title = withCursor ? "Life" : "Screensaver";
+		this.hint = withCursor ? "A: reseed  arrows: sow" : "A: new pattern";
 		this.random = rng(seed);
 		this.seed();
 	}

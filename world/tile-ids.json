@@ -6594,6 +6594,10 @@
 		"camping#Mobile_House_Big_5:6,7|camping:19,16",
 		"camping@spring#Mobile_House_Big_5:6,7|camping@spring:19,16",
 		"camping@autumn#Mobile_House_Big_5:6,7|camping@autumn:19,16",
-		"camping@winter#Mobile_House_Big_5:6,7|camping@winter:19,16"
+		"camping@winter#Mobile_House_Big_5:6,7|camping@winter:19,16",
+		"props:22,0|camping#Binoculars_1:0,0",
+		"props@spring:22,0|camping@spring#Binoculars_1:0,0",
+		"props@autumn:22,0|camping@autumn#Binoculars_1:0,0",
+		"props@winter:22,0|camping@winter#Binoculars_1:0,0"
 	]
 }

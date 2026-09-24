@@ -6548,5 +6548,9 @@
 	"camping#Mobile_House_Big_5:6,7|camping:19,16": "8067584482685848826c508f74654f8b",
 	"camping@spring#Mobile_House_Big_5:6,7|camping@spring:19,16": "8067584482685848836e4f8f76674d8b",
 	"camping@autumn#Mobile_House_Big_5:6,7|camping@autumn:19,16": "80675844826858488a6c4e8f7e644d8b",
-	"camping@winter#Mobile_House_Big_5:6,7|camping@winter:19,16": "80675844826858489e7c6b8f9779708b"
+	"camping@winter#Mobile_House_Big_5:6,7|camping@winter:19,16": "80675844826858489e7c6b8f9779708b",
+	"props:22,0|camping#Binoculars_1:0,0": "62647c3458576c2c907d72ef69626db1",
+	"props@spring:22,0|camping@spring#Binoculars_1:0,0": "62647c3458576c2c907d72ef69626db1",
+	"props@autumn:22,0|camping@autumn#Binoculars_1:0,0": "62647c3458576c2c907d72ef69626db1",
+	"props@winter:22,0|camping@winter#Binoculars_1:0,0": "62647c3458576c2c907d72ef69626db1"
 }

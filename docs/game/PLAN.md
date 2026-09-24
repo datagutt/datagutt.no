@@ -378,10 +378,14 @@ Goal: ship v1 to production.
 
 ## v1.1 backlog
 
-- [ ] **B1** Arcade cabinets: existing canvases rendered into Phaser `CanvasTexture`s in a
+- [x] **B1** Arcade cabinets: existing canvases rendered into Phaser `CanvasTexture`s in a
       youth-club arcade; falling blocks becomes playable with a local high score.
-- [ ] **B2** PC screensaver (Game of Life) in datagutt's house; hill telescope shows the
+      (The youth club, a site cabin on the harbour road: five cabinets from `game/arcade/`,
+      falling blocks playable with a best score in the save. `game/ui/ArcadeScreen.ts`.)
+- [x] **B2** PC screensaver (Game of Life) in datagutt's house; hill telescope shows the
       starfield at night.
+      (No telescope in the art: binoculars left on a bench at the radio hill's edge show
+      the night sky after dark. The left PC upstairs opens a Game of Life screensaver.)
 - [ ] **B3** Secrets and achievements: hidden cat, fourth-wall lines when walking off the
       map edge, achievement list in the passport.
 - [x] **B4** Music: pick or commission tracks per area with day and night variants.

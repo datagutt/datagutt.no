@@ -746,8 +746,9 @@ export class WorldScene extends Phaser.Scene {
 			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, npc.actor.centerX, npc.actor.headTop - 3);
 		}
 		const x = (target.x + 0.5) * TILE;
+		const cabinet = this.cabinets.get(tileKey(target));
+		if (cabinet) return this.prompt.show(cabinet.game === "stargazing" ? "Look" : cabinet.game === "screensaver" ? "Use" : "Play", device, x, target.y * TILE - 1);
 		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
-		if (this.cabinets.has(tileKey(target))) return this.prompt.show("Play", device, x, target.y * TILE - 1);
 		if (this.doors.has(tileKey(target))) return this.prompt.show("Enter", device, x, target.y * TILE - 1);
 		this.prompt.hide();
 	}
@@ -769,6 +770,11 @@ export class WorldScene extends Phaser.Scene {
 
 	/** Step up to a cabinet: its game takes the input until the player leaves (back). */
 	private playCabinet(cabinet: Extract<MapObject, { type: "arcade" }>) {
+		// The binoculars only show stars once it's dark (or on the finale's night).
+		if (cabinet.game === "stargazing" && this.dayNight.current.dark < 0.5 && !this.services.finale) {
+			this.dialogue.say("* Just the town and the fjord in daylight. The stars come out after dark.", null, () => this.dialogue.close());
+			return;
+		}
 		const progress = this.progress;
 		const game = makeArcade(cabinet.game, {
 			best: (name) => progress.records[name] ?? 0,
