@@ -29,7 +29,8 @@ export const FURNITURE = {
 	window: flat("generic", 10, 43, 2, 2),
 	stove: solid("kitchen", 8, 11, 2, 2),
 	/** A wooden table drawn across the middle of a 4×3 block. */
-	table: { sheet: "generic", col: 0, row: 5, w: 4, h: 3, aboveRows: 0, collision: [".##.", ".##."] },
+	/** The top two rows are the tabletop; the last is its legs and shadow, which you can stand on. */
+	table: { sheet: "generic", col: 0, row: 5, w: 4, h: 3, aboveRows: 0, collision: [".##.", ".##.", "...."] },
 	/** Kitchen chairs drawn from the side: one faces right, the other left. */
 	chairFacingRight: single("kitchen", 283),
 	chairFacingLeft: single("kitchen", 368),

@@ -1,7 +1,30 @@
 // Multi-tile pieces cut from the LimeZu sheets: buildings, trees and props (PLAN M3.3).
 // Coordinates are the top-left tile in the sheet; see world/gen/canvas.ts for the fields.
 import type { Prefab } from "../gen/canvas.ts";
-import { single } from "./singles.ts";
+import { sheetCoverage, single } from "./singles.ts";
+
+/**
+ * A building blocks its whole body: every row from its first to its last solid tile
+ * (catalogue coverage), so windows and ragged wall ends don't let anyone in, while the
+ * baked drop shadow, which is translucent and never solid, stays walkable. The door's
+ * column stays open below the door for steps.
+ */
+function footprint(prefab: Prefab): Prefab {
+	const coverage = prefab.coverage ?? sheetCoverage(prefab.sheet, prefab.col, prefab.row, prefab.w, prefab.h);
+	if (!coverage) return prefab;
+	const collision = coverage
+		.split("/")
+		.map((row, dy) => {
+			const first = row.indexOf("#");
+			if (first < 0) return ".".repeat(prefab.w);
+			const last = row.lastIndexOf("#");
+			const filled = ".".repeat(first) + "#".repeat(last - first + 1) + ".".repeat(prefab.w - last - 1);
+			if (!prefab.door || dy <= prefab.door[1]) return filled;
+			return filled.slice(0, prefab.door[0]) + "." + filled.slice(prefab.door[0] + 1);
+		})
+		.slice(prefab.aboveRows);
+	return { ...prefab, collision };
+}
 
 /** A villa (7_Villas singles "Villa_1".."Villa_5"): 9×13 with its shadow, door at (2,10). */
 function villa(key: string, sheet: "villas" | "villaRed" = "villas"): Prefab {
@@ -18,7 +41,7 @@ function villa(key: string, sheet: "villas" | "villaRed" = "villas"): Prefab {
 			"########", // porch roof
 			"########", // door row
 			"#......#", // porch deck, railings at the sides
-			"#.......",
+			"#...####", // the steps, then the bench along the porch
 		],
 		door: [2, 10],
 	});
@@ -34,22 +57,22 @@ export const PREFABS = {
 	homeVilla: villa("Villa_5", "villaRed"),
 
 	/** Boathouse studio: a corrugated wooden workshop with an awning. */
-	boathouse: { sheet: "houses", col: 16, row: 250, w: 15, h: 14, aboveRows: 3, door: [5, 13] },
+	boathouse: footprint({ sheet: "houses", col: 16, row: 250, w: 15, h: 14, aboveRows: 3, door: [5, 13] }),
 	/** Farmhouse: white board-and-batten house whose garage reads as barn doors. */
-	farmhouse: { sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] },
+	farmhouse: footprint({ sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] }),
 	/** Red-roofed log cabin: the gym. */
-	logCabin: single("houses", "Post_Apocalyptic_House_1", { aboveRows: 2, door: [8, 8], collision: [...Array(7).fill("#".repeat(12)), "."] }),
+	logCabin: footprint(single("houses", "Post_Apocalyptic_House_1", { aboveRows: 2, door: [8, 8] })),
 	windmill: single("houses", "Post_Apocalyptic_House_Wind_Mill", { aboveRows: 5, collision: [".##."] }),
 	/** LimeZu calls it a windmill without its propeller: a lattice tower. */
 	radioTower: single("houses", "Post_Apocalyptic_House_Wind_Mill_No_Propeller", { aboveRows: 5, collision: [".##."] }),
 	/** The sheet stacks a second storey under the cottage; take only the top one. */
-	kiosk: { sheet: "villas", col: 23, row: 14, w: 4, h: 5, aboveRows: 2, door: [2, 4] },
-	office: { sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [2, 14], collision: [...Array(12).fill("#".repeat(10)), "."] },
-	postOffice: { sheet: "post", col: 16, row: 4, w: 8, h: 13, aboveRows: 2, door: [4, 12] },
-	townHall: { sheet: "houses", col: 0, row: 208, w: 18, h: 22, aboveRows: 3, door: [3, 21] },
-	library: { sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] },
+	kiosk: footprint({ sheet: "villas", col: 23, row: 14, w: 4, h: 5, aboveRows: 2, door: [2, 4] }),
+	office: footprint({ sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [2, 14] }),
+	postOffice: footprint({ sheet: "post", col: 16, row: 4, w: 8, h: 13, aboveRows: 2, door: [4, 12] }),
+	townHall: footprint({ sheet: "houses", col: 0, row: 208, w: 18, h: 22, aboveRows: 3, door: [3, 21] }),
+	library: footprint({ sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] }),
 
-	hut: { sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] },
+	hut: footprint({ sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] }),
 	rowboat: single("vehicles", "Boat_1_Right_1", { collision: [] }),
 	ferry: single("vehicles", "Boat_3_Right_1", { collision: [] }),
 	/** A small wooden board on a post: building name signs. */

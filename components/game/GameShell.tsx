@@ -83,13 +83,12 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		return () => window.removeEventListener("keydown", onKey);
 	}, [playing, screen]);
 
-	// Each page of the menu starts with its first item under the cursor, and the cursor
-	// moves onto Continue once loading finishes if it isn't somewhere in the menu already.
+	// Each page of the menu starts with its first item under the cursor.
 	useEffect(() => {
 		const menu = menuRef.current;
 		if (screen === "splash" || !menu || menu.contains(document.activeElement)) return;
-		menu.querySelector<HTMLElement>("[data-menu-item]:not(:disabled)")?.focus();
-	}, [screen, hasSave, phase]);
+		menu.querySelector<HTMLElement>("[data-menu-item]")?.focus();
+	}, [screen, hasSave]);
 
 	// Parallax: the backdrop's layers lean away from the pointer (TitleArt.tsx).
 	useEffect(() => {
@@ -238,10 +237,13 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 	);
 }
 
-/** One line of the menu, with a pixel cursor while it is hovered or focused. */
+/**
+ * One line of the menu, with a pixel cursor while it is hovered or focused. A disabled
+ * line (still loading) stays focusable, so the cursor can wait on it until it works.
+ */
 function MenuItem({ children, onClick, href, disabled }: { children: ReactNode; onClick?: () => void; href?: string; disabled?: boolean }) {
 	const className =
-		"group flex w-full items-center gap-2 px-2 py-2 text-left font-pixel text-base uppercase tracking-wider text-[#fff4d6] outline-none hover:bg-[#fff4d6]/10 focus-visible:bg-[#fff4d6]/10 disabled:cursor-wait disabled:opacity-60 sm:text-lg";
+		"group flex w-full items-center gap-2 px-2 py-2 text-left font-pixel text-base uppercase tracking-wider text-[#fff4d6] outline-none hover:bg-[#fff4d6]/10 focus-visible:bg-[#fff4d6]/10 aria-disabled:cursor-wait aria-disabled:opacity-60 sm:text-lg";
 	const cursor = (
 		<span aria-hidden="true" className="w-4 text-[#ffd166] opacity-0 group-hover:opacity-100 group-focus:opacity-100">
 			▶
@@ -255,7 +257,7 @@ function MenuItem({ children, onClick, href, disabled }: { children: ReactNode; 
 					{children}
 				</Link>
 			) : (
-				<button type="button" data-menu-item onClick={onClick} disabled={disabled} className={className}>
+				<button type="button" data-menu-item onClick={disabled ? undefined : onClick} aria-disabled={disabled || undefined} className={className}>
 					{cursor}
 					{children}
 				</button>

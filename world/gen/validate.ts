@@ -24,7 +24,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 	// A spot counts as taken: the NPC who goes there may be standing on it.
 	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign" || o.type === "spot").map((o) => `${o.x},${o.y}`));
 	const reachableFrom = (o: MapObject) =>
-		NEIGHBOURS.some(([dx, dy]) => walkable(o.x + dx, o.y + dy) && !occupied.has(`${o.x + dx},${o.y + dy}`));
+		cellsOf(o, walkable).some(([x, y]) => NEIGHBOURS.some(([dx, dy]) => walkable(x + dx, y + dy) && !occupied.has(`${x + dx},${y + dy}`)));
 
 	for (const o of objects) {
 		if (o.type === "light" || o.type === "crops" || o.type === "books" || o.type === "area") continue; // areas and lights overlap other things
@@ -39,11 +39,19 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		}
 		if (o.type === "sign" && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
 		// A sign is read from next to it, so it must sit on something solid, not open floor.
-		if (o.type === "sign" && walkable(o.x, o.y)) problems.push(`${where} is on open floor; put it on the thing it describes`);
+		if (o.type === "sign" && cellsOf(o, walkable).every(([x, y]) => walkable(x, y))) problems.push(`${where} is on open floor; put it on the thing it describes`);
 		if (o.type === "door" && !walkable(o.x, o.y + 1)) problems.push(`${where} has a blocked tile in front of it`);
 	}
 	problems.push(...checkReachable(id, tmj, objects, walkable, occupied));
 	return problems;
+}
+
+/** The tiles an object answers on: a grown sign's blocked tiles, or its one tile. */
+function cellsOf(o: MapObject, walkable: (x: number, y: number) => boolean): [number, number][] {
+	if (o.type !== "sign" || o.w === undefined || o.h === undefined) return [[o.x, o.y]];
+	const cells: [number, number][] = [];
+	for (let y = o.y; y < o.y + o.h; y++) for (let x = o.x; x < o.x + o.w; x++) if (!walkable(x, y)) cells.push([x, y]);
+	return cells.length ? cells : [[o.x, o.y]];
 }
 
 /**
@@ -76,7 +84,7 @@ function checkReachable(
 		}
 	}
 	const reached = (x: number, y: number) => seen.has(`${x},${y}`);
-	const fromSide = (o: MapObject) => NEIGHBOURS.some(([dx, dy]) => reached(o.x + dx, o.y + dy));
+	const fromSide = (o: MapObject) => cellsOf(o, walkable).some(([x, y]) => NEIGHBOURS.some(([dx, dy]) => reached(x + dx, y + dy)));
 	const acrossCounter = (o: MapObject) =>
 		NEIGHBOURS.some(([dx, dy]) => [2, 3].some((d) => reached(o.x + dx * d, o.y + dy * d) && !walkable(o.x + dx, o.y + dy)));
 	const problems: string[] = [];

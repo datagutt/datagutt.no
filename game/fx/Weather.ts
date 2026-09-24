@@ -43,6 +43,8 @@ function bake(scene: Phaser.Scene, { key, palette, rows }: Sprite): void {
 
 export class Weather {
 	private emitter: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+	/** The frame the emitter started on; it fills its sky once the camera has found the player. */
+	private startedOn = -1;
 	private frost: Phaser.Filters.Vignette | null = null;
 
 	constructor(
@@ -61,6 +63,12 @@ export class Weather {
 
 	/** The pale frost would glow in the dark: it fades as night falls. */
 	update(dark: number): void {
+		// Start mid-fall rather than with an empty sky, but only after the camera's first
+		// follow step: before that its view is still at the map's corner.
+		if (this.startedOn >= 0 && this.scene.game.loop.frame > this.startedOn + 1) {
+			this.emitter?.fastForward(MOTION[this.season].life);
+			this.startedOn = -1;
+		}
 		if (this.frost) this.frost.strength = FROST * (1 - 0.8 * dark);
 	}
 
@@ -72,16 +80,23 @@ export class Weather {
 
 	destroy(): void {
 		this.emitter?.destroy();
-		if (this.frost) this.scene.cameras.main.filters.internal.remove(this.frost);
+		// On a map change the scene shuts down and its camera goes first, taking the frost
+		// filter with it; only a camera that is still there needs it removed.
+		const cam = this.scene.cameras?.main;
+		if (this.frost && cam) cam.filters.internal.remove(this.frost);
 	}
 
 	private start(width: number, height: number): void {
 		const m = MOTION[this.season];
 		const calm = this.reducedMotion || this.low;
+		// Particles live in the world, not on the screen: each is born in or just above the
+		// camera's current view, then falls where it is, so walking doesn't drag them along.
+		const view = this.scene.cameras.main.worldView;
+		const between = (min: number, max: number) => min + Math.random() * (max - min);
 		this.emitter = this.scene.add
 			.particles(0, 0, SPRITES[this.season].key, {
-				x: { min: -16, max: width + 16 },
-				y: m.wholeScreen ? { min: 0, max: height } : { min: -8, max: -2 },
+				x: { onEmit: () => between(view.x - 16, view.x + width + 16) },
+				y: { onEmit: () => (m.wholeScreen ? between(view.y, view.y + height) : between(view.y - 8, view.y - 2)) },
 				lifespan: m.life,
 				speedY: { min: m.fallY[0], max: m.fallY[1] },
 				speedX: { min: m.driftX[0], max: m.driftX[1] },
@@ -90,9 +105,7 @@ export class Weather {
 				frequency: calm ? m.every * 3 : m.every,
 				quantity: 1,
 			})
-			.setScrollFactor(0)
 			.setDepth(DEPTH);
-		// Start mid-fall rather than with an empty sky.
-		this.emitter.fastForward(m.life);
+		this.startedOn = this.scene.game.loop.frame;
 	}
 }

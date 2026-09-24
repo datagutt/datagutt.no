@@ -7,8 +7,12 @@ export type Facing = "right" | "up" | "left" | "down";
 export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
 	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string }
-	/** A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. */
-	| { type: "sign"; x: number; y: number; text: string; dialogue?: string }
+	/**
+	 * A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. The
+	 * map build grows it over the object it describes (world/gen/signs.ts): then (x, y)
+	 * is the corner of a w×h rectangle, read from any blocked tile inside it.
+	 */
+	| { type: "sign"; x: number; y: number; w?: number; h?: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
 	/**
 	 * A named place an NPC who moves between maps can be, facing a way: the live datagutt
@@ -77,7 +81,16 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn") };
 		case "sign": {
 			const dialogue = props.get("dialogue");
-			return { type: "sign", x, y, text: str("text"), ...(typeof dialogue === "string" && dialogue ? { dialogue } : {}) };
+			const w = Math.round(obj.width / tileSize);
+			const h = Math.round(obj.height / tileSize);
+			return {
+				type: "sign",
+				x,
+				y,
+				...(w > 1 || h > 1 ? { w, h } : {}),
+				text: str("text"),
+				...(typeof dialogue === "string" && dialogue ? { dialogue } : {}),
+			};
 		}
 		case "spot":
 			return { type: "spot", id: obj.name || str("id"), x, y, facing: facing() };
@@ -112,8 +125,11 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 export function toTiledObject(obj: MapObject, id: number, tileSize: number): TiledObject {
 	const { type, x, y, ...rest } = obj;
 	const objectName = "id" in rest ? rest.id : "";
-	// Areas (crops, books) keep their size as the Tiled object's width and height.
-	const area = type === "crops" || type === "books" || type === "area" ? (rest as { w: number; h: number }) : null;
+	// Areas (crops, books, grown signs) keep their size as the Tiled object's width and height.
+	const area =
+		type === "crops" || type === "books" || type === "area" || (type === "sign" && "w" in rest && rest.w !== undefined)
+			? (rest as { w: number; h: number })
+			: null;
 	const properties: TiledProperty[] = Object.entries(rest)
 		.filter(([key]) => key !== "id" && !(area && (key === "w" || key === "h")))
 		.map(([key, value]) => ({ name: key, type: "string", value: String(value) }));

@@ -7,6 +7,7 @@ import type { TileRef } from "../art/autotile.ts";
 import { seasonalTile } from "../art/seasons.ts";
 import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";
 import { ATLAS_CAPACITY, ATLAS_COLUMNS, CLEAR_ID, COLLISION_ID, parseKey, type TileRegistry } from "./registry.ts";
+import { growSigns } from "./signs.ts";
 
 const TILE = 16;
 export const WORLD_TILESET = "world";
@@ -67,6 +68,7 @@ export function canvasToTmj(
 	for (const obj of canvas.objects) {
 		if (!canvas.inBounds(obj.x, obj.y)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) is outside the map`);
 	}
+	growSigns(canvas);
 	// Crop growth stages are tile keys in the generator and gids in the map.
 	const resolved = canvas.objects.map((obj) =>
 		obj.type === "crops" ? { ...obj, stages: obj.stages.split("|").map((k) => String(registry.id(parseKey(k)!) + 1)).join(",") } : obj,

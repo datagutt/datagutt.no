@@ -53,6 +53,9 @@ export type Prefab = {
 /** Tiled's tile transform flags, as bits of a TileRef's `flip` (and of a gid, shifted up). */
 export const FLIP = { H: 1, V: 2, D: 4 } as const;
 
+/** A stamped prefab's rectangle on the map and the cells it blocks. */
+export type Placement = { x: number; y: number; w: number; h: number; blocked: [number, number][]; door?: [number, number] };
+
 /**
  * How a prefab is turned when stamped. Mirroring suits most LimeZu sprites; rotations
  * only suit flat things seen straight from above (rugs, tables), since the art is drawn
@@ -78,6 +81,8 @@ export class MapCanvas {
 	readonly objects: MapObject[] = [];
 	/** Every prefab stamped, for checking that none cuts an object in half (cuts.ts). */
 	readonly stamped: Prefab[] = [];
+	/** Where each prefab went and the cells it blocks, for growing signs over whole objects (signs.ts). */
+	readonly placed: Placement[] = [];
 
 	constructor(width: number, height: number) {
 		this.width = width;
@@ -173,17 +178,30 @@ export class MapCanvas {
 			prefab.coverage?.split("/").slice(prefab.aboveRows).map((r) => r.replace(/\+/g, ".")) ??
 			Array.from({ length: prefab.h - prefab.aboveRows }, () => "#".repeat(prefab.w));
 		const top = prefab.h - rows.length;
+		const blocked: [number, number][] = [];
 		rows.forEach((row, dy) =>
 			[...row].forEach((c, dx) => {
 				if (c !== "#") return;
 				const [tx, ty] = place(dx, top + dy);
 				this.block(x + tx, y + ty);
+				blocked.push([x + tx, y + ty]);
 			}),
 		);
+		let door: [number, number] | undefined;
 		if (prefab.door) {
 			const [tx, ty] = place(prefab.door[0], prefab.door[1]);
 			this.block(x + tx, y + ty, false);
+			door = [x + tx, y + ty];
 		}
+		const turned = t && (transform === "rot90" || transform === "rot270");
+		this.placed.push({
+			x,
+			y,
+			w: turned ? prefab.h : prefab.w,
+			h: turned ? prefab.w : prefab.h,
+			blocked: door ? blocked.filter(([bx, by]) => bx !== door[0] || by !== door[1]) : blocked,
+			door,
+		});
 		return this;
 	}
 

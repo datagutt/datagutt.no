@@ -4,6 +4,22 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **Collision and hitbox pass (user reports, 2026-09-24).**
+  - Buildings: `footprint()` in `world/art/prefabs.ts` blocks every row from its first
+    to its last solid catalogue tile, keeps the door column open below the door, and
+    leaves translucent baked shadows walkable. Villas keep their hand grid (porch bench
+    now blocks). The 4×3 `table` blocks its tabletop rows, not its legs.
+  - Signs grow over the object they sit on when a map is written (`world/gen/signs.ts`,
+    using the placements `MapCanvas.stamp` records): a sign is a rectangle and reads from
+    every blocked tile inside it. Signs on buildings stay one tile.
+  - Weather particles live in world space, born around the camera's view
+    (`game/fx/Weather.ts`); walking no longer drags them along. `destroy` tolerates the
+    camera being gone on a map change (a winter crash).
+  - The title menu's loading items use `aria-disabled`, so the cursor starts on the
+    first item even while loading (it was a flaky a11y test and a real focus bug).
+- **Music.** 7 loopable tracks from Towball's Crossing Deluxe are in datagutt-assets
+  (`music/towballs-crossing-deluxe/TRACKS.md` maps them to places). The licence is CC BY
+  4.0: credit is required. A background agent is wiring them in (B4).
 - **M6 in progress (the user asked for all of M6, then the backlogs).** M6.1 Journal done:
   `app/journal/page.tsx` and `components/journal/`, one section per place with a
   "Visit ... in the game" deep link, live GitHub data, passport progress from the save,

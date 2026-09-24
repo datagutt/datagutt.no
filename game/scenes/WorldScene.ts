@@ -164,13 +164,14 @@ export class WorldScene extends Phaser.Scene {
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		const lights: LightObject[] = [];
+		const signs: Extract<MapObject, { type: "sign" }>[] = [];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
 			if (obj.type === "spot") spots.set(obj.id, obj);
 			if (obj.type === "area") areas.set(obj.id, obj);
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
-			if (obj.type === "sign") this.signs.set(tileKey(obj), obj);
+			if (obj.type === "sign") signs.push(obj);
 			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
 			if (obj.type === "books") this.stockShelf(obj);
@@ -178,6 +179,14 @@ export class WorldScene extends Phaser.Scene {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
 				this.grid.occupy(obj.x, obj.y, obj.id);
+			}
+		}
+		// A sign reads from any solid tile of the thing it describes (world/gen/signs.ts).
+		for (const sign of signs) {
+			for (let y = sign.y; y < sign.y + (sign.h ?? 1); y++) {
+				for (let x = sign.x; x < sign.x + (sign.w ?? 1); x++) {
+					if (!this.grid.isWalkable(x, y) || (sign.w === undefined && sign.h === undefined)) this.signs.set(tileKey({ x, y }), sign);
+				}
 			}
 		}
 
