@@ -13,14 +13,12 @@ Last updated: 2026-09-25 (kai session 1, end)
   monorepo; `apps/datagutt/CLAUDE.md` covers the site and carries the Next agent rules
   block that `next dev` maintains.
 - Import boundaries are lint rules (`tooling/eslint-config/boundaries.js`).
-- `game` still sits at the K1.6 commit, behind `kai`. Production (Vercel)
+- `game` was fast-forwarded to `kai` on 2026-09-25. Production (Vercel)
   builds from `apps/datagutt` already.
 
 ## Waiting on the user
 
-Merging `kai` into `game` (a fast-forward). Until then, builds of `game` look for season
-overrides at the art repository's old `seasons/` path, which K3.5 moved to
-`games/datagutt/seasons/`: they build fine but lose the hand-drawn snow roofs in winter.
+Nothing.
 
 ## Next step
 
@@ -31,7 +29,8 @@ overrides at the art repository's old `seasons/` path, which K3.5 moved to
    the user's own save reaches the pier with it.
 2. Done: map object types are descriptors (docs/kai/PLUGINS.md, "Map object types").
    The generated maps stayed byte-identical.
-3. Merge `kai` into `game` when the user says so.
+3. Done: `kai` merged into `game`. Game work continues from
+   `apps/datagutt/docs/HANDOFF.md` on `game`.
 
 ## Gotchas
 

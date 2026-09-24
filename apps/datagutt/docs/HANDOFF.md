@@ -4,6 +4,11 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **The engine split is merged into `game` (2026-09-25).** The site now lives in
+  `apps/datagutt` on the kai engine (`packages/`), built with Bun and Turborepo. Paths
+  and commands in the notes below predate it (`pnpm`, `game/scenes/`, `world/art/`):
+  see the root `CLAUDE.md`, `apps/datagutt/CLAUDE.md` and `docs/kai/` for where things
+  are now. The finale now resumes on the next map if it was missed.
 - **The plan is closed (user, 2026-09-24)** apart from C1 (the Terraria-style mine) and
   C3 (multi-instance ghosts), both deferred. M6.2, M6.6 and M6.7 were closed by the user;
   nobody here has merged `game` into `master` or deployed to production.
