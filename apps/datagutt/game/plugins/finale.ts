@@ -1,12 +1,25 @@
-// Fjord Town's finale: the last stamp brings a note from Thomas, then night falls on every
+// Fjord Town's finale: a full passport brings a note from Thomas, then night falls on every
 // map and he waits at the end of the pier; his goodbye, the credits, and how to reach him.
 // `?debug&finale` starts on the pier.
 import { CreditsRoll } from "@datagutt/kai/ui/CreditsRoll";
-import type { KaiPlugin } from "@datagutt/kai";
+import { perWorld, type KaiPlugin, type World } from "@datagutt/kai";
+
+/** After the last stamp, so its banner has its moment first. */
+const AFTER_STAMP_MS = 1600;
+/** After arriving on a map, so the fade-in is done. */
+const AFTER_ARRIVAL_MS = 600;
 
 /** `knot`: Thomas's words on the pier (content/presence.json `night.dialogue`). */
 export function finalePlugin({ knot }: { knot: string }): KaiPlugin {
 	let rolling = false;
+	/** When the note may start on this map, in scene time, or null when it is not due. */
+	const due = perWorld((): { at: number | null } => ({ at: null }));
+
+	// The finale is owed until it has been seen to its end, not only at the moment of the
+	// last stamp: a reload after the note (the night is not saved), a door taken before
+	// the note starts, or a save that was already full all bring it back on the next map.
+	const owed = (world: World) => !world.progress.flags.finale && !world.services.night && world.services.data.passportFull(world.progress);
+
 	return {
 		name: "finale",
 		boot(services, params) {
@@ -15,15 +28,22 @@ export function finalePlugin({ knot }: { knot: string }): KaiPlugin {
 			services.start = { map: "town", spawn: "finale" };
 			return { start: true };
 		},
+		mapCreated(world) {
+			if (owed(world)) due(world).at = world.scene.time.now + AFTER_ARRIVAL_MS;
+		},
 		stamped(world, _place, complete) {
-			if (!complete || world.progress.flags.finale) return;
-			// Once the last stamp's banner has had its moment.
-			world.scene.time.delayedCall(1600, () =>
-				world.playKnot("finale_note", null, () => {
-					world.services.night = true;
-					world.goTo({ map: "town", spawn: "finale" });
-				}),
-			);
+			if (complete && owed(world)) due(world).at = world.scene.time.now + AFTER_STAMP_MS;
+		},
+		// Runs only while the world is free, so the note never cuts into a conversation.
+		update(world) {
+			const state = due(world);
+			if (state.at === null || world.scene.time.now < state.at) return;
+			state.at = null;
+			if (!owed(world)) return;
+			world.playKnot("finale_note", null, () => {
+				world.services.night = true;
+				world.goTo({ map: "town", spawn: "finale" });
+			});
 		},
 		talk(world, npc) {
 			if (npc.dialogue !== knot) return false;

@@ -261,6 +261,21 @@ test.describe("world", () => {
 		expect(flags.finale).toBe(true);
 	});
 
+	test("a full passport whose finale never finished brings it back on the next map", async ({ page }) => {
+		test.setTimeout(120_000);
+		const all = ["home", "boathouse", "radio-tower", "kiosk", "office", "town-hall", "gym", "library", "farm", "post-office"];
+		await continueAt(page, { map: "town", x: 18, y: 40, facing: "down" }, "coding", all);
+		// Thomas's note, then night falls and the pier is where the game puts the player.
+		await expect.poll(async () => (await state(page))?.dialogueOpen, { timeout: 10_000 }).toBe(true);
+		const deadline = Date.now() + 60_000;
+		while (Date.now() < deadline && !(await state(page))?.finale) {
+			await page.keyboard.press("e");
+			await page.waitForTimeout(200);
+		}
+		await expect.poll(async () => (await state(page))?.finale).toBe(true);
+		await expect.poll(async () => (await state(page))?.liveNpc?.place).toBe("pier");
+	});
+
 	test("holding interact opens the emote wheel; back closes it", async ({ page }) => {
 		await continueAt(page, { map: "town", x: 30, y: 44, facing: "down" });
 		await page.keyboard.down("e");
