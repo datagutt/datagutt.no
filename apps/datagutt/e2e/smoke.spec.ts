@@ -1,4 +1,16 @@
+import fs from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+
+// Placeholder builds (CI has no art token) draw no link-preview image, see
+// scripts/assets/build.mjs. A remote E2E_BASE_URL is a real deployment with the art.
+function builtWithPlaceholders() {
+	if (process.env.E2E_BASE_URL) return false;
+	try {
+		return JSON.parse(fs.readFileSync(".assets-cache/source.json", "utf8")).mode === "placeholder";
+	} catch {
+		return true;
+	}
+}
 
 function collectPageErrors(page: Page) {
 	const errors: string[] = [];
@@ -50,5 +62,5 @@ test("link previews, canonical links and the sitemap are in place", async ({ pag
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	expect(sitemap).toContain("<loc>https://datagutt.no/</loc>");
 	expect(sitemap).toContain("<loc>https://datagutt.no/journal</loc>");
-	expect((await request.get("/game/og.png")).status()).toBe(200);
+	expect((await request.get("/game/og.png")).status()).toBe(builtWithPlaceholders() ? 404 : 200);
 });
