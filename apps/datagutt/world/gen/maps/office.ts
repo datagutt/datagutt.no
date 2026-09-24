@@ -14,6 +14,7 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas, type Prefab } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, floorPatch, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 /**
  * One desk, LimeZu style: the desk top, a computer set laid on it, and a chair pulled up
@@ -37,6 +38,7 @@ const extra = (id: string, name: string, x: number, y: number, facing: "up" | "d
 });
 
 export function office(): MapCanvas {
+	const say = mapText("office");
 	const c = new MapCanvas(42, 29);
 	const r = { x: 2, y: 1, w: 38, h: 26 };
 	room(c, r, { wall: WALLS.officeWhite, floor: FLOORS.carpetGrey });
@@ -111,11 +113,11 @@ export function office(): MapCanvas {
 	c.add(extra("officeGrowth", "Nora", 25, 25, "up"));
 	c.add(extra("officeFinance", "Aisha", 30, 25, "left"));
 
-	c.add({ type: "sign", x: 4, y: 2, text: "* A whiteboard: \"Loan offers compared this week\". The line goes up and to the right. Someone drew a rocket at the end." });
-	c.add({ type: "sign", x: 7, y: 2, text: "* A whiteboard full of boxes and arrows. In the corner: \"do NOT erase (Thomas)\"." });
-	c.add({ type: "sign", x: 19, y: 2, text: "* A neon-lit poster of smiling pixel faces. Across the bottom: \"Ship it. Then ship it again.\"" });
-	c.add({ type: "sign", x: 23, y: 2, text: "* A pie chart. Most of the pie is labelled \"refinancing\". A small slice says \"cake\"." });
-	c.add({ type: "sign", x: 34, y: 3, text: "* The vending machine sells one thing: energy drinks. Thomas asked for that." });
-	c.add({ type: "sign", x: 29, y: 25, text: "* A pile of money on the floor. Nobody seems worried." });
+	c.add({ type: "sign", x: 4, y: 2, text: say("whiteboard-loans") });
+	c.add({ type: "sign", x: 7, y: 2, text: say("whiteboard-diagram") });
+	c.add({ type: "sign", x: 19, y: 2, text: say("poster") });
+	c.add({ type: "sign", x: 23, y: 2, text: say("pie-chart") });
+	c.add({ type: "sign", x: 34, y: 3, text: say("vending-machine") });
+	c.add({ type: "sign", x: 29, y: 25, text: say("money") });
 	return c;
 }

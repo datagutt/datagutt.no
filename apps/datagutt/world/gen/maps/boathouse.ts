@@ -10,8 +10,10 @@ import { glow, GLOWS } from "@datagutt/kai-limezu/lighting";
 import { FLIP, MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
 import { Region } from "@datagutt/kai-worldgen/layout";
+import { mapText } from "../text.ts";
 
 export function boathouse(): MapCanvas {
+	const say = mapText("boathouse");
 	const W = 20;
 	const H = 13;
 	const c = new MapCanvas(W, H);
@@ -53,8 +55,8 @@ export function boathouse(): MapCanvas {
 	exitDoor(c, r, 10, { toMap: "town", toSpawn: "boathouse_door" });
 	const sunniva = NPCS.find((n) => n.id === "streamer")!;
 	c.add({ type: "npc", id: "streamer", character: "streamer", x: 15, y: 6, facing: "down", name: sunniva.name, dialogue: "streamer" });
-	c.add({ type: "sign", x: 9, y: 6, text: "* The stream preview. Chat is typing faster than anyone can read." });
-	c.add({ type: "sign", x: 7, y: 2, text: "* The ON AIR lamp. It is always on. Sunniva says that's the point." });
-	c.add({ type: "sign", x: 14, y: 9, text: "* The camera's little red light blinks at you. You are, briefly, content." });
+	c.add({ type: "sign", x: 9, y: 6, text: say("stream-preview") });
+	c.add({ type: "sign", x: 7, y: 2, text: say("on-air-lamp") });
+	c.add({ type: "sign", x: 14, y: 9, text: say("camera") });
 	return c;
 }

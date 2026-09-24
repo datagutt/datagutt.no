@@ -5,8 +5,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function farmhouse(): MapCanvas {
+	const say = mapText("farmhouse");
 	const c = new MapCanvas(18, 11);
 	const r = { x: 2, y: 1, w: 14, h: 8 };
 	room(c, r, { wall: WALLS.gingham, floor: FLOORS.palePlanks });
@@ -28,8 +30,8 @@ export function farmhouse(): MapCanvas {
 	c.stamp(F.crates, 13, 6);
 
 	exitDoor(c, r, 9, { toMap: "town", toSpawn: "farmhouse_door" });
-	c.add({ type: "sign", x: 3, y: 7, text: "* Ola's harvest ledger. Tally marks, one page per year. The newest page is the busiest." });
-	c.add({ type: "sign", x: 11, y: 3, text: "* The oven is still warm. It smells of lefse." });
-	c.add({ type: "sign", x: 13, y: 7, text: "* Crates of potatoes, carrots and one suspicious cabbage." });
+	c.add({ type: "sign", x: 3, y: 7, text: say("harvest-ledger") });
+	c.add({ type: "sign", x: 11, y: 3, text: say("oven") });
+	c.add({ type: "sign", x: 13, y: 7, text: say("crates") });
 	return c;
 }

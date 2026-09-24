@@ -1,0 +1,117 @@
+{
+  "$schema": "../.kai/schema/mapText.json",
+  "names": {
+    "town": "Fjord Town",
+    "house": "datagutt's house",
+    "house-up": "datagutt's house, upstairs",
+    "boathouse": "Boathouse studio",
+    "library": "Library",
+    "kiosk": "Kiosk",
+    "post-office": "Post office",
+    "gym": "Gym",
+    "farmhouse": "Farmhouse",
+    "radio-hut": "Radio hut",
+    "town-hall": "Town hall",
+    "town-hall-basement": "Town hall basement",
+    "office": "Nettbureau office",
+    "youth-club": "Youth club",
+    "mountain": "Mountain trail"
+  },
+  "signs": {
+    "town": {
+      "trail-closed": "* TRAIL CLOSED. Rockfall on the mountain path. By order of the council, until further notice. Someone has added in pencil: \"ask Arne\".",
+      "villa-orange-closed": "Nobody answers. Through the window: a very tidy living room, and a cat judging you.",
+      "villa-blue-closed": "Nobody's home. A note says the neighbours are out on the fjord.",
+      "villa-purple-closed": "You knock. Somewhere inside, a radio is playing. Nobody comes.",
+      "villa-brown-closed": "Locked. There's a pair of skis leaning by the door, waiting for winter.",
+      "welcome": "Welcome to Fjord Town. Population: small, but opinionated.",
+      "datagutt-house": "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).",
+      "library": "Fjord Town Library. Every book on the shelves is one of datagutt's repositories. Shh.",
+      "youth-club": "Fjord Town Youth Club. Open every evening. Arcade inside, pool table, the good sofa.",
+      "town-hall": "Town Hall. The basement hums. That's the servers, not the ghosts. Probably.",
+      "farm": "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.",
+      "kiosk": "Kiosk. Snacks, newspapers and Randi's opinions, all free.",
+      "post-office": "Post Office. Letters for datagutt are delivered by Liv, rain or shine.",
+      "boathouse-studio": "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.",
+      "office": "Nettbureau. datagutt's day job, since 2021.",
+      "gym": "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.",
+      "radio-tower": "Radio Tower. Kjell keeps it running, so the streams stay live."
+    },
+    "house": {
+      "scale-model": "* A scale model of this very house. There's a tiny you inside it, reading a tiny sign. Best not to think about it.",
+      "stove": "* The stove. Spotless. It has never been used, and it knows it.",
+      "tv": "* The TV is paused on a speedrun. Someone is about to clip through a wall."
+    },
+    "house-up": {
+      "computers": "* Three computers. Several terminals are open. Something is compiling.",
+      "mini-fridge": "* A mini-fridge. Energy drinks, top to bottom. Also one lemon, looking lonely."
+    },
+    "boathouse": {
+      "stream-preview": "* The stream preview. Chat is typing faster than anyone can read.",
+      "on-air-lamp": "* The ON AIR lamp. It is always on. Sunniva says that's the point.",
+      "camera": "* The camera's little red light blinks at you. You are, briefly, content."
+    },
+    "library": {
+      "featured-shelf": "* The featured shelf. Every book on it is one of Thomas's projects, free for anyone to borrow.",
+      "globe": "* A globe. Someone has drawn a tiny circle around Norway."
+    },
+    "kiosk": {
+      "drinks-cooler": "* The drinks cooler. Brus, juice, and water nobody buys.",
+      "second-fridge": "* The second fridge. It is entirely energy drinks. There's a label on it: THOMAS.",
+      "skolebrod": "* Skolebrød and cinnamon buns. Randi says the waffles are \"coming\".",
+      "pick-and-mix": "* A case of pick-and-mix. The sour ones are already gone.",
+      "ice-cream-freezer": "* The ice cream freezer. It says Kroneis. It has always said Kroneis.",
+      "tip-jar": "* A tip jar. The label says: Donate.chat accepted. Also Vipps."
+    },
+    "post-office": {
+      "noticeboard": "* The noticeboard: GitHub, Bluesky, LinkedIn and more. Liv can point you at any of them.",
+      "postbox": "* The red box. For letters to Thomas. Liv has his address.",
+      "writing-desk": "* A writing desk, a pen on a string, and a stack of postcards with the ferry on them."
+    },
+    "gym": {
+      "languages-rack": "* The languages rack. Mostly TypeScript-weight dumbbells.",
+      "frameworks-rack": "* The frameworks rack. Every bar is loaded differently.",
+      "treadmill": "* The treadmill: cloud and DevOps. It never stops running.",
+      "warm-up-weights": "* Warm-up weights: everyday tools. Nobody skips them here.",
+      "heavy-rack": "* The heavy rack: video and streaming. The bar is bending slightly.",
+      "front-desk": "* The front desk. Memberships, payments, a bowl of protein bars."
+    },
+    "farmhouse": {
+      "harvest-ledger": "* Ola's harvest ledger. Tally marks, one page per year. The newest page is the busiest.",
+      "oven": "* The oven is still warm. It smells of lefse.",
+      "crates": "* Crates of potatoes, carrots and one suspicious cabbage."
+    },
+    "radio-hut": {
+      "signal-meter": "* Six signal meters, one per connection. All of them at five bars. Kjell looks very pleased.",
+      "transceiver": "* A transceiver, tuned to the tower. It hums.",
+      "spare-transceiver": "* A spare transceiver. Labelled: DO NOT UNPLUG (KJELL).",
+      "old-radio": "* A very old PC. It runs the stream dashboard, somehow."
+    },
+    "town-hall": {
+      "mayors": "* A past mayor. She is smiling. Nobody on the council knows why.",
+      "lectern": "* The lectern. A note taped to it says: KEEP IT SHORT."
+    },
+    "town-hall-basement": {
+      "escalator": "* An escalator. The council spent the IT budget for 2019 on it. It only goes up.",
+      "printers": "* The printers. One of them says PC LOAD LETTER. Nobody knows what that means.",
+      "tickets": "* The ticket board. OPEN: 4012. Under it, in marker: \"most of them are the printer\".",
+      "server": "* A server with a name tag: FIDO. A dog biscuit sits on top of it. Best not to touch."
+    },
+    "office": {
+      "whiteboard-loans": "* A whiteboard: \"Loan offers compared this week\". The line goes up and to the right. Someone drew a rocket at the end.",
+      "whiteboard-diagram": "* A whiteboard full of boxes and arrows. In the corner: \"do NOT erase (Thomas)\".",
+      "poster": "* A neon-lit poster of smiling pixel faces. Across the bottom: \"Ship it. Then ship it again.\"",
+      "pie-chart": "* A pie chart. Most of the pie is labelled \"refinancing\". A small slice says \"cake\".",
+      "vending-machine": "* The vending machine sells one thing: energy drinks. Thomas asked for that.",
+      "money": "* A pile of money on the floor. Nobody seems worried."
+    },
+    "youth-club": {
+      "consoles": "* Three consoles and a tangle of controllers. Two of them work. Nobody knows which two.",
+      "pool-table": "* The pool table. The eight ball went missing; someone plays with a potato."
+    },
+    "mountain": {
+      "hytte-door": "* Locked. A note on the door: \"Gone fishing. Back when the next quest is ready. - T.\"",
+      "lookout": "The whole of Fjord Town fits in one look from up here: the harbour, the square, the radio tower blinking on its hill. The fjord goes on further than you can see."
+    }
+  }
+}

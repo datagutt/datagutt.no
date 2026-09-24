@@ -77,6 +77,11 @@ export const collections = {
 			),
 		}),
 	),
+	/**
+	 * The words in the maps: each map's name, and the texts its builder places on signs
+	 * and shut doors, by map id and key (world/gen/text.ts).
+	 */
+	mapText: json(z.object({ names: z.record(text, text), signs: z.record(text, z.record(text, text)) })),
 	/** Jobs, one Markdown file each. */
 	experience: markdown(z.object({ id: text, company: text, role: text, period: text, description: text, tech: z.array(text) }), {
 		body: "description",

@@ -7,6 +7,7 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 const person = (id: string, name: string, x: number, y: number, facing: "up" | "down" | "left" | "right"): MapObject => ({
 	type: "npc",
@@ -20,6 +21,7 @@ const person = (id: string, name: string, x: number, y: number, facing: "up" | "
 });
 
 export function youthClub(): MapCanvas {
+	const say = mapText("youth-club");
 	const c = new MapCanvas(20, 13);
 	const r = { x: 2, y: 1, w: 16, h: 10 };
 	room(c, r, { wall: WALLS.teal, floor: FLOORS.darkWood });
@@ -54,7 +56,7 @@ export function youthClub(): MapCanvas {
 	c.add(person("clubGamer", "Mats", 8, 4, "up"));
 	c.add(person("clubLounger", "Ingrid", 14, 7, "up"));
 
-	c.add({ type: "sign", x: 15, y: 3, text: "* Three consoles and a tangle of controllers. Two of them work. Nobody knows which two." });
-	c.add({ type: "sign", x: 6, y: 8, text: "* The pool table. The eight ball went missing; someone plays with a potato." });
+	c.add({ type: "sign", x: 15, y: 3, text: say("consoles") });
+	c.add({ type: "sign", x: 6, y: 8, text: say("pool-table") });
 	return c;
 }

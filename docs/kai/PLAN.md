@@ -125,8 +125,12 @@ Goal: every hardcoded piece of content is a JSON or Markdown resource, validated
       (Markdown). The Journal reads the bundle. *Done when* `/journal` renders the same
       HTML as before. (The visible text of `/journal` is identical before and after; the
       `content/*.ts` modules are thin typed accessors now.)
-- [ ] **K4.4** Map data: sign texts, door targets, spawn points and NPC placements move
-      from the map builders to JSON. *Done when* `world:check` shows no diff.
+- [x] **K4.4** Map data: sign texts, door targets, spawn points and NPC placements move
+      from the map builders to JSON. *Done when* `world:check` shows no diff. (The copy
+      moved: map names and 65 sign and shut-door texts, in `content/mapText.json` by map
+      and key. Positions, doors, spawns and NPC placements stay in the builders: they are
+      layout, computed from the builders' own geometry, and as JSON they would become
+      loose numbers. NPC names already come from `npcs.json`. A test fails on unused copy.)
 - [ ] **K4.5** `content/strings.json` with the engine's English defaults. *Done when* no
       engine UI file has a visible string literal.
 

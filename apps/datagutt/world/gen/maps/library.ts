@@ -7,8 +7,10 @@ import { bookcase, FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function library(): MapCanvas {
+	const say = mapText("library");
 	const c = new MapCanvas(26, 14);
 	const r = { x: 2, y: 1, w: 22, h: 11 };
 	room(c, r, { wall: WALLS.teal, floor: FLOORS.herringbone });
@@ -46,9 +48,9 @@ export function library(): MapCanvas {
 		type: "sign",
 		x: 12,
 		y: 3,
-		text: "* The featured shelf. Every book on it is one of Thomas's projects, free for anyone to borrow.",
+		text: say("featured-shelf"),
 		dialogue: "featured_shelf",
 	});
-	c.add({ type: "sign", x: 22, y: 4, text: "* A globe. Someone has drawn a tiny circle around Norway." });
+	c.add({ type: "sign", x: 22, y: 4, text: say("globe") });
 	return c;
 }

@@ -6,8 +6,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function postOffice(): MapCanvas {
+	const say = mapText("post-office");
 	const c = new MapCanvas(20, 13);
 	const r = { x: 2, y: 1, w: 16, h: 10 };
 	room(c, r, { wall: WALLS.postenRed, floor: FLOORS.paleTiles });
@@ -32,8 +34,8 @@ export function postOffice(): MapCanvas {
 	exitDoor(c, r, 7, { toMap: "town", toSpawn: "post_office_door" });
 	const liv = NPCS.find((n) => n.id === "postmaster")!;
 	c.add({ type: "npc", id: "postmaster", character: "postmaster", x: 12, y: 5, facing: "down", name: liv.name, dialogue: "postmaster" });
-	c.add({ type: "sign", x: 3, y: 2, text: "* The noticeboard: GitHub, Bluesky, LinkedIn and more. Liv can point you at any of them." });
-	c.add({ type: "sign", x: 5, y: 3, text: "* The red box. For letters to Thomas. Liv has his address." });
-	c.add({ type: "sign", x: 3, y: 7, text: "* A writing desk, a pen on a string, and a stack of postcards with the ferry on them." });
+	c.add({ type: "sign", x: 3, y: 2, text: say("noticeboard") });
+	c.add({ type: "sign", x: 5, y: 3, text: say("postbox") });
+	c.add({ type: "sign", x: 3, y: 7, text: say("writing-desk") });
 	return c;
 }

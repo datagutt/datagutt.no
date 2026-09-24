@@ -13,6 +13,7 @@ import { variant } from "@datagutt/kai-worldgen/autotile";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { building, fence, forest, meadow, pier, plateau, sign } from "@datagutt/kai-limezu/features";
 import { Region, wobble } from "@datagutt/kai-worldgen/layout";
+import { mapText } from "../text.ts";
 
 export const W = 96;
 export const H = 76;
@@ -24,6 +25,7 @@ function npc(id: string, x: number, y: number, facing: Facing): MapObject {
 }
 
 export function overworld(): MapCanvas {
+	const say = mapText("town");
 	const c = new MapCanvas(W, H);
 	c.fill("ground", (x, y) => variant(GRASS, x, y));
 
@@ -93,7 +95,7 @@ export function overworld(): MapCanvas {
 		w: 3,
 		h: 6,
 		unlock: "passport",
-		text: "* TRAIL CLOSED. Rockfall on the mountain path. By order of the council, until further notice. Someone has added in pencil: \"ask Arne\".",
+		text: say("trail-closed"),
 	});
 	c.add({ type: "door", x: 61, y: 0, toMap: "mountain", toSpawn: "trailhead", unlock: "passport" });
 	// A bench at the hill's edge, binoculars left on it: the stars at night (B2).
@@ -102,16 +104,16 @@ export function overworld(): MapCanvas {
 	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
 	building(c, PREFABS.office, 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
 	const gymDoor = building(c, PREFABS.logCabin, 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
-	building(c, PREFABS.villaOrange, 6, 29, { closed: "Nobody answers. Through the window: a very tidy living room, and a cat judging you." });
+	building(c, PREFABS.villaOrange, 6, 29, { closed: say("villa-orange-closed") });
 	const home = building(c, PREFABS.homeVilla, 16, 29, { link: { toMap: "house", toSpawn: "entrance" } });
-	building(c, PREFABS.villaBlue, 26, 29, { closed: "Nobody's home. A note says the neighbours are out on the fjord." });
+	building(c, PREFABS.villaBlue, 26, 29, { closed: say("villa-blue-closed") });
 	const kioskDoor = building(c, PREFABS.kiosk, 57, 30, { link: { toMap: "kiosk", toSpawn: "entrance" } });
 	const postDoor = building(c, PREFABS.postOffice, 37, 44, { link: { toMap: "post-office", toSpawn: "entrance" } });
 	const boathouseDoor = building(c, PREFABS.boathouse, 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
 	pier(c, 22, shore[22] - 1, shore[22] + 3);
 	const clubDoor = building(c, PREFABS.youthClub, 53, 46, { link: { toMap: "youth-club", toSpawn: "entrance" } });
-	building(c, PREFABS.villaPurple, 64, 45, { closed: "You knock. Somewhere inside, a radio is playing. Nobody comes." });
-	building(c, PREFABS.villaBrown, 76, 45, { closed: "Locked. There's a pair of skis leaning by the door, waiting for winter." });
+	building(c, PREFABS.villaPurple, 64, 45, { closed: say("villa-purple-closed") });
+	building(c, PREFABS.villaBrown, 76, 45, { closed: say("villa-brown-closed") });
 
 	// --- Harbour -------------------------------------------------------------------------
 	const pierTop = shore[HARBOUR_X] - 1;
@@ -191,19 +193,19 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "trail", x: 61, y: 2, facing: "down" });
 	// The hidden cat (B3), sunning itself on the far end of the beach behind the last pines.
 	c.add({ type: "cat", x: 94, y: 61 });
-	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
+	sign(c, HARBOUR_X + 3, pierTop - 2, say("welcome"));
 	// A name sign in front of every building, so the town reads without talking to anyone.
-	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
-	sign(c, 33, 27, "Fjord Town Library. Every book on the shelves is one of datagutt's repositories. Shh.");
-	sign(c, 59, 53, "Fjord Town Youth Club. Open every evening. Arcade inside, pool table, the good sofa.", "signpost");
-	sign(c, 44, 26, "Town Hall. The basement hums. That's the servers, not the ghosts. Probably.");
-	sign(c, 12, 28, "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.");
-	sign(c, 60, 35, "Kiosk. Snacks, newspapers and Randi's opinions, all free.");
-	sign(c, 40, 57, "Post Office. Letters for datagutt are delivered by Liv, rain or shine.");
-	sign(c, 10, 61, "Boathouse Studio. When the red light is on, Sunniva is live. Keep it down.");
-	sign(c, 69, 37, "Nettbureau. datagutt's day job, since 2021.");
-	sign(c, 85, 37, "Treningsstudio. Tor's gym in the old log cabin. Lift the whole stack.");
-	sign(c, 78, 13, "Radio Tower. Kjell keeps it running, so the streams stay live.");
+	sign(c, 24, 41, say("datagutt-house"));
+	sign(c, 33, 27, say("library"));
+	sign(c, 59, 53, say("youth-club"), "signpost");
+	sign(c, 44, 26, say("town-hall"));
+	sign(c, 12, 28, say("farm"));
+	sign(c, 60, 35, say("kiosk"));
+	sign(c, 40, 57, say("post-office"));
+	sign(c, 10, 61, say("boathouse-studio"));
+	sign(c, 69, 37, say("office"));
+	sign(c, 85, 37, say("gym"));
+	sign(c, 78, 13, say("radio-tower"));
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("farmer", 16, 12, "down"));
 	return c;

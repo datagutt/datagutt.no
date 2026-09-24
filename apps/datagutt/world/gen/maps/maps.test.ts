@@ -3,6 +3,8 @@ import { canvasToTmj, formatTmj } from "@datagutt/kai-worldgen/tmj";
 import { validateMap } from "@datagutt/kai-worldgen/validate";
 import { describe, expect, it } from "vitest";
 import { isArcadeId } from "../../../game/arcade/ids";
+import { content } from "../../../content/index";
+import { usedMapText } from "../text";
 import { GENERATED_MAPS } from "./index";
 
 describe("generated maps", () => {
@@ -23,5 +25,12 @@ describe("generated maps", () => {
 		for (const map of GENERATED_MAPS) {
 			for (const obj of map.build().objects) if (obj.type === "arcade") expect(isArcadeId(obj.game), `${map.id}: ${obj.game}`).toBe(true);
 		}
+	});
+
+	it("use every text in content/mapText.json, and name every map", () => {
+		for (const map of GENERATED_MAPS) map.build();
+		const all = Object.entries(content.mapText.signs).flatMap(([map, texts]) => Object.keys(texts).map((key) => `${map}.${key}`));
+		expect(all.filter((key) => !usedMapText().has(key))).toEqual([]);
+		for (const map of GENERATED_MAPS) expect(map.properties?.name, map.id).toBeTruthy();
 	});
 });

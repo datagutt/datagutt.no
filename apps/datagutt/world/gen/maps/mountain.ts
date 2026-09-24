@@ -7,11 +7,13 @@ import { PREFABS } from "../prefabs.ts";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { building, forest, meadow, sign } from "@datagutt/kai-limezu/features";
 import { Region } from "@datagutt/kai-worldgen/layout";
+import { mapText } from "../text.ts";
 
 const W = 40;
 const H = 30;
 
 export function mountain(): MapCanvas {
+	const say = mapText("mountain");
 	const c = new MapCanvas(W, H);
 	c.fill("ground", (x, y) => variant(GRASS, x, y));
 
@@ -27,12 +29,12 @@ export function mountain(): MapCanvas {
 		type: "sign",
 		x: door.x,
 		y: door.y,
-		text: "* Locked. A note on the door: \"Gone fishing. Back when the next quest is ready. - T.\"",
+		text: say("hytte-door"),
 	});
 
 	// The lookout: a bench facing out over the fjord, far below.
 	c.stamp(PREFABS.bench, 32, 18);
-	sign(c, 34, 19, "The whole of Fjord Town fits in one look from up here: the harbour, the square, the radio tower blinking on its hill. The fjord goes on further than you can see.", "signpost");
+	sign(c, 34, 19, say("lookout"), "signpost");
 
 	// Rocks from the old rockfall, pushed off the path.
 	for (const [kind, x, y] of [

@@ -9,8 +9,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function house(): MapCanvas {
+	const say = mapText("house");
 	const c = new MapCanvas(20, 14);
 	const r = { x: 2, y: 1, w: 16, h: 11 };
 	const floor = room(c, r, { wall: WALLS.woodPanel, floor: FLOORS.oak });
@@ -44,13 +46,14 @@ export function house(): MapCanvas {
 	c.add({ type: "spawn", id: "stairs", x: 16, y: 5, facing: "down" });
 
 	exitDoor(c, r, 10, { toMap: "town", toSpawn: "house_door" });
-	c.add({ type: "sign", x: 15, y: 9, text: "* A scale model of this very house. There's a tiny you inside it, reading a tiny sign. Best not to think about it." });
-	c.add({ type: "sign", x: 2, y: 3, text: "* The stove. Spotless. It has never been used, and it knows it." });
-	c.add({ type: "sign", x: 9, y: 3, text: "* The TV is paused on a speedrun. Someone is about to clip through a wall." });
+	c.add({ type: "sign", x: 15, y: 9, text: say("scale-model") });
+	c.add({ type: "sign", x: 2, y: 3, text: say("stove") });
+	c.add({ type: "sign", x: 9, y: 3, text: say("tv") });
 	return c;
 }
 
 export function houseUpstairs(): MapCanvas {
+	const say = mapText("house-up");
 	const c = new MapCanvas(20, 13);
 	const r = { x: 2, y: 1, w: 16, h: 10 };
 	room(c, r, { wall: WALLS.blueGrey, floor: FLOORS.darkWood });
@@ -84,7 +87,7 @@ export function houseUpstairs(): MapCanvas {
 	c.add({ type: "spot", id: "datagutt-bed", x: 3, y: 7, facing: "down" });
 	// The left computer idles on a Game of Life screensaver (docs/game/PLAN.md B2).
 	c.add({ type: "arcade", x: 5, y: 4, game: "screensaver" });
-	c.add({ type: "sign", x: 7, y: 4, text: "* Three computers. Several terminals are open. Something is compiling." });
-	c.add({ type: "sign", x: 9, y: 3, text: "* A mini-fridge. Energy drinks, top to bottom. Also one lemon, looking lonely." });
+	c.add({ type: "sign", x: 7, y: 4, text: say("computers") });
+	c.add({ type: "sign", x: 9, y: 3, text: say("mini-fridge") });
 	return c;
 }

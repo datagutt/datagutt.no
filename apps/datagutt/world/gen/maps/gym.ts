@@ -9,8 +9,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function gym(): MapCanvas {
+	const say = mapText("gym");
 	const c = new MapCanvas(20, 13);
 	const r = { x: 2, y: 1, w: 16, h: 10 };
 	room(c, r, { wall: WALLS.mint, floor: FLOORS.rubberGrid });
@@ -35,11 +37,11 @@ export function gym(): MapCanvas {
 	exitDoor(c, r, 10, { toMap: "town", toSpawn: "gym_door" });
 	const tor = NPCS.find((n) => n.id === "trainer")!;
 	c.add({ type: "npc", id: "trainer", character: "trainer", x: 9, y: 7, facing: "down", name: tor.name, dialogue: "trainer" });
-	c.add({ type: "sign", x: 3, y: 3, text: "* The languages rack. Mostly TypeScript-weight dumbbells." });
-	c.add({ type: "sign", x: 7, y: 5, text: "* The frameworks rack. Every bar is loaded differently." });
-	c.add({ type: "sign", x: 16, y: 7, text: "* The treadmill: cloud and DevOps. It never stops running." });
-	c.add({ type: "sign", x: 4, y: 7, text: "* Warm-up weights: everyday tools. Nobody skips them here." });
-	c.add({ type: "sign", x: 12, y: 7, text: "* The heavy rack: video and streaming. The bar is bending slightly." });
-	c.add({ type: "sign", x: 6, y: 10, text: "* The front desk. Memberships, payments, a bowl of protein bars." });
+	c.add({ type: "sign", x: 3, y: 3, text: say("languages-rack") });
+	c.add({ type: "sign", x: 7, y: 5, text: say("frameworks-rack") });
+	c.add({ type: "sign", x: 16, y: 7, text: say("treadmill") });
+	c.add({ type: "sign", x: 4, y: 7, text: say("warm-up-weights") });
+	c.add({ type: "sign", x: 12, y: 7, text: say("heavy-rack") });
+	c.add({ type: "sign", x: 6, y: 10, text: say("front-desk") });
 	return c;
 }

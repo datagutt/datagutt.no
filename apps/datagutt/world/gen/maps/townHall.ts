@@ -9,8 +9,10 @@ import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { officeDesk } from "./office.ts";
 import { exitDoor, floorPatch, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function townHall(): MapCanvas {
+	const say = mapText("town-hall");
 	const c = new MapCanvas(24, 14);
 	const r = { x: 2, y: 1, w: 20, h: 11 };
 	room(c, r, { wall: WALLS.burgundy, floor: FLOORS.marble });
@@ -35,8 +37,8 @@ export function townHall(): MapCanvas {
 	exitDoor(c, r, 12, { toMap: "town", toSpawn: "town_hall_door" });
 	c.block(19, 2, false).add({ type: "door", x: 19, y: 2, toMap: "town-hall-basement", toSpawn: "stairs" });
 	c.add({ type: "spawn", id: "basement", x: 19, y: 3, facing: "down" });
-	c.add({ type: "sign", x: 4, y: 2, text: "* A past mayor. She is smiling. Nobody on the council knows why." });
-	c.add({ type: "sign", x: 11, y: 3, text: "* The lectern. A note taped to it says: KEEP IT SHORT." });
+	c.add({ type: "sign", x: 4, y: 2, text: say("mayors") });
+	c.add({ type: "sign", x: 11, y: 3, text: say("lectern") });
 	return c;
 }
 
@@ -46,6 +48,7 @@ export function townHall(): MapCanvas {
  * (the real job) between them, the helpdesk, and Fido, the server in the corner.
  */
 export function townHallBasement(): MapCanvas {
+	const say = mapText("town-hall-basement");
 	const c = new MapCanvas(28, 14);
 	const r = { x: 2, y: 1, w: 24, h: 11 };
 	room(c, r, { wall: WALLS.officeGrey, floor: FLOORS.carpetDark });
@@ -75,9 +78,9 @@ export function townHallBasement(): MapCanvas {
 
 	const bjorn = NPCS.find((n) => n.id === "sysadmin")!;
 	c.add({ type: "npc", id: "sysadmin", character: "sysadmin", x: 16, y: 6, facing: "down", name: bjorn.name, dialogue: "sysadmin" });
-	c.add({ type: "sign", x: 4, y: 4, text: "* An escalator. The council spent the IT budget for 2019 on it. It only goes up." });
-	c.add({ type: "sign", x: 17, y: 3, text: "* The printers. One of them says PC LOAD LETTER. Nobody knows what that means." });
-	c.add({ type: "sign", x: 21, y: 2, text: "* The ticket board. OPEN: 4012. Under it, in marker: \"most of them are the printer\"." });
-	c.add({ type: "sign", x: 25, y: 3, text: "* A server with a name tag: FIDO. A dog biscuit sits on top of it. Best not to touch." });
+	c.add({ type: "sign", x: 4, y: 4, text: say("escalator") });
+	c.add({ type: "sign", x: 17, y: 3, text: say("printers") });
+	c.add({ type: "sign", x: 21, y: 2, text: say("tickets") });
+	c.add({ type: "sign", x: 25, y: 3, text: say("server") });
 	return c;
 }

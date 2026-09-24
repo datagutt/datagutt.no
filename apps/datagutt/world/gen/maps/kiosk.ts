@@ -8,8 +8,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function kiosk(): MapCanvas {
+	const say = mapText("kiosk");
 	const c = new MapCanvas(18, 12);
 	const r = { x: 2, y: 1, w: 14, h: 9 };
 	room(c, r, { wall: WALLS.butter, floor: FLOORS.checker });
@@ -32,11 +34,11 @@ export function kiosk(): MapCanvas {
 	exitDoor(c, r, 8, { toMap: "town", toSpawn: "kiosk_door" });
 	const randi = NPCS.find((n) => n.id === "shopkeeper")!;
 	c.add({ type: "npc", id: "shopkeeper", character: "shopkeeper", x: 12, y: 4, facing: "down", name: randi.name, dialogue: "shopkeeper" });
-	c.add({ type: "sign", x: 3, y: 3, text: "* The drinks cooler. Brus, juice, and water nobody buys." });
-	c.add({ type: "sign", x: 5, y: 3, text: "* The second fridge. It is entirely energy drinks. There's a label on it: THOMAS." });
-	c.add({ type: "sign", x: 8, y: 2, text: "* Skolebrød and cinnamon buns. Randi says the waffles are \"coming\"." });
-	c.add({ type: "sign", x: 5, y: 7, text: "* A case of pick-and-mix. The sour ones are already gone." });
-	c.add({ type: "sign", x: 10, y: 4, text: "* The ice cream freezer. It says Kroneis. It has always said Kroneis." });
-	c.add({ type: "sign", x: 13, y: 6, text: "* A tip jar. The label says: Donate.chat accepted. Also Vipps." });
+	c.add({ type: "sign", x: 3, y: 3, text: say("drinks-cooler") });
+	c.add({ type: "sign", x: 5, y: 3, text: say("second-fridge") });
+	c.add({ type: "sign", x: 8, y: 2, text: say("skolebrod") });
+	c.add({ type: "sign", x: 5, y: 7, text: say("pick-and-mix") });
+	c.add({ type: "sign", x: 10, y: 4, text: say("ice-cream-freezer") });
+	c.add({ type: "sign", x: 13, y: 6, text: say("tip-jar") });
 	return c;
 }

@@ -7,8 +7,10 @@ import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { exitDoor, FLOORS, room, WALLS } from "@datagutt/kai-limezu/interior";
+import { mapText } from "../text.ts";
 
 export function radioHut(): MapCanvas {
+	const say = mapText("radio-hut");
 	const c = new MapCanvas(14, 10);
 	const r = { x: 2, y: 1, w: 10, h: 7 };
 	room(c, r, { wall: WALLS.industrial, floor: FLOORS.concrete });
@@ -28,9 +30,9 @@ export function radioHut(): MapCanvas {
 	exitDoor(c, r, 7, { toMap: "town", toSpawn: "radio_hut_door" });
 	const kjell = NPCS.find((n) => n.id === "technician")!;
 	c.add({ type: "npc", id: "technician", character: "technician", x: 7, y: 4, facing: "down", name: kjell.name, dialogue: "technician" });
-	c.add({ type: "sign", x: 7, y: 2, text: "* Six signal meters, one per connection. All of them at five bars. Kjell looks very pleased." });
-	c.add({ type: "sign", x: 3, y: 3, text: "* A transceiver, tuned to the tower. It hums." });
-	c.add({ type: "sign", x: 10, y: 6, text: "* A spare transceiver. Labelled: DO NOT UNPLUG (KJELL)." });
-	c.add({ type: "sign", x: 3, y: 6, text: "* A very old PC. It runs the stream dashboard, somehow." });
+	c.add({ type: "sign", x: 7, y: 2, text: say("signal-meter") });
+	c.add({ type: "sign", x: 3, y: 3, text: say("transceiver") });
+	c.add({ type: "sign", x: 10, y: 6, text: say("spare-transceiver") });
+	c.add({ type: "sign", x: 3, y: 6, text: say("old-radio") });
 	return c;
 }
