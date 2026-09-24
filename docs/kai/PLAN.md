@@ -210,6 +210,6 @@ Goal: a second app proves the engine needs nothing from datagutt.
       *Done when* the SessionStart hook prints the right handoff on both branches.
 - [x] **K7.2** `docs/kai/`: architecture and package map, plugin API, content schemas,
       the CLI, "start a new game from the sandbox". *Done when* written.
-- [ ] **K7.3** A README per package (what it is, what it must not import). A root
+- [x] **K7.3** A README per package (what it is, what it must not import). A root
       `CLAUDE.md` for the monorepo, `apps/datagutt/CLAUDE.md` for Fjord Town. *Done when*
       written.

@@ -25,8 +25,9 @@ small and the engine free of any one game.
   their types, so it reads already validated JSON without carrying Zod.
 
 ESLint enforces this (`tooling/eslint-config/boundaries.js`): packages never import an
-app, runtime code never imports build time packages or schema values, and the runtime
-never imports Next or React.
+app, runtime code never imports build time packages or schema values, the runtime
+never imports Next or React, and the map toolkit and asset build never import an art
+adapter.
 
 ## Packages
 

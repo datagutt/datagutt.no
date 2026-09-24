@@ -43,8 +43,19 @@ const rule = (patterns) => ({
   },
 });
 
+const artAdapter = {
+  group: ["@datagutt/kai-limezu", "@datagutt/kai-limezu/*"],
+  message:
+    "The map toolkit and the asset build hold no art family: art arrives through a SheetSource or the adapter kai.json names.",
+};
+
 /** Build-time package code: it may import anything but an app. */
 export const buildTimePackage = (files) => [{ files, ...rule([apps]) }];
+
+/** Build-time code that must work with any art family. */
+export const artAgnosticPackage = (files) => [
+  { files, ...rule([apps, artAdapter]) },
+];
 
 /** Runtime package code, shipped to the browser. */
 export const runtimePackage = (files, ignores = []) => [

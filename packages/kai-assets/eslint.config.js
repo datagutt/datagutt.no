@@ -1,4 +1,4 @@
 import base from "@datagutt/kai-eslint-config/base";
-import { buildTimePackage } from "@datagutt/kai-eslint-config/boundaries";
+import { artAgnosticPackage } from "@datagutt/kai-eslint-config/boundaries";
 
-export default [...base, ...buildTimePackage(["src/**/*.{ts,mjs}"])];
+export default [...base, ...artAgnosticPackage(["src/**/*.{ts,mjs}"])];
