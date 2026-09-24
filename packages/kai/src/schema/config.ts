@@ -7,6 +7,9 @@ const id = z.string().regex(/^[a-z0-9-]+$/, "use lowercase letters, digits and d
 /** A path inside the licensed art checkout, such as "limezu/ui/Modern_UI_Style_1.png". */
 const artPath = z.string().min(1);
 
+/** Sprite names for facing left and right (the same name twice when it doesn't turn). */
+const facing = z.object({ left: id, right: id });
+
 export const kaiConfigSchema = z.object({
 	$schema: z.string().optional(),
 	/** The game's id. Its art overrides live under `games/<id>/` in the art repository. */
@@ -71,6 +74,23 @@ export const kaiConfigSchema = z.object({
 			}),
 		)
 		.default({}),
+	/**
+	 * Sprites that are animals, by species. They get away when the player comes close
+	 * (`fly` off out of sight, `waddle` a few tiles along the ground, `drift` in a wavy
+	 * line) and come back once the player has gone. Strips are names in `sprites`, facing
+	 * left and right: sitting (`idle`), on the move, and taking off (played once first).
+	 */
+	critters: z
+		.record(
+			id,
+			z.object({
+				flee: z.enum(["fly", "waddle", "drift"]),
+				idle: facing,
+				move: facing.optional(),
+				takeOff: facing.optional(),
+			}),
+		)
+		.default({}),
 	/** The in-game bitmap font, drawn from a web font in an npm package. */
 	font: z.object({
 		/** A module of the package, resolved from the app ("geist/font/pixel"). */
@@ -93,6 +113,15 @@ export const kaiConfigSchema = z.object({
 			github: z.object({ user: z.string().min(1) }).optional(),
 		})
 		.default({}),
+}).superRefine((config, ctx) => {
+	for (const [species, critter] of Object.entries(config.critters)) {
+		for (const part of ["idle", "move", "takeOff"] as const) {
+			for (const side of ["left", "right"] as const) {
+				const name = critter[part]?.[side];
+				if (name && !(name in config.sprites)) ctx.addIssue({ code: "custom", path: ["critters", species, part, side], message: `no sprite "${name}" in sprites` });
+			}
+		}
+	}
 });
 
 export type KaiConfig = z.output<typeof kaiConfigSchema>;

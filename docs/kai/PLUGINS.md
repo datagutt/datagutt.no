@@ -36,7 +36,8 @@ A rule that only reacts to the world and grants something needs no code. Put it 
 
 Each trigger plays `knot` (narrated) if given, then sets `flag` and grants the
 achievement `grant`. `announce: false` grants it without the banner. The engine runs the
-triggers as a plugin ahead of the game's own.
+triggers as a plugin ahead of the game's own, and the `critters` of `kai.json` (animals
+that get away from the player) the same way.
 
 ## Writing a plugin
 

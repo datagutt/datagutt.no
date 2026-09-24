@@ -5,6 +5,7 @@ import { GhostClient, ghostsDisabled, worldSocketUrl } from "@datagutt/kai-net/c
 import { Music } from "./audio/Music.ts";
 import { GameData, type GameContent } from "./data.ts";
 import type { KaiPlugin } from "./plugins/api.ts";
+import { crittersPlugin } from "./plugins/critters.ts";
 import { triggersPlugin } from "./plugins/triggers.ts";
 import type { Progress } from "./progress/Progress.ts";
 import { browserStorage, clearSave, loadSave } from "./save/save.ts";
@@ -150,8 +151,8 @@ export function createGame(parent: HTMLElement, options: BootOptions): GameHandl
 		data,
 		live: options.live,
 		links: options.links ?? (() => null),
-		// The content's declarative triggers run first, then the game's own plugins.
-		plugins: [triggersPlugin(options.content.triggers.list), ...(options.plugins ?? [])],
+		// The content's declarative triggers and kai.json's critters run first, then the game's own plugins.
+		plugins: [triggersPlugin(options.content.triggers.list), crittersPlugin(config.critters), ...(options.plugins ?? [])],
 		externals: options.externals ?? (() => ({})),
 		onProgress: options.onProgress ?? (() => {}),
 		onReady: options.onReady ?? (() => {}),

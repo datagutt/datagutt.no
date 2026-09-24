@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices, type WorldTarget } from "../boot.ts";
-import { TILE } from "../constants.ts";
+import { ABOVE_DEPTH, TILE } from "../constants.ts";
 import { Actor } from "../entities/Actor.ts";
 import { GhostLayer } from "../entities/Ghosts.ts";
 import { EmoteWheel } from "../ui/EmoteWheel.ts";
@@ -60,8 +60,6 @@ type Door = ObjectOf<"door">;
 type Sign = ObjectOf<"sign">;
 
 const PLAYER_ID = "player";
-/** The roof layers' depth: over every character. */
-const ABOVE_DEPTH = 50_000;
 const tileKey = (p: Point) => `${p.x},${p.y}`;
 /** Registry key of the game-wide Ambience. */
 const AMBIENCE_KEY = "ambience";

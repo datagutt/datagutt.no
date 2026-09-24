@@ -18,7 +18,8 @@ One per app, next to its `package.json`. The schema with a comment on every fiel
   the build loads (`maps`, `ink`, `dialogueHost`, `harness`).
 - Art: `assets` (the art repository, its local checkout, the token's environment
   variable and the art adapter module), `ui` (the dialogue frame and emote sheet),
-  `sprites` (animated strips copied for plugins) and `font`.
+  `sprites` (animated strips, for `sprite` map objects and plugins), `critters` (which
+  of those strips are animals that get away from the player) and `font`.
 - Live data: `live.weather` (the fallback place and MET Norway's required User-Agent)
   and `live.github`.
 

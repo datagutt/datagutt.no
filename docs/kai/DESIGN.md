@@ -164,4 +164,7 @@ Visitors must not notice the refactor.
   at a tile plus a pixel offset, drawn among the characters or on the ground or roof
   layer, limited to seasons or daylight if asked. The build checks the names;
   `MapCanvas.reserve` keeps the collision of the art a sprite replaces.
+- 2026-09-25: animals are configuration, not a plugin a game writes: kai.json `critters`
+  names each species' strips and how it gets away (`fly`, `waddle`, `drift`), and a
+  built-in plugin runs them, like the triggers.
 
