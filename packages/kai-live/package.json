@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@datagutt/kai": "workspace:*",
-    "@datagutt/kai-net": "workspace:*"
+    "@datagutt/kai-net": "workspace:*",
+    "node-html-parser": "^7.0.2"
   },
   "devDependencies": {
     "@datagutt/kai-eslint-config": "workspace:*",

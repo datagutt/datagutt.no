@@ -185,9 +185,13 @@ it first would make the package import app code.
 
 Goal: a second app proves the engine needs nothing from datagutt.
 
-- [ ] **K6.1** `@datagutt/kai-next`: the game shell core, the world state script, the
+- [x] **K6.1** `@datagutt/kai-next`: the game shell core, the world state script, the
       WebSocket route helper, caching wrappers. *Done when* the datagutt app keeps only
-      its title art, Journal and site pages.
+      its title art, Journal and site pages. (`useKaiGame` and `useMenuKeys` are the
+      shell's core; the title screen's look stays the site's. `LiveDataScript`,
+      `worldSocketHandler`, and `'use cache'` wrappers over `kai-live`'s now
+      framework-free GitHub and MET fetchers. The app keeps its choice of data: which
+      GitHub user, the fallback place.)
 - [ ] **K6.2** `apps/sandbox`: one generated map, one NPC, one Ink knot, one trigger,
       placeholder art, booted by the kai dev harness. *Done when* it runs without the
       assets token.

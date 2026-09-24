@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
-import { WORLD_STATE_ELEMENT_ID, type WorldState } from "@datagutt/kai-live";
+import type { WorldState } from "@datagutt/kai-live";
+import { LiveDataScript } from "@datagutt/kai-next/live-data";
 import { getWeather, visitorPlace } from "@/lib/weather";
 import { getWorldState } from "@/lib/world-state";
 
@@ -12,7 +13,5 @@ export async function WorldStateScript() {
 	const place = visitorPlace(await headers());
 	const [world, weather] = await Promise.all([getWorldState(), getWeather(place)]);
 	const state: WorldState = { ...world, weather };
-	// Escape "<" so repo descriptions can never close the script tag.
-	const json = JSON.stringify(state).replace(/</g, "\\u003c");
-	return <script id={WORLD_STATE_ELEMENT_ID} type="application/json" dangerouslySetInnerHTML={{ __html: json }} />;
+	return <LiveDataScript data={state} />;
 }

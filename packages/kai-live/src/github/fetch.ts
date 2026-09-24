@@ -1,19 +1,14 @@
-import { cacheLife, cacheTag } from "next/cache";
+// A GitHub user's live data: pinned repos (scraped from the profile page, which the API
+// does not offer), stats from the REST API, and the contribution calendar from a public
+// mirror. Framework free: a host caches the results (@datagutt/kai-next/github).
 import { parse } from "node-html-parser";
-import type { ContributionDay, GitHubStats, PinnedRepo } from "@datagutt/kai-live";
-import { kaiConfig } from "@/lib/kai";
-import { profile } from "@/content/profile";
-
-const GITHUB_USERNAME = kaiConfig.live.github.user;
-const YEARS_CODING_SINCE = profile.codingSince;
-
-export type { PinnedRepo, GitHubStats, ContributionDay };
+import type { ContributionDay, GitHubStats, PinnedRepo } from "../github.ts";
 
 /**
- * Each fetcher reports whether it got real data. Successes are cached for hours;
- * failures only for minutes, so one network hiccup doesn't blank the site for an hour.
+ * What a fetch got, and whether it was real data: a host keeps a success for long and a
+ * failure only briefly, so one network hiccup doesn't blank the site for an hour.
  */
-type Fetched<T> = { ok: boolean; data: T };
+export type Fetched<T> = { ok: boolean; data: T };
 
 function warn(what: string, err: unknown) {
   const cause = err instanceof Error ? (err.cause ?? err.message) : err;
@@ -22,10 +17,10 @@ function warn(what: string, err: unknown) {
 
 // --- Pinned repos (scraped from GitHub profile) ---
 
-async function fetchPinnedRepos(): Promise<Fetched<PinnedRepo[]>> {
+export async function fetchPinnedRepos(user: string): Promise<Fetched<PinnedRepo[]>> {
   let html: string;
   try {
-    const res = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
+    const res = await fetch(`https://github.com/${user}`, {
       headers: { "User-Agent": "Mozilla/5.0" },
     });
     if (!res.ok) {
@@ -86,43 +81,35 @@ async function fetchPinnedRepos(): Promise<Fetched<PinnedRepo[]>> {
   return { ok: true, data: repos };
 }
 
-export async function getPinnedRepos(): Promise<PinnedRepo[]> {
-  "use cache";
-  cacheTag("github");
-  const result = await fetchPinnedRepos();
-  if (result.ok) cacheLife("hours");
-  else cacheLife("minutes");
-  return result.data;
-}
-
 // --- GitHub stats ---
 
-async function fetchGitHubStats(): Promise<Fetched<GitHubStats>> {
+/** `codingSince`: the year the user started, for `years_coding`. */
+export async function fetchGitHubStats(user: string, codingSince: number): Promise<Fetched<GitHubStats>> {
   const defaults: GitHubStats = {
     public_repos: 0,
     followers: 0,
     total_stars: 0,
-    years_coding: new Date().getFullYear() - YEARS_CODING_SINCE,
+    years_coding: new Date().getFullYear() - codingSince,
   };
 
   try {
     const [userRes, reposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${GITHUB_USERNAME}`),
-      fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`),
+      fetch(`https://api.github.com/users/${user}`),
+      fetch(`https://api.github.com/users/${user}/repos?per_page=100`),
     ]);
     if (!userRes.ok || !reposRes.ok) {
       warn("stats", `HTTP ${userRes.status}/${reposRes.status}`);
       return { ok: false, data: defaults };
     }
-    const user = await userRes.json();
+    const account = await userRes.json();
     const repos: { stargazers_count: number }[] = await reposRes.json();
     const total_stars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
 
     return {
       ok: true,
       data: {
-        public_repos: user.public_repos ?? defaults.public_repos,
-        followers: user.followers ?? defaults.followers,
+        public_repos: account.public_repos ?? defaults.public_repos,
+        followers: account.followers ?? defaults.followers,
         total_stars,
         years_coding: defaults.years_coding,
       },
@@ -133,21 +120,12 @@ async function fetchGitHubStats(): Promise<Fetched<GitHubStats>> {
   }
 }
 
-export async function getGitHubStats(): Promise<GitHubStats> {
-  "use cache";
-  cacheTag("github");
-  const result = await fetchGitHubStats();
-  if (result.ok) cacheLife("hours");
-  else cacheLife("minutes");
-  return result.data;
-}
-
 // --- Contributions ---
 
-async function fetchContributions(): Promise<Fetched<ContributionDay[]>> {
+export async function fetchContributions(user: string): Promise<Fetched<ContributionDay[]>> {
   try {
     const res = await fetch(
-      `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`,
+      `https://github-contributions-api.jogruber.de/v4/${user}?y=last`,
     );
     if (!res.ok) {
       warn("contributions", `HTTP ${res.status}`);
@@ -159,13 +137,4 @@ async function fetchContributions(): Promise<Fetched<ContributionDay[]>> {
     warn("contributions", err);
     return { ok: false, data: [] };
   }
-}
-
-export async function getContributions(): Promise<ContributionDay[]> {
-  "use cache";
-  cacheTag("github");
-  const result = await fetchContributions();
-  if (result.ok) cacheLife("hours");
-  else cacheLife("minutes");
-  return result.data;
 }

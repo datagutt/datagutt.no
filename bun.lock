@@ -18,13 +18,13 @@
         "@datagutt/kai-arcade": "workspace:*",
         "@datagutt/kai-live": "workspace:*",
         "@datagutt/kai-net": "workspace:*",
+        "@datagutt/kai-next": "workspace:*",
         "@vercel/functions": "^3.7.3",
         "babel-plugin-react-compiler": "1.0.0",
         "critters": "^0.0.25",
         "geist": "^1.7.0",
         "inkjs": "^2.4.0",
         "next": "16.3.6",
-        "node-html-parser": "^7.0.2",
         "phaser": "^4.2.1",
         "react": "19.3.0",
         "react-dom": "19.3.0",
@@ -145,6 +145,7 @@
       "dependencies": {
         "@datagutt/kai": "workspace:*",
         "@datagutt/kai-net": "workspace:*",
+        "node-html-parser": "^7.0.2",
       },
       "devDependencies": {
         "@datagutt/kai-eslint-config": "workspace:*",
@@ -174,6 +175,28 @@
         "eslint": "^9",
         "typescript": "^5.9.3",
         "vitest": "^5",
+      },
+    },
+    "packages/kai-next": {
+      "name": "@datagutt/kai-next",
+      "version": "0.0.0",
+      "dependencies": {
+        "@datagutt/kai": "workspace:*",
+        "@datagutt/kai-live": "workspace:*",
+        "@datagutt/kai-net": "workspace:*",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@types/node": "^24.13.6",
+        "@types/react": "19.3.0",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+      },
+      "peerDependencies": {
+        "@vercel/functions": "^3.7.3",
+        "next": "16.3.6",
+        "react": "19.3.0",
       },
     },
     "packages/kai-worldgen": {
@@ -268,6 +291,8 @@
     "@datagutt/kai-live": ["@datagutt/kai-live@workspace:packages/kai-live"],
 
     "@datagutt/kai-net": ["@datagutt/kai-net@workspace:packages/kai-net"],
+
+    "@datagutt/kai-next": ["@datagutt/kai-next@workspace:packages/kai-next"],
 
     "@datagutt/kai-tsconfig": ["@datagutt/kai-tsconfig@workspace:tooling/tsconfig"],
 

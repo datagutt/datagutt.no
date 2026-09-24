@@ -1,6 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { WorldState } from "@datagutt/kai-live";
-import { getContributions, getGitHubStats, getPinnedRepos } from "./github";
+import { getContributions, getGitHubStats, getPinnedRepos } from "@datagutt/kai-next/github";
+import { profile } from "@/content/profile";
+import { kaiConfig } from "@/lib/kai";
 import { getDiscordId } from "./lanyard";
 
 /**
@@ -12,7 +14,8 @@ import { getDiscordId } from "./lanyard";
 export async function getWorldState(): Promise<Omit<WorldState, "weather">> {
 	"use cache";
 	cacheTag("github");
-	const [repos, stats, contributions] = await Promise.all([getPinnedRepos(), getGitHubStats(), getContributions()]);
+	const user = kaiConfig.live.github.user;
+	const [repos, stats, contributions] = await Promise.all([getPinnedRepos(user), getGitHubStats(user, profile.codingSince), getContributions(user)]);
 	const complete = repos.length > 0 && stats.public_repos > 0 && contributions.length > 0;
 	if (complete) cacheLife("hours");
 	else cacheLife("minutes");

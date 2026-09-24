@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useKaiGame } from "@datagutt/kai-next/game";
+import { useMenuKeys } from "@datagutt/kai-next/menu-keys";
 import { credits } from "@/content/credits";
-import type { GameHandle } from "@/game";
 
-type Phase = "loading" | "ready" | "playing" | "failed";
 /** Where the title screen is: the "Press start" splash, its menu, or a page off the menu. */
 type Screen = "splash" | "menu" | "confirm" | "credits";
+
+const loadGame = () => import("@/game").then((game) => game.startFjordTown);
 
 const JOURNAL_LABEL = "Read it as a normal website";
 
@@ -18,70 +20,18 @@ const JOURNAL_LABEL = "Read it as a normal website";
  */
 export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 	const rootRef = useRef<HTMLDivElement>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
-	const handleRef = useRef<GameHandle | null>(null);
-	const [phase, setPhase] = useState<Phase>("loading");
 	const [screen, setScreen] = useState<Screen>("splash");
-	const [progress, setProgress] = useState(0);
-	const [hasSave, setHasSave] = useState(false);
-
-	useEffect(() => {
-		let cancelled = false;
-		import("@/game")
-			.then(({ startFjordTown }) => {
-				if (cancelled || !containerRef.current) return;
-				const handle = startFjordTown(containerRef.current, {
-					onProgress: (p) => setProgress(p),
-					onReady: () => setPhase((current) => (current === "loading" ? "ready" : current)),
-				});
-				handleRef.current = handle;
-				setHasSave(handle.hasSave);
-				// A shared `?at=place` link goes straight into the world.
-				if (handle.deepLinked) setPhase("playing");
-			})
-			.catch((err) => {
-				console.error("[game] failed to load", err);
-				if (!cancelled) setPhase("failed");
-			});
-		return () => {
-			cancelled = true;
-			handleRef.current?.destroy();
-			handleRef.current = null;
-		};
-	}, []);
-
+	const { containerRef, phase, progress, hasSave, start, playTitleMusic } = useKaiGame(loadGame);
 	const playing = phase === "playing";
 
-	// The splash takes any key; the menu moves its cursor with the arrow keys and goes back
-	// with Escape. Buttons do the rest, so Tab and Enter work as on any page.
-	useEffect(() => {
-		if (playing) return;
-		const onKey = (e: KeyboardEvent) => {
-			if (e.metaKey || e.ctrlKey || e.altKey) return;
-			if (screen === "splash") {
-				// Tab moves focus, and Enter on the Journal link follows it.
-				if (e.key === "Tab" || document.activeElement instanceof HTMLAnchorElement) return;
-				e.preventDefault();
-				setScreen("menu");
-				return;
-			}
-			if (e.key === "Escape") {
-				e.preventDefault();
-				setScreen(screen === "menu" ? "splash" : "menu");
-				return;
-			}
-			if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-			const items = [...(menuRef.current?.querySelectorAll<HTMLElement>("[data-menu-item]") ?? [])];
-			if (!items.length) return;
-			e.preventDefault();
-			const at = items.indexOf(document.activeElement as HTMLElement);
-			const step = e.key === "ArrowDown" ? 1 : -1;
-			items[(at + step + items.length) % items.length].focus();
-		};
-		window.addEventListener("keydown", onKey);
-		return () => window.removeEventListener("keydown", onKey);
-	}, [playing, screen]);
+	useMenuKeys({
+		enabled: !playing,
+		splash: screen === "splash",
+		menuRef,
+		openMenu: useCallback(() => setScreen("menu"), []),
+		back: useCallback(() => setScreen((current) => (current === "menu" ? "splash" : "menu")), []),
+	});
 
 	// Each page of the menu starts with its first item under the cursor.
 	useEffect(() => {
@@ -93,8 +43,8 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 	// Press start is the page's first gesture, and browsers play sound only after one, so the
 	// title music starts with the menu (or once the game has loaded, if that comes later).
 	useEffect(() => {
-		if (screen !== "splash" && phase !== "playing") handleRef.current?.playTitleMusic();
-	}, [screen, phase]);
+		if (screen !== "splash" && phase !== "playing") playTitleMusic();
+	}, [screen, phase, playTitleMusic]);
 
 	// Parallax: the backdrop's layers lean away from the pointer (TitleArt.tsx).
 	useEffect(() => {
@@ -109,13 +59,9 @@ export function GameShell({ titleArt }: { titleArt: ReactNode }) {
 		return () => window.removeEventListener("pointermove", onMove);
 	}, [playing]);
 
-	const enter = (fresh: boolean) => {
-		// Focus moves from the menu to the game: the game ignores keys while a page control
-		// has focus, and Tab from the game goes on to the Journal link after it.
-		containerRef.current?.focus({ preventScroll: true });
-		handleRef.current?.start({ fresh });
-		setPhase("playing");
-	};
+	// Focus moves from the menu to the game, and Tab from the game goes on to the Journal
+	// link after it.
+	const enter = (fresh: boolean) => start(fresh);
 
 	const ready = phase === "ready";
 	const loadingLabel = phase === "failed" ? "Could not load" : `Loading ${Math.round(progress * 100)}%`;
