@@ -89,9 +89,15 @@ the character recipes and music tracks as content, not as app TypeScript.
       objects, seasons and light shapes moved to `@datagutt/kai` first, with arcade and
       unlock ids as strings checked by the asset build. The asset output, including the
       title render, and `world:gen` are byte-identical.)
-- [ ] **K3.4** `@datagutt/kai-assets` and the `kai` CLI on Bun: `kai assets`,
+- [x] **K3.4** `@datagutt/kai-assets` and the `kai` CLI on Bun: `kai assets`,
       `kai world gen|check|render|catalog`, the dev harness. The link preview image stays
       an app script. *Done when* `public/game/` from the CLI matches the old build.
+      (Commands: `kai content|assets|world|characters|art|dev`. The CLI loads the art
+      adapter, the maps and the dialogue host from the modules `kai.json` names, so it
+      assumes no LimeZu. The adapter's own tools run as `kai art <tool>` (the catalogue).
+      The title strip and link preview are `scripts/title.ts`; the snow drafts and
+      find-single stay app scripts since they read the town's prefabs. Arcade ids are
+      checked by an app test. Output is byte-identical.)
 - [ ] **K3.5** Assets repo: move `seasons/` to `games/datagutt/seasons/` in
       `datagutt-assets`, in step with the `kai.json` change. **Needs the user** to approve
       the push to the assets repo. *Done when* a clean build with the token finds the

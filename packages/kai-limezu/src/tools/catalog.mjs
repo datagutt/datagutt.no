@@ -1,41 +1,29 @@
-#!/usr/bin/env node
-// Builds the sprite catalogue (@datagutt/kai-limezu catalog/<sheet>.json), metadata only (no
-// pixels, so it is committed): the whole objects of each LimeZu sheet. Needs the art.
+// `kai art catalog`: builds the sprite catalogue (catalog/<sheet>.json in this package),
+// metadata only (no pixels, so it is committed): the whole objects of each LimeZu sheet.
+// Needs the art.
 //
 // Sheets with a "Singles" folder: LimeZu's singles are the finished objects, and some are
 // assembled from parts laid out separately in the sheet, so maps use the singles
-// themselves (@datagutt/kai-limezu singles.ts). The catalogue records each single's size in tiles
+// themselves (singles.ts). The catalogue records each single's size in tiles
 // and, when its pixels appear as-is in the sheet, its tile position there (the validator
 // uses that to catch prefabs cut from the sheet that slice an object in half).
 // Sheets without singles (AUTO_CATALOG) get objects detected from their pixels, with
 // touching pixels grouped (8-connected).
 //
-// Also writes world/out/catalog/: <sheet>.png (the sheet with objects boxed and
+// Also writes the game's world/out/catalog/: <sheet>.png (the sheet with objects boxed and
 // numbered) and <sheet>-singles.png (every single, numbered), for picking by eye.
 //
-//   node scripts/world/catalog.mjs [--only=<sheet>]
+//   kai art catalog [--only=<sheet>]
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
-import { AUTO_CATALOG, SHEETS, SINGLES } from "@datagutt/kai-limezu/sheets";
-import { singleKeys } from "@datagutt/kai-limezu/singleKey";
-import { localArtDir } from "../assets/source.mjs";
+import { AUTO_CATALOG, SHEETS, SINGLES } from "../sheets.ts";
+import { singleKeys } from "../singleKey.ts";
 
 const T = 16;
-const root = process.cwd();
-const only = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
-const source = { dir: localArtDir(root) };
-if (!source.dir) {
-	console.error("[catalog] Needs a local checkout of the art repository (kai.json assets.localPath).");
-	process.exit(1);
-}
-const art = (p) => path.join(source.dir, "limezu", p);
 // The catalogue belongs to the LimeZu adapter, which every LimeZu game shares.
-const outJson = fileURLToPath(new URL("catalog", import.meta.resolve("@datagutt/kai-limezu/sheets")));
-const outPng = path.join(root, "world/out/catalog");
-fs.mkdirSync(outJson, { recursive: true });
-fs.mkdirSync(outPng, { recursive: true });
+const outJson = fileURLToPath(new URL("../catalog", import.meta.url));
 
 const raw = async (file) => {
 	const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -151,7 +139,7 @@ const toTiles = (b) => {
 	return [col, row, Math.floor((b.x + b.w - 1) / T) - col + 1, Math.floor((b.y + b.h - 1) / T) - row + 1];
 };
 
-async function contactSheet(id, sheet, items) {
+async function contactSheet(outPng, id, sheet, items) {
 	const scale = 2;
 	let svg = `<svg width="${sheet.width * scale}" height="${sheet.height * scale}" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">`;
 	for (const [n, col, row, w, h] of items) {
@@ -168,7 +156,7 @@ async function contactSheet(id, sheet, items) {
 }
 
 /** Every single side by side with its number, for picking the ones not in the sheet. */
-async function singlesMontage(id, montage) {
+async function singlesMontage(outPng, id, montage) {
 	const scale = 2;
 	const width = 900;
 	let x = 0, y = 0, rowH = 0;
@@ -198,50 +186,59 @@ async function singlesMontage(id, montage) {
 		.toFile(path.join(outPng, `${id}-singles.png`));
 }
 
-const ids = [...Object.keys(SINGLES), ...AUTO_CATALOG].filter((id) => !only || id === only);
-for (const id of ids) {
-	const sheet = await raw(art(SHEETS[id]));
-	let items;
-	let method;
-	let singles = null;
-	const montage = [];
-	if (SINGLES[id]) {
-		method = "singles";
-		const dir = art(SINGLES[id]);
-		const keys = [...singleKeys(fs.readdirSync(dir).filter((f) => f.endsWith(".png")))];
-		const order = (k) => (/^\d+$/.test(k) ? Number(k) : Infinity);
-		keys.sort(([a], [b]) => order(a) - order(b) || a.localeCompare(b));
-		items = [];
-		singles = [];
-		for (const [key, file] of keys) {
-			const single = await raw(path.join(dir, file));
-			const at = locate(sheet, single);
-			const size = [single.width / T, single.height / T];
-			const tileAligned = at && at.x % T === 0 && at.y % T === 0;
-			singles.push([key, ...size, tileAligned ? at.x / T : null, tileAligned ? at.y / T : null, coverage(single)]);
-			if (at) items.push([key, ...toTiles(opaqueBox(single, at))]);
-			montage.push({ n: key, single });
+/** `kai art catalog [--only=<sheet>]` (the adapter's `tools`). */
+export async function catalogTool({ appDir, artDir, args }) {
+	if (!artDir) throw new Error("[catalog] Needs a local checkout of the art repository (kai.json assets.localPath).");
+	const only = args.find((a) => a.startsWith("--only="))?.split("=")[1];
+	const art = (p) => path.join(artDir, "limezu", p);
+	const outPng = path.join(appDir, "world/out/catalog");
+	fs.mkdirSync(outJson, { recursive: true });
+	fs.mkdirSync(outPng, { recursive: true });
+	const ids = [...Object.keys(SINGLES), ...AUTO_CATALOG].filter((id) => !only || id === only);
+	for (const id of ids) {
+		const sheet = await raw(art(SHEETS[id]));
+		let items;
+		let method;
+		let singles = null;
+		const montage = [];
+		if (SINGLES[id]) {
+			method = "singles";
+			const dir = art(SINGLES[id]);
+			const keys = [...singleKeys(fs.readdirSync(dir).filter((f) => f.endsWith(".png")))];
+			const order = (k) => (/^\d+$/.test(k) ? Number(k) : Infinity);
+			keys.sort(([a], [b]) => order(a) - order(b) || a.localeCompare(b));
+			items = [];
+			singles = [];
+			for (const [key, file] of keys) {
+				const single = await raw(path.join(dir, file));
+				const at = locate(sheet, single);
+				const size = [single.width / T, single.height / T];
+				const tileAligned = at && at.x % T === 0 && at.y % T === 0;
+				singles.push([key, ...size, tileAligned ? at.x / T : null, tileAligned ? at.y / T : null, coverage(single)]);
+				if (at) items.push([key, ...toTiles(opaqueBox(single, at))]);
+				montage.push({ n: key, single });
+			}
+			const loose = singles.filter((s) => s[3] === null).length;
+			if (loose) console.log(`[catalog] ${id}: ${loose} of ${keys.length} singles are assembled or moved (not found as-is in the sheet)`);
+		} else {
+			method = "detected";
+			items = detect(sheet).map((b, i) => [i + 1, ...toTiles(b)]);
 		}
-		const loose = singles.filter((s) => s[3] === null).length;
-		if (loose) console.log(`[catalog] ${id}: ${loose} of ${keys.length} singles are assembled or moved (not found as-is in the sheet)`);
-	} else {
-		method = "detected";
-		items = detect(sheet).map((b, i) => [i + 1, ...toTiles(b)]);
+		items.sort((a, b) => a[2] - b[2] || a[1] - b[1]);
+		const json = {
+			sheet: id,
+			method,
+			// Objects as they appear in the sheet: [key, col, row, w, h] in tiles.
+			objects: items,
+			// Singles: [key, w, h, col, row, coverage] in tiles; col/row null when not in the
+			// sheet as-is; coverage as in coverage() below.
+			...(singles ? { singles } : {}),
+			// The whole sheet's coverage, one string per tile row, for prefabs cut from it.
+			coverage: coverage(sheet).split("/"),
+		};
+		fs.writeFileSync(path.join(outJson, `${id}.json`), JSON.stringify(json).replace(/\],\[/g, "],\n[") + "\n");
+		await contactSheet(outPng, id, sheet, items);
+		if (montage.length) await singlesMontage(outPng, id, montage);
+		console.log(`[catalog] ${id}: ${items.length} objects (${method})`);
 	}
-	items.sort((a, b) => a[2] - b[2] || a[1] - b[1]);
-	const json = {
-		sheet: id,
-		method,
-		// Objects as they appear in the sheet: [key, col, row, w, h] in tiles.
-		objects: items,
-		// Singles: [key, w, h, col, row, coverage] in tiles; col/row null when not in the
-		// sheet as-is; coverage as in coverage() below.
-		...(singles ? { singles } : {}),
-		// The whole sheet's coverage, one string per tile row, for prefabs cut from it.
-		coverage: coverage(sheet).split("/"),
-	};
-	fs.writeFileSync(path.join(outJson, `${id}.json`), JSON.stringify(json).replace(/\],\[/g, "],\n[") + "\n");
-	await contactSheet(id, sheet, items);
-	if (montage.length) await singlesMontage(id, montage);
-	console.log(`[catalog] ${id}: ${items.length} objects (${method})`);
 }

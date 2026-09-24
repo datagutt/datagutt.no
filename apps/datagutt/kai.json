@@ -3,11 +3,19 @@
   "title": "Fjord Town",
   "timezone": "Europe/Oslo",
   "startPlace": "dock",
+  "basePath": "/game/",
+  "paths": {
+    "maps": "world/gen/maps/index.ts",
+    "ink": "game/dialogue/ink",
+    "dialogueHost": "game/dialogue/host.ts",
+    "harness": "game/dev/harness.ts"
+  },
   "assets": {
     "repo": "datagutt/datagutt-assets",
     "branch": "main",
     "localPath": "../datagutt-assets",
-    "tokenEnv": "ASSETS_REPO_TOKEN"
+    "tokenEnv": "ASSETS_REPO_TOKEN",
+    "adapter": "@datagutt/kai-limezu/adapter"
   },
   "ui": {
     "frame": { "file": "limezu/ui/Modern_UI_Style_1.png", "x": 58, "y": 129, "width": 28, "height": 29 },

@@ -1,5 +1,5 @@
 // Every map the generator owns. `bun run world:gen` writes each to world/maps/<id>.tmj.
-import type { MapCanvas } from "@datagutt/kai-worldgen/canvas";
+import type { GeneratedMap } from "@datagutt/kai-worldgen/maps";
 import { boathouse } from "./boathouse.ts";
 import { farmhouse } from "./farmhouse.ts";
 import { house, houseUpstairs } from "./house.ts";
@@ -14,8 +14,7 @@ import { youthClub } from "./youthClub.ts";
 import { mountain } from "./mountain.ts";
 import { overworld } from "./overworld.ts";
 
-/** `outdoor` maps change with the seasons (game/world/season.ts) and the time of day (game/fx/DayNight.ts). */
-export type GeneratedMap = { id: string; properties?: Record<string, string>; outdoor?: boolean; build: () => MapCanvas };
+export type { GeneratedMap };
 
 export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "town", properties: { name: "Fjord Town" }, outdoor: true, build: overworld },

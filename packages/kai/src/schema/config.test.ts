@@ -15,7 +15,9 @@ const valid = {
 	title: "Demo",
 	timezone: "Europe/Oslo",
 	startPlace: "dock",
-	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN" },
+	basePath: "/game/",
+	paths: { maps: "world/maps.ts", ink: "dialogue", dialogueHost: "dialogue/host.ts" },
+	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN", adapter: "@datagutt/kai-limezu/adapter" },
 	ui: { frame: { file: "ui.png", x: 0, y: 0, width: 8, height: 8 }, emotes: "emotes.png" },
 	font: { module: "geist/font/pixel", file: "f.woff2", unitsPerPixel: 76 },
 };

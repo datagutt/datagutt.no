@@ -1,5 +1,6 @@
-// Frame layout of a LimeZu character sheet (16x16 pack): 16×32 frames, 56 per row,
-// directions always in the order right, up, left, down. The build keeps rows 0..6.
+// Frame layout of a character sheet in the LimeZu generator's format (16x16 pack): 16×32
+// frames, 56 per row, directions always in the order right, up, left, down. The build
+// keeps rows 0..6. The runtime animates characters by it; the art adapter composes them.
 
 export const FRAME_WIDTH = 16;
 export const FRAME_HEIGHT = 32;

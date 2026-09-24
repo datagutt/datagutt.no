@@ -23,6 +23,19 @@ export const kaiConfigSchema = z.object({
 	}, "not an IANA time zone"),
 	/** Where a new game starts: a place id from the game's places. */
 	startPlace: id,
+	/** The URL path the built assets are served from; the build writes them to public/ plus this. */
+	basePath: z.string().regex(/^\/([a-z0-9-]+\/)*$/, 'a path such as "/game/"'),
+	/** Modules and folders of the game that the build loads, relative to the game's folder. */
+	paths: z.object({
+		/** Exports `GENERATED_MAPS` (@datagutt/kai-worldgen/maps). */
+		maps: z.string(),
+		/** The folder holding main.ink. */
+		ink: z.string(),
+		/** Exports `dialogueHost` (@datagutt/kai-assets/build/ink). */
+		dialogueHost: z.string(),
+		/** The entry module `kai dev` bundles: boots the game into a #game element. */
+		harness: z.string().optional(),
+	}),
 	assets: z.object({
 		/** The private art repository on GitHub, as "owner/name". */
 		repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, 'use "owner/name"'),
@@ -31,6 +44,8 @@ export const kaiConfigSchema = z.object({
 		localPath: z.string(),
 		/** The environment variable that holds a read-only token for cloning `repo`. */
 		tokenEnv: z.string().regex(/^[A-Z_][A-Z0-9_]*$/),
+		/** The art adapter module, resolved from the game ("@datagutt/kai-limezu/adapter"). */
+		adapter: z.string(),
 	}),
 	ui: z.object({
 		/** The dialogue box's nine-slice frame: a cut from a sheet. */

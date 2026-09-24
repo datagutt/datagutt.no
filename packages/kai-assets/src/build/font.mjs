@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import opentype from "opentype.js";
 import wawoff from "wawoff2";
-import { Raster, hex } from "./raster.mjs";
+import { Raster, hex } from "../raster.ts";
 
 export const FONT_CHARS =
 	" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" +

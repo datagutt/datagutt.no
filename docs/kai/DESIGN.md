@@ -145,3 +145,7 @@ Visitors must not notice the refactor.
 - 2026-09-24: places are each game's own collection, not an engine one: what a place
   means differs per game (in Fjord Town, the content it presents). The engine only needs
   a place's id, name, stamp and entrance. The ambience mix stays engine code.
+- 2026-09-24: the build reaches game code only through modules `kai.json` names: the art
+  adapter (`assets.adapter`, exporting an `ArtAdapter`), the map builders
+  (`paths.maps`), the dialogue host (`paths.dialogueHost`) and the harness entry
+  (`paths.harness`). This keeps `kai-assets` free of any art family and any one game.

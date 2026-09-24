@@ -7,7 +7,10 @@
   "exports": {
     "./schema": "./src/schema/index.ts",
     "./world/*": "./src/world/*.ts",
-    "./fx/*": "./src/fx/*.ts"
+    "./fx/*": "./src/fx/*.ts",
+    "./characters/*": "./src/characters/*.ts",
+    "./ui/*": "./src/ui/*.ts",
+    "./schema/*": "./src/schema/*.ts"
   },
   "scripts": {
     "lint": "eslint .",

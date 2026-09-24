@@ -1,13 +1,13 @@
-// Background music for the game (docs/game/PLAN.md B4): each loop in the MUSIC manifest,
-// cut to its exact loop, levelled, and encoded twice, small: Opus in Ogg, and MP3 for
-// browsers without Opus. Encoding takes a while, so results are cached in .assets-cache.
+// Background music for the game: each track in content/music.json, cut to its exact loop,
+// levelled, and encoded twice, small: Opus in Ogg, and MP3 for browsers without Opus.
+// Encoding takes a while, so results are cached in .assets-cache.
 //
 // The loops are whole bars (their tempos measure as round numbers), so the loop length is
 // sacred: cutting a rest the composer wrote would move the downbeat at the join. Only the
 // codec's own silence is cut. The source MP3s carry no gapless header (their decoded
 // length is a whole number of 1152-sample frames), so decoding adds the encoder's and the
-// decoder's delay in front and up to two frames of padding behind. Tax Office ends in a
-// 0.2 s rest and Goodnight starts with a quiet moment; both are part of the loop.
+// decoder's delay in front and up to two frames of padding behind. A loop may end in a
+// rest or start with a quiet moment; both are part of the loop.
 import { spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -27,7 +27,7 @@ const SILENCE = 0.001;
  * does not trim a codec's delay or padding then still loops seamlessly (see Music.ts).
  */
 export const ROLL = 0.1;
-/** Every track is turned down to the quietest one's loudness (Goodnight, about -19.4 LUFS). */
+/** Every track is levelled to this loudness: just below Fjord Town's quietest loop (about -19.4 LUFS), so tracks are only ever turned down. */
 const TARGET_LUFS = -19.5;
 const ENCODINGS = {
 	ogg: ["-c:a", "libopus", "-b:a", "48k", "-vbr", "on", "-compression_level", "10", "-f", "ogg"],

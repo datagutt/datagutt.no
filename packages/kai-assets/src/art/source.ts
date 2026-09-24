@@ -1,39 +1,37 @@
 // Decides where the licensed source art comes from: kai.json's `assets` names the
 // repository, its usual local checkout and the token variable. resolveAssetSource() is
-// free of side effects so it can be unit tested; scripts/assets/fetch.mjs does the work.
+// free of side effects so it can be unit tested; fetch.ts does the work.
 import fs from "node:fs";
 import path from "node:path";
-import { loadKaiConfig } from "@datagutt/kai/schema";
+import type { KaiConfig } from "@datagutt/kai/schema";
 
-/** The game's hand-drawn seasonal art, relative to the art checkout. */
-export const SEASON_OVERRIDES = "seasons";
+export type AssetSource = { mode: "local"; dir: string } | { mode: "clone"; dir: string } | { mode: "placeholder"; dir: null };
+
+type AssetsConfig = Pick<KaiConfig["assets"], "repo" | "localPath" | "tokenEnv">;
 
 /** Where a clone of `repo` goes, relative to the app. */
-export const cloneDir = (repo) => `.assets-cache/${repo.split("/")[1]}`;
+export const cloneDir = (repo: string) => `.assets-cache/${repo.split("/")[1]}`;
 
-/**
- * @typedef {{ mode: "local", dir: string }
- *   | { mode: "clone", dir: string }
- *   | { mode: "placeholder", dir: null }} AssetSource
- */
+/** The game's hand-drawn seasonal art, relative to the art checkout. */
+export const seasonOverridesDir = (_config: Pick<KaiConfig, "id">) => "seasons";
 
-/**
- * @param {object} opts
- * @param {Record<string, string | undefined>} opts.env
- * @param {string} opts.cwd The app's directory.
- * @param {string} opts.repoRoot The repository root.
- * @param {{ repo: string, localPath: string, tokenEnv: string }} opts.assets kai.json's `assets`.
- * @param {(dir: string) => boolean} opts.isAssetsDir True when `dir` looks like a
- *   checkout of the assets repo.
- * @returns {AssetSource}
- */
-export function resolveAssetSource({ env, cwd, repoRoot, assets, isAssetsDir }) {
+export function resolveAssetSource(opts: {
+	env: Record<string, string | undefined>;
+	/** The app's directory. */
+	cwd: string;
+	/** The repository root. */
+	repoRoot: string;
+	assets: AssetsConfig;
+	/** True when `dir` looks like a checkout of the assets repo. */
+	isAssetsDir: (dir: string) => boolean;
+}): AssetSource {
+	const { env, cwd, repoRoot, assets, isAssetsDir } = opts;
 	if (env.ASSETS_DIR) {
 		const dir = path.resolve(cwd, env.ASSETS_DIR);
 		if (!isAssetsDir(dir)) {
 			throw new Error(
 				`ASSETS_DIR is set to ${dir}, but that is not a checkout of ${assets.repo} ` +
-					"(no limezu/ folder or LICENSES.md). Fix the path or unset ASSETS_DIR.",
+					"(no art folder or LICENSES.md). Fix the path or unset ASSETS_DIR.",
 			);
 		}
 		return { mode: "local", dir };
@@ -57,7 +55,7 @@ export function resolveAssetSource({ env, cwd, repoRoot, assets, isAssetsDir }) 
 }
 
 /** The monorepo root: the nearest directory above `from` that holds turbo.json. */
-export function findRepoRoot(from, exists = fs.existsSync) {
+export function findRepoRoot(from: string, exists: (file: string) => boolean = fs.existsSync): string {
 	for (let dir = path.resolve(from); ; dir = path.dirname(dir)) {
 		if (exists(path.join(dir, "turbo.json"))) return dir;
 		if (path.dirname(dir) === dir) throw new Error(`No turbo.json above ${from}.`);
@@ -68,14 +66,12 @@ export function findRepoRoot(from, exists = fs.existsSync) {
  * The local art checkout for the tools that need real art (catalog, snow drafts, the
  * character review), or null. They never clone.
  */
-export function localArtDir(cwd) {
-	const { assets } = loadKaiConfig(cwd);
-	const source = resolveAssetSource({
+export function localArtDir(appDir: string, assets: AssetsConfig, isAssetsDir: (dir: string) => boolean): string | null {
+	return resolveAssetSource({
 		env: { ...process.env, [assets.tokenEnv]: undefined },
-		cwd,
-		repoRoot: findRepoRoot(cwd),
+		cwd: appDir,
+		repoRoot: findRepoRoot(appDir),
 		assets,
-		isAssetsDir: (dir) => fs.existsSync(path.join(dir, "limezu")),
-	});
-	return source.dir;
+		isAssetsDir,
+	}).dir;
 }

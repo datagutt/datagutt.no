@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { portraitLayers, recolorPixels } from "./characters.mjs";
+import { portraitLayers, recolorPixels } from "./characters.ts";
 
 describe("recolorPixels", () => {
 	it("swaps exact colours on opaque pixels only", () => {
@@ -10,7 +10,7 @@ describe("recolorPixels", () => {
 });
 
 describe("portraitLayers", () => {
-	const exists = (file) => file !== "Accessories/PG_Accessory_03_Backpack_1.png";
+	const exists = (file: string) => file !== "Accessories/PG_Accessory_03_Backpack_1.png";
 
 	it("maps sprite layers to their portrait counterparts and drops the outfit", () => {
 		const recipe = {

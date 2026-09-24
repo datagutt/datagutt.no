@@ -17,6 +17,14 @@
   },
   "dependencies": {
     "@datagutt/kai": "workspace:*",
+    "@datagutt/kai-net": "workspace:*",
+    "@datagutt/kai-worldgen": "workspace:*",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "esbuild": "^0.28.2",
+    "inkjs": "^2.4.0",
+    "opentype.js": "^2.0.0",
+    "sharp": "^0.35.4",
+    "wawoff2": "^2.0.1",
     "yaml": "^2.9.1"
   },
   "devDependencies": {

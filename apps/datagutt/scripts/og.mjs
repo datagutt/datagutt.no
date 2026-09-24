@@ -18,8 +18,8 @@ import {
 	STRIP,
 	SUN,
 	W,
-} from "../../components/game/titleScene.ts";
-import { Raster, hex } from "./raster.mjs";
+} from "../components/game/titleScene.ts";
+import { Raster, hex } from "@datagutt/kai-assets/raster";
 
 const OG = { w: 600, h: 315 };
 /** Where the title scene's origin lands: centred across, its bottom on the image's bottom. */

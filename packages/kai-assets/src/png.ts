@@ -3,11 +3,11 @@
 // pixel for pixel before it is used, so nothing ever changes colour.
 import sharp from "sharp";
 
-export async function shrinkPng(input) {
+export async function shrinkPng(input: Buffer): Promise<Buffer> {
 	const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-	const colours = new Set();
+	const colours = new Set<number>();
 	for (let i = 0; i < data.length && colours.size <= 256; i += 4) colours.add(data.readUInt32LE(i));
-	const raw = { raw: { width: info.width, height: info.height, channels: 4 } };
+	const raw = { raw: { width: info.width, height: info.height, channels: 4 as const } };
 	const truecolour = await sharp(data, raw).png({ compressionLevel: 9, effort: 10, adaptiveFiltering: true }).toBuffer();
 	if (colours.size > 256) return truecolour;
 	const indexed = await sharp(data, raw).png({ palette: true, colours: colours.size, dither: 0, effort: 10, compressionLevel: 9 }).toBuffer();

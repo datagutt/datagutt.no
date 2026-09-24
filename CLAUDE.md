@@ -26,11 +26,12 @@ bun run world:check  # Fail if the generated maps are out of date or invalid
 bun run test:e2e     # Build, then Playwright (Chrome desktop and phone) against `next start`
 bun run format       # Format with Prettier
 
-# From apps/datagutt
-bun run game:dev     # Standalone game harness at http://localhost:3200/game/dev.html?debug (run `bun run assets` first)
-bun run assets       # Fetch licensed art (or fall back to placeholders) and build public/game/
-bun run world:gen    # Generate the maps (world/maps/*.tmj) from world/gen
-bun run world:render # Render the maps to world/out/*.png (--collision, --grid, --objects, --only=<map>)
+# From apps/datagutt (the `kai` CLI from @datagutt/kai-assets, configured by kai.json)
+bun run content      # kai content: check content/ against its schemas, write the .kai/ bundle
+bun run game:dev     # kai dev: standalone game harness at http://localhost:3200/game/dev.html?debug (run content and assets first)
+bun run assets       # kai assets: fetch licensed art (or fall back to placeholders) and build public/game/, then the title strip
+bun run world:gen    # kai world gen: generate the maps (world/maps/*.tmj) from world/gen/maps
+bun run world:render # kai world render: render the maps to world/out/*.png (--collision, --grid, --objects, --only=<map>)
 bun run start        # Start the production server
 bun run test:e2e:all # The e2e tests plus Firefox, Safari and iPhone, two workers (WebKit needs `sudo bunx playwright install-deps webkit`)
 ```

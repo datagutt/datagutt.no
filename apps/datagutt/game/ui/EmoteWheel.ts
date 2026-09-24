@@ -2,7 +2,7 @@
 // ring around the player's head. Opened by holding interact or a long press on the player;
 // arrows or the stick move round it, interact picks, back or a tap elsewhere cancels.
 import Phaser from "phaser";
-import { EMOTES, emoteFrame } from "./emotes";
+import { EMOTES, emoteFrame } from "@datagutt/kai/ui/emotes";
 import { GHOST_EMOTES, type GhostEmote } from "@datagutt/kai-net/protocol";
 import type { FrameInput } from "../input/InputController";
 

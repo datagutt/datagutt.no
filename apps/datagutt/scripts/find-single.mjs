@@ -1,19 +1,20 @@
-#!/usr/bin/env node
 // Which LimeZu singles make up a prefab cut from a sheet? For each named prefab in
 // world/gen/prefabs.ts or @datagutt/kai-limezu furniture.ts, searches every singles folder for images whose
 // pixels appear exactly inside the prefab's rectangle (± 1 tile), since sheets borrow
 // objects from other themes. Needs the art.
 //
-//   node scripts/world/find-single.mjs <prefab name> [...]
+//   bun scripts/find-single.mjs <prefab name> [...]
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { FURNITURE } from "@datagutt/kai-limezu/furniture";
 import { SHEETS, SINGLES } from "@datagutt/kai-limezu/sheets";
 import { singleKeys } from "@datagutt/kai-limezu/singleKey";
-import { PREFABS } from "../../world/gen/prefabs.ts";
-import { localArtDir } from "../assets/source.mjs";
-const A = path.join(localArtDir(process.cwd()), "limezu");
+import { loadApp } from "@datagutt/kai-assets/app";
+import { localArtDir } from "@datagutt/kai-assets/art/source";
+import { PREFABS } from "../world/gen/prefabs.ts";
+const app = loadApp(process.cwd());
+const A = path.join(localArtDir(app.dir, app.config.assets, (await app.adapter()).isArtDir), "limezu");
 const raw = async (f) => { const { data, info } = await sharp(f).ensureAlpha().raw().toBuffer({ resolveWithObject: true }); return { data, width: info.width, height: info.height }; };
 const all = { ...PREFABS, ...FURNITURE };
 const names = process.argv.slice(2);

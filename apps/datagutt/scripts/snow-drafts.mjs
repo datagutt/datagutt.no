@@ -1,18 +1,18 @@
-#!/usr/bin/env node
-// Drafts fully snowed roofs for the town's buildings into datagutt-assets
-// `seasons/winter/`, as the starting point for hand-drawn winter art (clean them up in
+// Drafts fully snowed roofs for the town's buildings into the art repository's
+// seasonal overrides (winter), as the starting point for hand-drawn winter art (clean them up in
 // Aseprite and commit them there). The world build uses whatever is in that folder over
 // the automatic snow caps (@datagutt/kai-limezu source.ts). Existing files are kept: they may be
 // hand-edited. Also writes world/out/snow-drafts.png, every draft side by side.
 //
-//   node scripts/world/snow-drafts.mjs [--force] [--only=<prefab>]
+//   bun scripts/snow-drafts.mjs [--force] [--only=<prefab>]
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { LimeZuSheets, seasonRecolor } from "@datagutt/kai-limezu/source";
 import { fullRoofMask, paintSnowRoof } from "@datagutt/kai-limezu/snowDraft";
-import { PREFABS } from "../../world/gen/prefabs.ts";
-import { localArtDir, SEASON_OVERRIDES } from "../assets/source.mjs";
+import { loadApp } from "@datagutt/kai-assets/app";
+import { localArtDir, seasonOverridesDir } from "@datagutt/kai-assets/art/source";
+import { PREFABS } from "../world/gen/prefabs.ts";
 
 /** The town's buildings with roofs. */
 const BUILDINGS = [
@@ -35,7 +35,9 @@ const root = process.cwd();
 const args = process.argv.slice(2);
 const force = args.includes("--force");
 const only = args.find((a) => a.startsWith("--only="))?.split("=")[1];
-const source = { dir: localArtDir(root) };
+const app = loadApp(root);
+const SEASON_OVERRIDES = seasonOverridesDir(app.config);
+const source = { dir: localArtDir(root, app.config.assets, (await app.adapter()).isArtDir) };
 if (!source.dir) {
 	console.error("[snow] Needs a local checkout of the art repository (kai.json assets.localPath).");
 	process.exit(1);

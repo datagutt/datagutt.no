@@ -3,7 +3,7 @@
 // Its origin is the middle of its feet, so squash and stretch keep it standing.
 import Phaser from "phaser";
 import { TILE } from "../constants";
-import { ANIMS, animKey, type AnimName } from "../characters/sheet";
+import { ANIMS, animKey, type AnimName } from "@datagutt/kai/characters/sheet";
 import { GridMover, type MoverConfig } from "../world/movement";
 import type { Point } from "../world/grid";
 import type { Facing } from "@datagutt/kai/world/objects";

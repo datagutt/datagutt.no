@@ -2,7 +2,7 @@
 // short line of text (a custom Discord status). Both sit above the world's roofs and
 // tree tops, anchored to the top of the head.
 import Phaser from "phaser";
-import { EMOTE_TAIL, EMOTES, emoteFrame, type EmoteName } from "./emotes";
+import { EMOTE_TAIL, EMOTES, emoteFrame, type EmoteName } from "@datagutt/kai/ui/emotes";
 import { wrapText } from "./text";
 
 const DEPTH = 60_000;

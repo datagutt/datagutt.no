@@ -92,6 +92,8 @@ export const achievement = z.object({
 /** What opens an unlock: for now, every stamp there is. */
 export const unlockCondition = z.object({ stamps: z.literal("all") });
 
+export type CharacterRecipe = z.output<typeof characterRecipe>;
+
 export const credits = z.object({
 	title: text,
 	byline: text,

@@ -1,13 +1,16 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { cloneDir, findRepoRoot, resolveAssetSource as resolve } from "./source.mjs";
+import { cloneDir, findRepoRoot, resolveAssetSource as resolve } from "./source.ts";
 
 const repoRoot = "/work/datagutt";
 const cwd = `${repoRoot}/apps/datagutt`;
 const assets = { repo: "datagutt/datagutt-assets", localPath: "../datagutt-assets", tokenEnv: "ASSETS_REPO_TOKEN" };
 const sibling = path.resolve(repoRoot, assets.localPath);
-const resolveAssetSource = (opts) => resolve({ assets, ...opts });
-const onlyExists = (...dirs) => (dir) => dirs.includes(dir);
+const resolveAssetSource = (opts: Omit<Parameters<typeof resolve>[0], "assets">) => resolve({ assets, ...opts });
+const onlyExists =
+	(...dirs: string[]) =>
+	(dir: string) =>
+		dirs.includes(dir);
 
 describe("resolveAssetSource", () => {
 	it("uses ASSETS_DIR when it points at an assets checkout", () => {
@@ -55,7 +58,7 @@ describe("resolveAssetSource", () => {
 
 describe("findRepoRoot", () => {
 	it("walks up to the directory with turbo.json", () => {
-		const exists = (file) => file === "/work/datagutt/turbo.json";
+		const exists = (file: string) => file === "/work/datagutt/turbo.json";
 		expect(findRepoRoot("/work/datagutt/apps/datagutt", exists)).toBe("/work/datagutt");
 	});
 });

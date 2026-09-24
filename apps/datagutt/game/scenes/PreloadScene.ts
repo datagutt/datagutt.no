@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { SERVICES_KEY, type GameServices } from "../boot";
-import { EMOTE_FRAME } from "../ui/emotes";
+import { EMOTE_FRAME } from "@datagutt/kai/ui/emotes";
 import { nowDoing } from "../live/datagutt";
 import { CHARACTERS } from "../assets/manifest";
 import {
@@ -16,7 +16,7 @@ import {
 	portraitKey,
 	type AnimName,
 	type PortraitAnim,
-} from "../characters/sheet";
+} from "@datagutt/kai/characters/sheet";
 import { DialogueRunner } from "../dialogue/DialogueRunner";
 import { Progress, PROGRESS_KEY } from "../progress/Progress";
 import { isUnlocked } from "../progress/unlocks";
