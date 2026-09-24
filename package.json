@@ -21,7 +21,7 @@
     "world:catalog": "node scripts/world/catalog.mjs",
     "world:snow": "node scripts/world/snow-drafts.mjs",
     "characters:review": "node scripts/assets/characters-review.mjs",
-    "test:e2e:all": "E2E_ALL_BROWSERS=1 playwright test"
+    "test:e2e:all": "E2E_ALL_BROWSERS=1 playwright test --workers=2"
   },
   "dependencies": {
     "@vercel/functions": "^3.7.3",

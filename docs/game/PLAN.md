@@ -370,6 +370,11 @@ Goal: ship v1 to production.
       canvases last exist at commit 3480750, for B1 and B2 to port.)
 - [ ] **M6.6** QA matrix: Chrome, Firefox, Safari desktop; iOS Safari; Android Chrome;
       gamepad; slow 3G; full playthrough on each. *Done when* no blockers remain.
+      (Automated so far, 2026-09-24: Chrome desktop and phone emulation pass; Firefox passes
+      all 18 with `pnpm test:e2e:all`, two workers, since parallel software-rendered
+      Firefoxes load past the timeouts. Left for the user: Safari/WebKit (needs `sudo pnpm
+      exec playwright install-deps webkit` here), a real iPhone and Android phone, a
+      gamepad, slow 3G, and a full playthrough on each.)
 - [ ] **M6.7** Launch: merge `game` into `master`, production deploy, verify live
       deployment, check runtime logs for errors. **Needs the user** to approve. *Done when*
       datagutt.no serves the game.

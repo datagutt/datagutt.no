@@ -4,6 +4,9 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **M6.6 Firefox:** all 18 pass with two workers. With more, software-rendered Firefoxes
+  load too slowly for the 30 s waits; the "bounce tracker" pref in playwright.config.ts
+  stays, harmless. `pnpm test:e2e:all` runs with two workers.
 - **Falling blocks, second pass (user):** its own bright piece colours (not the guideline
   ones), bevelled blocks on a navy board, a framed GAME OVER panel with the score, and a
   blinking PRESS START in the attract loop. The office lounge's first arcade machine plays

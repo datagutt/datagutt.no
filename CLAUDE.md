@@ -24,7 +24,7 @@ pnpm start          # Start production server
 pnpm lint           # ESLint CLI (Next.js config; `next lint` no longer exists in Next 16)
 pnpm test           # Vitest unit tests (*.test.ts / *.test.mjs)
 pnpm test:e2e       # Playwright (Chrome desktop and phone) against `next start` (run `pnpm build` first) or E2E_BASE_URL
-pnpm test:e2e:all   # The same plus Firefox, Safari and iPhone (WebKit needs `sudo pnpm exec playwright install-deps webkit`)
+pnpm test:e2e:all   # The same plus Firefox, Safari and iPhone, two workers (WebKit needs `sudo pnpm exec playwright install-deps webkit`)
 pnpm format         # Format with Prettier (includes Tailwind class sorting)
 pnpm format:check   # Check formatting
 ```
