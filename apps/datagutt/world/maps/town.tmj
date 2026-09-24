@@ -3146,12 +3146,17 @@
             {
               "name": "sprite",
               "type": "string",
-              "value": "pigeon"
+              "value": "crow-left"
             },
             {
               "name": "when",
               "type": "string",
               "value": "day"
+            },
+            {
+              "name": "dx",
+              "type": "string",
+              "value": "-8"
             }
           ]
         },
@@ -3169,12 +3174,17 @@
             {
               "name": "sprite",
               "type": "string",
-              "value": "pigeon"
+              "value": "crow-right"
             },
             {
               "name": "when",
               "type": "string",
               "value": "day"
+            },
+            {
+              "name": "dx",
+              "type": "string",
+              "value": "-8"
             }
           ]
         },
@@ -3192,12 +3202,17 @@
             {
               "name": "sprite",
               "type": "string",
-              "value": "pigeon"
+              "value": "crow-left"
             },
             {
               "name": "when",
               "type": "string",
               "value": "day"
+            },
+            {
+              "name": "dx",
+              "type": "string",
+              "value": "-8"
             }
           ]
         },

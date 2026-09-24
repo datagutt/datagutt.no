@@ -22,6 +22,8 @@ type KaiState = {
 	finale: boolean;
 	/** Animated sprites on screen, by name. */
 	sprites: string[];
+	/** Each critter as `<sprite>@<x>,<y>:<home|moving|aside|away>`. */
+	critters: string[];
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __kai?: KaiState }).__kai ?? null);
@@ -267,12 +269,20 @@ test.describe("world", () => {
 		const square = { map: "town", x: 47, y: 38, facing: "down" };
 		await continueAt(page, square, "coding", [], "&season=summer&time=day");
 		const summerDay = (await state(page))?.sprites ?? [];
-		expect(summerDay).toEqual(expect.arrayContaining(["windmill-blades", "fountain", "ferry", "rowboat", "pigeon", "seagull-left", "buoy", "butterfly"]));
+		expect(summerDay).toEqual(expect.arrayContaining(["windmill-blades", "fountain", "ferry", "rowboat", "crow-left", "seagull-left", "buoy", "butterfly"]));
 
 		await continueAt(page, square, "coding", [], "&season=winter&time=night");
 		const winterNight = (await state(page))?.sprites ?? [];
 		expect(winterNight).toEqual(expect.arrayContaining(["windmill-blades", "fountain", "ferry", "buoy"]));
-		for (const daytime of ["pigeon", "seagull-left", "butterfly"]) expect(winterNight).not.toContain(daytime);
+		for (const daytime of ["crow-left", "seagull-left", "butterfly"]) expect(winterNight).not.toContain(daytime);
+	});
+
+	test("a crow flies off when the player comes close", async ({ page }) => {
+		// Two tiles east of the crow on the square's south side: close enough to scare it.
+		await continueAt(page, { map: "town", x: 55, y: 38, facing: "left" }, "coding", [], "&season=summer&time=day");
+		await expect.poll(async () => (await state(page))?.critters, { timeout: 10_000 }).toContain("crow-left@53,38:away");
+		// Crows further off stay put.
+		expect((await state(page))?.critters).toContain("crow-left@51,31:home");
 	});
 
 	test("a full passport whose finale never finished brings it back on the next map", async ({ page }) => {

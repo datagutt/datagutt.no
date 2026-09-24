@@ -436,8 +436,10 @@ Goal: ship v1 to production.
       some ambient life fills places the maps already have, by season and daylight.
       (Built on the engine's `sprite` map object and kai.json `sprites`: the windmill's
       blades, the ferry and the rowboat bobbing, the fountain running, the fireplace,
-      the treadmill and the escalator; pigeons, gulls, buoys, butterflies in spring and
-      summer, and a campfire at the lookout. See ART.md, "Animations".)
+      the treadmill and the escalator; crows, gulls, buoys, butterflies in spring and
+      summer, and a campfire at the lookout. The animals get away when the player comes
+      close (crows fly off, gulls waddle, butterflies drift) and come back later. See
+      ART.md, "Animations".)
 - [ ] **C5** One-shot animations: doors that open as the player goes through (post
       office, farmhouse, gym cabin, hytte, kiosk match LimeZu's door strips exactly), the
       kiosk fridge and the farm oven. Needs a trigger on the sprite, not a loop.

@@ -35,9 +35,24 @@
     "seagull-left": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Seagull_Idle_Left_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 5 },
     "seagull-right": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Seagull_Idle_Right_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 5 },
     "buoy": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Water_Buoy_1_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 8, "frameRate": 5 },
-    "pigeon": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Pigeon_16x16.png", "frameWidth": 16, "frameHeight": 16, "frames": 6, "frameRate": 6 },
+    "crow-left": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_idle_Left_16x16.png", "frameWidth": 32, "frameHeight": 16, "frames": 6, "frameRate": 5 },
+    "crow-right": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_idle_Right_16x16.png", "frameWidth": 32, "frameHeight": 16, "frames": 6, "frameRate": 5 },
+    "crow-take-off-left": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_Flap_Left_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 12 },
+    "crow-take-off-right": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_Flap_Right_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 12 },
+    "crow-fly-left": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_Hover_Left_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 10 },
+    "crow-fly-right": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Crow_Hover_Right_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 10 },
     "butterfly": { "file": "limezu/interiors/animated/animated_butterfly_1_idle.png", "frameWidth": 16, "frameHeight": 16, "frames": 4, "frameRate": 8 },
     "campfire": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Campfire_16x16.png", "frameWidth": 16, "frameHeight": 32, "frames": 6, "frameRate": 10 }
+  },
+  "critters": {
+    "crow": {
+      "flee": "fly",
+      "idle": { "left": "crow-left", "right": "crow-right" },
+      "takeOff": { "left": "crow-take-off-left", "right": "crow-take-off-right" },
+      "move": { "left": "crow-fly-left", "right": "crow-fly-right" }
+    },
+    "gull": { "flee": "waddle", "idle": { "left": "seagull-left", "right": "seagull-right" } },
+    "butterfly": { "flee": "drift", "idle": { "left": "butterfly", "right": "butterfly" } }
   },
   "font": { "module": "geist/font/pixel", "file": "fonts/geist-pixel/GeistPixel-Square.woff2", "unitsPerPixel": 76 },
   "live": {

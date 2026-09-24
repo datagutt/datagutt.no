@@ -104,6 +104,13 @@ tiles with snow on its roof, sprite blades). `seasons` and `when` limit a sprite
 some seasons or to day or night: butterflies in spring and summer, birds by day. Renders
 (`bun run world:render`) draw each sprite's first frame, for the season rendered.
 
+Animals are `critters` in `kai.json`: a species names its strips facing left and right
+(sitting, moving, taking off) and how it gets away when the player comes within two and
+a half tiles. Crows `fly` off out of sight (LimeZu's gulls and pigeons have no flying
+frames, which is why the square has crows), gulls `waddle` a few walkable tiles, and
+butterflies `drift`. Each comes back to its spot once the player is seven tiles off and
+ten seconds have passed. They block nothing, since they never stay to be walked into.
+
 # Characters
 
 NPC walk sheets and portraits are stacked from the LimeZu character and portrait

@@ -5,8 +5,9 @@ Last updated: 2026-09-25 (engine split merged; C4 animation)
 ## Current state
 
 - **C4 animation (2026-09-25):** the windmill, boats, fountain, fireplace, treadmill and
-  escalator play LimeZu's strips; pigeons, gulls, buoys, butterflies (spring and
-  summer) and a campfire at the lookout by season and daylight. How to add more: ART.md,
+  escalator play LimeZu's strips; crows, gulls, buoys, butterflies (spring and summer)
+  and a campfire at the lookout by season and daylight. The animals flee the player
+  (kai.json `critters`) and come back. How to add more: ART.md,
   "Animations". Next: C5, doors that open as the player goes through.
 - **The engine split is merged into `game` (2026-09-25).** The site now lives in
   `apps/datagutt` on the kai engine (`packages/`), built with Bun and Turborepo. Paths

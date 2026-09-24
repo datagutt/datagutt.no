@@ -216,12 +216,14 @@ export function overworld(): MapCanvas {
 	c.add(npc("farmer", 16, 12, "down"));
 
 	// --- Life ----------------------------------------------------------------------------------
-	// Idle loops that ask nothing of the player. Birds keep to the daylight; butterflies
-	// only come out in the warm half of the year. Gulls stay through the Norwegian winter.
-	const life: [string, number, number, { seasons?: string; when?: string }][] = [
-		["pigeon", 51, 31, { when: "day" }],
-		["pigeon", 46, 37, { when: "day" }],
-		["pigeon", 53, 38, { when: "day" }],
+	// Birds keep to the daylight; butterflies only come out in the warm half of the year.
+	// Gulls stay through the Norwegian winter. The animals get away when the player comes
+	// close (kai.json `critters`), so they block nothing.
+	const life: [string, number, number, { seasons?: string; when?: string; dx?: number }][] = [
+		// Hooded crows, the town bird: the strip is two tiles wide, the crow in its middle.
+		["crow-left", 51, 31, { when: "day", dx: -8 }],
+		["crow-right", 46, 37, { when: "day", dx: -8 }],
+		["crow-left", 53, 38, { when: "day", dx: -8 }],
 		["seagull-left", 40, 62, { when: "day" }],
 		["seagull-right", 60, 62, { when: "day" }],
 		["buoy", 41, 70, {}],

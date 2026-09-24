@@ -2,10 +2,10 @@
 // user, and Oslo (kai.json live.weather.fallback) when the visitor's place is unknown,
 // the town being Oslo-ish.
 import { emptyWorldState, weatherPlace } from "@datagutt/kai-live";
-import { kaiConfig } from "../lib/kai";
+import { siteLive } from "../lib/kai";
 import { profile } from "./profile";
 
-const fallback = kaiConfig.live.weather.fallback;
+const fallback = siteLive.weather.fallback;
 export const FALLBACK_PLACE = weatherPlace(fallback.city, fallback.lat, fallback.lon);
 
 export const EMPTY_WORLD_STATE = emptyWorldState({ discordId: profile.discordId, place: FALLBACK_PLACE.city });
