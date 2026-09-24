@@ -1,7 +1,7 @@
 // A parallax starfield with pixel invaders drifting through, as on the old site. The
-// arrows steer the flight; A sends a flare of new sprites. The same sky shows in the
-// telescope on the radio hill at night (docs/game/PLAN.md B2).
-import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+// arrows steer the flight; A sends a flare of new sprites. Its stargazing mode is the
+// sky alone, for a telescope or binoculars.
+import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types.ts";
 
 /** 5×5 sprites: an invader, a UFO, a small ship, an asteroid. */
 const SPRITES = [

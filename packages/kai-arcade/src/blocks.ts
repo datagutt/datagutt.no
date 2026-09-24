@@ -1,8 +1,8 @@
 // Falling blocks: the one cabinet you can really play. The old site's canvas dropped
 // pieces by itself; that is the attract mode here, until A starts a game. Left and
 // right move, up rotates, down drops faster, A drops at once. Lines score by level.
-import { drawText, textWidth } from "./digits";
-import { rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+import { drawText, textWidth } from "./digits.ts";
+import { rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types.ts";
 
 export const COLS = 10;
 export const ROWS = 20;

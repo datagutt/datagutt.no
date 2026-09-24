@@ -1,7 +1,7 @@
 // Conway's Game of Life with the old site's data pulses: bright lines running across the
-// grid. A reseeds, the arrows move a cursor that sows life where it goes. The same
-// simulation runs as the screensaver on Thomas's PC (docs/game/PLAN.md B2).
-import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+// grid. A reseeds, the arrows move a cursor that sows life where it goes. Without its
+// cursor it also works as a screensaver.
+import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types.ts";
 
 const CELL = 4;
 const COLS = SCREEN_W / CELL;

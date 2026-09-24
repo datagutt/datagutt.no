@@ -1,6 +1,6 @@
-// The youth club's arcade cabinets (docs/game/PLAN.md B1): the old site's five canvases,
-// rebuilt as small games that draw onto one low-resolution screen. Nothing here knows
-// about Phaser; game/ui/ArcadeScreen.ts shows a cabinet and feeds it input.
+// Arcade cabinet games: datagutt.no's old five canvases, rebuilt as small games that draw
+// onto one low-resolution screen. Nothing here knows about Phaser; the runtime's arcade
+// screen shows a cabinet and feeds it input.
 
 /** Every cabinet draws on a screen this size, in game pixels, scaled up whole. */
 export const SCREEN_W = 160;

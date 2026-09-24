@@ -1,6 +1,6 @@
 // Drifting terrain in elevation bands, from deep water to snowy peaks, like the old
 // site's noise canvas. The arrows fly over it; A raises a new island.
-import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types.ts";
 
 const CELL = 4;
 const COLS = SCREEN_W / CELL;

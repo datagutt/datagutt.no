@@ -1,10 +1,10 @@
 // A cabinet up close (docs/game/PLAN.md B1): its screen drawn by a game from
-// game/arcade/ on a canvas texture, framed like a cabinet, over a dimmed room. Back
+// @datagutt/kai-arcade on a canvas texture, framed like a cabinet, over a dimmed room. Back
 // leaves. On touch, taps on the screen's sides steer, above turns (up), below presses A,
 // and a tap outside the cabinet leaves.
 import Phaser from "phaser";
-import type { ArcadeGame, ArcadeInput, Direction } from "../arcade/types";
-import { SCREEN_H, SCREEN_W } from "../arcade/types";
+import type { ArcadeGame, ArcadeInput, Direction } from "@datagutt/kai-arcade";
+import { SCREEN_H, SCREEN_W } from "@datagutt/kai-arcade";
 import type { FrameInput, InputDevice } from "../input/InputController";
 
 const DEPTH = 114_000;

@@ -14,6 +14,7 @@
       "name": "datagutt",
       "version": "0.1.0",
       "dependencies": {
+        "@datagutt/kai-arcade": "workspace:*",
         "@datagutt/kai-net": "workspace:*",
         "@vercel/functions": "^3.7.3",
         "babel-plugin-react-compiler": "1.0.0",
@@ -51,6 +52,18 @@
         "typescript": "^5.9.3",
         "vitest": "^5",
         "wawoff2": "^2.0.1",
+      },
+    },
+    "packages/kai-arcade": {
+      "name": "@datagutt/kai-arcade",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
       },
     },
     "packages/kai-net": {
@@ -131,6 +144,8 @@
     "@babel/types": ["@babel/types@7.29.8", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg=="],
 
     "@builder.io/partytown": ["@builder.io/partytown@0.10.3", "", { "bin": { "partytown": "bin/partytown.cjs" } }, "sha512-N2SWA3c5vEad3rgdAFM3zMb6uc7aXqibkgAz4ijvYzycgQXJ4dE5oH6fGFMXSQWj6ayVlLT1/CmpflYUJHfmQg=="],
+
+    "@datagutt/kai-arcade": ["@datagutt/kai-arcade@workspace:packages/kai-arcade"],
 
     "@datagutt/kai-eslint-config": ["@datagutt/kai-eslint-config@workspace:tooling/eslint-config"],
 

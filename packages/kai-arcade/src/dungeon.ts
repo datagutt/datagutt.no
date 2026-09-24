@@ -1,7 +1,7 @@
 // A procedural dungeon, as on the old site: rooms joined by corridors, explored room by
 // room by a hero with a torch through fog of war, knocking out the odd monster. The
 // arrows take the hero over for a while; A builds a new dungeon.
-import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types.ts";
 
 const CELL = 4;
 export const COLS = SCREEN_W / CELL;

@@ -31,7 +31,7 @@ Goal: the same site, built by Bun and Turborepo from its new place. No behaviour
       full asset build with the real art matches the old output.
 - [x] **K1.5** CI on Bun and Turborepo. *Done when* the workflow passes on the `kai`
       branch.
-- [ ] **K1.6** Merge into `game`, then set the Vercel Root Directory to `apps/datagutt`
+- [x] **K1.6** Merge into `game`, then set the Vercel Root Directory to `apps/datagutt`
       through the MCP. **Needs the user** to see the change first. *Done when* a
       preview of `game` builds and plays with the licensed art.
 
@@ -48,8 +48,11 @@ Goal: shared presets, and the three packages with the fewest ties to Fjord Town.
       rooms from the package and the ghost e2e passes. (There is no ghost e2e: `next start`
       cannot upgrade. The package's socket test and a manual run of the dev harness cover
       it.)
-- [ ] **K2.3** `@datagutt/kai-arcade`: the cabinet games and the arcade screen. Arcade
+- [x] **K2.3** `@datagutt/kai-arcade`: the cabinet games and the arcade screen. Arcade
       ids become strings. *Done when* both lounge cabinets play and share the best score.
+      (The games and a registry of the built-ins moved. The app's registry is typed by its
+      id list, so a missing game fails typecheck. `ArcadeScreen` needs the runtime's input
+      types, so it moves in K5.1. Both blocks cabinets still record under `blocks`.)
 - [ ] **K2.4** `@datagutt/kai-live`: the Lanyard client, the WorldState types (from
       `content/live.ts`), the MET weather fetcher with the fallback place as a parameter.
       *Done when* the weather and presence e2e pass.
@@ -103,8 +106,8 @@ Goal: every hardcoded piece of content is a JSON or Markdown resource, validated
 Goal: `@datagutt/kai` holds no Fjord Town behaviour.
 
 - [ ] **K5.1** `@datagutt/kai`: move the engine parts of `game/`. `createGame({ config,
-      content, plugins })` replaces `bootGame`. *Done when* the app boots through
-      `createGame`.
+      content, plugins })` replaces `bootGame`. `ArcadeScreen` moves to `kai-arcade`, which
+      then depends on `kai`. *Done when* the app boots through `createGame`.
 - [ ] **K5.2** `KaiPlugin` API: setup, map enter, interaction, update, map object types,
       Ink externals, start menu items. *Done when* the API has unit tests with a fake
       scene.

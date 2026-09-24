@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@datagutt/kai-arcade": "workspace:*",
     "@datagutt/kai-net": "workspace:*",
     "@vercel/functions": "^3.7.3",
     "babel-plugin-react-compiler": "1.0.0",
