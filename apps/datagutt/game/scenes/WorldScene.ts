@@ -47,7 +47,8 @@ import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 import { applySeason } from "../world/season";
 import { resolveWeather, weatherSound } from "../world/weather";
-import { CALM_WEATHER, type WeatherNow } from "../../content/live";
+import type { WeatherNow } from "@datagutt/kai-live";
+import { CALM_WEATHER } from "../../content/live";
 import { statusLines } from "../live/datagutt";
 
 type Door = Extract<MapObject, { type: "door" }>;

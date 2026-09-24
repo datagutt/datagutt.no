@@ -8,7 +8,7 @@ import { directionBetween, type CollisionGrid, type Point } from "../world/grid"
 import { findPath, findPathAdjacent } from "../world/pathfind";
 import type { MapObject } from "../world/objects";
 import { doingFor, nextMap, PLACE_MAPS, spotId, type Doing } from "../live/datagutt";
-import type { Presence, PresenceFeed } from "../net/lanyard";
+import type { Presence, PresenceFeed } from "@datagutt/kai-live";
 import { EmoteBubble, SpeechBubble } from "../ui/Bubbles";
 import { Actor } from "./Actor";
 

@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { parse } from "node-html-parser";
-import type { ContributionDay, GitHubStats, PinnedRepo } from "@/content/live";
+import type { ContributionDay, GitHubStats, PinnedRepo } from "@datagutt/kai-live";
 import { profile } from "@/content/profile";
 
 const GITHUB_USERNAME = "datagutt";

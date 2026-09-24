@@ -3,7 +3,7 @@
 // in the .ink sources against it; the game binds the implementations at runtime.
 // Imported by Node build scripts too, hence the explicit .ts extensions.
 import { experience } from "../../content/experience.ts";
-import type { WorldState } from "../../content/live.ts";
+import type { WorldState } from "@datagutt/kai-live";
 import { places } from "../../content/places.ts";
 import { profile } from "../../content/profile.ts";
 import { projects } from "../../content/projects.ts";

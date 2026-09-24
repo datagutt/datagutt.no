@@ -1,7 +1,7 @@
 // The weather outdoors (docs/game/PLAN.md C2): Oslo's real weather, which the page embeds
 // (lib/weather.ts), or `?debug&weather=<kind>`. This file decides what the sky should hold;
 // fx/Weather.ts draws it and audio/mix.ts hears it.
-import { isWeatherKind, type WeatherKind, type WeatherNow } from "../../content/live";
+import { isWeatherKind, type WeatherKind, type WeatherNow } from "@datagutt/kai-live";
 import type { Season } from "./season";
 
 /** Wind (m/s) for a debug override, which names only the kind. */

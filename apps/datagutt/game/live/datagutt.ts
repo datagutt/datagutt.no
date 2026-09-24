@@ -1,7 +1,7 @@
 // The live datagutt NPC (docs/game/PLAN.md M4.2): where Thomas is in town, how he looks
-// and what bubble he shows, from his Discord presence (game/net/lanyard.ts). The rules
+// and what bubble he shows, from his Discord presence (@datagutt/kai-live). The rules
 // are the user's, in DESIGN's open-questions table; the first that matches wins.
-import type { Presence } from "../net/lanyard";
+import type { Presence } from "@datagutt/kai-live";
 
 /** Places he can be. Each is a `spot` map object named "datagutt-<place>". */
 export type Place = "desk" | "bed" | "fjord" | "square" | "pier";

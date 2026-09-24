@@ -53,9 +53,11 @@ Goal: shared presets, and the three packages with the fewest ties to Fjord Town.
       (The games and a registry of the built-ins moved. The app's registry is typed by its
       id list, so a missing game fails typecheck. `ArcadeScreen` needs the runtime's input
       types, so it moves in K5.1. Both blocks cabinets still record under `blocks`.)
-- [ ] **K2.4** `@datagutt/kai-live`: the Lanyard client, the WorldState types (from
+- [x] **K2.4** `@datagutt/kai-live`: the Lanyard client, the WorldState types (from
       `content/live.ts`), the MET weather fetcher with the fallback place as a parameter.
-      *Done when* the weather and presence e2e pass.
+      *Done when* the weather and presence e2e pass. (`fetchWeather` takes the place and
+      the User-Agent; the app's `lib/weather.ts` keeps the `'use cache'` wrapper until
+      K6.1. The WorldState parser takes the game's empty state.)
 
 ## K3: world generation and the asset pipeline
 

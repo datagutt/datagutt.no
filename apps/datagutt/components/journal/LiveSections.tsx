@@ -1,4 +1,4 @@
-import type { ContributionDay } from "@/content/live";
+import type { ContributionDay } from "@datagutt/kai-live";
 import { placePresenting } from "@/content/places";
 import { getWorldState } from "@/lib/world-state";
 import { Section } from "./Section";

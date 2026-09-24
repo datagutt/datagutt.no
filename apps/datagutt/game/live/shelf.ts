@@ -1,6 +1,6 @@
 // The library's featured shelf (M3.11): one book spine per pinned repo, in the repo's
 // language colour, standing on the shelf with a little variety in height and width.
-import type { PinnedRepo } from "../../content/live";
+import type { PinnedRepo } from "@datagutt/kai-live";
 
 export type Spine = { x: number; y: number; w: number; h: number; color: number; edge: number };
 

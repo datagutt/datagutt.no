@@ -15,6 +15,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@datagutt/kai-arcade": "workspace:*",
+        "@datagutt/kai-live": "workspace:*",
         "@datagutt/kai-net": "workspace:*",
         "@vercel/functions": "^3.7.3",
         "babel-plugin-react-compiler": "1.0.0",
@@ -61,6 +62,22 @@
         "@datagutt/kai-eslint-config": "workspace:*",
         "@datagutt/kai-tsconfig": "workspace:*",
         "@datagutt/kai-vitest-config": "workspace:*",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
+      },
+    },
+    "packages/kai-live": {
+      "name": "@datagutt/kai-live",
+      "version": "0.0.0",
+      "dependencies": {
+        "@datagutt/kai-net": "workspace:*",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "@types/node": "^24.13.6",
         "eslint": "^9",
         "typescript": "^5.9.3",
         "vitest": "^5",
@@ -148,6 +165,8 @@
     "@datagutt/kai-arcade": ["@datagutt/kai-arcade@workspace:packages/kai-arcade"],
 
     "@datagutt/kai-eslint-config": ["@datagutt/kai-eslint-config@workspace:tooling/eslint-config"],
+
+    "@datagutt/kai-live": ["@datagutt/kai-live@workspace:packages/kai-live"],
 
     "@datagutt/kai-net": ["@datagutt/kai-net@workspace:packages/kai-net"],
 

@@ -1,6 +1,6 @@
 // Ola's field from the contribution calendar (docs/game/PLAN.md M3.11): columns are
 // weeks (oldest on the left), rows are weekdays (Sunday on top), like GitHub's grid.
-import type { ContributionDay } from "../../content/live";
+import type { ContributionDay } from "@datagutt/kai-live";
 
 export type Level = 0 | 1 | 2 | 3 | 4;
 

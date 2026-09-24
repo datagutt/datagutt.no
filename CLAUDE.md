@@ -54,7 +54,7 @@ Maps are generated, not drawn: `world/gen/maps/*.ts` build each map from LimeZu 
 
 ### Data Fetching (lib/github.ts)
 
-Three server-side functions, cached with `'use cache'`: an hour on success, minutes after a failure (a failure is logged as `[github] … failed`). `lib/world-state.ts` combines them into the game's live payload, embedded in `/` as `<script id="world-state">`, and the Journal renders the same data. Types live in `content/live.ts`:
+Three server-side functions, cached with `'use cache'`: an hour on success, minutes after a failure (a failure is logged as `[github] … failed`). `lib/world-state.ts` combines them into the game's live payload, embedded in `/` as `<script id="world-state">`, and the Journal renders the same data. Types live in `@datagutt/kai-live`; `content/live.ts` holds the site's defaults (its Discord user, Oslo as the fallback place):
 
 - `getPinnedRepos()` — Scrapes GitHub profile HTML for pinned repos
 - `getGitHubStats()` — GitHub REST API for user stats + total stars
@@ -72,9 +72,9 @@ All copy lives in `content/`: `profile.ts`, `socials.ts`, `projects.ts` (slug id
 
 ### Live systems (game)
 
-- **Lanyard:** `game/net/lanyard.ts` is a plain WebSocket client for `wss://api.lanyard.rest/socket`. Thomas's presence drives the live datagutt NPC (`game/live/datagutt.ts`, `game/entities/LiveThomas.ts`). The Discord id comes from `NEXT_PUBLIC_DISCORD_ID` or `profile.discordId` (`lib/lanyard.ts`) and reaches the game through the WorldState payload. Lanyard only tracks members of its Discord server (`discord.gg/lanyard`).
+- **Lanyard:** `@datagutt/kai-live` has a plain WebSocket client for `wss://api.lanyard.rest/socket`. Thomas's presence drives the live datagutt NPC (`game/live/datagutt.ts`, `game/entities/LiveThomas.ts`). The Discord id comes from `NEXT_PUBLIC_DISCORD_ID` or `profile.discordId` (`lib/lanyard.ts`) and reaches the game through the WorldState payload. Lanyard only tracks members of its Discord server (`discord.gg/lanyard`).
 - **Other visitors:** a WebSocket at `/api/world/ws` with one room per map (`@datagutt/kai-net`: `rooms.ts`, protocol in `protocol.ts`). Visitors see each other as tinted ghosts and send emotes. Fan-out is single-instance: two visitors on different Fluid instances don't see each other (upgrade path: Redis pub/sub or a Durable Object per room). The route uses `experimental_upgradeWebSocket` from `@vercel/functions` (needs the `ws` package) and calls `connection()` before upgrading, because `cacheComponents` is on. `next dev` and `next start` can't upgrade; `bun run game:dev` serves the same rooms locally (`@datagutt/kai-net/node`).
-- **Weather:** `lib/weather.ts` reads the visitor's current weather from MET Norway (Locationforecast; their terms require the identifying User-Agent), placed by Vercel's `x-vercel-ip-city`/`-latitude`/`-longitude` headers and falling back to Oslo. It is cached per place (coordinates to one decimal). `components/game/WorldStateScript.tsx` reads the headers, so it renders per request inside the page's Suspense boundary while the title stays prerendered; the GitHub part (`lib/world-state.ts`) keeps its own hourly cache. `game/world/weather.ts` turns it into the sky and the ambience; `game/fx/Weather.ts` draws it. `?debug&weather=<kind>` overrides it.
+- **Weather:** `@datagutt/kai-live` reads the visitor's current weather from MET Norway and `lib/weather.ts` caches it (Locationforecast; their terms require the identifying User-Agent), placed by Vercel's `x-vercel-ip-city`/`-latitude`/`-longitude` headers and falling back to Oslo. It is cached per place (coordinates to one decimal). `components/game/WorldStateScript.tsx` reads the headers, so it renders per request inside the page's Suspense boundary while the title stays prerendered; the GitHub part (`lib/world-state.ts`) keeps its own hourly cache. `game/world/weather.ts` turns it into the sky and the ambience; `game/fx/Weather.ts` draws it. `?debug&weather=<kind>` overrides it.
 - **Kill switch:** `localStorage.setItem("rx_off", "1")` turns other visitors off entirely; the in-game Settings has "Other visitors: On/Off" too.
 
 #### Environment

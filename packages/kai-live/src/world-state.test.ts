@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { CALM_WEATHER, EMPTY_WORLD_STATE } from "../../content/live";
-import { parseWorldState } from "./worldState";
+import { emptyWorldState, parseWorldState as parse, type WorldState } from "./world-state.ts";
+
+const EMPTY_WORLD_STATE = emptyWorldState({ discordId: "1", place: "Oslo" });
+const CALM_WEATHER = EMPTY_WORLD_STATE.weather;
+const parseWorldState = (json: string | null, empty: WorldState = EMPTY_WORLD_STATE) => parse(json, empty);
 
 describe("parseWorldState", () => {
 	it("reads a full payload", () => {

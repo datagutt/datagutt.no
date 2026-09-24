@@ -4,8 +4,8 @@ import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
-import type { WorldState } from "../content/live";
-import { readWorldState } from "./live/worldState";
+import { readWorldState, type WorldState } from "@datagutt/kai-live";
+import { EMPTY_WORLD_STATE } from "../content/live";
 import { browserStorage, clearSave, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
@@ -13,7 +13,7 @@ import type { Facing } from "./world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
 import { resolveSeason, type Season } from "./world/season";
 import { clock, monthNow } from "./world/dayNight";
-import { LanyardClient, PresenceFeed } from "./net/lanyard";
+import { LanyardClient, PresenceFeed } from "@datagutt/kai-live";
 import { MOCK_PRESENCES } from "./live/datagutt";
 import { GhostClient, ghostsDisabled, worldSocketUrl } from "@datagutt/kai-net/client";
 import { Music } from "./audio/Music";
@@ -119,7 +119,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		onReady: options.onReady ?? (() => {}),
 		startRequested,
 		start: target,
-		world: readWorldState(),
+		world: readWorldState(EMPTY_WORLD_STATE),
 		season: resolveSeason(window.location.search),
 		presence: new PresenceFeed(),
 		finale: false,

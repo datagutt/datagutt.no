@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
-import type { WorldState } from "@/content/live";
+import type { WorldState } from "@datagutt/kai-live";
 import { getContributions, getGitHubStats, getPinnedRepos } from "./github";
 import { getDiscordId } from "./lanyard";
 

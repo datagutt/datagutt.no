@@ -1,8 +1,7 @@
-// Thomas's Discord presence from Lanyard (docs/game/PLAN.md M4.1), which drives the live
-// datagutt NPC. A plain WebSocket: the server says hello with a heartbeat interval, we
-// subscribe to one user, then get the full state once and every change after it.
-// Lanyard only tracks users who are in its Discord server; for anyone else the feed
-// stays empty and the NPC keeps its default place.
+// A Discord user's presence from Lanyard, which can drive a live NPC. A plain WebSocket:
+// the server says hello with a heartbeat interval, we subscribe to one user, then get the
+// full state once and every change after it. Lanyard only tracks users who are in its
+// Discord server; for anyone else the feed stays empty.
 
 import { browserSocket, Reconnecting, type SocketLike } from "@datagutt/kai-net/reconnect";
 
