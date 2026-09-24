@@ -2,7 +2,12 @@
 === ferryman ===
 {
 - ferryman > 1:
-    {~The ferry's late again. It's always late.|The fjord's calm today.|Back for more directions?|I've been rowing this route for thirty years. The ferry only has an engine for show.}
+    // The mountain trail (docs/game/PLAN.md B6): Arne keeps the player posted.
+    {unlocked("passport"):
+        Heard the news? The council cleared the rockfall. The mountain trail's open again: up past the town hall, all the way to the hytte.
+    - else:
+        {~The ferry's late again. It's always late.|The fjord's calm today.|Back for more directions?|I've been rowing this route for thirty years. The ferry only has an engine for show.|The mountain trail's still shut. Rockfall. They say the council clears it once someone's filled a whole passport.}
+    }
 - ferryman_intro:
     Still here? The town's that way. Mind the passport, it's the only one I had.
 - else:
@@ -41,6 +46,7 @@
 === ferryman_intro ===
 Hei! Welcome to Fjord Town. # nod
 Here's your passport. Get it stamped by the folks who live here, one stamp a house.
+Fill it, and who knows: maybe the council finally clears the rockfall on the mountain trail.
 Walk with the arrow keys or WASD, or tap where you want to go. Press E, or tap someone, to talk.
 And if you'd rather read than walk, the Journal in the menu has it all in plain text.
 -> END

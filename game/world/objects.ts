@@ -3,6 +3,7 @@
 // Coordinates are in tiles.
 
 import { ARCADE_IDS, type ArcadeId } from "../arcade/ids.ts";
+import { UNLOCK_IDS, type UnlockId } from "../progress/unlockIds.ts";
 
 export type Facing = "right" | "up" | "left" | "down";
 
@@ -18,6 +19,11 @@ export type MapObject =
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
 	/** An arcade cabinet: interact to play `game` (game/arcade/). */
 	| { type: "arcade"; x: number; y: number; game: ArcadeId }
+	/**
+	 * A way that stays shut until `unlock` holds (game/progress/unlocks.ts): the w×h
+	 * rectangle's barriers block it and read `text`; once open, they are cleared away.
+	 */
+	| { type: "gate"; id: string; x: number; y: number; w: number; h: number; unlock: UnlockId; text: string }
 	/**
 	 * A named place an NPC who moves between maps can be, facing a way: the live datagutt
 	 * NPC goes to the spot his presence picks (game/live/datagutt.ts).
@@ -101,6 +107,11 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			if (!ARCADE_IDS.includes(game as ArcadeId)) throw new Error(`arcade object ${obj.id} has unknown game "${game}"`);
 			return { type: "arcade", x, y, game: game as ArcadeId };
 		}
+		case "gate": {
+			const unlock = str("unlock");
+			if (!UNLOCK_IDS.includes(unlock as UnlockId)) throw new Error(`gate object ${obj.id} has unknown unlock "${unlock}"`);
+			return { type: "gate", id: obj.name || str("id"), x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize), unlock: unlock as UnlockId, text: str("text") };
+		}
 		case "spot":
 			return { type: "spot", id: obj.name || str("id"), x, y, facing: facing() };
 		case "npc":
@@ -136,7 +147,7 @@ export function toTiledObject(obj: MapObject, id: number, tileSize: number): Til
 	const objectName = "id" in rest ? rest.id : "";
 	// Areas (crops, books, grown signs) keep their size as the Tiled object's width and height.
 	const area =
-		type === "crops" || type === "books" || type === "area" || (type === "sign" && "w" in rest && rest.w !== undefined)
+		type === "crops" || type === "books" || type === "area" || type === "gate" || (type === "sign" && "w" in rest && rest.w !== undefined)
 			? (rest as { w: number; h: number })
 			: null;
 	const properties: TiledProperty[] = Object.entries(rest)

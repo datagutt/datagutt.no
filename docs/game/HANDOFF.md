@@ -4,6 +4,16 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **B6 mountain trail, done; waiting on the user's look.** A path north between the
+  town hall and the radio hill, shut by worksite barriers and a rockfall inside a `gate`
+  map object (`unlock: "passport"`). A shut gate reads like a sign; an open one has its
+  below/above tiles cleared and its collision opened when the map loads, so keep a
+  gate's rectangle tight to its barriers (it would clear anything else there). The
+  validator treats gate cells as passable. Unlock conditions live in
+  `game/progress/unlocks.ts` (names in `unlockIds.ts`, for the Node build); dialogue asks
+  with `unlocked("passport")`: Arne and Randi mention the closed trail and later the open
+  one, and Thomas's contact line after the finale points up the trail. The `mountain`
+  map (outdoor) has the locked hytte, a lookout bench and rocks; later quests start there.
 - **B1 arcade and B2 (screensaver, stargazing), done; waiting on the user's look.** `game/arcade/`: the old site's five
   canvases as small games on one 160×120 screen (`ArcadeGame`: step, draw; no Phaser).
   Falling blocks is really playable (the old autoplay is its attract mode); Life,

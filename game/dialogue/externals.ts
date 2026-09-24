@@ -9,9 +9,10 @@ import { profile } from "../../content/profile.ts";
 import { projects } from "../../content/projects.ts";
 import { skillCategories } from "../../content/skills.ts";
 import { socials } from "../../content/socials.ts";
+import { UNLOCK_IDS, type UnlockId } from "../progress/unlockIds.ts";
 
 /** What kind of value an external's first argument is, so literal ids can be checked. */
-export type ArgKind = "project" | "job" | "social" | "profileField" | "stat" | "skillCategory" | "place" | "index" | "none";
+export type ArgKind = "project" | "job" | "social" | "profileField" | "stat" | "skillCategory" | "place" | "unlock" | "index" | "none";
 
 const PROFILE_FIELDS = ["name", "firstName", "handle", "role", "tagline", "location", "email", "contactPitch"] as const;
 const STAT_FIELDS = ["public_repos", "followers", "total_stars", "years_coding"] as const;
@@ -40,6 +41,7 @@ export const EXTERNALS = {
 	stat: { params: ["name"], arg: "stat", doc: "GitHub stat (live): public_repos, followers, total_stars, years_coding" },
 	contributions_total: { params: [], arg: "none", doc: "Contributions in the last year (live)" },
 	has_stamp: { params: ["place"], arg: "place", doc: "Whether the player has that place's passport stamp" },
+	unlocked: { params: ["name"], arg: "unlock", doc: "Whether a locked way is open, e.g. unlocked(\"passport\") once every stamp is in (game/progress/unlocks.ts)" },
 	lanyard_activity: { params: [], arg: "none", doc: "What Thomas is up to right now in his own words, or \"\" (live, game/live/datagutt.ts)" },
 } as const satisfies Record<string, ExternalSpec>;
 
@@ -62,6 +64,8 @@ export function validIds(kind: ArgKind): readonly string[] | null {
 			return skillCategories.map((c) => c.name);
 		case "place":
 			return places.map((p) => p.id);
+		case "unlock":
+			return UNLOCK_IDS;
 		case "index":
 		case "none":
 			return null;
@@ -81,6 +85,7 @@ type Bindable = { BindExternalFunction(name: string, fn: (...args: never[]) => u
 export type ExternalContext = {
 	world: WorldState;
 	hasStamp(place: string): boolean;
+	isUnlocked(name: UnlockId): boolean;
 	lanyardActivity(): string;
 };
 
@@ -123,6 +128,7 @@ export function bindExternals(story: Bindable, ctx: ExternalContext): void {
 		stat: (name: string) => ctx.world.stats[name as (typeof STAT_FIELDS)[number]] ?? 0,
 		contributions_total: () => ctx.world.contributions.reduce((sum, d) => sum + d.count, 0),
 		has_stamp: (place: string) => ctx.hasStamp(place),
+		unlocked: (name: string) => ctx.isUnlocked(name as UnlockId),
 		lanyard_activity: () => ctx.lanyardActivity(),
 	};
 	for (const [name, fn] of Object.entries(impl)) story.BindExternalFunction(name, fn, true);

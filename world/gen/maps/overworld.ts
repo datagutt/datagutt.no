@@ -51,6 +51,7 @@ export function overworld(): MapCanvas {
 		.path([[41, 56], [41, 59]]) // post office to the beach
 		.path([[51, 54], [57, 54]]) // the youth club: from the harbour road round to its side steps
 		.path([[57, 52], [57, 54]])
+		.path([[61, 0], [61, 28]]) // the mountain trail, north between the town hall and the radio hill
 		.path([[4, 44], [4, 60]]); // down the west side to the boathouse beach
 	const square = new Region(W, H).rect(38, 29, 25, 13);
 	// The farm field along the top of the farm: 26 weeks × 7 days inside the fence, laid out
@@ -80,6 +81,21 @@ export function overworld(): MapCanvas {
 	const libraryDoor = building(c, "library", 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	const hallDoor = building(c, "townHall", 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
+	// The mountain trail (B6): barriers and a rockfall shut it until the passport is full;
+	// then the game clears the gate and the way north leads up to the hytte.
+	c.stamp(PREFABS.barrierLeft, 60, 7).stamp(PREFABS.barrierMid, 61, 7).stamp(PREFABS.barrierRight, 62, 7);
+	c.stamp(PREFABS.rockBig, 61, 5).stamp(PREFABS.rock, 60, 4).stamp(PREFABS.rockSmall, 62, 5).stamp(PREFABS.rockLong, 61, 3);
+	c.add({
+		type: "gate",
+		id: "trail",
+		x: 60,
+		y: 3,
+		w: 3,
+		h: 6,
+		unlock: "passport",
+		text: "* TRAIL CLOSED. Rockfall on the mountain path. By order of the council, until further notice. Someone has added in pencil: \"ask Arne\".",
+	});
+	c.add({ type: "door", x: 61, y: 0, toMap: "mountain", toSpawn: "trailhead" });
 	// A bench at the hill's edge, binoculars left on it: the stars at night (B2).
 	c.stamp(PREFABS.bench, 69, 12).stamp(PREFABS.binoculars, 70, 12);
 	c.add({ type: "arcade", x: 70, y: 13, game: "stargazing" });
@@ -165,6 +181,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "radio_hut_door", ...hutDoor, facing: "down" });
 	c.add({ type: "spawn", id: "town_hall_door", ...hallDoor, facing: "down" });
 	c.add({ type: "spawn", id: "youth_club_door", ...clubDoor, facing: "down" });
+	c.add({ type: "spawn", id: "trail", x: 61, y: 2, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");

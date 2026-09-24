@@ -72,5 +72,6 @@ Now look up. That's the best part of living this far north.
 
 === datagutt_contact ===
 {profile("contactPitch")} # link: email
+Oh, and the council's cleared the rockfall. The trail up the mountain is open now, past the town hall. The view from the hytte is worth the climb.
 See you around. The ferry's always late, so there's no rush.
 -> END

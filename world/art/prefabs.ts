@@ -99,6 +99,17 @@ export const PREFABS = {
 	lamp: { sheet: "props", col: 20, row: 0, w: 1, h: 4, aboveRows: 3 },
 	parkLamp: { sheet: "props", col: 1, row: 28, w: 3, h: 4, aboveRows: 3, collision: [".#."] },
 	bench: { sheet: "props", col: 21, row: 0, w: 2, h: 2, aboveRows: 0 },
+	/** The hytte up the mountain trail (B6): a red log cabin, the gym's sister. */
+	hytte: footprint(single("houses", "Post_Apocalyptic_House_2", { aboveRows: 2, door: [7, 8] })),
+	/** Red-and-white worksite barriers, one post each: left end, middle, right end. */
+	barrierLeft: single("worksite", "Fence_2_1"),
+	barrierMid: single("worksite", "Fence_2_2"),
+	barrierRight: single("worksite", "Fence_2_5"),
+	/** Loose rocks: the rockfall on the trail, and scatter up the mountain. */
+	rockSmall: single("camping", "Rock_2"),
+	rock: single("camping", "Rock_3"),
+	rockLong: single("camping", "Rock_7"),
+	rockBig: single("camping", "Rock_8"),
 	/** A pair of binoculars, left lying about (on the radio hill's bench). */
 	binoculars: single("camping", "Binoculars_1", { collision: [] }),
 	benchLong: { sheet: "props", col: 21, row: 2, w: 3, h: 2, aboveRows: 0 },

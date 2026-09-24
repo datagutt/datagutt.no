@@ -40,10 +40,13 @@ import { Intro } from "./Intro";
 import { CreditsRoll } from "../ui/CreditsRoll";
 import { ArcadeScreen } from "../ui/ArcadeScreen";
 import { makeArcade } from "../arcade";
+import { isUnlocked } from "../progress/unlocks";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
 import { applySeason } from "../world/season";
+import { resolveWeather, weatherSound } from "../world/weather";
+import { CALM_WEATHER, type WeatherNow } from "../../content/live";
 import { statusLines } from "../live/datagutt";
 
 type Door = Extract<MapObject, { type: "door" }>;
@@ -66,6 +69,8 @@ export class WorldScene extends Phaser.Scene {
 	private thomas!: LiveThomas;
 	private dayNight!: DayNight;
 	private weather: Weather | null = null;
+	/** Oslo's weather, or the debug override; it rains on indoor maps too, for the ambience. */
+	private weatherNow: WeatherNow = CALM_WEATHER;
 	private water: Water | null = null;
 	private aurora: Aurora | null = null;
 	private prompt!: Prompt;
@@ -173,6 +178,7 @@ export class WorldScene extends Phaser.Scene {
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
 		const lights: LightObject[] = [];
 		const signs: Extract<MapObject, { type: "sign" }>[] = [];
+		const gates: Extract<MapObject, { type: "gate" }>[] = [];
 		for (const raw of rawObjects) {
 			const obj = parseMapObject(raw, TILE);
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
@@ -181,6 +187,7 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") signs.push(obj);
 			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
+			if (obj.type === "gate") gates.push(obj);
 			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
 			if (obj.type === "books") this.stockShelf(obj);
@@ -188,6 +195,19 @@ export class WorldScene extends Phaser.Scene {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
 				this.grid.occupy(obj.x, obj.y, obj.id);
+			}
+		}
+		// A shut gate reads like a sign; an open one clears its barriers off the map.
+		for (const gate of gates) {
+			if (!isUnlocked(gate.unlock, this.progress)) {
+				signs.push({ type: "sign", x: gate.x, y: gate.y, w: gate.w, h: gate.h, text: gate.text });
+				continue;
+			}
+			for (let y = gate.y; y < gate.y + gate.h; y++) {
+				for (let x = gate.x; x < gate.x + gate.w; x++) {
+					for (const name of ["below", "above"]) layers.get(name)?.removeTileAt(x, y);
+					this.grid.setBlocked(x, y, false);
+				}
 			}
 		}
 		// A sign reads from any solid tile of the thing it describes (world/gen/signs.ts).
@@ -205,8 +225,11 @@ export class WorldScene extends Phaser.Scene {
 		const hours = this.services.finale ? () => 23 : this.services.hours;
 		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, hours, this.services.month);
 		const low = this.quality === "low";
-		this.weather = outdoors ? new Weather(this, this.services.season, this.progress.reducedMotion, low) : null;
-		this.aurora = outdoors && !low ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
+		// The finale keeps its clear night sky whatever the weather.
+		this.weatherNow = this.services.finale ? CALM_WEATHER : resolveWeather(window.location.search, this.services.world.weather);
+		this.weather = outdoors ? new Weather(this, this.services.season, this.weatherNow, this.progress.reducedMotion, low) : null;
+		const clearSky = this.weatherNow.kind === "clear";
+		this.aurora = outdoors && !low && clearSky ? Aurora.create(this, this.services.season, this.progress.reducedMotion) : null;
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.aurora?.destroy());
 		this.water = low ? null : Water.create(this, map.getLayer("water") ?? undefined, () => this.dayNight.current, () => this.aurora?.strength ?? 0);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.water?.destroy());
@@ -476,7 +499,15 @@ export class WorldScene extends Phaser.Scene {
 		const at = (field: Uint16Array) => (field[y * this.mapWidth + x] === FAR ? Infinity : field[y * this.mapWidth + x]);
 		const fire = Math.min(Infinity, ...s.fires.map((f) => Math.abs(f.x - x) + Math.abs(f.y - y)));
 		this.ambience.set(
-			ambienceMix({ outdoors: s.outdoors, water: at(s.water), forest: at(s.forest), fire, dark: this.dayNight.current.dark, season: this.services.season }),
+			ambienceMix({
+				outdoors: s.outdoors,
+				water: at(s.water),
+				forest: at(s.forest),
+				fire,
+				dark: this.dayNight.current.dark,
+				season: this.services.season,
+				weather: weatherSound(this.weatherNow),
+			}),
 		);
 		const { muted, music } = this.progress.settings;
 		const moment = this.credits
@@ -562,6 +593,7 @@ export class WorldScene extends Phaser.Scene {
 		(window as unknown as { __fjord?: object }).__fjord = {
 			map: this.target.map,
 			season: this.services.season,
+			weather: this.weatherNow.kind,
 			daylight: this.dayNight.current,
 			quality: this.quality,
 			ambience: this.ambience.levels,

@@ -395,7 +395,7 @@ Goal: ship v1 to production.
       `game/audio/playlist.ts` picks, `Music.ts` plays, `scripts/assets/music.mjs` builds.
       Nobody has listened to the joins yet.)
 - [x] **B5** Buy Modern Office if interiors need more variety. *(Bought 2026-09-23; used by the office.)*
-- [ ] **B6** Beyond the town: a mountain trail north out of the forest to a small map
+- [x] **B6** Beyond the town: a mountain trail north out of the forest to a small map
       with a hytte and a view over the fjord (the user's choice). A wooden barrier and a
       sign ("Trail closed: rockfall") shut it until the passport is full; then the barrier
       is gone. Build the lock as a general rule (a condition on a door or path, read from
@@ -404,6 +404,9 @@ Goal: ship v1 to production.
       is full the news spreads (a line from Arne or whoever is near, and the finale's
       contact prompt points up the trail). *Done when* the way stays shut with an in-world
       reason before the last stamp, opens after it, and the game says so.
+      (Built: the `gate` map object and `game/progress/unlocks.ts`; the trail runs north
+      between the town hall and the radio hill to `mountain`. Arne, Randi and Thomas's
+      contact lines tell the player, through the `unlocked()` dialogue function.)
 
 ## v2 backlog
 

@@ -27,7 +27,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		cellsOf(o, walkable).some(([x, y]) => NEIGHBOURS.some(([dx, dy]) => walkable(x + dx, y + dy) && !occupied.has(`${x + dx},${y + dy}`)));
 
 	for (const o of objects) {
-		if (o.type === "light" || o.type === "crops" || o.type === "books" || o.type === "area") continue; // areas and lights overlap other things
+		if (o.type === "light" || o.type === "crops" || o.type === "books" || o.type === "area" || o.type === "gate") continue; // areas and lights overlap other things
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const key = `${o.x},${o.y}`;
 		const other = at.get(key);
@@ -42,7 +42,10 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		if ((o.type === "sign" || o.type === "arcade") && cellsOf(o, walkable).every(([x, y]) => walkable(x, y))) problems.push(`${where} is on open floor; put it on the thing it describes`);
 		if (o.type === "door" && !walkable(o.x, o.y + 1)) problems.push(`${where} has a blocked tile in front of it`);
 	}
-	problems.push(...checkReachable(id, tmj, objects, walkable, occupied));
+	// A gate opens one day, so what lies behind it counts as reachable.
+	const gates = objects.filter((o): o is Extract<MapObject, { type: "gate" }> => o.type === "gate");
+	const passable = (x: number, y: number) => walkable(x, y) || gates.some((g) => x >= g.x && y >= g.y && x < g.x + g.w && y < g.y + g.h);
+	problems.push(...checkReachable(id, tmj, objects, passable, occupied));
 	return problems;
 }
 
@@ -89,7 +92,7 @@ function checkReachable(
 		NEIGHBOURS.some(([dx, dy]) => [2, 3].some((d) => reached(o.x + dx * d, o.y + dy * d) && !walkable(o.x + dx, o.y + dy)));
 	const problems: string[] = [];
 	for (const o of objects) {
-		if (o.type === "light" || o.type === "crops" || o.type === "books" || o.type === "area") continue;
+		if (o.type === "light" || o.type === "crops" || o.type === "books" || o.type === "area" || o.type === "gate") continue;
 		const where = `${id}: ${o.type} ${"id" in o ? `"${o.id}" ` : ""}at (${o.x}, ${o.y})`;
 		const ok =
 			o.type === "door" || o.type === "spawn"

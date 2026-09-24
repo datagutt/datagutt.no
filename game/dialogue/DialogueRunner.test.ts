@@ -22,7 +22,7 @@ beforeAll(() => {
 	json = new Compiler(main, new CompilerOptions("main.ink", [], false, null, fileHandler)).Compile().ToJson()!;
 });
 
-const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, lanyardActivity: () => "offline" };
+const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, isUnlocked: () => false, lanyardActivity: () => "offline" };
 
 function read(runner: DialogueRunner): { lines: string[]; last: Beat } {
 	const out: string[] = [];
