@@ -8,6 +8,8 @@ import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
 import { building, forest, meadow, sign } from "@datagutt/kai-limezu/features";
 import { Region } from "@datagutt/kai-worldgen/layout";
 import { mapText } from "../text.ts";
+import { spriteObject } from "@datagutt/kai/world/objects";
+import { glow, GLOWS } from "@datagutt/kai-limezu/lighting";
 
 const W = 40;
 const H = 30;
@@ -34,6 +36,9 @@ export function mountain(): MapCanvas {
 
 	// The lookout: a bench facing out over the fjord, far below.
 	c.stamp(PREFABS.bench, 32, 18);
+	// A campfire by the bench, lit day and night; it throws its light after dark.
+	c.block(30, 17).add(spriteObject.at(30, 16, { sprite: "campfire" })).add({ ...glow(30, 17, GLOWS.fire), when: "night" });
+	c.add(spriteObject.at(22, 21, { sprite: "butterfly", seasons: "spring,summer", when: "day" }));
 	sign(c, 34, 19, say("lookout"), "signpost");
 
 	// Rocks from the old rockfall, pushed off the path.

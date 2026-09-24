@@ -4,7 +4,7 @@
 //   x:  0-4 forest | 5-34 farm, datagutt's street, boathouse | 35-62 library, town hall,
 //       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
-import type { Facing, MapObject } from "@datagutt/kai/world/objects";
+import { spriteObject, type Facing, type MapObject } from "@datagutt/kai/world/objects";
 import { arcadeObject } from "@datagutt/kai-arcade/object";
 import { cropsObject } from "@datagutt/kai-live/github/objects";
 import { catObject } from "../../../game/plugins/cat.object.ts";
@@ -82,7 +82,7 @@ export function overworld(): MapCanvas {
 
 	// --- Buildings -------------------------------------------------------------------------
 	const farmDoor = building(c, PREFABS.farmhouse, 5, 14, { link: { toMap: "farmhouse", toSpawn: "entrance" } });
-	c.stamp(PREFABS.windmill, 23, 15);
+	c.stamp(PREFABS.windmillTower, 23, 15).add(spriteObject.at(23, 15, { sprite: "windmill-blades", dy: 21, layer: "above" }));
 	const libraryDoor = building(c, PREFABS.library, 29, 5, { addDoor: true, link: { toMap: "library", toSpawn: "entrance" } });
 	const hallDoor = building(c, PREFABS.townHall, 42, 4, { addDoor: true, link: { toMap: "town-hall", toSpawn: "entrance" } });
 	c.stamp(PREFABS.radioTower, 79, 5);
@@ -122,14 +122,17 @@ export function overworld(): MapCanvas {
 	const pierTop = shore[HARBOUR_X] - 1;
 	const pierEnd = pierTop + 8;
 	pier(c, HARBOUR_X, pierTop, pierEnd);
-	c.stamp(PREFABS.ferry, HARBOUR_X + 3, pierEnd - 4);
-	// The intro sails it in (game/scenes/Intro.ts); it needs to know which tiles it is.
+	// The boats bob as sprites (kai.json), drawn under whoever stands on their decks.
+	c.reserve(PREFABS.ferry, HARBOUR_X + 3, pierEnd - 4).add(spriteObject.at(HARBOUR_X + 3, pierEnd - 4, { sprite: "ferry", layer: "below" }));
+	// The intro sails it in (game/plugins/Intro.ts); it needs to know which tiles and sprites it is.
 	c.add({ type: "area", id: "ferry", x: HARBOUR_X + 3, y: pierEnd - 4, w: PREFABS.ferry.w, h: PREFABS.ferry.h });
 	// Moored with its rope end (right) at the boathouse pier.
-	c.stamp(PREFABS.rowboat, 18, Math.max(...shore.slice(18, 22)));
+	const rowboatY = Math.max(...shore.slice(18, 22));
+	c.reserve(PREFABS.rowboat, 18, rowboatY).add(spriteObject.at(18, rowboatY, { sprite: "rowboat", layer: "below" }));
 
 	// --- Town furniture --------------------------------------------------------------------
-	c.stamp(PREFABS.bigFountain, 48, 32);
+	// Running: the sprite's water plays over the fountain's footprint.
+	c.reserve(PREFABS.bigFountain, 48, 32).add(spriteObject.at(48, 32, { sprite: "fountain" }));
 	c.stamp(PREFABS.benchLong, 43, 33).stamp(PREFABS.benchLong, 54, 33);
 	// Lamps round the square and along the south verge of the main road. They light up
 	// after dark from their heads (the prefab's top tile).
@@ -211,5 +214,21 @@ export function overworld(): MapCanvas {
 	sign(c, 78, 13, say("radio-tower"));
 	c.add(npc("ferryman", HARBOUR_X + 2, pierEnd - 1, "left"));
 	c.add(npc("farmer", 16, 12, "down"));
+
+	// --- Life ----------------------------------------------------------------------------------
+	// Idle loops that ask nothing of the player. Birds keep to the daylight; butterflies
+	// only come out in the warm half of the year. Gulls stay through the Norwegian winter.
+	const life: [string, number, number, { seasons?: string; when?: string }][] = [
+		["pigeon", 51, 31, { when: "day" }],
+		["pigeon", 46, 37, { when: "day" }],
+		["pigeon", 53, 38, { when: "day" }],
+		["seagull-left", 40, 62, { when: "day" }],
+		["seagull-right", 60, 62, { when: "day" }],
+		["buoy", 41, 70, {}],
+		["buoy", 62, 73, {}],
+		["butterfly", 46, 57, { seasons: "spring,summer", when: "day" }],
+		["butterfly", 39, 58, { seasons: "spring,summer", when: "day" }],
+	];
+	for (const [sprite, x, y, options] of life) c.add(spriteObject.at(x, y, { sprite, ...options }));
 	return c;
 }

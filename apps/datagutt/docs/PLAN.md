@@ -431,3 +431,14 @@ Goal: ship v1 to production.
       faintly indoors. `?debug&weather=<kind>`.)
       (Since 2026-09-24: the visitor's own weather, by Vercel's IP location, Oslo as the fallback.)
 - [ ] **C3** Multi-instance ghosts: Upstash Redis pub/sub or Durable Objects.
+- [x] **C4** Animation: the town moves. LimeZu ships animated strips for much of what
+      the maps use. *Done when* the looping ones play in place of their static art and
+      some ambient life fills places the maps already have, by season and daylight.
+      (Built on the engine's `sprite` map object and kai.json `sprites`: the windmill's
+      blades, the ferry and the rowboat bobbing, the fountain running, the fireplace,
+      the treadmill and the escalator; pigeons, gulls, buoys, butterflies in spring and
+      summer, and a campfire at the lookout. See ART.md, "Animations".)
+- [ ] **C5** One-shot animations: doors that open as the player goes through (post
+      office, farmhouse, gym cabin, hytte, kiosk match LimeZu's door strips exactly), the
+      kiosk fridge and the farm oven. Needs a trigger on the sprite, not a loop.
+

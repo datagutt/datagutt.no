@@ -20,6 +20,8 @@ type KaiState = {
 	intro: boolean;
 	credits: boolean;
 	finale: boolean;
+	/** Animated sprites on screen, by name. */
+	sprites: string[];
 };
 
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __kai?: KaiState }).__kai ?? null);
@@ -43,13 +45,13 @@ async function holdKey(page: Page, key: string, ms: number) {
  * `presence` fixes Thomas's Discord presence (content/presence.json mocks), so
  * where he stands doesn't depend on the real Lanyard feed.
  */
-async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding", stamps: string[] = []) {
-	await page.goto(`/?debug&presence=${presence}`);
+async function continueAt(page: Page, at: { map: string; x: number; y: number; facing: string }, presence = "coding", stamps: string[] = [], query = "") {
+	await page.goto(`/?debug&presence=${presence}${query}`);
 	await page.evaluate(
 		([save, stamps]) => localStorage.setItem("fjordtown.save", JSON.stringify({ version: 1, ...save, stamps, flags: {}, dialogue: {}, settings: {} })),
 		[at, stamps] as const,
 	);
-	await page.goto(`/?debug&presence=${presence}`);
+	await page.goto(`/?debug&presence=${presence}${query}`);
 	await choose(page, /continue/i);
 	await expect.poll(() => state(page), { timeout: 30_000 }).toMatchObject({ map: at.map, tile: { x: at.x, y: at.y } });
 }
@@ -259,6 +261,18 @@ test.describe("world", () => {
 		await expect.poll(async () => (await state(page))?.finale, { message: JSON.stringify(await state(page)) }).toBe(false);
 		const flags = await page.evaluate(() => JSON.parse(localStorage.getItem("fjordtown.save") ?? "{}").flags);
 		expect(flags.finale).toBe(true);
+	});
+
+	test("the town's animations follow the season and the daylight", async ({ page }) => {
+		const square = { map: "town", x: 47, y: 38, facing: "down" };
+		await continueAt(page, square, "coding", [], "&season=summer&time=day");
+		const summerDay = (await state(page))?.sprites ?? [];
+		expect(summerDay).toEqual(expect.arrayContaining(["windmill-blades", "fountain", "ferry", "rowboat", "pigeon", "seagull-left", "buoy", "butterfly"]));
+
+		await continueAt(page, square, "coding", [], "&season=winter&time=night");
+		const winterNight = (await state(page))?.sprites ?? [];
+		expect(winterNight).toEqual(expect.arrayContaining(["windmill-blades", "fountain", "ferry", "buoy"]));
+		for (const daytime of ["pigeon", "seagull-left", "butterfly"]) expect(winterNight).not.toContain(daytime);
 	});
 
 	test("a full passport whose finale never finished brings it back on the next map", async ({ page }) => {

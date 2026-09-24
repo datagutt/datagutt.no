@@ -3,6 +3,7 @@
 // past mayors, public benches either side of the red carpet. The door by the stage goes
 // down to the basement: the municipal IT department, where Bjørn still keeps the servers
 // and, mostly, the printers running.
+import { spriteObject } from "@datagutt/kai/world/objects";
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
@@ -55,7 +56,7 @@ export function townHallBasement(): MapCanvas {
 	floorPatch(c, { x: 14, y: 3, w: 6, h: 3 }, FLOORS.carpetGrey);
 
 	// The escalator in the back-left corner; its second step is the door back up.
-	c.stamp(F.escalatorUp, 2, 1);
+	c.reserve(F.escalatorUp, 2, 1).add(spriteObject.at(2, 1, { sprite: "escalator", layer: "below" }));
 	c.block(3, 2, false).add({ type: "door", x: 3, y: 2, toMap: "town-hall", toSpawn: "basement" });
 	c.add({ type: "spawn", id: "stairs", x: 3, y: 6, facing: "down" });
 

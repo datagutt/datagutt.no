@@ -24,7 +24,20 @@
     "emotes": "limezu/interiors/ui_elements/UI_thinking_emotes_animation_16x16.png"
   },
   "sprites": {
-    "cat": { "file": "limezu/interiors/animated/animated_cat.png", "frameWidth": 48, "frameHeight": 16, "frames": 12 }
+    "cat": { "file": "limezu/interiors/animated/animated_cat.png", "frameWidth": 48, "frameHeight": 16, "frames": 12 },
+    "windmill-blades": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Additional_Houses_Wind_Mill_Blades_16x16.png", "frameWidth": 64, "frameHeight": 64, "frames": 4, "frameRate": 6 },
+    "ferry": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Fishing_Boat_2_right_16x16.png", "frameWidth": 96, "frameHeight": 64, "frames": 8, "frameRate": 5 },
+    "rowboat": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Boat_1_right_1_16x16.png", "frameWidth": 64, "frameHeight": 32, "frames": 8, "frameRate": 5 },
+    "fountain": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Garden_Fountain_6_16x16.png", "frameWidth": 64, "frameHeight": 80, "frames": 6, "frameRate": 8 },
+    "fireplace": { "file": "limezu/interiors/animated/animated_chimney_red.png", "frameWidth": 32, "frameHeight": 48, "frames": 3, "frameRate": 8 },
+    "treadmill": { "file": "limezu/interiors/animated/animated_treadmill.png", "frameWidth": 48, "frameHeight": 64, "frames": 3, "frameRate": 10 },
+    "escalator": { "file": "limezu/interiors/animated/animated_escalator_up.png", "frameWidth": 48, "frameHeight": 80, "frames": 6, "frameRate": 8 },
+    "seagull-left": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Seagull_Idle_Left_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 5 },
+    "seagull-right": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Seagull_Idle_Right_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 6, "frameRate": 5 },
+    "buoy": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Beach_Water_Buoy_1_16x16.png", "frameWidth": 32, "frameHeight": 32, "frames": 8, "frameRate": 5 },
+    "pigeon": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Pigeon_16x16.png", "frameWidth": 16, "frameHeight": 16, "frames": 6, "frameRate": 6 },
+    "butterfly": { "file": "limezu/interiors/animated/animated_butterfly_1_idle.png", "frameWidth": 16, "frameHeight": 16, "frames": 4, "frameRate": 8 },
+    "campfire": { "file": "limezu/exteriors/Animated_16x16/Animated_sheets_16x16/Campfire_16x16.png", "frameWidth": 16, "frameHeight": 32, "frames": 6, "frameRate": 10 }
   },
   "font": { "module": "geist/font/pixel", "file": "fonts/geist-pixel/GeistPixel-Square.woff2", "unitsPerPixel": 76 },
   "live": {

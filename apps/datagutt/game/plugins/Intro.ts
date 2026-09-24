@@ -2,7 +2,7 @@
 // the pier with the player aboard, the player hops ashore, and Arne says hello (with the
 // passport, the controls and the Journal). Any key, button or tap skips the sailing.
 // The ferry is part of the map; for the voyage its tiles are lifted into a moving group
-// of images, and put back once it has docked.
+// of images, and put back once it has docked. Its sprites (the bobbing hull) sail along.
 import Phaser from "phaser";
 import { TILE } from "@datagutt/kai";
 import type { Actor } from "@datagutt/kai/entities/Actor";
@@ -20,6 +20,8 @@ type Lifted = { layer: Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPU
 export class Intro {
 	private readonly boat: Phaser.GameObjects.Container;
 	private readonly lifted: Lifted[] = [];
+	/** The ferry's sprites and where they are moored. */
+	private readonly sailing: { sprite: Phaser.GameObjects.Sprite; x: number }[];
 	private tween: Phaser.Tweens.Tween | null = null;
 	private stage: "sailing" | "ashore" | "done" = "sailing";
 
@@ -28,6 +30,7 @@ export class Intro {
 		private readonly player: Actor,
 		ferry: Area,
 		layers: (Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer)[],
+		sprites: Phaser.GameObjects.Sprite[],
 		private readonly spawn: Point,
 		reducedMotion: boolean,
 		/** Arne's welcome, then `done`. */
@@ -35,6 +38,8 @@ export class Intro {
 		private readonly finished: () => void,
 	) {
 		this.boat = scene.add.container(START_TILES * TILE, 0);
+		this.sailing = sprites.map((sprite) => ({ sprite, x: sprite.x }));
+		this.moveSprites();
 		const atlas = scene.textures.get("tiles:world");
 		const columns = Math.floor((atlas.getSourceImage() as { width: number }).width / TILE);
 		for (const layer of layers) {
@@ -79,7 +84,10 @@ export class Intro {
 			this.goAshore();
 		}
 		// The player rides the ferry: its deck, not the tile they stand on, moves.
-		if (this.stage === "sailing") this.player.offset.x = Math.round(this.boat.x);
+		if (this.stage === "sailing") {
+			this.player.offset.x = Math.round(this.boat.x);
+			this.moveSprites();
+		}
 		this.boat.setDepth(this.player.sprite.depth - 1);
 		this.player.sync();
 	}
@@ -112,8 +120,13 @@ export class Intro {
 		});
 	}
 
+	private moveSprites(): void {
+		for (const { sprite, x } of this.sailing) sprite.x = x + Math.round(this.boat.x);
+	}
+
 	/** Back into the map: the ferry is moored where the generator put it. */
 	private dock(): void {
+		for (const { sprite, x } of this.sailing) sprite.x = x;
 		for (const t of this.lifted) {
 			const tile = t.layer.putTileAt(t.index, t.x, t.y);
 			tile.flipX = t.flipX;

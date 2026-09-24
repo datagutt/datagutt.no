@@ -4,6 +4,7 @@
 // everyday tools (warm-up weights), the heavy rack (video and streaming) and the front
 // desk (payments, memberships). Everything comes from the one gym sheet so it matches.
 // Laid out with two-tile aisles so there is room to move between the kit.
+import { spriteObject } from "@datagutt/kai/world/objects";
 import { NPCS } from "../../../game/npcs.ts";
 import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
@@ -27,7 +28,8 @@ export function gym(): MapCanvas {
 	// Free weights on the mat, the heavy rack, the treadmill.
 	c.stamp(F.gymMat, 2, 5).stamp(F.warmupRack, 3, 6); // everyday tools
 	c.stamp(F.benchPress, 11, 6).stamp(F.weightPlates, 13, 9); // the heavy rack
-	c.stamp(F.treadmill, 15, 5); // cloud and DevOps
+	// The belt runs as a sprite; its art sits 2 px higher than the tiles cut from the sheet.
+	c.reserve(F.treadmill, 15, 5).add(spriteObject.at(15, 5, { sprite: "treadmill", dy: -2 })); // cloud and DevOps
 	shadowUnder(c, F.benchPress, 11, 6);
 
 	// Front desk by the door (payments), with a light over it.

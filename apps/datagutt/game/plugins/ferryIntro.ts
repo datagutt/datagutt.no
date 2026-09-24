@@ -13,11 +13,13 @@ export function ferryIntroPlugin(): KaiPlugin {
 			const forced = new URLSearchParams(window.location.search).has("intro");
 			if (!ferry || !arne || !world.services.firstVisit || world.arrival.target.spawn !== "ferry" || (world.progress.flags.intro && !forced)) return;
 			const layers = ["below", "above"].flatMap((name) => world.layers.get(name) ?? []);
+			const aboard = world.sprites.filter(({ def }) => def.x >= ferry.x && def.y >= ferry.y && def.x < ferry.x + ferry.w && def.y < ferry.y + ferry.h);
 			const intro = new Intro(
 				world.scene,
 				world.player,
 				ferry,
 				layers,
+				aboard.map(({ sprite }) => sprite),
 				world.arrival.tile,
 				world.progress.reducedMotion,
 				(done) => {

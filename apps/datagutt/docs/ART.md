@@ -79,6 +79,31 @@ never overwrites a file that exists, since it may be hand-edited; `--force` redr
 commit them in datagutt-assets, then run `bun run world:gen` to rebuild the atlas.
 
 
+# Animations
+
+LimeZu's animated strips live under `limezu/exteriors/Animated_16x16/` and
+`limezu/interiors/animated/`. Use the PNGs: the GIFs lose their pale transparent colours.
+Each strip is one row of frames.
+
+To animate something a map already draws:
+
+1. Find its strip and the frame size (the static art's size, usually). Check that frame
+   0 lies over the static art: most do at offset (0, 0), some sit a few pixels off (the
+   treadmill 2 px higher, the windmill's blades 21 px down).
+2. Add the strip to `kai.json` `sprites` (file, frame size, frame count, frame rate).
+3. In the map builder, `c.reserve(prefab, x, y)` keeps its collision without its tiles,
+   and `spriteObject.at(x, y, { sprite, dx, dy })` plays the strip there.
+
+Sprites draw among the characters by their bottom edge. `layer: "below"` puts them
+under everyone, for what the player stands on (the ferry's deck, the escalator), and
+`layer: "above"` over everyone, like roofs (the windmill's blades over its tower).
+
+Sprites don't change with the seasons the way tiles do: a strip has no snow. Keep the
+parts winter touches as tiles and animate the rest, as the windmill does (a tower of
+tiles with snow on its roof, sprite blades). `seasons` and `when` limit a sprite to
+some seasons or to day or night: butterflies in spring and summer, birds by day. Renders
+(`bun run world:render`) draw each sprite's first frame, for the season rendered.
+
 # Characters
 
 NPC walk sheets and portraits are stacked from the LimeZu character and portrait

@@ -4,6 +4,9 @@ import type { Prefab } from "@datagutt/kai-worldgen/canvas";
 import { PREFABS as LIMEZU_PREFABS, footprint, villa } from "@datagutt/kai-limezu/prefabs";
 import { single } from "@datagutt/kai-limezu/singles";
 
+/** LimeZu calls it a windmill without its propeller: a lattice tower. */
+const latticeTower = single("houses", "Post_Apocalyptic_House_Wind_Mill_No_Propeller", { aboveRows: 5, collision: [".##."] });
+
 const TOWN_PREFABS = {
 	/** datagutt's house: the red villa in falu red with a slate roof. */
 	homeVilla: villa("Villa_5", "villaRed"),
@@ -12,8 +15,12 @@ const TOWN_PREFABS = {
 	boathouse: footprint({ sheet: "houses", col: 16, row: 250, w: 15, h: 14, aboveRows: 3, door: [5, 13] }),
 	/** Farmhouse: white board-and-batten house whose garage reads as barn doors. */
 	farmhouse: footprint({ sheet: "houses", col: 0, row: 250, w: 16, h: 14, aboveRows: 3, door: [9, 13] }),
-	/** LimeZu calls it a windmill without its propeller: a lattice tower. */
-	radioTower: single("houses", "Post_Apocalyptic_House_Wind_Mill_No_Propeller", { aboveRows: 5, collision: [".##."] }),
+	radioTower: latticeTower,
+	/**
+	 * The windmill without its blades, which turn over it as a sprite (kai.json
+	 * `windmill-blades`). The tower stays tiles, so it keeps its snow in winter.
+	 */
+	windmillTower: latticeTower,
 	/** The sheet stacks a second storey under the cottage; take only the top one. */
 	kiosk: footprint({ sheet: "villas", col: 23, row: 14, w: 4, h: 5, aboveRows: 2, door: [2, 4] }),
 	office: footprint({ sheet: "houses", col: 0, row: 83, w: 10, h: 16, aboveRows: 3, door: [2, 14] }),

@@ -6,6 +6,7 @@
 // Upstairs, cooler and more personal: Thomas at one long desk with three computers, the
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
 import { arcadeObject } from "@datagutt/kai-arcade/object";
+import { spriteObject } from "@datagutt/kai/world/objects";
 import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
@@ -22,7 +23,7 @@ export function house(): MapCanvas {
 	c.stamp(F.stove, 2, 2).stamp(F.counter, 4, 2);
 	c.stamp(F.window, 7, 1);
 	c.stamp(F.tvCabinet, 9, 2).stamp(F.tv, 9, 1);
-	c.stamp(F.fireplace, 12, 1);
+	c.reserve(F.fireplace, 12, 1).add(spriteObject.at(12, 1, { sprite: "fireplace" }));
 	c.stamp(F.stairsUp, 15, 1);
 
 	// Dining: the chairs face the table from either side.
