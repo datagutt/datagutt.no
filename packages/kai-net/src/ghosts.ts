@@ -1,7 +1,7 @@
 // The game's end of the world socket (protocol in ./protocol.ts): reports which map the
 // player is on and where, passes on what the room says, and rejoins after a reconnect.
-// Visitors can switch it off with localStorage `rx_off` (DESIGN §14, the old reactions
-// kill switch), in which case nothing is sent or received.
+// Visitors can switch it off with a localStorage key the game names (its kill switch),
+// in which case nothing is sent or received.
 import { OPEN, Reconnecting, browserSocket, type SocketLike } from "./reconnect.ts";
 import {
 	parseServerMessage,
@@ -14,10 +14,10 @@ import {
 
 type Where = { map: string; x: number; y: number; facing: Facing };
 
-/** Whether the visitor has other visitors switched off (`localStorage.rx_off = "1"`). */
-export function ghostsDisabled(storage: Pick<Storage, "getItem"> | null): boolean {
+/** Whether the visitor has other visitors switched off: `localStorage[key]` is "1". */
+export function ghostsDisabled(storage: Pick<Storage, "getItem"> | null, key: string): boolean {
 	try {
-		return storage?.getItem("rx_off") === "1";
+		return storage?.getItem(key) === "1";
 	} catch {
 		return false;
 	}

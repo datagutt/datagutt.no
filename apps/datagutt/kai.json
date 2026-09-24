@@ -3,6 +3,8 @@
   "title": "Fjord Town",
   "timezone": "Europe/Oslo",
   "startPlace": "dock",
+  "saveKey": "fjordtown.save",
+  "visitorsOffKey": "rx_off",
   "basePath": "/game/",
   "paths": {
     "maps": "world/gen/maps/index.ts",

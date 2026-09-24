@@ -200,13 +200,13 @@ test.describe("world", () => {
 	test("the last stamp leads to the finale: the pier at night, credits, then contact", async ({ page }) => {
 		// Three conversations and the credits: under a full parallel run, slow machines need
 		// longer than the default.
-		test.setTimeout(150_000);
+		test.setTimeout(240_000);
 		// Every stamp but Thomas's, then talk to him at his desk.
 		const others = ["boathouse", "radio-tower", "kiosk", "office", "town-hall", "gym", "library", "farm", "post-office"];
 		await continueAt(page, { map: "house-up", x: 7, y: 5, facing: "left" }, "coding", others);
 		const readUntil = async (done: () => Promise<boolean>) => {
 			// A time budget rather than a count of presses: typing speed follows the frame rate.
-			const deadline = Date.now() + 40_000;
+			const deadline = Date.now() + 70_000;
 			while (Date.now() < deadline && !(await done())) {
 				const s = await state(page);
 				// Say goodbye as soon as it's offered, then read on.

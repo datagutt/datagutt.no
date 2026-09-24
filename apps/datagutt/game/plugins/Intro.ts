@@ -4,10 +4,10 @@
 // The ferry is part of the map; for the voyage its tiles are lifted into a moving group
 // of images, and put back once it has docked.
 import Phaser from "phaser";
-import { TILE } from "../constants";
-import type { Actor } from "../entities/Actor";
-import type { FrameInput } from "../input/InputController";
-import type { Point } from "../world/grid";
+import { TILE } from "@datagutt/kai";
+import type { Actor } from "@datagutt/kai/entities/Actor";
+import type { FrameInput } from "@datagutt/kai/input/InputController";
+import type { Point } from "@datagutt/kai/world/grid";
 
 /** How far out the ferry starts, in tiles, and how long the crossing takes. */
 const START_TILES = 14;

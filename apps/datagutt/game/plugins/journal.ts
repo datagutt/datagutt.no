@@ -1,6 +1,5 @@
 // The start menu's way out to the Journal, the site's plain-text twin of the game.
-import { t } from "../strings";
-import type { KaiPlugin } from "./api";
+import type { KaiPlugin } from "@datagutt/kai";
 
 export function journalPlugin(): KaiPlugin {
 	return {
@@ -8,7 +7,7 @@ export function journalPlugin(): KaiPlugin {
 		menuItems: (world) => [
 			{
 				id: "journal",
-				label: t("menu.journal"),
+				label: world.services.data.t("menu.journal"),
 				run() {
 					world.save();
 					window.location.href = "/journal";

@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@datagutt/kai": "workspace:*",
     "@datagutt/kai-net": "workspace:*"
   },
   "devDependencies": {

@@ -16,6 +16,8 @@ const valid = {
 	timezone: "Europe/Oslo",
 	startPlace: "dock",
 	basePath: "/game/",
+	saveKey: "demo.save",
+	visitorsOffKey: "demo_visitors_off",
 	paths: { maps: "world/maps.ts", ink: "dialogue", dialogueHost: "dialogue/host.ts" },
 	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN", adapter: "@datagutt/kai-limezu/adapter" },
 	ui: { frame: { file: "ui.png", x: 0, y: 0, width: 8, height: 8 }, emotes: "emotes.png" },

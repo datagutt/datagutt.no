@@ -5,12 +5,10 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./schema": "./src/schema/index.ts",
-    "./world/*": "./src/world/*.ts",
-    "./fx/*": "./src/fx/*.ts",
-    "./characters/*": "./src/characters/*.ts",
-    "./ui/*": "./src/ui/*.ts",
-    "./schema/*": "./src/schema/*.ts"
+    "./schema/*": "./src/schema/*.ts",
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -19,6 +17,7 @@
   },
   "dependencies": {
     "@datagutt/kai-net": "workspace:*",
+    "inkjs": "^2.4.0",
     "zod": "^4"
   },
   "devDependencies": {
@@ -29,5 +28,8 @@
     "eslint": "^9",
     "typescript": "^5.9.3",
     "vitest": "^5"
+  },
+  "peerDependencies": {
+    "phaser": "^4.2.1"
   }
 }

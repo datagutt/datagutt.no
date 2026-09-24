@@ -3,14 +3,14 @@
 // to the new spot on this map, out through the door toward another map, or in through
 // the door he would come from. Off this map he simply is wherever his presence says.
 import type Phaser from "phaser";
-import { NPC_MOVEMENT, type MoverEvent } from "../world/movement";
-import { directionBetween, type CollisionGrid, type Point } from "../world/grid";
-import { findPath, findPathAdjacent } from "../world/pathfind";
+import { NPC_MOVEMENT, type MoverEvent } from "@datagutt/kai/world/movement";
+import { directionBetween, type CollisionGrid, type Point } from "@datagutt/kai/world/grid";
+import { findPath, findPathAdjacent } from "@datagutt/kai/world/pathfind";
 import type { MapObject } from "@datagutt/kai/world/objects";
 import { doingFor, nextMap, PLACE_MAPS, spotId, type Doing } from "../live/datagutt";
 import type { Presence, PresenceFeed } from "@datagutt/kai-live";
-import { EmoteBubble, SpeechBubble } from "../ui/Bubbles";
-import { Actor } from "./Actor";
+import { EmoteBubble, SpeechBubble } from "@datagutt/kai/ui/Bubbles";
+import { Actor } from "@datagutt/kai/entities/Actor";
 
 export const THOMAS_ID = "datagutt";
 

@@ -58,6 +58,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@datagutt/kai-net": "workspace:*",
+        "inkjs": "^2.4.0",
         "zod": "^4",
       },
       "devDependencies": {
@@ -69,10 +70,16 @@
         "typescript": "^5.9.3",
         "vitest": "^5",
       },
+      "peerDependencies": {
+        "phaser": "^4.2.1",
+      },
     },
     "packages/kai-arcade": {
       "name": "@datagutt/kai-arcade",
       "version": "0.0.0",
+      "dependencies": {
+        "@datagutt/kai": "workspace:*",
+      },
       "devDependencies": {
         "@datagutt/kai-eslint-config": "workspace:*",
         "@datagutt/kai-tsconfig": "workspace:*",
@@ -80,6 +87,9 @@
         "eslint": "^9",
         "typescript": "^5.9.3",
         "vitest": "^5",
+      },
+      "peerDependencies": {
+        "phaser": "^4.2.1",
       },
     },
     "packages/kai-assets": {
@@ -133,6 +143,7 @@
       "name": "@datagutt/kai-live",
       "version": "0.0.0",
       "dependencies": {
+        "@datagutt/kai": "workspace:*",
         "@datagutt/kai-net": "workspace:*",
       },
       "devDependencies": {

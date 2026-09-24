@@ -1,7 +1,7 @@
 // The hidden cat (docs/game/PLAN.md B3): it lies across its tile and the next one east, and
 // petting it earns "cat".
-import { TILE } from "../constants";
-import { perWorld, tileKey, type KaiPlugin } from "./api";
+import { TILE } from "@datagutt/kai";
+import { perWorld, tileKey, type KaiPlugin } from "@datagutt/kai";
 
 export function catPlugin(): KaiPlugin {
 	const cats = perWorld(() => new Set<string>());

@@ -147,9 +147,13 @@ each piece of Fjord Town behaviour moves into a plugin there (K5.4, K5.5) with e
 after each. Only then does the now generic runtime move into the package (K5.1): moving
 it first would make the package import app code.
 
-- [ ] **K5.1** `@datagutt/kai`: move the engine parts of `game/`. `createGame({ config,
+- [x] **K5.1** `@datagutt/kai`: move the engine parts of `game/`. `createGame({ config,
       content, plugins })` replaces `bootGame`. `ArcadeScreen` moves to `kai-arcade`, which
-      then depends on `kai`. *Done when* the app boots through `createGame`.
+      then depends on `kai`. *Done when* the app boots through `createGame`. (The runtime
+      reads content through `GameData` on `services.data`, not module imports. It takes
+      the live payload as `{ weather, ...slices }`; the weather types live in the runtime
+      and `kai-live` depends on it, so there is no package cycle. The save key and the
+      visitors kill switch come from `kai.json`. The triggers plugin is built in.)
 - [ ] **K5.2** `KaiPlugin` API: setup, map enter, interaction, update, map object types,
       Ink externals, start menu items. *Done when* the API has unit tests with a fake
       scene. (The API is in `game/plugins/api.ts` and runs Fjord Town; it moves with the

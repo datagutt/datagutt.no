@@ -1,6 +1,6 @@
 // On a first visit, arriving at the dock: sail in on the ferry and meet Arne (Intro.ts).
 // `?intro` plays it again over a save.
-import type { KaiPlugin } from "./api";
+import type { KaiPlugin } from "@datagutt/kai";
 import { Intro } from "./Intro";
 
 export function ferryIntroPlugin(): KaiPlugin {

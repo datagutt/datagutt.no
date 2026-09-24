@@ -1,11 +1,11 @@
 // Fjord Town's cabinets (the registry in ../arcade): step up to one and its game has the
 // frame until the player leaves. The binoculars on the radio hill show stars only after
 // dark, and Thomas's PC runs a screensaver.
-import { ArcadeScreen } from "../ui/ArcadeScreen";
-import type { PromptAction } from "../ui/Prompt";
+import { ArcadeScreen } from "@datagutt/kai-arcade/screen";
+import type { PromptAction } from "@datagutt/kai/ui/Prompt";
 import { makeArcade } from "../arcade";
 import { isArcadeId, type ArcadeId } from "../arcade/ids";
-import { perWorld, tileKey, type KaiPlugin, type ObjectOf, type World } from "./api";
+import { perWorld, tileKey, type KaiPlugin, type ObjectOf, type World } from "@datagutt/kai";
 
 /** The falling blocks score that earns "High score". */
 export const BLOCKS_TARGET = 1000;
@@ -28,7 +28,7 @@ export function arcadePlugin(): KaiPlugin {
 				if (name === "blocks" && score >= BLOCKS_TARGET) world.achieve("blocks");
 			},
 		});
-		const screen = new ArcadeScreen(world.scene, game, () => world.save());
+		const screen = new ArcadeScreen(world.scene, game, world.services.data, () => world.save());
 		playing = game.title;
 		world.takeOver({
 			name: game.title,

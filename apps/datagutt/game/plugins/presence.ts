@@ -1,15 +1,14 @@
 // The live datagutt NPC (LiveThomas): Thomas's Discord presence, read from Lanyard, picks
 // where he is and what he shows. `?debug&presence=<name>` stands in a fixed presence
 // (MOCK_PRESENCES) for Lanyard, and window.__fjordPresence(name) switches it live.
-import { LanyardClient, PresenceFeed } from "@datagutt/kai-live";
+import { LanyardClient, PresenceFeed, type WorldState } from "@datagutt/kai-live";
 import { LiveThomas, THOMAS_ID } from "../entities/LiveThomas";
 import { MOCK_PRESENCES, nowDoing, statusLines } from "../live/datagutt";
 import { npc as rosterNpc } from "../npcs";
-import { t } from "../strings";
 import { FINALE_KNOT } from "./finale";
-import type { KaiPlugin } from "./api";
+import type { KaiPlugin } from "@datagutt/kai";
 
-export function presencePlugin(): KaiPlugin {
+export function presencePlugin(live: WorldState): KaiPlugin {
 	const feed = new PresenceFeed();
 	let thomas: LiveThomas | null = null;
 	return {
@@ -17,7 +16,7 @@ export function presencePlugin(): KaiPlugin {
 		boot(services, params) {
 			const debug = params.has("debug");
 			if (debug) feed.subscribe((p) => console.info("[game] presence", p));
-			const lanyard = new LanyardClient(services.world.discordId, (p) => feed.set(p));
+			const lanyard = new LanyardClient(live.discordId, (p) => feed.set(p));
 			const mock = debug ? params.get("presence") : null;
 			if (mock && MOCK_PRESENCES[mock]) feed.set(MOCK_PRESENCES[mock]);
 			else lanyard.start();
@@ -68,7 +67,7 @@ export function presencePlugin(): KaiPlugin {
 			thomas?.wokenByPlayer();
 			world.achieve("wake");
 		},
-		menuItems: () => [{ id: "status", label: t("menu.status"), title: t("status.title"), lines: () => statusLines(feed.current) }],
+		menuItems: ({ services: { data } }) => [{ id: "status", label: data.t("menu.status"), title: data.t("status.title"), lines: () => statusLines(feed.current) }],
 		debug: () => ({ presence: feed.current, thomas: thomas?.state }),
 	};
 }

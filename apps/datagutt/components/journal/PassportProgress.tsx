@@ -1,8 +1,12 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { STAMP_PLACES } from "@/game/progress/passport";
-import { browserStorage, loadSave, SAVE_KEY } from "@/game/save/save";
+import { browserStorage, loadSave } from "@datagutt/kai/save/save";
+import { fjordData } from "@/game/data";
+import { kaiConfig } from "@/lib/kai";
+
+const SAVE_KEY = kaiConfig.saveKey;
+const STAMP_PLACES = fjordData.stampPlaces;
 
 function subscribe(onChange: () => void) {
 	window.addEventListener("storage", onChange);
@@ -16,7 +20,7 @@ const readSaveText = () => browserStorage()?.getItem(SAVE_KEY) ?? null;
 /** The visitor's Fjord Passport from their saved game, if they have played. Nothing without a save or JS. */
 export function PassportProgress() {
 	const saveText = useSyncExternalStore(subscribe, readSaveText, () => null);
-	const stamps = saveText ? loadSave(browserStorage())?.stamps : null;
+	const stamps = saveText ? loadSave(browserStorage(), SAVE_KEY)?.stamps : null;
 	if (!stamps) return null;
 
 	const count = STAMP_PLACES.filter((p) => stamps.includes(p.id)).length;

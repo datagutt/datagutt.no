@@ -7,7 +7,7 @@ import { profile } from "../../content/profile";
 import { projects } from "../../content/projects";
 import { externalDeclarations, fjordExternals } from "./externals";
 import { NPCS } from "../npcs";
-import { DialogueRunner, type Beat } from "./DialogueRunner";
+import { DialogueRunner, type Beat } from "@datagutt/kai/dialogue/DialogueRunner";
 
 const dir = path.join(__dirname, "ink");
 let json = "";

@@ -1,17 +1,17 @@
 // Live GitHub data drawn into the maps: Ola's field (one tile per day of the last weeks,
 // crops as tall as the commits) and the library's featured shelf (a spine per pinned repo,
 // in its language colour).
-import { TILE } from "../constants";
+import { TILE, type KaiPlugin } from "@datagutt/kai";
+import type { WorldState } from "@datagutt/kai-live";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
-import type { KaiPlugin } from "./api";
 
-export function githubPlugin(): KaiPlugin {
+export function githubPlugin(live: WorldState): KaiPlugin {
 	return {
 		name: "github",
 		objects: {
 			crops(world, area) {
-				const days = world.services.world.contributions;
+				const days = live.contributions;
 				const decal = world.layers.get("decal");
 				// Without live data the generator's sample crops stay.
 				if (!decal || !days.length) return;
@@ -28,7 +28,7 @@ export function githubPlugin(): KaiPlugin {
 			},
 			books(world, area) {
 				const g = world.scene.add.graphics().setDepth(-0.5);
-				for (const s of spines(world.services.world.repos, area.w * TILE, area.h * TILE - 2)) {
+				for (const s of spines(live.repos, area.w * TILE, area.h * TILE - 2)) {
 					const x = area.x * TILE + s.x;
 					const y = area.y * TILE + s.y;
 					g.fillStyle(s.edge).fillRect(x, y, s.w, s.h);

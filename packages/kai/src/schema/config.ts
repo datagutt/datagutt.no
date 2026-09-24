@@ -23,6 +23,10 @@ export const kaiConfigSchema = z.object({
 	}, "not an IANA time zone"),
 	/** Where a new game starts: a place id from the game's places. */
 	startPlace: id,
+	/** The localStorage key the game saves under. Changing it loses every visitor's save. */
+	saveKey: z.string().min(1),
+	/** The localStorage key that switches other visitors off entirely when it is "1". */
+	visitorsOffKey: z.string().min(1),
 	/** The URL path the built assets are served from; the build writes them to public/ plus this. */
 	basePath: z.string().regex(/^\/([a-z0-9-]+\/)*$/, 'a path such as "/game/"'),
 	/** Modules and folders of the game that the build loads, relative to the game's folder. */

@@ -77,9 +77,9 @@ describe("GhostClient", () => {
 
 describe("ghost helpers", () => {
 	it("read the kill switch and build the socket URL", () => {
-		expect(ghostsDisabled({ getItem: (k) => (k === "rx_off" ? "1" : null) })).toBe(true);
-		expect(ghostsDisabled({ getItem: () => null })).toBe(false);
-		expect(ghostsDisabled(null)).toBe(false);
+		expect(ghostsDisabled({ getItem: (k) => (k === "rx_off" ? "1" : null) }, "rx_off")).toBe(true);
+		expect(ghostsDisabled({ getItem: () => null }, "rx_off")).toBe(false);
+		expect(ghostsDisabled(null, "rx_off")).toBe(false);
 		expect(worldSocketUrl({ protocol: "https:", host: "datagutt.no" })).toBe("wss://datagutt.no/api/world/ws");
 		expect(worldSocketUrl({ protocol: "http:", host: "localhost:3200" })).toBe("ws://localhost:3200/api/world/ws");
 	});

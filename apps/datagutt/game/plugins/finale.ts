@@ -1,8 +1,8 @@
 // Fjord Town's finale: the last stamp brings a note from Thomas, then night falls on every
 // map and he waits at the end of the pier; his goodbye, the credits, and how to reach him.
 // `?debug&finale` starts on the pier.
-import { CreditsRoll } from "../ui/CreditsRoll";
-import type { KaiPlugin } from "./api";
+import { CreditsRoll } from "@datagutt/kai/ui/CreditsRoll";
+import type { KaiPlugin } from "@datagutt/kai";
 
 export const FINALE_KNOT = "datagutt_finale";
 
@@ -29,7 +29,7 @@ export function finalePlugin(): KaiPlugin {
 		talk(world, npc) {
 			if (npc.dialogue !== FINALE_KNOT) return false;
 			world.playKnot(npc.dialogue, npc, () => {
-				const roll = new CreditsRoll(world.scene, world.progress.reducedMotion, () => {
+				const roll = new CreditsRoll(world.scene, world.services.data.content.credits, world.progress.reducedMotion, () => {
 					rolling = false;
 					world.achieve("credits");
 					world.playKnot("datagutt_contact", npc, () => {
