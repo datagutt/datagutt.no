@@ -1,3 +1,5 @@
 import next from "@datagutt/kai-eslint-config/next";
+import { hostPackage } from "@datagutt/kai-eslint-config/boundaries";
 
-export default next;
+const config = [...next, ...hostPackage(["src/**/*.{ts,tsx}"])];
+export default config;

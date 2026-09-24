@@ -201,7 +201,7 @@ Goal: a second app proves the engine needs nothing from datagutt.
 - [x] **K6.3** A Playwright smoke test for the sandbox (walk to the NPC, talk) in CI.
       *Done when* CI runs it. (`turbo run test:e2e` runs it beside datagutt's, against
       the kai dev harness; it also checks the stamp.)
-- [ ] **K6.4** Boundary lint: `packages/** ↛ apps/**`, runtime packages ↛ build-time
+- [x] **K6.4** Boundary lint: `packages/** ↛ apps/**`, runtime packages ↛ build-time
       packages, `kai` ↛ Next and React. *Done when* a deliberate bad import fails CI.
 
 ## K7: docs

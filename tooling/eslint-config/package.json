@@ -8,7 +8,8 @@
   "exports": {
     "./base": "./base.js",
     "./phaser": "./phaser.js",
-    "./next": "./next.js"
+    "./next": "./next.js",
+    "./boundaries": "./boundaries.js"
   },
   "license": "GPL-3.0-or-later",
   "private": true,
