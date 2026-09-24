@@ -32,5 +32,6 @@ INCLUDE farmer.ink
 INCLUDE postmaster.ink
 INCLUDE office.ink
 INCLUDE club.ink
+INCLUDE world.ink
 
 -> END

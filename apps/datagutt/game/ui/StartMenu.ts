@@ -6,6 +6,7 @@ import type { Facing } from "@datagutt/kai/world/objects";
 import { PassportPanel } from "./Passport";
 import { credits } from "../../content/credits";
 import type { EffectsSetting } from "../save/save";
+import { t } from "../strings";
 
 const FONT = "pixel";
 const FRAME = "ui:frame";
@@ -120,29 +121,30 @@ export class StartMenu {
 	private items(): { label: string; run: () => void }[] {
 		if (this.view === "settings") {
 			const s = this.hooks.settings();
-			const motion = s.reducedMotion === null ? "Auto" : s.reducedMotion ? "On" : "Off";
+			const onOff = (on: boolean) => ({ value: t(on ? "value.on" : "value.off") });
+			const motion = s.reducedMotion === null ? t("value.auto") : t(s.reducedMotion ? "value.on" : "value.off");
 			return [
-				{ label: `Sound: ${s.muted ? "Off" : "On"}`, run: () => this.hooks.changeSettings({ ...s, muted: !s.muted }) },
-				{ label: `Music: ${s.music ? "On" : "Off"}`, run: () => this.hooks.changeSettings({ ...s, music: !s.music }) },
-				{ label: `Other visitors: ${s.showVisitors ? "On" : "Off"}`, run: () => this.hooks.changeSettings({ ...s, showVisitors: !s.showVisitors }) },
+				{ label: t("settings.sound", onOff(!s.muted)), run: () => this.hooks.changeSettings({ ...s, muted: !s.muted }) },
+				{ label: t("settings.music", onOff(s.music)), run: () => this.hooks.changeSettings({ ...s, music: !s.music }) },
+				{ label: t("settings.visitors", onOff(s.showVisitors)), run: () => this.hooks.changeSettings({ ...s, showVisitors: !s.showVisitors }) },
 				{
-					label: `Effects: ${s.effects === "auto" ? "Auto" : s.effects === "high" ? "High" : "Low"}`,
+					label: t("settings.effects", { value: t(s.effects === "auto" ? "value.auto" : s.effects === "high" ? "value.high" : "value.low") }),
 					run: () => this.hooks.changeSettings({ ...s, effects: s.effects === "auto" ? "high" : s.effects === "high" ? "low" : "auto" }),
 				},
 				{
-					label: `Reduced motion: ${motion}`,
+					label: t("settings.reducedMotion", { value: motion }),
 					run: () => this.hooks.changeSettings({ ...s, reducedMotion: s.reducedMotion === null ? true : s.reducedMotion ? false : null }),
 				},
-				{ label: "Back", run: () => this.backToMain() },
+				{ label: t("menu.back"), run: () => this.backToMain() },
 			];
 		}
 		return [
-			{ label: "Passport", run: () => this.showPassport() },
-			{ label: "datagutt's status", run: () => this.openView("status") },
-			{ label: "Journal (plain text)", run: () => this.hooks.openJournal() },
-			{ label: "Settings", run: () => this.openView("settings") },
-			{ label: "Credits", run: () => this.openView("credits") },
-			{ label: "Close", run: () => this.close() },
+			{ label: t("menu.passport"), run: () => this.showPassport() },
+			{ label: t("menu.status"), run: () => this.openView("status") },
+			{ label: t("menu.journal"), run: () => this.hooks.openJournal() },
+			{ label: t("menu.settings"), run: () => this.openView("settings") },
+			{ label: t("menu.credits"), run: () => this.openView("credits") },
+			{ label: t("menu.close"), run: () => this.close() },
 		];
 	}
 
@@ -182,10 +184,10 @@ export class StartMenu {
 			const w = Math.min(cam.width - 16, 300);
 			const body = scene.add.bitmapText(12, 9 + lh + 6, FONT, text).setTint(INK).setMaxWidth(w - 24);
 			const bodyBottom = 9 + lh + 6 + Math.ceil(body.getTextBounds().local.height);
-			const hint = scene.add.bitmapText(12, bodyBottom + 8, FONT, "Tap or press E to go back.").setTint(FADED).setMaxWidth(w - 24);
+			const hint = scene.add.bitmapText(12, bodyBottom + 8, FONT, t("menu.backHint")).setTint(FADED).setMaxWidth(w - 24);
 			const h = bodyBottom + 8 + Math.ceil(hint.getTextBounds().local.height) + 12;
 			parts.push(scene.add.nineslice(0, 0, FRAME, undefined, w, h, ...SLICE).setOrigin(0), body, hint);
-			parts.push(scene.add.bitmapText(12, 9, FONT, this.view === "credits" ? "Credits" : "datagutt's status").setTint(ACCENT));
+			parts.push(scene.add.bitmapText(12, 9, FONT, t(this.view === "credits" ? "credits.title" : "status.title")).setTint(ACCENT));
 			this.container = scene.add
 				.container(Math.floor((cam.width - w) / 2), Math.max(4, Math.floor((cam.height - h) / 2)), parts)
 				.setScrollFactor(0)
@@ -194,7 +196,7 @@ export class StartMenu {
 		}
 
 		const items = this.items();
-		const title = this.view === "settings" ? "Settings" : "Menu";
+		const title = t(this.view === "settings" ? "settings.title" : "menu.title");
 		const w = Math.min(cam.width - 16, 200);
 		const h = 9 + lh + 4 + items.length * lh + 10;
 		const x = Math.floor((cam.width - w) / 2);
@@ -218,7 +220,7 @@ export class MenuButton {
 	private bounds = { x: 0, y: 0, w: 0, h: 0 };
 
 	constructor(scene: Phaser.Scene) {
-		const label = scene.add.bitmapText(8, 5, FONT, "Menu").setTint(INK);
+		const label = scene.add.bitmapText(8, 5, FONT, t("menu.button")).setTint(INK);
 		const w = Math.ceil(label.getTextBounds().local.width) + 16;
 		const h = 22;
 		const box = scene.add.nineslice(0, 0, FRAME, undefined, w, h, ...SLICE).setOrigin(0);

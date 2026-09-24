@@ -3,6 +3,8 @@
 // the input the player used last.
 import Phaser from "phaser";
 import type { InputDevice } from "../input/InputController";
+import type { StringKey } from "@datagutt/kai/ui/strings";
+import { t } from "../strings";
 
 export type PromptAction = "Talk" | "Read" | "Enter" | "Wake" | "Play" | "Look" | "Use" | "Pet";
 
@@ -10,6 +12,17 @@ const INK = 0x3b2a3a;
 const PAPER = 0xf2eef7;
 const KEY = 0xffd27a;
 const DEPTH = 60_002;
+
+const LABEL: Record<PromptAction, StringKey> = {
+	Talk: "prompt.talk",
+	Read: "prompt.read",
+	Enter: "prompt.enter",
+	Wake: "prompt.wake",
+	Play: "prompt.play",
+	Look: "prompt.look",
+	Use: "prompt.use",
+	Pet: "prompt.pet",
+};
 
 /** The button to show for each device. */
 const BUTTON: Record<InputDevice, string> = { keyboard: "E", gamepad: "A", touch: "Tap" };
@@ -36,11 +49,12 @@ export class Prompt {
 	/** Centred over (x, bottom) in world pixels. */
 	show(action: PromptAction, device: InputDevice, x: number, bottom: number): void {
 		const button = BUTTON[device];
-		const text = `${button} ${action}`;
+		const label = t(LABEL[action]);
+		const text = `${button} ${label}`;
 		if (text !== this.shown) {
 			this.shown = text;
 			this.key.setText(button);
-			this.label.setText(action);
+			this.label.setText(label);
 		}
 		const kw = Math.ceil(this.key.getTextBounds().local.width) + 4;
 		const lw = Math.ceil(this.label.getTextBounds().local.width);

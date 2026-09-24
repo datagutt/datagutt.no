@@ -20,11 +20,3 @@ export function achievement(id: AchievementId): Achievement {
 	if (!found) throw new Error(`Unknown achievement "${id}"`);
 	return found;
 }
-
-/** The lines the map's edge says when someone walks into it, in turn. */
-export const EDGE_LINES = [
-	"* The map ends here. Past this point it's all placeholder grass, and nobody wants that.",
-	"* You lean on the edge of the world. It holds.",
-	"* A small sign would say HERE BE NOTHING, if anyone had bothered to put one up.",
-	"* Somewhere a level designer winces.",
-];

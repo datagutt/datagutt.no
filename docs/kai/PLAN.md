@@ -131,8 +131,12 @@ Goal: every hardcoded piece of content is a JSON or Markdown resource, validated
       and key. Positions, doors, spawns and NPC placements stay in the builders: they are
       layout, computed from the builders' own geometry, and as JSON they would become
       loose numbers. NPC names already come from `npcs.json`. A test fails on unused copy.)
-- [ ] **K4.5** `content/strings.json` with the engine's English defaults. *Done when* no
-      engine UI file has a visible string literal.
+- [x] **K4.5** `content/strings.json` with the engine's English defaults. *Done when* no
+      engine UI file has a visible string literal. (Defaults in
+      `@datagutt/kai/ui/strings`; the `strings` collection rejects unknown keys. The
+      cat, the binoculars by day and the edge-of-the-world lines are Fjord Town's words,
+      so they became Ink knots in `world.ink` (the edge lines cycle), not strings. The
+      presence status lines follow in K5.5.)
 
 ## K5: the runtime and the plugin API
 

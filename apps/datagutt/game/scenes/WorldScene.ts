@@ -42,7 +42,7 @@ import { ArcadeScreen } from "../ui/ArcadeScreen";
 import { makeArcade } from "../arcade";
 import { isArcadeId } from "../arcade/ids";
 import { isUnlocked } from "../progress/unlocks";
-import { ACHIEVEMENTS, achievement, BLOCKS_TARGET, EDGE_LINES, type AchievementId } from "../progress/achievements";
+import { ACHIEVEMENTS, achievement, BLOCKS_TARGET, type AchievementId } from "../progress/achievements";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -51,6 +51,7 @@ import { resolveWeather, weatherSound } from "../world/weather";
 import type { WeatherNow } from "@datagutt/kai-live";
 import { CALM_WEATHER } from "../../content/live";
 import { statusLines } from "../live/datagutt";
+import { t } from "../strings";
 
 type Door = Extract<MapObject, { type: "door" }>;
 type Sign = Extract<MapObject, { type: "sign" }>;
@@ -87,7 +88,6 @@ export class WorldScene extends Phaser.Scene {
 	/** Where the hidden cat lies (B3). */
 	private cats = new Set<string>();
 	/** Fourth-wall lines at the map's edge: which is next, and when it may speak again. */
-	private edgeLines = 0;
 	private edgeQuietUntil = 0;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
@@ -824,10 +824,7 @@ export class WorldScene extends Phaser.Scene {
 			return;
 		}
 		if (this.cats.has(tileKey(p))) {
-			this.dialogue.say("* Mjau. The cat allows it, this once.", null, () => {
-				this.dialogue.close();
-				this.achieve("cat");
-			});
+			this.playKnot("cat_petted", null, () => this.achieve("cat"));
 			return;
 		}
 		const cabinet = this.cabinets.get(tileKey(p));
@@ -848,18 +845,14 @@ export class WorldScene extends Phaser.Scene {
 	private bumpedEdge() {
 		if (this.time.now < this.edgeQuietUntil || this.dialogue.open) return;
 		this.edgeQuietUntil = this.time.now + 20_000;
-		const line = EDGE_LINES[this.edgeLines++ % EDGE_LINES.length];
-		this.dialogue.say(line, null, () => {
-			this.dialogue.close();
-			this.achieve("edge");
-		});
+		this.playKnot("edge_of_world", null, () => this.achieve("edge"));
 	}
 
 	/** Step up to a cabinet: its game takes the input until the player leaves (back). */
 	private playCabinet(cabinet: Extract<MapObject, { type: "arcade" }>) {
 		// The binoculars only show stars once it's dark (or on the finale's night).
 		if (cabinet.game === "stargazing" && this.dayNight.current.dark < 0.5 && !this.services.finale) {
-			this.dialogue.say("* Just the town and the fjord in daylight. The stars come out after dark.", null, () => this.dialogue.close());
+			this.playKnot("binoculars_by_day", null, () => {});
 			return;
 		}
 		if (!isArcadeId(cabinet.game)) return;
@@ -975,7 +968,7 @@ export class WorldScene extends Phaser.Scene {
 	/** "Open github.com?" after a line with a `# link:` tag. */
 	private offerLink(url: string, label: string, then: () => void) {
 		this.links.arm(url);
-		this.dialogue.choose([`Open ${label}`, "Not now"], (i) => {
+		this.dialogue.choose([t("link.open", { label }), t("link.notNow")], (i) => {
 			if (i === 0) this.links.confirm();
 			else this.links.disarm();
 			then();

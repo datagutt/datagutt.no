@@ -165,3 +165,27 @@ describe("DialogueRunner", () => {
 	});
 });
 
+
+describe("the world's own lines", () => {
+	it("pets the cat and looks through the binoculars", () => {
+		for (const [knot, start] of [
+			["cat_petted", "* Mjau."],
+			["binoculars_by_day", "* Just the town"],
+		]) {
+			const runner = new DialogueRunner(json, ctx);
+			runner.start(knot);
+			expect(read(runner).lines[0].startsWith(start), knot).toBe(true);
+		}
+	});
+
+	it("says a different edge line each time, in turn", () => {
+		const runner = new DialogueRunner(json, ctx);
+		const lines = Array.from({ length: 5 }, () => {
+			runner.start("edge_of_world");
+			return read(runner).lines[0];
+		});
+		expect(new Set(lines.slice(0, 4)).size).toBe(4);
+		expect(lines[4]).toBe(lines[0]);
+		expect(lines[0]).toBe("* The map ends here. Past this point it's all placeholder grass, and nobody wants that.");
+	});
+});

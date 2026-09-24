@@ -34,7 +34,5 @@ an app script. Then K3.5 (assets repo move, needs the user), K4.4, K4.5, K5.
   ids that were literal unions (place, music, achievement) are plain strings now.
 - `pkill -f next-server` in a Bash call kills the call's own shell. Use
   `pkill -f "[n]ext-server"`.
-- The e2e finale test ("the last stamp leads to the finale") fails now and then under a
-  full parallel run on WSL. It passes alone.
 - `game:dev` from `apps/datagutt` does not build assets or content first. Run it from the
   root (`turbo run game:dev`) or run `bun run content && bun run assets` before it.

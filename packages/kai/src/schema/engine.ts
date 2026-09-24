@@ -1,6 +1,7 @@
 // The collections the engine itself reads. Every game has them; a game's own collections
 // sit beside them (content/schema.ts in the game).
 import { z } from "zod";
+import { STRING_KEYS } from "../ui/strings.ts";
 import { json, type Collections } from "./content.ts";
 
 const id = z.string().regex(/^[a-zA-Z0-9_-]+$/, "use letters, digits, dashes and underscores");
@@ -113,4 +114,11 @@ export const ENGINE_COLLECTIONS = {
 	unlocks: json(z.record(id, unlockCondition).default({})),
 	/** The credits page and the credits roll. */
 	credits: json(credits),
+	/** Overrides of the engine's UI copy by key (@datagutt/kai/ui/strings). An unknown key is an error. */
+	strings: json(
+		z
+			.object(Object.fromEntries(STRING_KEYS.map((key) => [key, text.optional()])) as Record<(typeof STRING_KEYS)[number], z.ZodOptional<z.ZodString>>)
+			.strict()
+			.default({}),
+	),
 } satisfies Collections;

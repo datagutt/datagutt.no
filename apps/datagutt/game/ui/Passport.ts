@@ -3,6 +3,7 @@
 import Phaser from "phaser";
 import { ACHIEVEMENTS } from "../progress/achievements";
 import { STAMP_PLACES } from "../progress/passport";
+import { t } from "../strings";
 
 const FONT = "pixel";
 const FRAME = "ui:frame";
@@ -46,11 +47,11 @@ export class StampToast {
 	constructor(private readonly scene: Phaser.Scene) {}
 
 	show(place: string, count: number, reducedMotion: boolean): void {
-		this.banner(`Stamped: ${placeName(place)}  ${count}/${STAMP_PLACES.length}`, drawStamp, reducedMotion);
+		this.banner(t("toast.stamped", { place: placeName(place), count, total: STAMP_PLACES.length }), drawStamp, reducedMotion);
 	}
 
 	showAchievement(name: string, reducedMotion: boolean): void {
-		this.banner(`Achievement: ${name}`, drawStar, reducedMotion);
+		this.banner(t("toast.achievement", { name }), drawStar, reducedMotion);
 	}
 
 	private banner(label: string, mark: typeof drawStamp, reducedMotion: boolean): void {
@@ -104,16 +105,11 @@ export class PassportPanel {
 		const entries =
 			page === 0
 				? STAMP_PLACES.map((p) => ({ label: p.name, has: stamps.includes(p.id) }))
-				: ACHIEVEMENTS.map((a) => ({ label: achievements.includes(a.id) ? a.name : "???", has: achievements.includes(a.id) }));
+				: ACHIEVEMENTS.map((a) => ({ label: achievements.includes(a.id) ? a.name : t("passport.unknown"), has: achievements.includes(a.id) }));
 		const rows = Math.ceil(entries.length / columns);
 		const earned = entries.filter((e) => e.has).length;
-		const pageHint = "Left, right or tap: turn the page.";
-		const hintText =
-			page === 1
-				? `Things to find beyond the stamps. ${pageHint}`
-				: earned === STAMP_PLACES.length
-					? `Full passport. Every stamp in town! ${pageHint}`
-					: `Talk to people to collect stamps. ${pageHint}`;
+		const pageHint = t("passport.pageHint");
+		const hintText = t(page === 1 ? "passport.achievementsHint" : earned === STAMP_PLACES.length ? "passport.fullHint" : "passport.stampsHint", { pageHint });
 		const hint = scene.add.bitmapText(12, 0, FONT, hintText).setTint(FADED).setMaxWidth(w - 24);
 		const hintHeight = Math.ceil(hint.getTextBounds().local.height);
 		const listTop = 9 + Math.round(1.5 * lineHeight);
@@ -126,7 +122,7 @@ export class PassportPanel {
 		const parts: Phaser.GameObjects.GameObject[] = [frame(scene, w, h)];
 		const g = scene.add.graphics();
 		parts.push(g);
-		parts.push(scene.add.bitmapText(12, 9, FONT, page === 0 ? "Fjord Passport" : "Achievements").setTint(INK));
+		parts.push(scene.add.bitmapText(12, 9, FONT, t(page === 0 ? "passport.title" : "passport.achievements")).setTint(INK));
 		const counter = scene.add.bitmapText(0, 9, FONT, `${earned}/${entries.length}`).setTint(STAMP_RED);
 		counter.x = w - 12 - counter.getTextBounds().local.width;
 		parts.push(counter);

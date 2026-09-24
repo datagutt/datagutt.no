@@ -6,6 +6,7 @@ import Phaser from "phaser";
 import type { ArcadeGame, ArcadeInput, Direction } from "@datagutt/kai-arcade";
 import { SCREEN_H, SCREEN_W } from "@datagutt/kai-arcade";
 import type { FrameInput, InputDevice } from "../input/InputController";
+import { t } from "../strings";
 
 const DEPTH = 114_000;
 const TEXTURE = "arcade:screen";
@@ -63,7 +64,7 @@ export class ArcadeScreen {
 		}
 		if (input.device !== this.device) {
 			this.device = input.device;
-			const back = input.device === "touch" ? "Tap outside: leave" : `${input.device === "gamepad" ? "B" : "Esc"}: leave`;
+			const back = input.device === "touch" ? t("arcade.leaveTouch") : t("arcade.leave", { button: input.device === "gamepad" ? "B" : "Esc" });
 			const lines = this.game.hint.replace(/\bA:/g, `${BUTTON[input.device]}:`).split(/\s{2,}/);
 			this.hint.setText([...lines, back].map((l) => l.toUpperCase()));
 			// The case reaches down past however many lines the hint has.
