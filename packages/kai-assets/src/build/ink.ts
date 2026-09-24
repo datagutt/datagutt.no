@@ -63,7 +63,9 @@ export function compileDialogue(dir: string, host: DialogueHost): CompiledDialog
 		else if (type === 1) console.warn(`[ink] ${message}`);
 	};
 	const main = `INCLUDE ${EXTERNALS_FILE}\n${fs.readFileSync(path.join(dir, "main.ink"), "utf8")}`;
-	const compiler = new Compiler(main, new CompilerOptions("main.ink", [], false, errorHandler, fileHandler));
+	// Count visits to every knot: the runtime knows a conversation reached an NPC's own knot
+	// by its visit count, and Ink only counts the knots a story refers to otherwise.
+	const compiler = new Compiler(main, new CompilerOptions("main.ink", [], true, errorHandler, fileHandler));
 	let story = null;
 	try {
 		story = compiler.Compile();

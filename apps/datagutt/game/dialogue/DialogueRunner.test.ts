@@ -19,7 +19,8 @@ beforeAll(() => {
 			name === "__externals.ink" ? externalDeclarations() : fs.readFileSync(path.join(dir, name), "utf8"),
 	};
 	const main = `INCLUDE __externals.ink\n${fs.readFileSync(path.join(dir, "main.ink"), "utf8")}`;
-	json = new Compiler(main, new CompilerOptions("main.ink", [], false, null, fileHandler)).Compile().ToJson()!;
+	// As the asset build compiles it: every knot's visits counted.
+	json = new Compiler(main, new CompilerOptions("main.ink", [], true, null, fileHandler)).Compile().ToJson()!;
 });
 
 const ctx = { world: EMPTY_WORLD_STATE, hasStamp: () => false, isUnlocked: () => false };
