@@ -4,7 +4,8 @@ Last updated: 2026-09-24 (kai session 1, end)
 
 ## Current state
 
-- Every task in PLAN.md is done. CI is green on `kai`.
+- Every task in PLAN.md is done, K3.5 included (the art repository holds Fjord Town's
+  season overrides in `games/datagutt/seasons/`). CI and the Vercel preview are green.
 - The engine is eight packages under `packages/`, documented in `docs/kai/`
   (ARCHITECTURE, PLUGINS, CONTENT, NEW-GAME) and a README per package. Two apps use
   it: `apps/datagutt` (the site and Fjord Town) and `apps/sandbox`.
@@ -12,7 +13,7 @@ Last updated: 2026-09-24 (kai session 1, end)
   monorepo; `apps/datagutt/CLAUDE.md` covers the site and carries the Next agent rules
   block that `next dev` maintains.
 - Import boundaries are lint rules (`tooling/eslint-config/boundaries.js`).
-- `game` still sits at the K1.6 commit, 27 commits behind `kai`. Production (Vercel)
+- `game` still sits at the K1.6 commit, behind `kai`. Production (Vercel)
   builds from `apps/datagutt` already.
 
 ## Waiting on the user
