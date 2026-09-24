@@ -5,6 +5,7 @@ import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import sharp from "sharp";
+import { spriteProblems } from "../world/sprites.ts";
 import { doorObject, gateObject, npcObject, parseMapObject, signObject, spawnObject, type AnyMapObject, type TiledObject } from "@datagutt/kai/world/objects";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "@datagutt/kai/ui/emotes";
 import type { CharacterRecipe } from "@datagutt/kai/schema/engine";
@@ -102,6 +103,8 @@ export async function buildAssets(app: KaiApp): Promise<void> {
 	const dialogue = compileDialogue(path.join(app.dir, config.paths.ink), await app.dialogueHost());
 	write("dialogue/main.json", dialogue.json);
 	checkMaps(maps, dialogue.knots, Object.keys(content.unlocks));
+	const spriteIssues = maps.flatMap(({ id, objects }) => spriteProblems(id, objects, config.sprites));
+	if (spriteIssues.length) throw new Error(spriteIssues.join("\n"));
 
 	// Placeholder builds have no music, and the game stays quiet.
 	const music = art

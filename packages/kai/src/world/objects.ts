@@ -207,6 +207,24 @@ export const spotObject = defineMapObject("spot", { props: { id: "string", facin
 /** A named rectangle of the map for scripted scenes, such as the ferry for an intro. */
 export const areaObject = defineMapObject("area", { props: { id: "string" }, placement: "overlay", size: "rect" });
 
+/**
+ * An animated strip from kai.json `sprites`, looping at its tile plus a pixel offset (`dx`,
+ * `dy`). It draws among the characters by its bottom edge; with `layer: "below"` under all
+ * of them (what they walk or stand on: an escalator, a boat's deck), and with `layer:
+ * "above"` over all of them, like roofs (a windmill's blades over its tower). `seasons`
+ * (comma-separated) limits it to those seasons, and `when` to "day" or "night", as for
+ * lights: butterflies in summer, a campfire after dark. It blocks
+ * nothing: stamp the thing it animates without its tiles (MapCanvas.reserve), or block
+ * its cells.
+ */
+export const spriteObject = defineMapObject("sprite", {
+	props: { sprite: "string", dx: "number?", dy: "number?", layer: "string?", seasons: "string?", when: "string?" },
+	placement: "overlay",
+});
+
+/** The values a sprite's `layer` may take. */
+export const SPRITE_LAYERS = ["below", "above"] as const;
+
 export type LightTime = "day" | "night";
 
 /**
@@ -241,12 +259,13 @@ export type NpcObject = MapObjectOf<typeof npcObject>;
 export type GateObject = MapObjectOf<typeof gateObject>;
 export type SpotObject = MapObjectOf<typeof spotObject>;
 export type AreaObject = MapObjectOf<typeof areaObject>;
+export type SpriteObject = MapObjectOf<typeof spriteObject>;
 
 /** The types the engine handles itself. */
-export const CORE_OBJECTS: readonly MapObjectType[] = [spawnObject, doorObject, signObject, npcObject, gateObject, spotObject, areaObject, lightObject];
+export const CORE_OBJECTS: readonly MapObjectType[] = [spawnObject, doorObject, signObject, npcObject, gateObject, spotObject, areaObject, spriteObject, lightObject];
 
 /** One of the engine's own map objects. */
-export type MapObject = SpawnObject | DoorObject | SignObject | NpcObject | GateObject | SpotObject | AreaObject | LightObject;
+export type MapObject = SpawnObject | DoorObject | SignObject | NpcObject | GateObject | SpotObject | AreaObject | SpriteObject | LightObject;
 
 export type MapObjectTypes = ReadonlyMap<string, MapObjectType>;
 

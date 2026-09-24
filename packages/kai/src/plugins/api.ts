@@ -3,7 +3,7 @@
 // something, a conversation ending), places its own map object types, adds start menu
 // items, and can take over the frame for a while (a cutscene, a cabinet, the credits).
 import type Phaser from "phaser";
-import type { AreaObject, DoorObject, MapObject, NpcObject, ObjectPlacer, SpawnObject, SpotObject } from "../world/objects.ts";
+import type { AreaObject, DoorObject, MapObject, NpcObject, ObjectPlacer, SpawnObject, SpotObject, SpriteObject } from "../world/objects.ts";
 import type { Externals, ExternalsContext, GameServices, WorldTarget } from "../boot.ts";
 import type { Actor } from "../entities/Actor.ts";
 import type { FrameInput } from "../input/InputController.ts";
@@ -33,6 +33,8 @@ export interface World {
 	readonly spawns: ReadonlyMap<string, SpawnObject>;
 	readonly spots: ReadonlyMap<string, SpotObject>;
 	readonly areas: ReadonlyMap<string, AreaObject>;
+	/** The map's animated sprites, as placed (a cutscene may move them). */
+	readonly sprites: ReadonlyArray<{ readonly def: SpriteObject; readonly sprite: Phaser.GameObjects.Sprite }>;
 	/** Doors by tile ("x,y"). */
 	readonly doors: ReadonlyMap<string, DoorObject>;
 	/** Where the player arrived on this map. */

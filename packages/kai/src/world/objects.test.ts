@@ -12,6 +12,8 @@ describe("map objects", () => {
 			{ type: "sign", x: 5, y: 6, text: "Hello" },
 			{ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" },
 			{ type: "area", id: "ferry", x: 52, y: 67, w: 6, h: 4 },
+			{ type: "sprite", x: 23, y: 15, sprite: "windmill-blades", dy: 21, layer: "above" },
+			{ type: "sprite", x: 46, y: 57, sprite: "butterfly", seasons: "spring,summer", when: "day" },
 			{ type: "light", shape: "glow", x: 7, y: 8, radius: 2.5, color: "ffae62", intensity: 0.5, flicker: true },
 			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4 },
 			{ type: "light", shape: "beam", x: 1, y: 1, w: 2, h: 3, color: "fff0d2", intensity: 0.4, when: "day" },

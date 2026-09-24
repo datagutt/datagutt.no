@@ -31,11 +31,13 @@ import {
 	signObject,
 	spawnObject,
 	spotObject,
+	spriteObject,
 	type AnyMapObject,
 	type Facing,
 	type GateObject,
 	type LightObject,
 	type ObjectPlacer,
+	type SpriteObject,
 	type TiledObject,
 } from "../world/objects.ts";
 import { addLights } from "../fx/Lights.ts";
@@ -49,6 +51,7 @@ import { distanceField, FAR } from "../world/distance.ts";
 import { Feel } from "../fx/Feel.ts";
 import { FrameWatch, qualityFor, type Quality } from "../fx/quality.ts";
 import { findPath, findPathAdjacent } from "../world/pathfind.ts";
+import { lightFactor } from "../world/dayNight.ts";
 import { applySeason } from "../world/season.ts";
 import { resolveWeather, weatherSound } from "../world/weather.ts";
 import { calmWeather, type WeatherNow } from "../world/weather-kinds.ts";
@@ -57,6 +60,8 @@ type Door = ObjectOf<"door">;
 type Sign = ObjectOf<"sign">;
 
 const PLAYER_ID = "player";
+/** The roof layers' depth: over every character. */
+const ABOVE_DEPTH = 50_000;
 const tileKey = (p: Point) => `${p.x},${p.y}`;
 /** Registry key of the game-wide Ambience. */
 const AMBIENCE_KEY = "ambience";
@@ -87,6 +92,7 @@ export class WorldScene extends Phaser.Scene {
 	private spawns = new Map<string, ObjectOf<"spawn">>();
 	private spots = new Map<string, ObjectOf<"spot">>();
 	private areas = new Map<string, ObjectOf<"area">>();
+	private sprites: { def: SpriteObject; sprite: Phaser.GameObjects.Sprite }[] = [];
 	private layers = new Map<string, TileLayer>();
 	private outdoors = false;
 	private start: Point = { x: 0, y: 0 };
@@ -136,6 +142,7 @@ export class WorldScene extends Phaser.Scene {
 		this.spawns = new Map();
 		this.spots = new Map();
 		this.areas = new Map();
+		this.sprites = [];
 		this.layers = new Map();
 		this.takeover = null;
 		this.promptNpc = null;
@@ -176,7 +183,7 @@ export class WorldScene extends Phaser.Scene {
 				continue;
 			}
 			layer.setVisible(!collisionOnly);
-			layer.setDepth(layerData.name.includes("above") ? 50_000 : -1);
+			layer.setDepth(layerData.name.includes("above") ? ABOVE_DEPTH : -1);
 			// Blended layers (the `shade` layer multiplies) say so in a layer property.
 			const blend = (layerData.properties as { name: string; value: unknown }[] | undefined)?.find((p) => p.name === "blend")?.value;
 			if (blend === "multiply") layer.setBlendMode(Phaser.BlendModes.MULTIPLY);
@@ -209,6 +216,7 @@ export class WorldScene extends Phaser.Scene {
 			if (spawnObject.is(obj)) this.spawns.set(obj.id, obj);
 			else if (spotObject.is(obj)) this.spots.set(obj.id, obj);
 			else if (areaObject.is(obj)) this.areas.set(obj.id, obj);
+			else if (spriteObject.is(obj)) this.placeSprite(obj);
 			else if (doorObject.is(obj)) {
 				// A locked warp is solid ground until it opens, whatever the map around it
 				// allows: nobody slips round a gate onto it.
@@ -251,6 +259,7 @@ export class WorldScene extends Phaser.Scene {
 		// A story night stays at night, under a clear sky, whatever the clock and the weather.
 		const hours = this.services.night ? () => 23 : this.services.hours;
 		this.dayNight = new DayNight(this, lights.map((light, i) => ({ light, image: images[i] })), outdoors, hours, this.services.month);
+		this.showSpritesByDaylight();
 		const low = this.quality === "low";
 		const weather = this.services.live.weather;
 		this.weatherNow = this.services.night ? calmWeather(weather.place) : resolveWeather(window.location.search, weather);
@@ -371,6 +380,7 @@ export class WorldScene extends Phaser.Scene {
 		const input = this.input2.poll();
 		this.dialogue.update(dt, time);
 		this.dayNight.update(time);
+		this.showSpritesByDaylight();
 		if (this.progress.settings.effects === "auto" && this.frameWatch.sample(delta)) {
 			// Struggling: the shaders go now, the weather thins on the next map.
 			this.services.autoLow = true;
@@ -580,6 +590,8 @@ export class WorldScene extends Phaser.Scene {
 			daylight: this.dayNight.current,
 			quality: this.quality,
 			ambience: this.ambience.levels,
+			/** Animated sprites on screen now, by name: seasonal and day-only ones come and go. */
+			sprites: this.sprites.filter(({ sprite }) => sprite.visible).map(({ def }) => def.sprite),
 			music: this.services.music.current,
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
@@ -766,6 +778,33 @@ export class WorldScene extends Phaser.Scene {
 		this.save();
 	}
 
+	/** A looping strip from kai.json `sprites`; with reduced motion it holds its first frame. */
+	private placeSprite(def: SpriteObject) {
+		const key = `sprite:${def.sprite}`;
+		if (def.seasons && !def.seasons.split(",").includes(this.services.season)) return;
+		if (!this.textures.exists(key)) {
+			console.warn(`[world] ${this.target.map}: no sprite "${def.sprite}" in kai.json sprites`);
+			return;
+		}
+		const sprite = this.add.sprite(def.x * TILE + (def.dx ?? 0), def.y * TILE + (def.dy ?? 0), key).setOrigin(0);
+		// Just over its tile layer (the ground, or the roofs); otherwise sorted with the characters by its bottom edge.
+		sprite.setDepth(def.layer === "below" ? -0.9 : def.layer === "above" ? ABOVE_DEPTH + 0.1 : sprite.y + sprite.height);
+		// Neighbours start at different frames, so a flock doesn't move in step.
+		const frames = sprite.texture.frameTotal - 1;
+		const start = (def.x * 7 + def.y * 13) % Math.max(1, frames);
+		if (this.progress.reducedMotion) sprite.setFrame(0);
+		else sprite.play({ key, startFrame: start });
+		this.sprites.push({ def, sprite });
+	}
+
+	/** Day-only and night-only sprites come and go with the light, as their lights do. */
+	private showSpritesByDaylight() {
+		const { dark } = this.dayNight.current;
+		for (const { def, sprite } of this.sprites) {
+			if (def.when === "day" || def.when === "night") sprite.setVisible(lightFactor(def.when, dark) >= 0.5);
+		}
+	}
+
 	/** What a plugin lets the player use on `p`, if anything. */
 	private usableAt(p: Point): Usable | null {
 		for (const plugin of this.kaiPlugins) {
@@ -898,6 +937,7 @@ export class WorldScene extends Phaser.Scene {
 			spawns: scene.spawns,
 			spots: scene.spots,
 			areas: scene.areas,
+			sprites: scene.sprites,
 			doors: scene.doors,
 			get arrival() {
 				return { target: scene.target, tile: scene.start };

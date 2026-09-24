@@ -160,3 +160,8 @@ Visitors must not notice the refactor.
   `books` in kai-live, `cat` in datagutt). The map checks follow each type's placement.
   The build learns a game's types from `MAP_OBJECTS` in its maps module, the runtime
   from the plugins that place them.
+- 2026-09-25: animated map objects are an engine type, `sprite`: a kai.json strip looping
+  at a tile plus a pixel offset, drawn among the characters or on the ground or roof
+  layer, limited to seasons or daylight if asked. The build checks the names;
+  `MapCanvas.reserve` keeps the collision of the art a sprite replaces.
+

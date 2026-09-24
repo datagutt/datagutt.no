@@ -80,7 +80,9 @@ plugin that answers a question (a usable tile, a prompt, a talk) wins.
 - `objects`: the map object types this plugin places, as `[descriptor.place(fn)]`. The
   world calls `fn` for each object of that type as the map loads (see "Map object
   types" below). The engine places spawns, doors, signs, spots, areas, gates, lights and
-  NPCs itself. An object of a type no plugin places is skipped with a warning.
+  NPCs itself, and animated `sprite`s (a kai.json strip looping at a tile, for a season
+  or a time of day if asked). An object of a type no plugin places is skipped with a
+  warning.
 - `mapCreated(world)`: after the map, its objects and the player are in place.
 - `usableAt(world, tile)`: what the player can use on a tile. It is asked before signs
   and doors, so a plugin can take over a tile the map also marks.

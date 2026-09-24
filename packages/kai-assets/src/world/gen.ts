@@ -20,6 +20,8 @@ import { canvasToTmj, formatTmj, isManual, type Tmj } from "@datagutt/kai-worldg
 import { validateMap } from "@datagutt/kai-worldgen/validate";
 import type { KaiApp } from "../app.ts";
 import { localArtDir, seasonOverridesDir } from "../art/source.ts";
+import { spriteProblems } from "./sprites.ts";
+import sharp from "sharp";
 
 export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", args: string[]): Promise<void> {
 	const flag = (name: string) => args.includes(`--${name}`);
@@ -53,7 +55,7 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 			...(map.outdoor ? { seasonal: adapter.seasonalTile } : {}),
 			types,
 		});
-		problems.push(...validateMap(map.id, tmj, types), ...adapter.checkCuts(map.id, canvas.stamped));
+		problems.push(...validateMap(map.id, tmj, types), ...spriteProblems(map.id, canvas.objects, app.config.sprites), ...adapter.checkCuts(map.id, canvas.stamped));
 		outputs.set(file, formatTmj(tmj));
 	}
 	if (problems.length) throw new Error(`[world] ${problems.length} problem(s):\n  ${problems.join("\n  ")}`);
@@ -82,6 +84,24 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 	const season = opt("season") ?? "summer";
 	if (!isSeason(season)) throw new Error(`[world] Unknown season "${season}"`);
 	if (mode === "render") {
+		// Renders draw each sprite at its first frame, cut from its strip in the art.
+		const frames = new Map<string, Promise<{ data: Buffer; width: number; height: number } | null>>();
+		const firstFrame = (name: string) => {
+			const sprite = app.config.sprites[name];
+			if (!sprite) return Promise.resolve(null);
+			if (!frames.has(name)) {
+				frames.set(
+					name,
+					sharp(path.join(artDir, sprite.file))
+						.extract({ left: 0, top: 0, width: sprite.frameWidth, height: sprite.frameHeight })
+						.ensureAlpha()
+						.raw()
+						.toBuffer({ resolveWithObject: true })
+						.then(({ data, info }) => ({ data, width: info.width, height: info.height })),
+				);
+			}
+			return frames.get(name)!;
+		};
 		fs.mkdirSync(files.out, { recursive: true });
 		for (const [file, text] of outputs) {
 			if (!file.endsWith(".tmj")) continue;
@@ -91,6 +111,8 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 				grid: flag("grid"),
 				scale: Number(opt("scale") ?? 1),
 				types,
+				sprite: firstFrame,
+				season,
 			});
 			const target = path.join(files.out, path.basename(file, ".tmj") + (season === "summer" ? "" : `@${season}`) + ".png");
 			fs.writeFileSync(target, png);

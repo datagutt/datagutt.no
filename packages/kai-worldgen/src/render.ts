@@ -2,7 +2,8 @@
 // art (through a SheetSource), for reviewing maps. Needs the private art.
 import sharp from "sharp";
 import { beamAlpha, glowAlpha, hexRgb } from "@datagutt/kai/fx/lightShapes";
-import { lightObject, mapObjectTypes, parseMapObject, type MapObjectTypes, type TiledObject } from "@datagutt/kai/world/objects";
+import { lightObject, mapObjectTypes, parseMapObject, spriteObject, type MapObjectTypes, type TiledObject } from "@datagutt/kai/world/objects";
+import type { Raw } from "./atlas.ts";
 import { drawKey, type SheetSource } from "./atlas.ts";
 import { CLEAR_ID, COLLISION_ID } from "./registry.ts";
 import { decodeGid, type Tmj } from "./tmj.ts";
@@ -29,7 +30,17 @@ export async function renderTmj(
 	tmj: Tmj,
 	tiles: string[],
 	sheets: SheetSource,
-	options: { collision?: boolean; scale?: number; objects?: boolean; grid?: boolean; types?: MapObjectTypes } = {},
+	options: {
+		collision?: boolean;
+		scale?: number;
+		objects?: boolean;
+		grid?: boolean;
+		types?: MapObjectTypes;
+		/** The first frame of a kai.json sprite by name, to draw `sprite` objects; left out, they are not drawn. */
+		sprite?: (name: string) => Promise<Raw | null>;
+		/** The season rendered, for sprites limited to some seasons (summer when left out). */
+		season?: string;
+	} = {},
 ): Promise<Buffer> {
 	const W = tmj.width * T;
 	const H = tmj.height * T;
@@ -52,6 +63,27 @@ export async function renderTmj(
 	const objects = tmj.layers
 		.filter((l) => l.type === "objectgroup")
 		.flatMap((l) => (l.objects as TiledObject[]).map((o) => parseMapObject(o, T, types)));
+	// Animated sprites at their first frame, over the tiles.
+	for (const obj of objects) {
+		if (!spriteObject.is(obj) || !options.sprite) continue;
+		if (obj.seasons && !obj.seasons.split(",").includes(options.season ?? "summer")) continue;
+		const frame = await options.sprite(obj.sprite);
+		if (!frame) continue;
+		const x0 = obj.x * T + (obj.dx ?? 0);
+		const y0 = obj.y * T + (obj.dy ?? 0);
+		for (let y = 0; y < frame.height; y++) {
+			for (let x = 0; x < frame.width; x++) {
+				const si = (y * frame.width + x) * 4;
+				const a = frame.data[si + 3] / 255;
+				const px = x0 + x;
+				const py = y0 + y;
+				if (!a || px < 0 || py < 0 || px >= W || py >= H) continue;
+				const di = (py * W + px) * 4;
+				for (let c = 0; c < 3; c++) out.data[di + c] = Math.round(frame.data[si + c] * a + out.data[di + c] * (1 - a));
+				out.data[di + 3] = 255;
+			}
+		}
+	}
 	for (const light of objects) {
 		// Renders show the map by day: lamps and porch lights stay off.
 		if (!lightObject.is(light) || light.when === "night") continue;

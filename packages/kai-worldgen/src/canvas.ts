@@ -158,14 +158,26 @@ export class MapCanvas {
 	 * Its tiles stack over what is already on the layer (see `stack`).
 	 */
 	stamp(prefab: Prefab, x: number, y: number, transform?: Transform): this {
+		return this.place(prefab, x, y, transform, true);
+	}
+
+	/**
+	 * Place a prefab's collision and footprint but none of its tiles, for a thing an
+	 * animated sprite draws instead (a `sprite` map object over the same spot).
+	 */
+	reserve(prefab: Prefab, x: number, y: number, transform?: Transform): this {
+		return this.place(prefab, x, y, transform, false);
+	}
+
+	private place(prefab: Prefab, x: number, y: number, transform: Transform | undefined, draw: boolean): this {
 		if (prefab.parts) {
-			for (const part of prefab.parts) this.stamp(part.prefab, x + part.dx, y + part.dy, transform);
+			for (const part of prefab.parts) this.place(part.prefab, x + part.dx, y + part.dy, transform, draw);
 			return this;
 		}
 		this.stamped.push(prefab);
 		const t = transform ? TRANSFORMS[transform] : null;
 		const place = (dx: number, dy: number): [number, number] => (t ? t.at(dx, dy, prefab.w, prefab.h) : [dx, dy]);
-		for (let dy = 0; dy < prefab.h; dy++) {
+		for (let dy = 0; draw && dy < prefab.h; dy++) {
 			const layer: LayerName = prefab.rowLayers?.[dy] ?? (dy < prefab.aboveRows ? "above" : prefab.flat ? "ground2" : "below");
 			for (let dx = 0; dx < prefab.w; dx++) {
 				const [tx, ty] = place(dx, dy);
