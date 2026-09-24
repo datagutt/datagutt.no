@@ -5,6 +5,10 @@ const onWslMountedDrive = process.platform === "linux" && process.cwd().startsWi
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   productionBrowserSourceMaps: true,
+  // The old site lived at /legacy while the game was built; its content is the Journal now.
+  async redirects() {
+    return [{ source: "/legacy", destination: "/journal", permanent: true }];
+  },
   cacheComponents: true,
   reactCompiler: true,
   experimental: {

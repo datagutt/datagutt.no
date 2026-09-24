@@ -2,13 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { OG_IMAGE, SITE_URL } from "@/lib/site";
 import { GeistSans } from "geist/font/sans";
-import {
-  GeistPixelSquare,
-  GeistPixelGrid,
-  GeistPixelCircle,
-  GeistPixelTriangle,
-  GeistPixelLine,
-} from "geist/font/pixel";
+import { GeistPixelSquare } from "geist/font/pixel";
 
 const description = "Hi! I'm Thomas, a full-stack web developer from Norway. My portfolio is a small pixel-art town on a fjord: walk around, talk to the locals, find my projects.";
 
@@ -37,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistPixelSquare.variable} ${GeistPixelGrid.variable} ${GeistPixelCircle.variable} ${GeistPixelTriangle.variable} ${GeistPixelLine.variable}`}
+      className={`${GeistSans.variable} ${GeistPixelSquare.variable}`}
     >
       <body>{children}</body>
     </html>

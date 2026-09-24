@@ -24,13 +24,15 @@ test("title screen boots the game, and New game from its menu enters the world",
 	expect(errors).toEqual([]);
 });
 
-test("journal and legacy pages render", async ({ page }) => {
+test("the old /legacy address leads to the Journal, and unknown ones to a way back", async ({ page }) => {
 	const errors = collectPageErrors(page);
-	for (const path of ["/journal", "/legacy"]) {
-		const response = await page.goto(path);
-		expect(response?.status(), path).toBeLessThan(400);
-		await expect(page.locator("main")).toBeVisible();
-	}
+	await page.goto("/legacy");
+	await expect(page).toHaveURL(/\/journal$/);
+	await expect(page.getByRole("heading", { name: "datagutt's Journal" })).toBeVisible();
+
+	const response = await page.goto("/no-such-place");
+	expect(response?.status()).toBe(404);
+	await expect(page.getByRole("link", { name: "Back to town" })).toBeVisible();
 	expect(errors).toEqual([]);
 });
 
