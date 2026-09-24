@@ -9,6 +9,8 @@ node_modules/
 coverage/
 *.tsbuildinfo
 next-env.d.ts
+# kai content output (`kai content`), written into each app
+.kai/
 
 # misc
 .DS_Store
