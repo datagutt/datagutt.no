@@ -7,3 +7,5 @@ export type { Achievement, CharacterRecipe, EngineContent, GameContent, Moment, 
 export { perWorld, tileKey } from "./plugins/api.ts";
 export type { KaiPlugin, MenuItem, NpcDef, ObjectOf, Takeover, TileLayer, Usable, World } from "./plugins/api.ts";
 export { TILE } from "./constants.ts";
+export { defineMapObject } from "./world/objects.ts";
+export type { AnyMapObject, MapObjectOf, MapObjectType, ObjectPlacer, Placement, PropKind } from "./world/objects.ts";

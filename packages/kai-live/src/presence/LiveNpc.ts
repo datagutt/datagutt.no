@@ -6,16 +6,12 @@ import type Phaser from "phaser";
 import { NPC_MOVEMENT, type MoverEvent } from "@datagutt/kai/world/movement";
 import { directionBetween, type CollisionGrid, type Point } from "@datagutt/kai/world/grid";
 import { findPath, findPathAdjacent } from "@datagutt/kai/world/pathfind";
-import type { MapObject } from "@datagutt/kai/world/objects";
+import type { DoorObject as Door, NpcObject as NpcDef, SpotObject as Spot } from "@datagutt/kai/world/objects";
 import type { Presence, PresenceFeed } from "../lanyard.ts";
 import type { PresenceConfig } from "./config.ts";
 import { doingFor, nextMap, spotId, type Doing } from "./rules.ts";
 import { EmoteBubble, SpeechBubble } from "@datagutt/kai/ui/Bubbles";
 import { Actor } from "@datagutt/kai/entities/Actor";
-
-type NpcDef = Extract<MapObject, { type: "npc" }>;
-type Spot = Extract<MapObject, { type: "spot" }>;
-type Door = Extract<MapObject, { type: "door" }>;
 
 export type LiveHost = {
 	scene: Phaser.Scene;

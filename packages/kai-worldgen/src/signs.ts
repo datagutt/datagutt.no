@@ -1,10 +1,8 @@
 // A sign is placed on one tile of the thing it describes, but players read it by facing
 // any part of that thing: a whiteboard two tiles wide, a vending machine, a fountain.
 // Before a map is written, each sign grows to the footprint of the object under it.
-import type { MapObject } from "@datagutt/kai/world/objects";
+import { doorObject, signObject, type MapObjectTypes, type SignObject as Sign } from "@datagutt/kai/world/objects";
 import type { MapCanvas, Placement } from "./canvas.ts";
-
-type Sign = Extract<MapObject, { type: "sign" }>;
 
 const contains = (p: Placement, x: number, y: number) => x >= p.x && y >= p.y && x < p.x + p.w && y < p.y + p.h;
 
@@ -28,11 +26,15 @@ function footprint(canvas: MapCanvas, sign: Sign): [number, number][] {
 }
 
 /** Grow every one-tile sign to the object it sits on, as a rectangle (the game reads it on the blocked cells inside). */
-export function growSigns(canvas: MapCanvas): void {
-	// Cells another sign, an NPC or a door already answers for stay theirs.
-	const taken = new Set(canvas.objects.filter((o) => o.type === "sign" || o.type === "arcade" || o.type === "npc" || o.type === "cat" || o.type === "door").map((o) => `${o.x},${o.y}`));
+export function growSigns(canvas: MapCanvas, types: MapObjectTypes): void {
+	// Cells another fixture (a sign, a cabinet), someone standing or a door already answers for stay theirs.
+	const answers = (type: string) => {
+		const placement = types.get(type)?.placement;
+		return placement === "fixture" || placement === "standing" || type === doorObject.type;
+	};
+	const taken = new Set(canvas.objects.filter((o) => answers(o.type)).map((o) => `${o.x},${o.y}`));
 	for (const obj of canvas.objects) {
-		if (obj.type !== "sign" || obj.w !== undefined) continue;
+		if (!signObject.is(obj) || obj.w !== undefined) continue;
 		const own = `${obj.x},${obj.y}`;
 		const cells = footprint(canvas, obj).filter(([x, y]) => `${x},${y}` === own || !taken.has(`${x},${y}`));
 		if (cells.length <= 1) continue;

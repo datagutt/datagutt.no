@@ -154,3 +154,9 @@ Visitors must not notice the refactor.
   `githubField` and `repoShelf`: both read the same live data and place one object type
   each. A game's own plugins live where its game code lives (`game/plugins/` in
   datagutt), not necessarily `src/plugins/`.
+- 2026-09-25: map object types are descriptors (`defineMapObject`: properties, placement,
+  size), not one closed union in the engine. The engine keeps its own types; a game's
+  or a plugin's types live with their owner (`arcade` in kai-arcade, `crops` and
+  `books` in kai-live, `cat` in datagutt). The map checks follow each type's placement.
+  The build learns a game's types from `MAP_OBJECTS` in its maps module, the runtime
+  from the plugins that place them.

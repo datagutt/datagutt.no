@@ -121,5 +121,6 @@ the content bundle also depends on schemas in other packages. `typecheck`, `test
   such as `@datagutt/kai/data`.
 - `Phaser.Scene` already has `plugins` and `data`, so the world scene calls its own
   `kaiPlugins` and `gameData`.
-- Map object types are one closed union in `packages/kai/src/world/objects.ts`, parsed
-  there too. A plugin can place any of them, but a new type is an engine change.
+- A map object type of a game's own must be listed in `MAP_OBJECTS` for the build and
+  placed by a plugin at runtime. The two lists are separate, so a type in only one of
+  them fails the build or is skipped in the game with a warning.

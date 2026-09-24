@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated: 2026-09-24 (kai session 1, end)
+Last updated: 2026-09-25 (kai session 1, end)
 
 ## Current state
 
@@ -29,13 +29,8 @@ overrides at the art repository's old `seasons/` path, which K3.5 moved to
    trainer, and taking a door within the old 1.6 s timer cancelled it. The finale is now
    owed until seen to its end (`game/plugins/finale.ts`) and resumes on the next map;
    the user's own save reaches the pier with it.
-2. Map object types, as approved by the user: `defineMapObject(type, { props,
-   placement, size })` with placements `standing`, `fixture` and `overlay`. Core types
-   become descriptors too; `arcade` moves to `kai-arcade/object`, `crops` and `books` to
-   `kai-live/github/objects`, `cat` to the app. Plugins register
-   `objects: [desc.place(fn)]`; the build reads `MAP_OBJECTS` from the `paths.maps`
-   module. An unknown type fails the build and is warned about and skipped at runtime.
-   The `.tmj` files must stay byte-identical.
+2. Done: map object types are descriptors (docs/kai/PLUGINS.md, "Map object types").
+   The generated maps stayed byte-identical.
 3. Merge `kai` into `game` when the user says so.
 
 ## Gotchas

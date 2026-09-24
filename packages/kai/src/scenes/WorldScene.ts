@@ -21,7 +21,23 @@ import type { DialogueRunner } from "../dialogue/DialogueRunner.ts";
 import { DIALOGUE_KEY } from "./PreloadScene.ts";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid.ts";
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement.ts";
-import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects.ts";
+import {
+	areaObject,
+	doorObject,
+	gateObject,
+	lightObject,
+	mapObjectTypes,
+	npcObject,
+	signObject,
+	spawnObject,
+	spotObject,
+	type AnyMapObject,
+	type Facing,
+	type GateObject,
+	type LightObject,
+	type ObjectPlacer,
+	type TiledObject,
+} from "../world/objects.ts";
 import { addLights } from "../fx/Lights.ts";
 import { DayNight } from "../fx/DayNight.ts";
 import { Weather } from "../fx/Weather.ts";
@@ -176,35 +192,38 @@ export class WorldScene extends Phaser.Scene {
 		this.world = this.makeWorld();
 		// Generated `objects` plus any `manual_*` object layers added in Tiled.
 		const rawObjects = map.objects.flatMap((layer) => layer.objects) as unknown as TiledObject[];
+		// The engine's own types, plus those the plugins place (the first plugin to name a type places it).
+		const placers = new Map<string, ObjectPlacer>();
+		for (const placer of this.kaiPlugins.flatMap((p) => p.objects ?? [])) if (!placers.has(placer.type.type)) placers.set(placer.type.type, placer);
+		const types = mapObjectTypes([...placers.values()].map((p) => p.type));
 		const lights: LightObject[] = [];
 		const signs: Sign[] = [];
-		const gates: ObjectOf<"gate">[] = [];
-		const placed: MapObject[] = [];
+		const gates: GateObject[] = [];
+		const placed: AnyMapObject[] = [];
 		for (const raw of rawObjects) {
-			const obj = parseMapObject(raw, TILE);
-			if (obj.type === "spawn") this.spawns.set(obj.id, obj);
-			else if (obj.type === "spot") this.spots.set(obj.id, obj);
-			else if (obj.type === "area") this.areas.set(obj.id, obj);
-			else if (obj.type === "door") {
+			if (!types.has(raw.type)) {
+				console.warn(`[world] ${this.target.map}: no plugin places "${raw.type}" objects`);
+				continue;
+			}
+			const obj = types.get(raw.type)!.parse(raw, TILE);
+			if (spawnObject.is(obj)) this.spawns.set(obj.id, obj);
+			else if (spotObject.is(obj)) this.spots.set(obj.id, obj);
+			else if (areaObject.is(obj)) this.areas.set(obj.id, obj);
+			else if (doorObject.is(obj)) {
 				// A locked warp is solid ground until it opens, whatever the map around it
 				// allows: nobody slips round a gate onto it.
 				if (obj.unlock && !this.gameData.isUnlocked(obj.unlock, this.progress)) this.grid.setBlocked(obj.x, obj.y);
 				else this.doors.set(tileKey(obj), obj);
-			} else if (obj.type === "sign") signs.push(obj);
-			else if (obj.type === "gate") gates.push(obj);
-			else if (obj.type === "light") lights.push(obj);
-			else if (obj.type === "npc") {
+			} else if (signObject.is(obj)) signs.push(obj);
+			else if (gateObject.is(obj)) gates.push(obj);
+			else if (lightObject.is(obj)) lights.push(obj);
+			else if (npcObject.is(obj)) {
 				const actor = new Actor(this, obj.id, obj.character, obj, obj.facing, NPC_MOVEMENT);
 				this.npcs.set(obj.id, { actor, def: obj });
 				this.grid.occupy(obj.x, obj.y, obj.id);
 			} else placed.push(obj);
 		}
-		// Every other type belongs to the plugin that places it.
-		for (const obj of placed) {
-			const place = this.kaiPlugins.map((p) => p.objects?.[obj.type] as ((world: World, o: MapObject) => void) | undefined).find(Boolean);
-			if (place) place(this.world, obj);
-			else console.warn(`[world] ${this.target.map}: no plugin places "${obj.type}" objects`);
-		}
+		for (const obj of placed) placers.get(obj.type)!.place(this.world, obj);
 		// A shut gate reads like a sign; an open one clears its barriers off the map.
 		for (const gate of gates) {
 			if (!this.gameData.isUnlocked(gate.unlock, this.progress)) {

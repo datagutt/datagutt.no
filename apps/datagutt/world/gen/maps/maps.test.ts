@@ -5,25 +5,29 @@ import { describe, expect, it } from "vitest";
 import { isArcadeId } from "../../../game/arcade/ids";
 import { content } from "../../../content/index";
 import { usedMapText } from "../text";
-import { GENERATED_MAPS } from "./index";
+import { doorObject, mapObjectTypes, spotObject } from "@datagutt/kai/world/objects";
+import { arcadeObject } from "@datagutt/kai-arcade/object";
+import { GENERATED_MAPS, MAP_OBJECTS } from "./index";
+
+const types = mapObjectTypes(MAP_OBJECTS);
 
 describe("generated maps", () => {
 	it("are byte-identical across runs", () => {
 		for (const map of GENERATED_MAPS) {
-			const a = formatTmj(canvasToTmj(map.id, map.build(), new TileRegistry(), { properties: map.properties }));
-			const b = formatTmj(canvasToTmj(map.id, map.build(), new TileRegistry(), { properties: map.properties }));
+			const a = formatTmj(canvasToTmj(map.id, map.build(), new TileRegistry(), { properties: map.properties, types }));
+			const b = formatTmj(canvasToTmj(map.id, map.build(), new TileRegistry(), { properties: map.properties, types }));
 			expect(a).toBe(b);
 		}
 	});
 
 	it("pass validation", () => {
-		for (const map of GENERATED_MAPS) expect(validateMap(map.id, canvasToTmj(map.id, map.build(), new TileRegistry()))).toEqual([]);
+		for (const map of GENERATED_MAPS) expect(validateMap(map.id, canvasToTmj(map.id, map.build(), new TileRegistry(), { types }), types)).toEqual([]);
 	});
 
 	// Map objects name arcade games as plain strings; the registry is Fjord Town's code.
 	it("only place cabinets for games the arcade registry has", () => {
 		for (const map of GENERATED_MAPS) {
-			for (const obj of map.build().objects) if (obj.type === "arcade") expect(isArcadeId(obj.game), `${map.id}: ${obj.game}`).toBe(true);
+			for (const obj of map.build().objects) if (arcadeObject.is(obj)) expect(isArcadeId(obj.game), `${map.id}: ${obj.game}`).toBe(true);
 		}
 	});
 
@@ -38,11 +42,11 @@ describe("generated maps", () => {
 		const { presence } = content;
 		const built = new Map(GENERATED_MAPS.map((m) => [m.id, m.build()]));
 		for (const [place, { map }] of Object.entries(presence.places)) {
-			const spots = built.get(map)!.objects.filter((o) => o.type === "spot" && o.id === `${presence.npc}-${place}`);
+			const spots = built.get(map)!.objects.filter((o) => spotObject.is(o) && o.id === `${presence.npc}-${place}`);
 			expect(spots, `${presence.npc}-${place} on ${map}`).toHaveLength(1);
 		}
 		for (const [from, tos] of Object.entries(presence.routes)) {
-			for (const to of tos) expect(built.get(from)!.objects.some((o) => o.type === "door" && o.toMap === to), `door ${from} → ${to}`).toBe(true);
+			for (const to of tos) expect(built.get(from)!.objects.some((o) => doorObject.is(o) && o.toMap === to), `door ${from} → ${to}`).toBe(true);
 		}
 	});
 });

@@ -1,5 +1,9 @@
 // Every map the generator owns. `bun run world:gen` writes each to world/maps/<id>.tmj.
+import type { MapObjectType } from "@datagutt/kai/world/objects";
+import { arcadeObject } from "@datagutt/kai-arcade/object";
+import { booksObject, cropsObject } from "@datagutt/kai-live/github/objects";
 import type { GeneratedMap } from "@datagutt/kai-worldgen/maps";
+import { catObject } from "../../../game/plugins/cat.object.ts";
 import { content } from "../../../content/index.ts";
 import { boathouse } from "./boathouse.ts";
 import { farmhouse } from "./farmhouse.ts";
@@ -18,6 +22,9 @@ import { overworld } from "./overworld.ts";
 export type { GeneratedMap };
 
 const NAMES = content.mapText.names;
+
+/** The map object types of Fjord Town and its plugins, beside the engine's own. */
+export const MAP_OBJECTS: MapObjectType[] = [catObject, arcadeObject, cropsObject, booksObject];
 
 export const GENERATED_MAPS: GeneratedMap[] = [
 	{ id: "town", properties: { name: NAMES["town"] }, outdoor: true, build: overworld },

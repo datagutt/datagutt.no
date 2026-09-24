@@ -5,6 +5,9 @@
 //       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
 import type { Facing, MapObject } from "@datagutt/kai/world/objects";
+import { arcadeObject } from "@datagutt/kai-arcade/object";
+import { cropsObject } from "@datagutt/kai-live/github/objects";
+import { catObject } from "../../../game/plugins/cat.object.ts";
 import { COBBLE, CROPS, GRASS, TERRAIN } from "@datagutt/kai-limezu/palette";
 import { refKey } from "@datagutt/kai-worldgen/registry";
 import { glow, NIGHT_LIGHTS } from "@datagutt/kai-limezu/lighting";
@@ -71,7 +74,7 @@ export function overworld(): MapCanvas {
 
 	fence(c, FIELD.x, FIELD.y, FIELD.w, FIELD.h, [[15, FIELD.y + FIELD.h - 1]]);
 	field.each((x, y) => (x * 7 + y * 3) % 5 !== 0 && c.put("decal", x, y, CROPS[(x * 3 + y * 5) % CROPS.length]));
-	c.add({ type: "crops", x: FIELD.x + 1, y: FIELD.y + 1, w: FIELD.w - 2, h: FIELD.h - 2, stages: CROPS.map(refKey).join("|") });
+	c.add(cropsObject.at(FIELD.x + 1, FIELD.y + 1, { w: FIELD.w - 2, h: FIELD.h - 2, stages: CROPS.map(refKey).join("|") }));
 
 	// --- Radio hill ------------------------------------------------------------------------
 	plateau(c, 63, 5, 27, 10, [66, 67]);
@@ -100,7 +103,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "door", x: 61, y: 0, toMap: "mountain", toSpawn: "trailhead", unlock: "passport" });
 	// A bench at the hill's edge, binoculars left on it: the stars at night (B2).
 	c.stamp(PREFABS.bench, 69, 12).stamp(PREFABS.binoculars, 70, 12);
-	c.add({ type: "arcade", x: 70, y: 13, game: "stargazing" });
+	c.add(arcadeObject.at(70, 13, { game: "stargazing" }));
 	// Closed until its interior is built (it waits for LimeZu's Modern Office pack).
 	building(c, PREFABS.office, 69, 22, { link: { toMap: "office", toSpawn: "entrance" } });
 	const gymDoor = building(c, PREFABS.logCabin, 79, 28, { link: { toMap: "gym", toSpawn: "entrance" } });
@@ -192,7 +195,7 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "youth_club_door", ...clubDoor, facing: "down" });
 	c.add({ type: "spawn", id: "trail", x: 61, y: 2, facing: "down" });
 	// The hidden cat (B3), sunning itself on the far end of the beach behind the last pines.
-	c.add({ type: "cat", x: 94, y: 61 });
+	c.add(catObject.at(94, 61, {}));
 	sign(c, HARBOUR_X + 3, pierTop - 2, say("welcome"));
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, say("datagutt-house"));

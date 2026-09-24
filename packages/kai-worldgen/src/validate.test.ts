@@ -1,3 +1,4 @@
+import { defineMapObject, mapObjectTypes } from "@datagutt/kai/world/objects";
 import { describe, expect, it } from "vitest";
 import { MapCanvas } from "./canvas.ts";
 import { TileRegistry } from "./registry.ts";
@@ -32,5 +33,21 @@ describe("validateMap", () => {
 		expect(problems).toMatch(/npc "far" at \(5, 2\) can't be reached from entrance/);
 		expect(problems).toMatch(/sign at \(5, 0\) can't be reached from entrance/);
 		expect(problems).toMatch(/sign at \(0, 0\) is on open floor/);
+	});
+
+	it("checks a game's own types by their placement", () => {
+		const cat = defineMapObject("cat", { placement: "standing", size: { w: 2, h: 1 } });
+		const cabinet = defineMapObject("cabinet", { props: { game: "string" }, placement: "fixture" });
+		const types = mapObjectTypes([cat, cabinet]);
+		const c = new MapCanvas(6, 3);
+		c.block(3, 0).block(5, 1);
+		c.add({ type: "spawn", id: "entrance", x: 0, y: 1, facing: "up" });
+		c.add(cat.at(2, 0, {}));
+		c.add(cabinet.at(0, 0, { game: "blocks" }));
+		c.add(cabinet.at(5, 1, { game: "life" }));
+		const problems = validateMap("t", canvasToTmj("t", c, new TileRegistry(), { types }), types).join("\n");
+		expect(problems).toMatch(/cat at \(2, 0\) reaches onto a blocked tile at \(3, 0\)/);
+		expect(problems).toMatch(/cabinet at \(0, 0\) is on open floor/);
+		expect(problems).not.toMatch(/cabinet at \(5, 1\)/);
 	});
 });

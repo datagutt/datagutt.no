@@ -1,6 +1,6 @@
 // A map under construction: tile layers of LimeZu tile references, an explicit collision
 // layer, and map objects. The generator paints into it; tiled.ts writes it out.
-import type { MapObject } from "@datagutt/kai/world/objects";
+import type { AnyMapObject, MapObject } from "@datagutt/kai/world/objects";
 import { pieceAt, variant, type AutotileSet, type Mask, type TileRef } from "./autotile.ts";
 
 /**
@@ -78,7 +78,7 @@ export class MapCanvas {
 	readonly collision: Uint8Array;
 	/** Cells inside a forest, for the ambience (birdsong, wind in the trees). */
 	readonly forest: Uint8Array;
-	readonly objects: MapObject[] = [];
+	readonly objects: AnyMapObject[] = [];
 	/** Every prefab stamped, for checking that none cuts an object in half (cuts.ts). */
 	readonly stamped: Prefab[] = [];
 	/** Where each prefab went and the cells it blocks, for growing signs over whole objects (signs.ts). */
@@ -205,7 +205,8 @@ export class MapCanvas {
 		return this;
 	}
 
-	add(obj: MapObject): this {
+	/** An engine object as a literal, or a game's own made with its descriptor's `at()`. */
+	add(obj: MapObject | AnyMapObject): this {
 		this.objects.push(obj);
 		return this;
 	}

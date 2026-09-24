@@ -5,7 +5,10 @@ import { ArcadeScreen } from "@datagutt/kai-arcade/screen";
 import type { PromptAction } from "@datagutt/kai/ui/Prompt";
 import { makeArcade } from "../arcade";
 import { isArcadeId, type ArcadeId } from "../arcade/ids";
-import { perWorld, tileKey, type KaiPlugin, type ObjectOf, type World } from "@datagutt/kai";
+import { arcadeObject } from "@datagutt/kai-arcade/object";
+import { perWorld, tileKey, type KaiPlugin, type MapObjectOf, type World } from "@datagutt/kai";
+
+type Cabinet = MapObjectOf<typeof arcadeObject>;
 
 /** The falling blocks score that earns "High score". */
 export const BLOCKS_TARGET = 1000;
@@ -13,10 +16,10 @@ export const BLOCKS_TARGET = 1000;
 const PROMPTS: Partial<Record<ArcadeId, PromptAction>> = { stargazing: "Look", screensaver: "Use" };
 
 export function arcadePlugin(): KaiPlugin {
-	const cabinets = perWorld(() => new Map<string, ObjectOf<"arcade">>());
+	const cabinets = perWorld(() => new Map<string, Cabinet>());
 	let playing: string | null = null;
 
-	function play(world: World, cabinet: ObjectOf<"arcade">) {
+	function play(world: World, cabinet: Cabinet) {
 		if (cabinet.game === "stargazing" && world.daylight.dark < 0.5) return world.playKnot("binoculars_by_day", null, () => {});
 		if (!isArcadeId(cabinet.game)) return;
 		if (cabinet.game === "stargazing") world.achieve("stars");
@@ -42,9 +45,7 @@ export function arcadePlugin(): KaiPlugin {
 
 	return {
 		name: "arcade",
-		objects: {
-			arcade: (world, cabinet) => void cabinets(world).set(tileKey(cabinet), cabinet),
-		},
+		objects: [arcadeObject.place((world, cabinet) => void cabinets(world).set(tileKey(cabinet), cabinet))],
 		usableAt(world, p) {
 			const cabinet = cabinets(world).get(tileKey(p));
 			if (!cabinet) return null;

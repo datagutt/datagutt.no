@@ -31,7 +31,7 @@ export const kaiConfigSchema = z.object({
 	basePath: z.string().regex(/^\/([a-z0-9-]+\/)*$/, 'a path such as "/game/"'),
 	/** Modules and folders of the game that the build loads, relative to the game's folder. */
 	paths: z.object({
-		/** Exports `GENERATED_MAPS` (@datagutt/kai-worldgen/maps). */
+		/** Exports `GENERATED_MAPS` (@datagutt/kai-worldgen/maps), and `MAP_OBJECTS` when the game has map object types of its own. */
 		maps: z.string(),
 		/** The folder holding main.ink. */
 		ink: z.string(),

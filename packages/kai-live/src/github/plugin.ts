@@ -4,13 +4,14 @@
 import { TILE, type KaiPlugin } from "@datagutt/kai";
 import type { ContributionDay, PinnedRepo } from "../github.ts";
 import { fieldLevels } from "./field.ts";
+import { booksObject, cropsObject } from "./objects.ts";
 import { spines } from "./shelf.ts";
 
 export function githubObjects(live: { contributions: readonly ContributionDay[]; repos: readonly PinnedRepo[] }): KaiPlugin {
 	return {
 		name: "github",
-		objects: {
-			crops(world, area) {
+		objects: [
+			cropsObject.place((world, area) => {
 				const days = live.contributions;
 				const decal = world.layers.get("decal");
 				// Without live data the generator's sample crops stay.
@@ -25,8 +26,8 @@ export function githubObjects(live: { contributions: readonly ContributionDay[];
 						else decal.putTileAt(stages[Math.min(level, stages.length) - 1], x, y);
 					});
 				});
-			},
-			books(world, area) {
+			}),
+			booksObject.place((world, area) => {
 				const g = world.scene.add.graphics().setDepth(-0.5);
 				for (const s of spines(live.repos, area.w * TILE, area.h * TILE - 2)) {
 					const x = area.x * TILE + s.x;
@@ -34,7 +35,7 @@ export function githubObjects(live: { contributions: readonly ContributionDay[];
 					g.fillStyle(s.edge).fillRect(x, y, s.w, s.h);
 					g.fillStyle(s.color).fillRect(x, y + 1, s.w - 1, s.h - 1);
 				}
-			},
-		},
+			}),
+		],
 	};
 }

@@ -2,6 +2,7 @@
 // website's five canvases live on as arcade cabinets (docs/PLAN.md B1). Teal walls,
 // dark boards; the cabinets along the back wall, the TV corner with its rug and bean bags,
 // a pool table, and Siv who runs the place.
+import { arcadeObject } from "@datagutt/kai-arcade/object";
 import type { MapObject } from "@datagutt/kai/world/objects";
 import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
@@ -37,7 +38,7 @@ export function youthClub(): MapCanvas {
 	cabinets.forEach(({ x, game }, i) => {
 		c.stamp(i % 2 ? F.arcadeRed : F.arcade, x, 1);
 		c.add(glow(x, 2, GLOWS.screen));
-		c.add({ type: "arcade", x, y: 3, game });
+		c.add(arcadeObject.at(x, 3, { game }));
 	});
 
 	// The TV corner: consoles on the back wall, the rug and bean bags in front.

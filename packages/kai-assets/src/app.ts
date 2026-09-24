@@ -1,9 +1,11 @@
 // A game as the build sees it: its folder, its validated kai.json, and the modules kai.json
-// points at (the art adapter, the maps, the dialogue host), loaded on demand.
+// points at (the art adapter, the maps and their object types, the dialogue host), loaded
+// on demand.
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadKaiConfig, type KaiConfig } from "@datagutt/kai/schema";
+import { mapObjectTypes, type MapObjectType, type MapObjectTypes } from "@datagutt/kai/world/objects";
 import type { GeneratedMap } from "@datagutt/kai-worldgen/maps";
 import type { ArtAdapter } from "./adapter.ts";
 import type { DialogueHost } from "./build/ink.ts";
@@ -17,13 +19,16 @@ export type KaiApp = {
 	worldDir: string;
 	adapter(): Promise<ArtAdapter>;
 	maps(): Promise<GeneratedMap[]>;
+	/** The engine's map object types plus the game's own (MAP_OBJECTS in its maps module). */
+	mapObjects(): Promise<MapObjectTypes>;
 	dialogueHost(): Promise<DialogueHost>;
 };
 
-async function importFrom<T>(file: string, name: string): Promise<T> {
+async function importFrom<T>(file: string, name: string, fallback?: T): Promise<T> {
 	const mod = await import(pathToFileURL(file).href);
-	if (!(name in mod)) throw new Error(`${file} does not export \`${name}\``);
-	return mod[name] as T;
+	if (name in mod) return mod[name] as T;
+	if (fallback !== undefined) return fallback;
+	throw new Error(`${file} does not export \`${name}\``);
 }
 
 export function loadApp(dir: string): KaiApp {
@@ -36,6 +41,7 @@ export function loadApp(dir: string): KaiApp {
 		worldDir: local("world"),
 		adapter: () => importFrom(createRequire(local("package.json")).resolve(config.assets.adapter), "adapter"),
 		maps: () => importFrom(local(config.paths.maps), "GENERATED_MAPS"),
+		mapObjects: async () => mapObjectTypes(await importFrom<MapObjectType[]>(local(config.paths.maps), "MAP_OBJECTS", [])),
 		dialogueHost: () => importFrom(local(config.paths.dialogueHost), "dialogueHost"),
 	};
 }

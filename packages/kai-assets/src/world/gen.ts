@@ -32,7 +32,7 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 		out: path.join(app.worldDir, "out"),
 	};
 	const readJson = (file: string) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null);
-	const [adapter, maps] = await Promise.all([app.adapter(), app.maps()]);
+	const [adapter, maps, types] = await Promise.all([app.adapter(), app.maps(), app.mapObjects()]);
 
 	if (flag("prune") && opt("only")) throw new Error("[world] --prune rebuilds tile ids for every map; it can't be combined with --only.");
 	if (flag("prune")) {
@@ -51,8 +51,9 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 			properties: { ...map.properties, ...(map.outdoor ? { outdoor: "true" } : {}) },
 			previous: readJson(file),
 			...(map.outdoor ? { seasonal: adapter.seasonalTile } : {}),
+			types,
 		});
-		problems.push(...validateMap(map.id, tmj), ...adapter.checkCuts(map.id, canvas.stamped));
+		problems.push(...validateMap(map.id, tmj, types), ...adapter.checkCuts(map.id, canvas.stamped));
 		outputs.set(file, formatTmj(tmj));
 	}
 	if (problems.length) throw new Error(`[world] ${problems.length} problem(s):\n  ${problems.join("\n  ")}`);
@@ -89,6 +90,7 @@ export async function worldGen(app: KaiApp, mode: "gen" | "check" | "render", ar
 				objects: flag("objects"),
 				grid: flag("grid"),
 				scale: Number(opt("scale") ?? 1),
+				types,
 			});
 			const target = path.join(files.out, path.basename(file, ".tmj") + (season === "summer" ? "" : `@${season}`) + ".png");
 			fs.writeFileSync(target, png);

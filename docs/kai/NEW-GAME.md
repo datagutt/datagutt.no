@@ -21,8 +21,10 @@ the next game. These steps make `apps/<name>` from it.
 1. Places: edit `content/places.json`. `startPlace` in `kai.json` must name one with an
    entrance.
 2. Maps: write builders in `world/maps.ts` (or a folder of them) and list them in
-   `GENERATED_MAPS`. Run `bun run world:gen`, then commit `world/maps/*.tmj` and the tile
-   registry beside them.
+   `GENERATED_MAPS`. If the maps use object types of the game's own or of a plugin
+   package (arcade cabinets, say), list their descriptors in `MAP_OBJECTS` in the same
+   module. Run `bun run world:gen`, then commit `world/maps/*.tmj` and the tile registry
+   beside them.
 3. Cast: add looks to `content/characters.json` and people to `content/npcs.json`.
    Place each NPC on a map with an `npc` object. Run `bunx kai characters` to review
    the looks.

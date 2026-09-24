@@ -3,7 +3,7 @@
 // something, a conversation ending), places its own map object types, adds start menu
 // items, and can take over the frame for a while (a cutscene, a cabinet, the credits).
 import type Phaser from "phaser";
-import type { MapObject } from "../world/objects.ts";
+import type { AreaObject, DoorObject, MapObject, NpcObject, ObjectPlacer, SpawnObject, SpotObject } from "../world/objects.ts";
 import type { Externals, ExternalsContext, GameServices, WorldTarget } from "../boot.ts";
 import type { Actor } from "../entities/Actor.ts";
 import type { FrameInput } from "../input/InputController.ts";
@@ -12,8 +12,9 @@ import type { PromptAction } from "../ui/Prompt.ts";
 import type { CollisionGrid, Point } from "../world/grid.ts";
 import type { Daylight } from "../world/dayNight.ts";
 
+/** One of the engine's own map objects by type. A game's own: `MapObjectOf<typeof itsDescriptor>`. */
 export type ObjectOf<T extends MapObject["type"]> = Extract<MapObject, { type: T }>;
-export type NpcDef = ObjectOf<"npc">;
+export type NpcDef = NpcObject;
 export type TileLayer = Phaser.Tilemaps.TilemapLayer | Phaser.Tilemaps.TilemapGPULayer;
 
 /** The running world, as a plugin sees it. One lives for as long as the player is on a map. */
@@ -29,11 +30,11 @@ export interface World {
 	readonly daylight: Daylight;
 	/** The map's tile layers by name ("ground", "decal", "below", "above", ...). */
 	readonly layers: ReadonlyMap<string, TileLayer>;
-	readonly spawns: ReadonlyMap<string, ObjectOf<"spawn">>;
-	readonly spots: ReadonlyMap<string, ObjectOf<"spot">>;
-	readonly areas: ReadonlyMap<string, ObjectOf<"area">>;
+	readonly spawns: ReadonlyMap<string, SpawnObject>;
+	readonly spots: ReadonlyMap<string, SpotObject>;
+	readonly areas: ReadonlyMap<string, AreaObject>;
 	/** Doors by tile ("x,y"). */
-	readonly doors: ReadonlyMap<string, ObjectOf<"door">>;
+	readonly doors: ReadonlyMap<string, DoorObject>;
 	/** Where the player arrived on this map. */
 	readonly arrival: { target: WorldTarget; tile: Point };
 	readonly dialogueOpen: boolean;
@@ -89,8 +90,12 @@ export interface KaiPlugin {
 	boot?(services: GameServices, params: URLSearchParams): { start?: boolean; stop?: () => void } | void;
 	/** Ink external functions this plugin implements, bound beside the game's own. */
 	externals?(ctx: ExternalsContext): Externals;
-	/** Map object types this plugin places, by `type`: called for each as the map loads. */
-	readonly objects?: Partial<{ [T in MapObject["type"]]: (world: World, obj: ObjectOf<T>) => void }>;
+	/**
+	 * The map object types this plugin places, each with what to do for every object of it
+	 * as the map loads: `[catObject.place((world, cat) => ...)]`. The game's maps module
+	 * lists the same types in MAP_OBJECTS, for the build.
+	 */
+	readonly objects?: readonly ObjectPlacer[];
 	/** After the map, its objects and the player are in place. */
 	mapCreated?(world: World): void;
 	/** What the player can use on `tile`, asked before signs and doors. */

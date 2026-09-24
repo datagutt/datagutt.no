@@ -5,6 +5,7 @@
 // of the house itself by the door.
 // Upstairs, cooler and more personal: Thomas at one long desk with three computers, the
 // mini-fridge of energy drinks within reach, his bed, a dresser and the stairwell down.
+import { arcadeObject } from "@datagutt/kai-arcade/object";
 import { FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder, windowLight } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
@@ -86,7 +87,7 @@ export function houseUpstairs(): MapCanvas {
 	c.add({ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" });
 	c.add({ type: "spot", id: "datagutt-bed", x: 3, y: 7, facing: "down" });
 	// The left computer idles on a Game of Life screensaver (docs/PLAN.md B2).
-	c.add({ type: "arcade", x: 5, y: 4, game: "screensaver" });
+	c.add(arcadeObject.at(5, 4, { game: "screensaver" }));
 	c.add({ type: "sign", x: 7, y: 4, text: say("computers") });
 	c.add({ type: "sign", x: 9, y: 3, text: say("mini-fridge") });
 	return c;

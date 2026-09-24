@@ -77,10 +77,10 @@ plugin that answers a question (a usable tile, a prompt, a talk) wins.
 - `externals(ctx)`: Ink external functions this plugin implements. They are bound beside
   the game's own `externals`, and the game's dialogue host must declare them for the
   Ink compile check.
-- `objects`: map object types this plugin places, by type. The world calls the function
-  for each object of that type as the map loads. The engine places spawns, doors, signs,
-  spots, areas, gates, lights and NPCs itself; any other type needs a plugin, or the
-  world warns that nothing places it.
+- `objects`: the map object types this plugin places, as `[descriptor.place(fn)]`. The
+  world calls `fn` for each object of that type as the map loads (see "Map object
+  types" below). The engine places spawns, doors, signs, spots, areas, gates, lights and
+  NPCs itself. An object of a type no plugin places is skipped with a warning.
 - `mapCreated(world)`: after the map, its objects and the player are in place.
 - `usableAt(world, tile)`: what the player can use on a tile. It is asked before signs
   and doors, so a plugin can take over a tile the map also marks.
@@ -97,6 +97,39 @@ plugin that answers a question (a usable tile, a prompt, a talk) wins.
 - `menuItems(world)`: start menu items after the Passport, either an action or a page of
   lines.
 - `debug(world)`: fields merged into `window.__kai` under `?debug`, for e2e tests.
+
+## Map object types
+
+A game or plugin adds its own kinds of map object with `defineMapObject` from
+`@datagutt/kai/world/objects`. Keep the descriptor in a module without Phaser, because
+the map builders and the build import it too:
+
+```ts
+import { defineMapObject } from "@datagutt/kai/world/objects";
+
+export const arcadeObject = defineMapObject("arcade", {
+  props: { game: "string" },
+  placement: "fixture",
+});
+```
+
+- `props` are the object's properties by kind: `string`, `number`, `bool`, `facing`,
+  `tiles` (tile keys the map writer turns into gids), and `string?` or `number?` for
+  optional ones. A property named `id` becomes the Tiled object's name.
+- `placement` says how the object sits on the map, and the map checks follow it.
+  `standing` stands on walkable tiles and takes them. `fixture` sits on something solid
+  and is used from a walkable side. `overlay` covers anything and goes unchecked.
+- `size` is a fixed footprint (`{ w: 2, h: 1 }` for a cat lying across two tiles), or
+  `rect` for a rectangle each object sizes itself.
+
+The descriptor then serves three places:
+
+1. Map builders place objects with `c.add(arcadeObject.at(5, 4, { game: "blocks" }))`.
+2. The game's maps module (`paths.maps` in `kai.json`) lists every descriptor its maps
+   use in `MAP_OBJECTS`, beside `GENERATED_MAPS`. The build rejects a map object of a
+   type it does not know.
+3. The plugin places them: `objects: [arcadeObject.place((world, cabinet) => ...)]`,
+   where `cabinet.game` is typed.
 
 ## The World
 
@@ -131,7 +164,8 @@ story night: clear sky, 23:00, the aurora out on every map until a plugin ends i
 - `kai-live/src/presence/plugin.ts`: an NPC who follows a Discord presence between maps,
   configured by `content/presence.json`. It uses `boot`, `externals`, `mapCreated`,
   `update`, `promptFor`, `talked`, `menuItems` and `debug`.
-- `kai-live/src/github/plugin.ts`: map objects (`crops`, `books`) drawn from live data.
+- `kai-live/src/github/plugin.ts`: map objects (`crops`, `books`, defined in
+  `github/objects.ts`) drawn from live data.
 - `apps/datagutt/game/plugins/ferryIntro.ts`: a first visit cutscene as a takeover.
 - `apps/datagutt/game/plugins/finale.ts`: a story night that ends in the credits.
 - `apps/datagutt/game/plugins/arcade.ts`: arcade cabinets as a usable tile and a

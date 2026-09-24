@@ -1,3 +1,4 @@
+import { spawnObject } from "@datagutt/kai/world/objects";
 import { describe, expect, it } from "vitest";
 import { places, type Place } from "../../../content/places";
 import { GENERATED_MAPS } from "./index";
@@ -8,7 +9,7 @@ describe("places on the maps", () => {
 		for (const place of places as readonly Place[]) {
 			expect(place.entrance, place.id).toBeDefined();
 			const { map, spawn } = place.entrance!;
-			const spawns = built.get(map)?.objects.filter((o) => o.type === "spawn" && o.id === spawn) ?? [];
+			const spawns = built.get(map)?.objects.filter((o) => spawnObject.is(o) && o.id === spawn) ?? [];
 			expect(spawns, `${place.id}: spawn "${spawn}" on ${map}`).toHaveLength(1);
 		}
 	});

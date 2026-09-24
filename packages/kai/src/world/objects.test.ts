@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseMapObject, toTiledObject, type MapObject } from "./objects.ts";
+import { defineMapObject, mapObjectTypes, parseMapObject, toTiledObject, type LightObject, type MapObject } from "./objects.ts";
 import { beamAlpha, glowAlpha } from "../fx/lightShapes.ts";
 
 const roundTrip = (obj: MapObject) => parseMapObject(toTiledObject(obj, 1, 16), 16);
@@ -21,9 +21,37 @@ describe("map objects", () => {
 	});
 
 	it("rejects lights with a bad shape", () => {
-		const raw = toTiledObject({ type: "light", shape: "glow", x: 0, y: 0, radius: 1, color: "fff", intensity: 1, flicker: false }, 1, 16);
+		const light: LightObject = { type: "light", shape: "glow", x: 0, y: 0, radius: 1, color: "fff", intensity: 1, flicker: false };
+		const raw = toTiledObject(light, 1, 16);
 		raw.properties = raw.properties!.map((p) => (p.name === "shape" ? { ...p, value: "cone" } : p));
 		expect(() => parseMapObject(raw, 16)).toThrow(/unknown shape "cone"/);
+	});
+});
+
+describe("a game's own map object types", () => {
+	const cabinet = defineMapObject("cabinet", { props: { game: "string", label: "string?" }, placement: "fixture" });
+	const field = defineMapObject("field", { props: { stages: "tiles" }, placement: "overlay", size: "rect" });
+	const types = mapObjectTypes([cabinet, field]);
+
+	it("round-trip through Tiled's format, a rectangle keeping its size as the object's", () => {
+		for (const obj of [cabinet.at(3, 4, { game: "blocks" }), cabinet.at(1, 1, { game: "life", label: "Life" }), field.at(2, 2, { w: 4, h: 3, stages: "1,2" })]) {
+			expect(parseMapObject(toTiledObject(obj, 1, 16, types), 16, types)).toEqual(obj);
+		}
+		expect(toTiledObject(field.at(2, 2, { w: 4, h: 3, stages: "1,2" }), 1, 16, types)).toMatchObject({ width: 64, height: 48 });
+	});
+
+	it("are unknown until the game lists them", () => {
+		expect(() => toTiledObject(cabinet.at(0, 0, { game: "blocks" }), 1, 16)).toThrow(/Unknown map object type "cabinet"/);
+	});
+
+	it("can't take a name another type has", () => {
+		expect(() => mapObjectTypes([defineMapObject("sign", { placement: "fixture" })])).toThrow(/Two map object types are called "sign"/);
+	});
+
+	it("say what a missing property is", () => {
+		const raw = toTiledObject(cabinet.at(0, 0, { game: "blocks" }), 1, 16, types);
+		raw.properties = [];
+		expect(() => parseMapObject(raw, 16, types)).toThrow(/cabinet object 1 needs a "game" string property/);
 	});
 });
 

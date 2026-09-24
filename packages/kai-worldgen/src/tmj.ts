@@ -1,7 +1,7 @@
 // Writes a generated MapCanvas as a Tiled map (.tmj). Generated layers are rewritten on
 // every run; layers named `manual_*` in the previous file are the user's touch-ups in
 // Tiled and are carried over untouched, after the generated layers.
-import { toTiledObject } from "@datagutt/kai/world/objects";
+import { mapObjectTypes, toTiledObject, type MapObjectTypes } from "@datagutt/kai/world/objects";
 import { CHANGED_SEASONS, formatSeasonTable, seasonProperty, type ChangedSeason } from "@datagutt/kai/world/season";
 import type { TileRef } from "./autotile.ts";
 import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";
@@ -38,7 +38,13 @@ export function canvasToTmj(
 	id: string,
 	canvas: MapCanvas,
 	registry: TileRegistry,
-	options: { properties?: Record<string, string>; previous?: Tmj | null; seasonal?: SeasonalTiles } = {},
+	options: {
+		properties?: Record<string, string>;
+		previous?: Tmj | null;
+		seasonal?: SeasonalTiles;
+		/** The engine's map object types and the game's own (its MAP_OBJECTS). */
+		types?: MapObjectTypes;
+	} = {},
 ): Tmj {
 	const { width, height } = canvas;
 	const gid = (tileId: number) => tileId + 1;
@@ -73,12 +79,22 @@ export function canvasToTmj(
 	for (const obj of canvas.objects) {
 		if (!canvas.inBounds(obj.x, obj.y)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) is outside the map`);
 	}
-	growSigns(canvas);
-	// Crop growth stages are tile keys in the generator and gids in the map.
-	const resolved = canvas.objects.map((obj) =>
-		obj.type === "crops" ? { ...obj, stages: obj.stages.split("|").map((k) => String(registry.id(parseKey(k)!) + 1)).join(",") } : obj,
-	);
-	const objects = resolved.map((obj, i) => toTiledObject(obj, i + 1, TILE));
+	const types = options.types ?? mapObjectTypes();
+	growSigns(canvas, types);
+	// `tiles` properties are tile keys in the generator and gids in the map.
+	const resolved = canvas.objects.map((obj) => {
+		const tileProps = Object.entries(types.get(obj.type)?.props ?? {}).filter(([, kind]) => kind === "tiles");
+		if (!tileProps.length) return obj;
+		const out: Record<string, unknown> = { ...obj };
+		for (const [name] of tileProps) {
+			out[name] = String(out[name])
+				.split("|")
+				.map((k) => String(registry.id(parseKey(k)!) + 1))
+				.join(",");
+		}
+		return out as typeof obj;
+	});
+	const objects = resolved.map((obj, i) => toTiledObject(obj, i + 1, TILE, types));
 	layers.push({ id: 0, name: "objects", type: "objectgroup", x: 0, y: 0, opacity: 1, visible: true, draworder: "topdown", objects });
 
 	let nextObjectId = objects.length + 1;

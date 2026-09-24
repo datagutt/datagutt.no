@@ -2,7 +2,7 @@
 // art (through a SheetSource), for reviewing maps. Needs the private art.
 import sharp from "sharp";
 import { beamAlpha, glowAlpha, hexRgb } from "@datagutt/kai/fx/lightShapes";
-import { parseMapObject, type MapObject, type TiledObject } from "@datagutt/kai/world/objects";
+import { lightObject, mapObjectTypes, parseMapObject, type MapObjectTypes, type TiledObject } from "@datagutt/kai/world/objects";
 import { drawKey, type SheetSource } from "./atlas.ts";
 import { CLEAR_ID, COLLISION_ID } from "./registry.ts";
 import { decodeGid, type Tmj } from "./tmj.ts";
@@ -29,7 +29,7 @@ export async function renderTmj(
 	tmj: Tmj,
 	tiles: string[],
 	sheets: SheetSource,
-	options: { collision?: boolean; scale?: number; objects?: boolean; grid?: boolean } = {},
+	options: { collision?: boolean; scale?: number; objects?: boolean; grid?: boolean; types?: MapObjectTypes } = {},
 ): Promise<Buffer> {
 	const W = tmj.width * T;
 	const H = tmj.height * T;
@@ -48,12 +48,13 @@ export async function renderTmj(
 	}
 
 	// Lights, added over everything the way the game does it.
-	const objects: MapObject[] = tmj.layers
+	const types = options.types ?? mapObjectTypes();
+	const objects = tmj.layers
 		.filter((l) => l.type === "objectgroup")
-		.flatMap((l) => (l.objects as TiledObject[]).map((o) => parseMapObject(o, T)));
+		.flatMap((l) => (l.objects as TiledObject[]).map((o) => parseMapObject(o, T, types)));
 	for (const light of objects) {
 		// Renders show the map by day: lamps and porch lights stay off.
-		if (light.type !== "light" || light.when === "night") continue;
+		if (!lightObject.is(light) || light.when === "night") continue;
 		const [r, g, b] = hexRgb(light.color);
 		const box =
 			light.shape === "glow"
@@ -94,7 +95,7 @@ export async function renderTmj(
 		for (const layer of tmj.layers) {
 			if (layer.type !== "objectgroup") continue;
 			for (const raw of layer.objects as TiledObject[]) {
-				const obj = parseMapObject(raw, T);
+				const obj = parseMapObject(raw, T, types);
 				mark(obj.x, obj.y, colours[obj.type] ?? [255, 0, 255], ring);
 			}
 		}

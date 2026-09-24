@@ -3,6 +3,7 @@
 // repos; M3.11 fills it from live data) lit in the middle, book aisles on the left, a
 // reading corner on the right, and Solveig's desk facing the door.
 import { NPCS } from "../../../game/npcs.ts";
+import { booksObject } from "@datagutt/kai-live/github/objects";
 import { bookcase, FURNITURE as F } from "@datagutt/kai-limezu/furniture";
 import { glow, GLOWS, shadowUnder } from "@datagutt/kai-limezu/lighting";
 import { MapCanvas } from "@datagutt/kai-worldgen/canvas";
@@ -23,7 +24,7 @@ export function library(): MapCanvas {
 	c.stamp(bookcase("narrow2", 0), 16, 1).stamp(bookcase("narrow", 2), 18, 1).stamp(bookcase("wide", 1), 20, 1);
 	c.add(glow(12, 3, GLOWS.lamp));
 	// The game stands one book per pinned repo on the featured shelf (M3.11).
-	c.add({ type: "books", x: 11, y: 2, w: 3, h: 1 });
+	c.add(booksObject.at(11, 2, { w: 3, h: 1 }));
 
 	// Aisles on the left: long bookcases seen end-on.
 	for (const x of [3, 5, 7]) c.stamp(F.aisleShelf, x, 6);

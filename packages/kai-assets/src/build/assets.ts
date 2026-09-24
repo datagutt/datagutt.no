@@ -5,7 +5,7 @@ import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import sharp from "sharp";
-import { parseMapObject, type MapObject, type TiledObject } from "@datagutt/kai/world/objects";
+import { doorObject, gateObject, npcObject, parseMapObject, signObject, spawnObject, type AnyMapObject, type TiledObject } from "@datagutt/kai/world/objects";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "@datagutt/kai/ui/emotes";
 import type { CharacterRecipe } from "@datagutt/kai/schema/engine";
 import { buildAtlas, buildPlaceholderAtlas } from "@datagutt/kai-worldgen/atlas";
@@ -73,6 +73,7 @@ export async function buildAssets(app: KaiApp): Promise<void> {
 		? await buildAtlas(registry.tiles, adapter.sheets(art, { overridesDir: seasonOverridesDir(config) }))
 		: await buildPlaceholderAtlas(registry.tiles, JSON.parse(fs.readFileSync(path.join(worldDir, "tile-colors.json"), "utf8")));
 	write("tilesets/world.png", await shrinkPng(atlas));
+	const types = await app.mapObjects();
 	const maps = fs
 		.readdirSync(path.join(worldDir, "maps"))
 		.filter((f) => f.endsWith(".tmj"))
@@ -81,7 +82,7 @@ export async function buildAssets(app: KaiApp): Promise<void> {
 			write(`maps/${file}`, JSON.stringify(tmj));
 			const objects = (tmj.layers as { type: string; objects?: TiledObject[] }[])
 				.filter((l) => l.type === "objectgroup")
-				.flatMap((l) => (l.objects ?? []).map((o) => parseMapObject(o, TILE)));
+				.flatMap((l) => (l.objects ?? []).map((o) => parseMapObject(o, TILE, types)));
 			return { id: path.basename(file, ".tmj"), objects };
 		});
 
@@ -126,20 +127,20 @@ export async function buildAssets(app: KaiApp): Promise<void> {
 }
 
 /** Doors lead to a spawn that exists, signs and NPCs name dialogue knots, locks name unlocks. */
-function checkMaps(maps: { id: string; objects: MapObject[] }[], knots: string[], unlocks: string[]) {
-	const spawnsByMap = new Map(maps.map(({ id, objects }) => [id, new Set(objects.filter((o) => o.type === "spawn").map((o) => o.id))]));
+function checkMaps(maps: { id: string; objects: AnyMapObject[] }[], knots: string[], unlocks: string[]) {
+	const spawnsByMap = new Map(maps.map(({ id, objects }) => [id, new Set(objects.filter(spawnObject.is).map((o) => o.id))]));
 	for (const { id, objects } of maps) {
 		for (const obj of objects) {
 			const at = `${id}: ${obj.type} at (${obj.x}, ${obj.y})`;
-			if (obj.type === "door") {
+			if (doorObject.is(obj)) {
 				const spawns = spawnsByMap.get(obj.toMap);
 				if (!spawns) throw new Error(`${at} leads to unknown map "${obj.toMap}"`);
 				if (!spawns.has(obj.toSpawn)) throw new Error(`${at} leads to missing spawn "${obj.toSpawn}" on ${obj.toMap}`);
 			}
-			const unlock = obj.type === "door" || obj.type === "gate" ? obj.unlock : undefined;
+			const unlock = doorObject.is(obj) || gateObject.is(obj) ? obj.unlock : undefined;
 			if (unlock !== undefined && !unlocks.includes(unlock)) throw new Error(`${at} has unknown unlock "${unlock}" (content/unlocks.json)`);
-			if (obj.type === "sign" && obj.dialogue && !knots.includes(obj.dialogue)) throw new Error(`${at} uses dialogue "${obj.dialogue}", which is not a knot.`);
-			if (obj.type === "npc" && !knots.includes(obj.dialogue)) {
+			if (signObject.is(obj) && obj.dialogue && !knots.includes(obj.dialogue)) throw new Error(`${at} uses dialogue "${obj.dialogue}", which is not a knot.`);
+			if (npcObject.is(obj) && !knots.includes(obj.dialogue)) {
 				throw new Error(`${id}: NPC "${obj.id}" uses dialogue "${obj.dialogue}", which is not a knot. Knots: ${knots.join(", ")}`);
 			}
 		}
