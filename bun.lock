@@ -33,6 +33,7 @@
       "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
         "@builder.io/partytown": "^0.10.3",
+        "@datagutt/kai-assets": "workspace:*",
         "@datagutt/kai-eslint-config": "workspace:*",
         "@datagutt/kai-limezu": "workspace:*",
         "@datagutt/kai-tsconfig": "workspace:*",
@@ -82,6 +83,26 @@
         "@datagutt/kai-eslint-config": "workspace:*",
         "@datagutt/kai-tsconfig": "workspace:*",
         "@datagutt/kai-vitest-config": "workspace:*",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
+      },
+    },
+    "packages/kai-assets": {
+      "name": "@datagutt/kai-assets",
+      "version": "0.0.0",
+      "bin": {
+        "kai": "./src/cli.ts",
+      },
+      "dependencies": {
+        "@datagutt/kai": "workspace:*",
+        "yaml": "^2.9.1",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "@types/node": "^24.13.6",
         "eslint": "^9",
         "typescript": "^5.9.3",
         "vitest": "^5",
@@ -220,6 +241,8 @@
     "@datagutt/kai": ["@datagutt/kai@workspace:packages/kai"],
 
     "@datagutt/kai-arcade": ["@datagutt/kai-arcade@workspace:packages/kai-arcade"],
+
+    "@datagutt/kai-assets": ["@datagutt/kai-assets@workspace:packages/kai-assets"],
 
     "@datagutt/kai-eslint-config": ["@datagutt/kai-eslint-config@workspace:tooling/eslint-config"],
 
@@ -1328,6 +1351,8 @@
     "xdg-portable": ["xdg-portable@7.3.0", "", { "dependencies": { "os-paths": "^4.0.1" } }, "sha512-sqMMuL1rc0FmMBOzCpd0yuy9trqF2yTTVe+E9ogwCSWQCdDEtQUwrZPT6AxqtsFGRNxycgncbP/xmOOSPw5ZUw=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
+
+    "yaml": ["yaml@2.9.1", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw=="],
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 

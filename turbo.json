@@ -6,27 +6,39 @@
   // public/game/ is therefore never restored from cache.
   "globalPassThroughEnv": ["ASSETS_DIR", "ASSETS_REPO_TOKEN", "VERCEL_*", "CI", "PORT", "E2E_*"],
   "tasks": {
+    // The content bundle (.kai/) that the game, the site and their tests import. It also
+    // depends on the engine's schemas in packages/, and takes a second: never cached.
+    "content": {
+      "cache": false
+    },
     "assets": {
+      "dependsOn": ["content"],
       "cache": false
     },
     "build": {
-      "dependsOn": ["assets", "^build"],
+      "dependsOn": ["assets", "content", "^build"],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["assets"],
+      "dependsOn": ["assets", "content"],
       "cache": false,
       "persistent": true
     },
     "game:dev": {
-      "dependsOn": ["assets"],
+      "dependsOn": ["assets", "content"],
       "cache": false,
       "persistent": true
     },
     "lint": {},
-    "typecheck": {},
-    "test": {},
-    "world:check": {},
+    "typecheck": {
+      "dependsOn": ["content"]
+    },
+    "test": {
+      "dependsOn": ["content"]
+    },
+    "world:check": {
+      "dependsOn": ["content"]
+    },
     "test:e2e": {
       "dependsOn": ["build"],
       "cache": false

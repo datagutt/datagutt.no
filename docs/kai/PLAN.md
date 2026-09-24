@@ -101,16 +101,19 @@ the character recipes and music tracks as content, not as app TypeScript.
 
 Goal: every hardcoded piece of content is a JSON or Markdown resource, validated by Zod.
 
-- [ ] **K4.1** `kai content`: loads `content/`, validates with Zod 4, exports JSON Schema,
+- [x] **K4.1** `kai content`: loads `content/`, validates with Zod 4, exports JSON Schema,
       writes `.kai/content.json` and its `.d.ts`. Turborepo runs it before `dev`,
       `build`, `typecheck` and `test`. *Done when* a broken file fails with its path and
-      the failing field.
+      the failing field. (No `.d.ts`: the bundle's type is `ContentOf` the schemas,
+      imported type-only, see the DESIGN changelog. JSON files are objects so they can
+      carry `$schema`; Markdown files are `NN-id.md`.)
 - [ ] **K4.2** Engine content: NPC roster and voices, places, achievements, unlock ids,
       character recipes, music tracks and playlist rules, credits, ambience layers.
       *Done when* none of them is a TypeScript constant.
-- [ ] **K4.3** Site content: profile, socials, skills (JSON), projects and experience
+- [x] **K4.3** Site content: profile, socials, skills (JSON), projects and experience
       (Markdown). The Journal reads the bundle. *Done when* `/journal` renders the same
-      HTML as before.
+      HTML as before. (The visible text of `/journal` is identical before and after; the
+      `content/*.ts` modules are thin typed accessors now.)
 - [ ] **K4.4** Map data: sign texts, door targets, spawn points and NPC placements move
       from the map builders to JSON. *Done when* `world:check` shows no diff.
 - [ ] **K4.5** `content/strings.json` with the engine's English defaults. *Done when* no

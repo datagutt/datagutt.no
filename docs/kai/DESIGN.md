@@ -139,3 +139,6 @@ Visitors must not notice the refactor.
 - 2026-09-24: the character sheet layout belongs to the runtime, not to kai-limezu: the
   runtime animates characters by it, and runtime packages never import build-time ones.
   kai-limezu keeps the LimeZu layer composition.
+- 2026-09-24: the content bundle gets no generated `.d.ts`. Its type is `ContentOf` the
+  collections' Zod schemas, imported type-only, which gives the same safety without a
+  code generator, and Zod still never reaches the client bundle.

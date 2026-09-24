@@ -20,7 +20,8 @@
     "world:snow": "node scripts/world/snow-drafts.mjs",
     "characters:review": "node scripts/assets/characters-review.mjs",
     "test:e2e:all": "E2E_ALL_BROWSERS=1 playwright test --workers=2",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "content": "kai content"
   },
   "dependencies": {
     "@datagutt/kai": "workspace:*",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@builder.io/partytown": "^0.10.3",
+    "@datagutt/kai-assets": "workspace:*",
     "@datagutt/kai-eslint-config": "workspace:*",
     "@datagutt/kai-limezu": "workspace:*",
     "@datagutt/kai-tsconfig": "workspace:*",

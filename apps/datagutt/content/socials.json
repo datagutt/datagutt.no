@@ -1,0 +1,35 @@
+{
+  "$schema": "../.kai/schema/socials.json",
+  "links": [
+    {
+      "id": "x",
+      "label": "X",
+      "url": "https://x.com/datagutt"
+    },
+    {
+      "id": "bluesky",
+      "label": "Bluesky",
+      "url": "https://bsky.app/profile/datagutt.no"
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/thomas-lekanger-a77990b0/"
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "url": "https://instagram.com/lekanger"
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "url": "https://github.com/datagutt"
+    },
+    {
+      "id": "twitch",
+      "label": "Twitch",
+      "url": "https://twitch.tv/datagutt"
+    }
+  ]
+}
