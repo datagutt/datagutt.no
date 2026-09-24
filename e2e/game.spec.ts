@@ -164,7 +164,7 @@ test.describe("world", () => {
 		// Skip the crossing: Arne's welcome comes straight away.
 		await page.keyboard.press("e");
 		await expect.poll(async () => (await state(page))?.dialogueOpen).toBe(true);
-		for (let i = 0; i < 10 && (await state(page))?.dialogueOpen; i++) {
+		for (let i = 0; i < 30 && (await state(page))?.dialogueOpen; i++) {
 			await page.keyboard.press("e");
 			await page.waitForTimeout(250);
 		}

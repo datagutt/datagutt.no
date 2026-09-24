@@ -95,7 +95,7 @@ export function overworld(): MapCanvas {
 		unlock: "passport",
 		text: "* TRAIL CLOSED. Rockfall on the mountain path. By order of the council, until further notice. Someone has added in pencil: \"ask Arne\".",
 	});
-	c.add({ type: "door", x: 61, y: 0, toMap: "mountain", toSpawn: "trailhead" });
+	c.add({ type: "door", x: 61, y: 0, toMap: "mountain", toSpawn: "trailhead", unlock: "passport" });
 	// A bench at the hill's edge, binoculars left on it: the stars at night (B2).
 	c.stamp(PREFABS.bench, 69, 12).stamp(PREFABS.binoculars, 70, 12);
 	c.add({ type: "arcade", x: 70, y: 13, game: "stargazing" });
@@ -156,6 +156,13 @@ export function overworld(): MapCanvas {
 	forest(c, edge, 3, ["pineTall", "pineMid", "pineSmall", "pineMid"], 0.9, taken);
 	const groves = new Region(W, H).rect(5, 5, 58, 2).rect(30, 44, 6, 12).rect(76, 17, 14, 8).rect(88, 17, 3, 40);
 	forest(c, groves.subtract(sand), 5, ["oak", "roundTree", "pineMid"], 0.25, taken);
+	// The trail runs up a rocky gully: boulders on both sides from the barricade to the map's
+	// edge, so the gate is the only way in (the forest band is walkable between trunks).
+	const gully = ["rockBig", "rock", "rockLong", "rockSmall"] as const;
+	for (let y = 0; y <= 6; y++) {
+		c.stamp(PREFABS[gully[y % gully.length]], 59, y).stamp(PREFABS[gully[(y + 2) % gully.length]], 63, y);
+		c.block(59, y).block(63, y);
+	}
 
 	// --- Meadow details on whatever grass is left --------------------------------------------
 	const onGrass = (i: number) => c.layers.ground2[i] === null;

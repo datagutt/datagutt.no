@@ -9,7 +9,8 @@ export type Facing = "right" | "up" | "left" | "down";
 
 export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
-	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string }
+	/** A warp to another map. With `unlock`, it stays shut (and solid) until that holds. */
+	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string; unlock?: UnlockId }
 	/**
 	 * A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. The
 	 * map build grows it over the object it describes (world/gen/signs.ts): then (x, y)
@@ -89,8 +90,11 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 	switch (obj.type) {
 		case "spawn":
 			return { type: "spawn", id: obj.name || str("id"), x, y, facing: facing() };
-		case "door":
-			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn") };
+		case "door": {
+			const unlock = props.get("unlock");
+			if (unlock !== undefined && !UNLOCK_IDS.includes(unlock as UnlockId)) throw new Error(`door object ${obj.id} has unknown unlock "${unlock}"`);
+			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn"), ...(unlock ? { unlock: unlock as UnlockId } : {}) };
+		}
 		case "sign": {
 			const dialogue = props.get("dialogue");
 			const w = Math.round(obj.width / tileSize);

@@ -191,7 +191,12 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "spawn") spawns.set(obj.id, obj);
 			if (obj.type === "spot") spots.set(obj.id, obj);
 			if (obj.type === "area") areas.set(obj.id, obj);
-			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
+			if (obj.type === "door") {
+				// A locked warp is solid ground until it opens, whatever the map around it
+				// allows: nobody slips round a gate onto it.
+				if (obj.unlock && !isUnlocked(obj.unlock, this.progress)) this.grid.setBlocked(obj.x, obj.y);
+				else this.doors.set(tileKey(obj), obj);
+			}
 			if (obj.type === "sign") signs.push(obj);
 			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
 			if (obj.type === "gate") gates.push(obj);

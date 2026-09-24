@@ -15,7 +15,9 @@ export default defineConfig({
 		// WebKit needs system libraries (`sudo pnpm exec playwright install-deps webkit`).
 		...(process.env.E2E_ALL_BROWSERS
 			? [
-					{ name: "firefox", use: { ...devices["Desktop Firefox"] } },
+					// Firefox's bounce-tracking protection purges the saves the tests plant in
+					// localStorage between navigations; players never hit it.
+					{ name: "firefox", use: { ...devices["Desktop Firefox"], launchOptions: { firefoxUserPrefs: { "privacy.bounceTrackingProtection.mode": 0 } } } },
 					{ name: "safari", use: { ...devices["Desktop Safari"] } },
 					{ name: "iphone", use: { ...devices["iPhone 15"] } },
 				]

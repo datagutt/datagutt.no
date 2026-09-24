@@ -27,7 +27,11 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   - The cat is LimeZu's `interiors/animated/animated_cat.png` (36 frames), copied to
     `ui/cat.png` by the asset build, as a `cat` map object on the far east beach.
   - Walking into the map's edge gives one of `EDGE_LINES`, at most every 20 seconds.
-- **B6 mountain trail, done; waiting on the user's look.** A path north between the
+- **B6 mountain trail, done; waiting on the user's look.** Locks, belt and braces (the user walked
+  round the first version via the walkable forest band along the top): the trail runs up
+  a gully of boulders from the barricade to the map edge, and the exit is a `door` with
+  `unlock: "passport"`, which the game treats as solid until it opens. Give any warp
+  behind a gate an `unlock` too. A path north between the
   town hall and the radio hill, shut by worksite barriers and a rockfall inside a `gate`
   map object (`unlock: "passport"`). A shut gate reads like a sign; an open one has its
   below/above tiles cleared and its collision opened when the map loads, so keep a

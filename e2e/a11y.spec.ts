@@ -33,7 +33,10 @@ test.describe("game shell accessibility", () => {
 
 		// In the world, on the ferry: skip the crossing and Arne's welcome, then walk.
 		await expect.poll(() => moving(page), { timeout: 30_000 }).not.toBeNull();
-		for (let i = 0; i < 12; i++) {
+		const talking = () => page.evaluate(() => (window as unknown as { __fjord?: { dialogueOpen: boolean; intro: boolean } }).__fjord);
+		for (let i = 0; i < 30; i++) {
+			const s = await talking();
+			if (i > 2 && s && !s.dialogueOpen && !s.intro) break;
 			await page.keyboard.press("e");
 			await page.waitForTimeout(250);
 		}
