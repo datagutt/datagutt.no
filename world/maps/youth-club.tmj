@@ -1,0 +1,755 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 20,
+  "height": 13,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 9,
+  "nextobjectid": 19,
+  "properties": [
+    {
+      "name": "name",
+      "type": "string",
+      "value": "Youth club"
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,2662,2663,2663,2663,2663,2663,2663,2663,2663,2663,2663,2663,2663,2663,2663,2664,0,0,
+        0,0,2665,2666,2666,2666,2666,2666,2666,2666,2666,2666,2666,2666,2666,2666,2666,2667,0,0,
+        0,0,2525,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,2526,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,2527,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,2528,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ground2",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,6232,6233,6234,6235,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,6236,6237,6238,6239,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,6240,6241,6242,6243,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "decal",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "shade",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,3099,3100,3101,3102,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,3103,3104,3105,3106,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ],
+      "properties": [
+        {
+          "name": "blend",
+          "type": "string",
+          "value": "multiply"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "below",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,6142,0,6143,0,6142,0,6143,0,6142,0,6244,6245,6246,6247,0,0,0,
+        0,0,0,6147,0,6148,0,6147,0,6148,0,6147,0,6248,6249,6250,6251,0,0,0,
+        0,0,0,6157,0,6158,0,6157,0,6158,0,6157,0,6252,6253,6254,6255,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,5924,5992,0,5927,5928,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,5932,5993,0,5935,5936,0,0,
+        0,0,0,0,6256,6257,6258,6259,0,0,0,0,0,5937,5938,0,5939,5940,0,0,
+        0,0,0,0,6260,6261,6262,6263,0,0,0,0,0,0,0,0,2540,2541,0,0,
+        0,0,0,0,6264,6265,6266,6267,0,0,0,0,0,0,0,0,2549,2550,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2558,2559,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 6,
+      "name": "above",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,2509,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2510,2511,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2512,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2515,0,
+        0,2516,2517,2517,2517,2517,2517,2517,2517,2517,0,2517,2517,2517,2517,2517,2517,2517,2518,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 7,
+      "name": "collision",
+      "type": "tilelayer",
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 13,
+      "opacity": 1,
+      "visible": false,
+      "data": [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+        0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+        0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,
+        0,1,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,1,0,
+        0,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      ]
+    },
+    {
+      "id": 8,
+      "name": "objects",
+      "type": "objectgroup",
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 1,
+          "name": "",
+          "type": "light",
+          "x": 48,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "arcade",
+          "x": 48,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "life"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "light",
+          "x": 80,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "arcade",
+          "x": 80,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "terrain"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "",
+          "type": "light",
+          "x": 112,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "",
+          "type": "arcade",
+          "x": 112,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "blocks"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "",
+          "type": "light",
+          "x": 144,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "name": "",
+          "type": "arcade",
+          "x": 144,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "dungeon"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "",
+          "type": "light",
+          "x": 176,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "",
+          "type": "arcade",
+          "x": 176,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "starfield"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "",
+          "type": "light",
+          "x": 240,
+          "y": 32,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "shape",
+              "type": "string",
+              "value": "glow"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "value": "1.6"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "78b4ff"
+            },
+            {
+              "name": "intensity",
+              "type": "string",
+              "value": "0.35"
+            },
+            {
+              "name": "flicker",
+              "type": "string",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "",
+          "type": "door",
+          "x": 160,
+          "y": 176,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "town"
+            },
+            {
+              "name": "toSpawn",
+              "type": "string",
+              "value": "youth_club_door"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "entrance",
+          "type": "spawn",
+          "x": 160,
+          "y": 160,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "up"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "name": "youthWorker",
+          "type": "npc",
+          "x": 176,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "character",
+              "type": "string",
+              "value": "youthWorker"
+            },
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "left"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "Siv"
+            },
+            {
+              "name": "dialogue",
+              "type": "string",
+              "value": "youthWorker"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "name": "clubGamer",
+          "type": "npc",
+          "x": 128,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "character",
+              "type": "string",
+              "value": "clubGamer"
+            },
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "up"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "Mats"
+            },
+            {
+              "name": "dialogue",
+              "type": "string",
+              "value": "clubGamer"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "name": "clubLounger",
+          "type": "npc",
+          "x": 224,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "character",
+              "type": "string",
+              "value": "clubLounger"
+            },
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "up"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "Ingrid"
+            },
+            {
+              "name": "dialogue",
+              "type": "string",
+              "value": "clubLounger"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "name": "",
+          "type": "sign",
+          "x": 208,
+          "y": 16,
+          "width": 64,
+          "height": 48,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* Three consoles and a tangle of controllers. Two of them work. Nobody knows which two."
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "name": "",
+          "type": "sign",
+          "x": 64,
+          "y": 112,
+          "width": 64,
+          "height": 48,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "text",
+              "type": "string",
+              "value": "* The pool table. The eight ball went missing; someone plays with a potato."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "world",
+      "image": "../tilesets/world.png",
+      "imagewidth": 2048,
+      "imageheight": 2048,
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 16384,
+      "columns": 128,
+      "margin": 0,
+      "spacing": 0,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "clears",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

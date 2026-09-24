@@ -2,6 +2,8 @@
 // (`type` plus custom properties) and the game reads them back with parseMapObject().
 // Coordinates are in tiles.
 
+import { ARCADE_IDS, type ArcadeId } from "../arcade/ids.ts";
+
 export type Facing = "right" | "up" | "left" | "down";
 
 export type MapObject =
@@ -14,6 +16,8 @@ export type MapObject =
 	 */
 	| { type: "sign"; x: number; y: number; w?: number; h?: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
+	/** An arcade cabinet: interact to play `game` (game/arcade/). */
+	| { type: "arcade"; x: number; y: number; game: ArcadeId }
 	/**
 	 * A named place an NPC who moves between maps can be, facing a way: the live datagutt
 	 * NPC goes to the spot his presence picks (game/live/datagutt.ts).
@@ -91,6 +95,11 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 				text: str("text"),
 				...(typeof dialogue === "string" && dialogue ? { dialogue } : {}),
 			};
+		}
+		case "arcade": {
+			const game = str("game");
+			if (!ARCADE_IDS.includes(game as ArcadeId)) throw new Error(`arcade object ${obj.id} has unknown game "${game}"`);
+			return { type: "arcade", x, y, game: game as ArcadeId };
 		}
 		case "spot":
 			return { type: "spot", id: obj.name || str("id"), x, y, facing: facing() };

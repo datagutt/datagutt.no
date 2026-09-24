@@ -45,6 +45,7 @@ export const places = [
 	{ id: "library", name: "Library", presents: [{ kind: "repos" }], stamp: true, entrance: { map: "town", spawn: "library_door" } },
 	{ id: "farm", name: "Farm", presents: [{ kind: "stats" }], stamp: true, entrance: { map: "town", spawn: "farmhouse_door" } },
 	{ id: "post-office", name: "Post office", presents: [{ kind: "contact" }], stamp: true, entrance: { map: "town", spawn: "post_office_door" } },
+	{ id: "youth-club", name: "Youth club", presents: [], stamp: false, entrance: { map: "town", spawn: "youth_club_door" } },
 ] as const satisfies readonly Place[];
 
 export type PlaceId = (typeof places)[number]["id"];

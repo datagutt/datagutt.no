@@ -38,6 +38,8 @@ import { Feel } from "../fx/Feel";
 import { FrameWatch, qualityFor, type Quality } from "../fx/quality";
 import { Intro } from "./Intro";
 import { CreditsRoll } from "../ui/CreditsRoll";
+import { ArcadeScreen } from "../ui/ArcadeScreen";
+import { makeArcade } from "../arcade";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -71,6 +73,9 @@ export class WorldScene extends Phaser.Scene {
 	private intro: Intro | null = null;
 	private readonly frameWatch = new FrameWatch();
 	private credits: CreditsRoll | null = null;
+	/** A cabinet being played (game/ui/ArcadeScreen.ts). */
+	private arcade: { screen: ArcadeScreen; title: string } | null = null;
+	private cabinets = new Map<string, Extract<MapObject, { type: "arcade" }>>();
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -110,6 +115,8 @@ export class WorldScene extends Phaser.Scene {
 		this.npcs = new Map();
 		this.doors = new Map();
 		this.signs = new Map();
+		this.cabinets = new Map();
+		this.arcade = null;
 		this.path = [];
 		this.pathMarkers = [];
 		this.onArrive = null;
@@ -173,6 +180,7 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "area") areas.set(obj.id, obj);
 			if (obj.type === "door") this.doors.set(tileKey(obj), obj);
 			if (obj.type === "sign") signs.push(obj);
+			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
 			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
 			if (obj.type === "books") this.stockShelf(obj);
@@ -340,7 +348,7 @@ export class WorldScene extends Phaser.Scene {
 		this.aurora?.update(this.dayNight.current.dark, this.services.finale);
 		this.updateAmbience(time);
 		this.weather?.update(this.dayNight.current.dark);
-		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open) this.prompt.hide();
+		if (this.transitioning || this.menu.open || this.dialogue.open || this.wheel.open || this.arcade) this.prompt.hide();
 		this.updateDebug();
 
 		if (this.transitioning) return;
@@ -352,6 +360,11 @@ export class WorldScene extends Phaser.Scene {
 		if (this.intro?.active && !this.dialogue.open) {
 			this.intro.update(input);
 			for (const [id, { actor }] of this.npcs) if (id !== THOMAS_ID) actor.sync();
+			return;
+		}
+		if (this.arcade) {
+			if (!this.arcade.screen.update(dt, input)) this.arcade = null;
+			this.player.sync();
 			return;
 		}
 		if (this.menu.open) {
@@ -558,6 +571,7 @@ export class WorldScene extends Phaser.Scene {
 			ghosts: this.ghosts.count,
 			emoteWheel: this.wheel.open,
 			intro: this.intro?.active ?? false,
+			arcade: this.arcade?.title ?? null,
 			credits: this.credits !== null,
 			finale: this.services.finale,
 			prompt: this.prompt.text,
@@ -733,6 +747,7 @@ export class WorldScene extends Phaser.Scene {
 		}
 		const x = (target.x + 0.5) * TILE;
 		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
+		if (this.cabinets.has(tileKey(target))) return this.prompt.show("Play", device, x, target.y * TILE - 1);
 		if (this.doors.has(tileKey(target))) return this.prompt.show("Enter", device, x, target.y * TILE - 1);
 		this.prompt.hide();
 	}
@@ -745,9 +760,22 @@ export class WorldScene extends Phaser.Scene {
 			this.talk(npc.def);
 			return;
 		}
+		const cabinet = this.cabinets.get(tileKey(p));
+		if (cabinet) return this.playCabinet(cabinet);
 		const sign = this.signs.get(tileKey(p));
 		if (sign?.dialogue) this.playKnot(sign.dialogue, null, () => this.save());
 		else if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
+	}
+
+	/** Step up to a cabinet: its game takes the input until the player leaves (back). */
+	private playCabinet(cabinet: Extract<MapObject, { type: "arcade" }>) {
+		const progress = this.progress;
+		const game = makeArcade(cabinet.game, {
+			best: (name) => progress.records[name] ?? 0,
+			record: (name, score) => progress.record(name, score) && this.save(),
+		});
+		this.clearPath();
+		this.arcade = { screen: new ArcadeScreen(this, game, () => this.save()), title: game.title };
 	}
 
 	/** Play an NPC's Ink knot beat by beat until it ends. */
@@ -757,8 +785,13 @@ export class WorldScene extends Phaser.Scene {
 		// as talking to them if it leads there.
 		const runner = this.registry.get(DIALOGUE_KEY) as DialogueRunner;
 		const visits = runner.visits(npc.id);
-		this.playKnot(npc.dialogue, npc, () => {
-			if (runner.visits(npc.id) > visits) this.finishedTalking(npc.id);
+		const knot = npc.dialogue;
+		this.playKnot(knot, npc, () => {
+			if (runner.visits(npc.id) > visits) {
+				// Woken up and talked to: he gets out of bed rather than lying back down.
+				if (npc.id === THOMAS_ID && knot === "datagutt_asleep") this.thomas.wokenByPlayer();
+				this.finishedTalking(npc.id);
+			}
 			this.save();
 		});
 	}
@@ -870,6 +903,7 @@ export class WorldScene extends Phaser.Scene {
 			facing: facing as Facing,
 			stamps: progress.stamps,
 			flags: progress.flags,
+			records: progress.records,
 			dialogue: { main: (this.registry.get(DIALOGUE_KEY) as DialogueRunner).saveState() },
 			settings: progress.settings,
 		});

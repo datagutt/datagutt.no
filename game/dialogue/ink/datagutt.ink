@@ -49,10 +49,11 @@
 // usual conversation, which is what stamps the passport.
 === datagutt_asleep ===
 \* {~Thomas is fast asleep. He mumbles something about merge conflicts.|Thomas is asleep. "Just one more commit," he says, to nobody.|Thomas is asleep, snoring softly. A laptop fan whirs somewhere under the duvet.} # narration
-* [Wake him up.]
+// Sticky choices: once-only ones run out after a couple of visits and leave nothing to pick.
++ [Wake him up.]
     Mm? Oh. Hi. I was just resting my eyes. # nod
     -> datagutt
-* [Let him sleep.]
++ [Let him sleep.]
     -> END
 
 // The finale (docs/game/PLAN.md M5.8). A full passport: a note, then Thomas at the end of

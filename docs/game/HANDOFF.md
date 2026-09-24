@@ -4,13 +4,20 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
-- **B1 arcade, in progress.** `game/arcade/`: the old site's five canvases as small
-  games on one 160×120 screen (`ArcadeGame`: step, draw), with no Phaser in them. Falling
-  blocks is really playable (the old autoplay is its attract mode, best score handed
-  back for the save); Life, Terrain, Dungeon and Starfield are watchable and react to the
-  arrows and A. Life and a quiet Starfield are meant for B2 (the PC screensaver and the
-  hill telescope). Next: the youth club (a white site cabin, LimeZu camping
-  `Mobile_House_Big_5`, in town), its interior with five cabinets, and the screen UI.
+- **B1 arcade, playable; waiting on the user's look.** `game/arcade/`: the old site's five
+  canvases as small games on one 160×120 screen (`ArcadeGame`: step, draw; no Phaser).
+  Falling blocks is really playable (the old autoplay is its attract mode); Life,
+  Terrain, Dungeon and Starfield are watchable and react to the arrows and A. The youth
+  club is a site cabin on the harbour road (LimeZu camping `Mobile_House_Big_5`, a
+  hand-made grid: its steps come down the right side, the deck is railed at the front),
+  map `youth-club` with five cabinets (`arcade` map objects), a TV corner, a pool table,
+  Siv who runs it and two regulars. `game/ui/ArcadeScreen.ts` shows a cabinet over the
+  room; touch taps steer and a tap outside leaves. Best scores go in the save's new
+  `records` (`Progress.record`). Next: B2 (the PC screensaver and the hill telescope,
+  using Life and a quiet Starfield).
+- **Thomas asleep:** the wake/let-sleep choices are sticky (once-only ones ran out and
+  softlocked the dialogue), and waking him in conversation gets him out of bed until his
+  presence moves him (`LiveThomas.wokenByPlayer`).
 - **Decisions (2026-09-24):** C1 (the mine) and C3 (multi-instance ghosts) are deferred;
   C2 weather follows real Oslo weather from MET Norway; B6 is a mountain trail to a hytte.
 - **Music (B4), 2026-09-24.** Seven loops from Towball's Crossing: Deluxe! (CC BY 4.0,

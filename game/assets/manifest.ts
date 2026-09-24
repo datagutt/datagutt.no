@@ -187,6 +187,22 @@ export const CHARACTERS = {
 		portrait: false,
 		placeholder: "2a7a6a",
 	},
+	// The youth club (world/gen/maps/youthClub.ts): Siv runs it, two regulars hang out.
+	youthWorker: {
+		layers: ["Bodies/Body_03.png", "Eyes/Eyes_05.png", "Outfits/Outfit_29_02.png", "Hairstyles/Hairstyle_24_04.png", "Accessories/Accessory_15_Glasses_01.png"],
+		portrait: false,
+		placeholder: "8a6ac4",
+	},
+	clubGamer: {
+		layers: ["Bodies/Body_01.png", "Eyes/Eyes_02.png", "Outfits/Outfit_19_01.png", "Hairstyles/Hairstyle_07_02.png", "Accessories/Accessory_04_Snapback_02.png"],
+		portrait: false,
+		placeholder: "3a8a6a",
+	},
+	clubLounger: {
+		layers: ["Bodies/Body_07.png", "Eyes/Eyes_03.png", "Outfits/Outfit_10_03.png", "Hairstyles/Hairstyle_17_03.png", "Accessories/Accessory_11_Beanie_03.png"],
+		portrait: false,
+		placeholder: "c48a3a",
+	},
 } satisfies Record<string, CharacterRecipe>;
 
 export type CharacterId = keyof typeof CHARACTERS;

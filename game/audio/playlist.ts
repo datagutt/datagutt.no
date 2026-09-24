@@ -19,6 +19,7 @@ export const ROOMS: Record<string, MusicId> = {
 	boathouse: "market",
 	"post-office": "market",
 	gym: "market",
+	"youth-club": "market",
 	office: "taxOffice",
 	"town-hall": "taxOffice",
 	"town-hall-basement": "taxOffice",

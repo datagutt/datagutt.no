@@ -10,11 +10,13 @@ type Settings = SaveData["settings"];
 export class Progress {
 	stamps: string[];
 	flags: Record<string, boolean>;
+	records: Record<string, number>;
 	settings: Settings;
 
 	constructor(saved: SaveData | null) {
 		this.stamps = awardStamp(saved?.stamps ?? [], null).stamps;
 		this.flags = { ...(saved?.flags ?? {}) };
+		this.records = { ...(saved?.records ?? {}) };
 		this.settings = saved?.settings ?? { muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" };
 	}
 
@@ -26,6 +28,13 @@ export class Progress {
 		const result = awardStamp(this.stamps, place);
 		this.stamps = result.stamps;
 		return result;
+	}
+
+	/** Keep `value` under `name` if it beats what is there; true when it did. */
+	record(name: string, value: number): boolean {
+		if (value <= (this.records[name] ?? 0)) return false;
+		this.records[name] = value;
+		return true;
 	}
 
 	/** Reduced motion: the explicit setting, else the OS preference. */

@@ -212,6 +212,13 @@ export const FURNITURE = {
 	pingPong: single("basement", 241),
 	arcade: single("basement", 218),
 	arcadeRed: single("basement", 219),
+	/** Pool tables seen from above, green and blue baize. */
+	poolTable: solid("basement", 4, 25, 4, 3),
+	poolTableBlue: solid("basement", 4, 28, 4, 3),
+	/** A TV on a low stand with three consoles and a tangle of controllers. */
+	tvConsoles: solid("basement", 6, 47, 4, 3),
+	/** A pale blue rug with a yellow middle. */
+	clubRug: flat("basement", 9, 44, 4, 3),
 	loungeSofaWide: single("workplace", 200),
 	/** A white desk run and its corner, for reception. */
 	deskRun: single("workplace", 263),

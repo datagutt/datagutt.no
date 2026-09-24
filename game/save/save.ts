@@ -13,6 +13,8 @@ export type SaveData = {
 	facing: Facing;
 	stamps: string[];
 	flags: Record<string, boolean>;
+	/** Best scores and counts by name, e.g. the arcade's `blocks` high score. */
+	records: Record<string, number>;
 	/** Ink visit state per dialogue, stored as the runtime's JSON (M2). */
 	dialogue: Record<string, string>;
 	settings: { muted: boolean; music: boolean; showVisitors: boolean; reducedMotion: boolean | null; effects: EffectsSetting };
@@ -36,6 +38,11 @@ function validate(raw: unknown): SaveData | null {
 	if (typeof r.facing !== "string" || !FACINGS.has(r.facing)) return null;
 	const stamps = Array.isArray(r.stamps) ? r.stamps.filter((s): s is string => typeof s === "string") : [];
 	const flags = typeof r.flags === "object" && r.flags !== null ? (r.flags as Record<string, boolean>) : {};
+	const records = Object.fromEntries(
+		Object.entries(typeof r.records === "object" && r.records !== null ? r.records : {}).filter(
+			(e): e is [string, number] => Number.isInteger(e[1]) && (e[1] as number) >= 0,
+		),
+	);
 	const dialogue = typeof r.dialogue === "object" && r.dialogue !== null ? (r.dialogue as Record<string, string>) : {};
 	const s = (typeof r.settings === "object" && r.settings !== null ? r.settings : {}) as Record<string, unknown>;
 	return {
@@ -46,6 +53,7 @@ function validate(raw: unknown): SaveData | null {
 		facing: r.facing as Facing,
 		stamps: [...new Set(stamps)],
 		flags,
+		records,
 		dialogue,
 		settings: {
 			muted: s.muted === true,

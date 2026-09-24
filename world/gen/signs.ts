@@ -30,7 +30,7 @@ function footprint(canvas: MapCanvas, sign: Sign): [number, number][] {
 /** Grow every one-tile sign to the object it sits on, as a rectangle (the game reads it on the blocked cells inside). */
 export function growSigns(canvas: MapCanvas): void {
 	// Cells another sign, an NPC or a door already answers for stay theirs.
-	const taken = new Set(canvas.objects.filter((o) => o.type === "sign" || o.type === "npc" || o.type === "door").map((o) => `${o.x},${o.y}`));
+	const taken = new Set(canvas.objects.filter((o) => o.type === "sign" || o.type === "arcade" || o.type === "npc" || o.type === "door").map((o) => `${o.x},${o.y}`));
 	for (const obj of canvas.objects) {
 		if (obj.type !== "sign" || obj.w !== undefined) continue;
 		const own = `${obj.x},${obj.y}`;

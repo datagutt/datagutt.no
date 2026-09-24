@@ -22,7 +22,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 	const problems: string[] = [];
 	const at = new Map<string, MapObject>();
 	// A spot counts as taken: the NPC who goes there may be standing on it.
-	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign" || o.type === "spot").map((o) => `${o.x},${o.y}`));
+	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign" || o.type === "arcade" || o.type === "spot").map((o) => `${o.x},${o.y}`));
 	const reachableFrom = (o: MapObject) =>
 		cellsOf(o, walkable).some(([x, y]) => NEIGHBOURS.some(([dx, dy]) => walkable(x + dx, y + dy) && !occupied.has(`${x + dx},${y + dy}`)));
 
@@ -37,9 +37,9 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		else if ((o.type === "spawn" || o.type === "npc" || o.type === "door") && !walkable(o.x, o.y)) {
 			problems.push(`${where} is on a blocked tile`);
 		}
-		if (o.type === "sign" && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
+		if ((o.type === "sign" || o.type === "arcade") && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
 		// A sign is read from next to it, so it must sit on something solid, not open floor.
-		if (o.type === "sign" && cellsOf(o, walkable).every(([x, y]) => walkable(x, y))) problems.push(`${where} is on open floor; put it on the thing it describes`);
+		if ((o.type === "sign" || o.type === "arcade") && cellsOf(o, walkable).every(([x, y]) => walkable(x, y))) problems.push(`${where} is on open floor; put it on the thing it describes`);
 		if (o.type === "door" && !walkable(o.x, o.y + 1)) problems.push(`${where} has a blocked tile in front of it`);
 	}
 	problems.push(...checkReachable(id, tmj, objects, walkable, occupied));

@@ -49,6 +49,8 @@ export function overworld(): MapCanvas {
 		.path([[18, 40], [18, 42]])
 		.path([[28, 40], [28, 42]]) // (villaBlue's door is at x 28)
 		.path([[41, 56], [41, 59]]) // post office to the beach
+		.path([[51, 54], [57, 54]]) // the youth club: from the harbour road round to its side steps
+		.path([[57, 52], [57, 54]])
 		.path([[4, 44], [4, 60]]); // down the west side to the boathouse beach
 	const square = new Region(W, H).rect(38, 29, 25, 13);
 	// The farm field along the top of the farm: 26 weeks × 7 days inside the fence, laid out
@@ -88,6 +90,7 @@ export function overworld(): MapCanvas {
 	const postDoor = building(c, "postOffice", 37, 44, { link: { toMap: "post-office", toSpawn: "entrance" } });
 	const boathouseDoor = building(c, "boathouse", 7, 47, { link: { toMap: "boathouse", toSpawn: "entrance" } });
 	pier(c, 22, shore[22] - 1, shore[22] + 3);
+	const clubDoor = building(c, "youthClub", 53, 46, { link: { toMap: "youth-club", toSpawn: "entrance" } });
 	building(c, "villaPurple", 64, 45, { closed: "You knock. Somewhere inside, a radio is playing. Nobody comes." });
 	building(c, "villaBrown", 76, 45, { closed: "Locked. There's a pair of skis leaning by the door, waiting for winter." });
 
@@ -132,7 +135,7 @@ export function overworld(): MapCanvas {
 		.rect(64, 5, 25, 2) // the back of the radio hill
 		.subtract(sand);
 	forest(c, edge, 3, ["pineTall", "pineMid", "pineSmall", "pineMid"], 0.9, taken);
-	const groves = new Region(W, H).rect(5, 5, 58, 2).rect(52, 44, 10, 12).rect(30, 44, 6, 12).rect(76, 17, 14, 8).rect(88, 17, 3, 40);
+	const groves = new Region(W, H).rect(5, 5, 58, 2).rect(30, 44, 6, 12).rect(76, 17, 14, 8).rect(88, 17, 3, 40);
 	forest(c, groves.subtract(sand), 5, ["oak", "roundTree", "pineMid"], 0.25, taken);
 
 	// --- Meadow details on whatever grass is left --------------------------------------------
@@ -158,10 +161,12 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "farmhouse_door", ...farmDoor, facing: "down" });
 	c.add({ type: "spawn", id: "radio_hut_door", ...hutDoor, facing: "down" });
 	c.add({ type: "spawn", id: "town_hall_door", ...hallDoor, facing: "down" });
+	c.add({ type: "spawn", id: "youth_club_door", ...clubDoor, facing: "down" });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");
 	sign(c, 33, 27, "Fjord Town Library. Every book on the shelves is one of datagutt's repositories. Shh.");
+	sign(c, 59, 53, "Fjord Town Youth Club. Open every evening. Arcade inside, pool table, the good sofa.", "signpost");
 	sign(c, 44, 26, "Town Hall. The basement hums. That's the servers, not the ghosts. Probably.");
 	sign(c, 12, 28, "Ola's farm. The crops grow when datagutt pushes code. Nobody knows how.");
 	sign(c, 60, 35, "Kiosk. Snacks, newspapers and Randi's opinions, all free.");

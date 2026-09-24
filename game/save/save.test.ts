@@ -19,6 +19,7 @@ const sample = {
 	facing: "up" as const,
 	stamps: ["library"],
 	flags: { metFerryman: true },
+	records: { blocks: 1200 },
 	dialogue: {},
 	settings: { muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" as const },
 };
@@ -59,10 +60,11 @@ describe("save", () => {
 
 	it("repairs sloppy fields instead of discarding progress", () => {
 		const storage = memoryStorage({
-			[SAVE_KEY]: JSON.stringify({ ...sample, version: 1, stamps: ["a", "a", 3], settings: "nope" }),
+			[SAVE_KEY]: JSON.stringify({ ...sample, version: 1, stamps: ["a", "a", 3], records: { blocks: -3, pool: 2.5, lines: 7 }, settings: "nope" }),
 		});
 		const save = loadSave(storage)!;
 		expect(save.stamps).toEqual(["a"]);
+		expect(save.records).toEqual({ lines: 7 });
 		expect(save.settings).toEqual({ muted: false, music: true, showVisitors: true, reducedMotion: null, effects: "auto" });
 	});
 });

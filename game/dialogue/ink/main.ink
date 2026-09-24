@@ -31,5 +31,6 @@ INCLUDE librarian.ink
 INCLUDE farmer.ink
 INCLUDE postmaster.ink
 INCLUDE office.ink
+INCLUDE club.ink
 
 -> END

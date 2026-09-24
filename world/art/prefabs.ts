@@ -73,6 +73,23 @@ export const PREFABS = {
 	library: footprint({ sheet: "houses", col: 19, row: 208, w: 12, h: 22, aboveRows: 3, door: [6, 21] }),
 
 	hut: footprint({ sheet: "garden", col: 17, row: 38, w: 3, h: 4, aboveRows: 2, door: [1, 3] }),
+	/**
+	 * The youth club: a white site cabin on wheels, as Norwegian ungdomsklubber often are.
+	 * A small deck in front of the door, railed at the front and left; its steps come down
+	 * the right-hand side.
+	 */
+	youthClub: single("camping", "Mobile_House_Big_5", {
+		aboveRows: 2,
+		door: [2, 4],
+		collision: [
+			"#########.",
+			"#########.",
+			"##########", // the door row (the door itself stays open)
+			"##..######", // the deck, under the eaves
+			".#........", // the deck and, right of it, the steps down to the grass
+			".###......", // the front railing
+		],
+	}),
 	rowboat: single("vehicles", "Boat_1_Right_1", { collision: [] }),
 	ferry: single("vehicles", "Boat_3_Right_1", { collision: [] }),
 	/** A small wooden board on a post: building name signs. */

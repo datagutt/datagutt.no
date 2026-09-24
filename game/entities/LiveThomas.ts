@@ -41,6 +41,8 @@ const PILLOW = { x: -8, y: 4 };
 
 export class LiveThomas {
 	private doing: Doing;
+	/** The player woke him (his asleep dialogue): up and about while his presence stays the same. */
+	private woken = false;
 	private actor: Actor | null = null;
 	private def: NpcDef | null = null;
 	private path: Point[] = [];
@@ -88,10 +90,12 @@ export class LiveThomas {
 		const before = this.doing;
 		this.doing = next;
 		if (next.place === before.place) {
-			// Same place, maybe a new bubble or custom status.
-			if (this.actor && this.def) this.def.dialogue = next.asleep ? "datagutt_asleep" : "datagutt";
+			// Same place, maybe a new bubble or custom status. Woken by the player, he stays
+			// up until his presence sends him somewhere else.
+			if (this.actor && this.def) this.def.dialogue = next.asleep && !this.woken ? "datagutt_asleep" : "datagutt";
 			return;
 		}
+		this.woken = false;
 		const here = this.host.map;
 		const target = PLACE_MAPS[next.place] === here ? this.spot(next) : undefined;
 		if (this.actor) {
@@ -146,6 +150,12 @@ export class LiveThomas {
 		this.actor.asleep = true;
 		this.actor.offset = { ...PILLOW };
 		this.def.dialogue = "datagutt_asleep";
+	}
+
+	/** The player woke him in conversation: out of bed, and awake while he stays put. */
+	wokenByPlayer(): void {
+		this.woken = true;
+		this.wake();
 	}
 
 	/** Out of bed and onto the nearest free floor, ready to walk. */
