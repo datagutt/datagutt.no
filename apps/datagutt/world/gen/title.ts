@@ -1,4 +1,4 @@
-// The title screen's foreground (docs/game/PLAN.md M5.11): the waterfront drawn from the
+// The title screen's foreground (docs/PLAN.md M5.11): the waterfront drawn from the
 // game's own tiles, rendered to public/game/ui/title.png by `bun run assets`. Nothing is
 // painted above the tree line, so the page's drawn sky and mountains show through it
 // (components/game/TitleArt.tsx). Its horizontal middle, the pier, lines up with the

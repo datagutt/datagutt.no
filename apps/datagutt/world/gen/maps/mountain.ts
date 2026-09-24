@@ -1,4 +1,4 @@
-// Up the mountain trail (docs/game/PLAN.md B6): open once the passport is full. A path
+// Up the mountain trail (docs/PLAN.md B6): open once the passport is full. A path
 // climbs from the trailhead through a meadow ringed with pines to the hytte, with a bench
 // at a lookout over the fjord. The hytte is locked for now: later quests start here.
 import { variant } from "@datagutt/kai-worldgen/autotile";

@@ -1,4 +1,4 @@
-// Fake visitors for `?debug&ghosts=<n>` (docs/game/PLAN.md M4.4: smooth with 20 ghosts on
+// Fake visitors for `?debug&ghosts=<n>` (apps/datagutt/docs/PLAN.md M4.4: smooth with 20 ghosts on
 // a phone). They join around the player and wander one tile at a time, fed to the ghost
 // layer as if the room had sent them.
 import type { CollisionGrid, Point } from "../world/grid.ts";

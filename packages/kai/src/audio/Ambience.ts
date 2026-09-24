@@ -1,4 +1,4 @@
-// The sound of the town (docs/game/PLAN.md M5.6; DESIGN §15), all synthesised with Web
+// The sound of the town (apps/datagutt/docs/PLAN.md M5.6; DESIGN §15), all synthesised with Web
 // Audio: no recordings to load or license. Buses: master into Phaser's output (so the mute
 // setting holds), then ambience and effects; the music has its own (Music.ts). Ambience
 // layers run all the time and glide to the levels mix.ts asks for, so walking about, and

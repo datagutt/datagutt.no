@@ -336,7 +336,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
   - LimeZu has no straw hat that leaves the eyes visible in the portrait (the
     "Detective" hat covers them), no headphones, no tank top and no hard hat.
 
-- **M3.9 seasons done** (docs/game/ART.md, "Seasons"). The generator writes a swap
+- **M3.9 seasons done** (docs/ART.md, "Seasons"). The generator writes a swap
   table per season into outdoor maps (`season:<name>` map properties; only `town` is
   outdoor) and `WorldScene` applies it to a cached copy of the map
   (`game/world/season.ts`: `seasonOn` uses Europe/Oslo, `?debug&season=` overrides).
@@ -444,7 +444,7 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
     block (user hit an invisible wall along the farmhouse's shadow).
   - User ideas queued in PLAN.md: M3.12 closed doors read as closed, M5.10 interaction
     prompts, M5.11 title screen v2.
-  - **Art handling rules are in docs/game/ART.md** (user found half-cut sprites): use
+  - **Art handling rules are in docs/ART.md** (user found half-cut sprites): use
     LimeZu singles via `single(sheet, key)`, pick them from the contact sheets that
     `pnpm world:catalog` writes, and `world:gen` fails on prefabs that cut an object.
   - Every building has a notice-board sign with its name and a line of flavour

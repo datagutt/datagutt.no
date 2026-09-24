@@ -13,7 +13,7 @@ root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}
 
 branch="$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null || echo)"
 case "$branch" in
-	game | game/*) rel="docs/game" ;;
+	game | game/*) rel="apps/datagutt/docs" ;;
 	kai | kai/*) rel="docs/kai" ;;
 	*) exit 0 ;;
 esac

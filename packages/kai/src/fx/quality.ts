@@ -1,4 +1,4 @@
-// Effects quality (docs/game/PLAN.md M5.9). "high" has the water and aurora shaders and
+// Effects quality (apps/datagutt/docs/PLAN.md M5.9). "high" has the water and aurora shaders and
 // full weather; "low" drops the shaders and thins the weather. The "auto" setting starts
 // high and watches the first seconds on each map: if frames run slow it drops to low for
 // the rest of the visit.

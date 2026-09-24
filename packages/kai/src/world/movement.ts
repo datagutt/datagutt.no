@@ -1,4 +1,4 @@
-// Tile-locked movement for the player and NPCs (docs/game/PLAN.md M1.5). Pure state, no
+// Tile-locked movement for the player and NPCs (apps/datagutt/docs/PLAN.md M1.5). Pure state, no
 // Phaser, so the feel can be unit tested:
 // - Pressing the direction you already face walks immediately.
 // - Pressing a new direction while standing turns in place; keep holding it past the

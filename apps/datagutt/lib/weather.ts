@@ -3,7 +3,7 @@ import { getWeather as cachedWeather } from "@datagutt/kai-next/weather";
 import { FALLBACK_PLACE } from "@/content/live";
 import { kaiConfig } from "@/lib/kai";
 
-// The game's sky follows the visitor's weather (docs/game/PLAN.md C2), placed by Vercel's
+// The game's sky follows the visitor's weather (docs/PLAN.md C2), placed by Vercel's
 // IP location headers. Without those (local runs, or a place Vercel can't tell) the sky
 // is Oslo's.
 

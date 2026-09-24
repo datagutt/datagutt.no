@@ -1,4 +1,4 @@
-// Time of day (docs/game/PLAN.md M5.1), from the visitor's own clock: outdoors the world
+// Time of day (apps/datagutt/docs/PLAN.md M5.1), from the visitor's own clock: outdoors the world
 // is tinted (a multiplied colour, fx/DayNight.ts) through dawn, day, dusk and night, and
 // lights marked for the night come on as it gets dark while daylight through windows fades.
 

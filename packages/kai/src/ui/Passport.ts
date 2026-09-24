@@ -1,4 +1,4 @@
-// Fjord Passport UI (docs/game/PLAN.md M2.10): the stamp banner shown when a stamp is
+// Fjord Passport UI (apps/datagutt/docs/PLAN.md M2.10): the stamp banner shown when a stamp is
 // earned, and the passport page listing every place.
 import Phaser from "phaser";
 import type { GameData } from "../data.ts";

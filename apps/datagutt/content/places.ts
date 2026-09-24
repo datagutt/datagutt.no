@@ -1,4 +1,4 @@
-// The town's places (content/places.json) and what each one presents (docs/game/DESIGN.md
+// The town's places (content/places.json) and what each one presents (docs/DESIGN.md
 // §5). Used for passport stamps, `?at=` deep links, the Journal's "visit in game" links
 // and the validator that checks every piece of content has a home.
 

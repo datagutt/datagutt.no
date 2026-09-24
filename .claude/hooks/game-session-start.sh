@@ -9,7 +9,7 @@ branch="$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown
 # The kai branches work on the engine split, which keeps its own plan and handoff.
 case "$branch" in
 	kai | kai/*) rel="docs/kai"; title="kai engine split" ;;
-	*) rel="docs/game"; title="Fjord Town game project" ;;
+	*) rel="apps/datagutt/docs"; title="Fjord Town game project" ;;
 esac
 docs="$root/$rel"
 [ -f "$docs/HANDOFF.md" ] || exit 0

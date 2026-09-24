@@ -1,4 +1,4 @@
-// The fjord (docs/game/PLAN.md M5.2): a shader over open water, which the generator marks
+// The fjord (apps/datagutt/docs/PLAN.md M5.2): a shader over open water, which the generator marks
 // in a hidden `water` layer. It adds drifting ripples in the sky's colour from the time of
 // day, and slow glints (paler, moonlit ones at night), in whole pixels to match the art. Shore tiles are left alone: their art already has the beach and its foam.
 // Without WebGL there is no shader and the water stays as drawn.

@@ -56,7 +56,7 @@
 + [Let him sleep.]
     -> END
 
-// The finale (docs/game/PLAN.md M5.8). A full passport: a note, then Thomas at the end of
+// The finale (docs/PLAN.md M5.8). A full passport: a note, then Thomas at the end of
 // the pier at night, the credits, and last of all how to reach him.
 === finale_note ===
 \* Your passport is full! Tucked in the back is a note.

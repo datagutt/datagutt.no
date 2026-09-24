@@ -1,4 +1,4 @@
-// The title screen's backdrop (docs/game/PLAN.md M5.11): a summer day on the fjord.
+// The title screen's backdrop (docs/PLAN.md M5.11): a summer day on the fjord.
 // The sky, clouds and mountains are drawn here on a pixel grid where one unit is one game
 // pixel: a wide screen sees the bottom 512×288 (18 tiles tall, like the game's own view),
 // a tall phone screen sees more sky above it at about the game's phone zoom. The waterfront in front is the

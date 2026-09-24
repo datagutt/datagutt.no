@@ -1,4 +1,4 @@
-// The hidden cat (docs/game/PLAN.md B3): it lies across its tile and the next one east, and
+// The hidden cat (docs/PLAN.md B3): it lies across its tile and the next one east, and
 // petting it earns "cat".
 import { TILE } from "@datagutt/kai";
 import { perWorld, tileKey, type KaiPlugin } from "@datagutt/kai";

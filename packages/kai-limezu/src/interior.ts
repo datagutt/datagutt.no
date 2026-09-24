@@ -1,4 +1,4 @@
-// Interior rooms from LimeZu's Room Builder (docs/game/PLAN.md M3.8): a two-tile wall
+// Interior rooms from LimeZu's Room Builder (apps/datagutt/docs/PLAN.md M3.8): a two-tile wall
 // face along the top, a patterned floor, a thin wall-top border ringing the room and
 // black void outside it. Doors are gaps in the bottom border.
 import type { TileRef } from "@datagutt/kai-worldgen/autotile";

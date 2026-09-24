@@ -55,7 +55,7 @@ export const collections = {
 		{ body: "description" },
 	),
 	/**
-	 * The town's places and what each one presents (docs/game/DESIGN.md §5): passport
+	 * The town's places and what each one presents (docs/DESIGN.md §5): passport
 	 * stamps, `?at=` deep links, the Journal's "visit in game" links, and the check that
 	 * every piece of content has a home.
 	 */

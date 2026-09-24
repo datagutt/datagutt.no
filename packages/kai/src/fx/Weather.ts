@@ -1,4 +1,4 @@
-// The sky outdoors: the season's particles (docs/game/PLAN.md M5.4: snow and a frosty rim
+// The sky outdoors: the season's particles (apps/datagutt/docs/PLAN.md M5.4: snow and a frosty rim
 // in winter, petals in spring, pollen in summer, leaves in autumn) and Oslo's real weather
 // (C2: rain, sleet, snow, fog, storms; world/weather.ts decides what shows). Everything
 // sits under the time-of-day tint (fx/DayNight.ts), so it darkens at night like the rest,

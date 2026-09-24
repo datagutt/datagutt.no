@@ -1,6 +1,6 @@
 // How big the low-resolution game canvas is and how far the browser scales it up.
 // The canvas is scaled by a whole number of *device* pixels, so every game pixel is
-// an exact square on screen whatever the devicePixelRatio (docs/game/DESIGN.md §13).
+// an exact square on screen whatever the devicePixelRatio (apps/datagutt/docs/DESIGN.md §13).
 import { TILE } from "./constants.ts";
 
 /** Never show fewer tiles than this on the short screen axis. */

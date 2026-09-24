@@ -1,4 +1,4 @@
-// The emote wheel (docs/game/PLAN.md M4.5): the emotes a visitor can show others, in a
+// The emote wheel (apps/datagutt/docs/PLAN.md M4.5): the emotes a visitor can show others, in a
 // ring around the player's head. Opened by holding interact or a long press on the player;
 // arrows or the stick move round it, interact picks, back or a tap elsewhere cancels.
 import Phaser from "phaser";

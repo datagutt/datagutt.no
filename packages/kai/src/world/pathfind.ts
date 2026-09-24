@@ -1,4 +1,4 @@
-// A* on the tile grid for tap/click-to-move (docs/game/PLAN.md M1.8). 4-directional,
+// A* on the tile grid for tap/click-to-move (apps/datagutt/docs/PLAN.md M1.8). 4-directional,
 // with a small penalty for turning so paths prefer long straight runs, which reads as
 // deliberate walking rather than zig-zagging.
 import type { Point } from "./grid.ts";

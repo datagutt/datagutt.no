@@ -85,7 +85,7 @@ export function houseUpstairs(): MapCanvas {
 	// when offline, out in town otherwise.
 	c.add({ type: "spot", id: "datagutt-desk", x: 6, y: 5, facing: "up" });
 	c.add({ type: "spot", id: "datagutt-bed", x: 3, y: 7, facing: "down" });
-	// The left computer idles on a Game of Life screensaver (docs/game/PLAN.md B2).
+	// The left computer idles on a Game of Life screensaver (docs/PLAN.md B2).
 	c.add({ type: "arcade", x: 5, y: 4, game: "screensaver" });
 	c.add({ type: "sign", x: 7, y: 4, text: say("computers") });
 	c.add({ type: "sign", x: 9, y: 3, text: say("mini-fridge") });

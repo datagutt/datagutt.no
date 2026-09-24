@@ -26,6 +26,6 @@ Not covered by the GPL:
   [licence](./fonts/EULA-PangramPangram-FreeForPersonalUse-MAY2021.pdf).
 - `public/images/`: the avatar and project screenshots. All rights reserved.
 - Game art: the LimeZu tilesets and characters are licensed separately, live in a private
-  repository and are never committed here (see `docs/game/DESIGN.md` §9).
+  repository and are never committed here (see `apps/datagutt/docs/DESIGN.md` §9).
 - Geist and Geist Pixel fonts come from the `geist` package under the SIL Open Font License.
 

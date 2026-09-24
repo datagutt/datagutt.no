@@ -1,4 +1,4 @@
-// The world socket's messages (docs/game/PLAN.md M4.3): visitors see each other as ghosts.
+// The world socket's messages (apps/datagutt/docs/PLAN.md M4.3): visitors see each other as ghosts.
 // One room per map. A client joins the room of the map it is on and reports its tile when
 // it changes; the server gives each connection a random name and tint, tells the room
 // who came, moved, emoted or left, and never echoes a message back to its sender.

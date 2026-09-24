@@ -6,7 +6,7 @@ import { kaiConfig } from "@/lib/kai";
 import { getDiscordId } from "./lanyard";
 
 /**
- * Live data for the game and the Journal (docs/game/PLAN.md M2.2), apart from the weather,
+ * Live data for the game and the Journal (docs/PLAN.md M2.2), apart from the weather,
  * which depends on the visitor (components/game/WorldStateScript.tsx adds it). Its explicit
  * lifetime overrides the inner caches', so it mirrors their rule: hours when everything
  * arrived, minutes if any source came back empty, so a failed fetch is retried soon.

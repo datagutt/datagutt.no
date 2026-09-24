@@ -1,4 +1,4 @@
-// Small synthesised sound effects (docs/game/DESIGN.md §15: effects are made in code).
+// Small synthesised sound effects (apps/datagutt/docs/DESIGN.md §15: effects are made in code).
 // Same output rule as blips: read Phaser's Web Audio context lazily, it can change.
 
 export type AudioOutput = () => { context: AudioContext; destination: AudioNode } | null;

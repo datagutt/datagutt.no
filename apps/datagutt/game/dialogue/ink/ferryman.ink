@@ -2,7 +2,7 @@
 === ferryman ===
 {
 - ferryman > 1:
-    // The mountain trail (docs/game/PLAN.md B6): Arne keeps the player posted.
+    // The mountain trail (docs/PLAN.md B6): Arne keeps the player posted.
     {unlocked("passport"):
         Heard the news? The council cleared the rockfall. The mountain trail's open again: up past the town hall, all the way to the hytte.
     - else:

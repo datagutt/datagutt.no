@@ -11,7 +11,7 @@ export default defineConfig({
 	projects: [
 		{ name: "desktop", use: { ...devices["Desktop Chrome"] } },
 		{ name: "phone", use: { ...devices["Pixel 7"] } },
-		// The QA matrix (docs/game/PLAN.md M6.6): `bun run test:e2e:all`. Off by default, since
+		// The QA matrix (docs/PLAN.md M6.6): `bun run test:e2e:all`. Off by default, since
 		// WebKit needs system libraries (`sudo bunx playwright install-deps webkit`).
 		...(process.env.E2E_ALL_BROWSERS
 			? [

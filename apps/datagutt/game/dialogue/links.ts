@@ -1,4 +1,4 @@
-// `# link:` tags in Ink (docs/game/PLAN.md M2.7): a line can offer to open something.
+// `# link:` tags in Ink (docs/PLAN.md M2.7): a line can offer to open something.
 //   # link: project irlserver     the project's site
 //   # link: social github         a social profile
 //   # link: email                 a mail to datagutt

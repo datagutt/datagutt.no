@@ -1,5 +1,5 @@
 // The youth club (places: youth-club): a site cabin on the harbour road where the old
-// website's five canvases live on as arcade cabinets (docs/game/PLAN.md B1). Teal walls,
+// website's five canvases live on as arcade cabinets (docs/PLAN.md B1). Teal walls,
 // dark boards; the cabinets along the back wall, the TV corner with its rug and bean bags,
 // a pool table, and Siv who runs the place.
 import type { MapObject } from "@datagutt/kai/world/objects";

@@ -1,4 +1,4 @@
-// The ferry intro (docs/game/PLAN.md M5.7), on a first visit only: the ferry sails in to
+// The ferry intro (docs/PLAN.md M5.7), on a first visit only: the ferry sails in to
 // the pier with the player aboard, the player hops ashore, and Arne says hello (with the
 // passport, the controls and the Journal). Any key, button or tap skips the sailing.
 // The ferry is part of the map; for the voyage its tiles are lifted into a moving group

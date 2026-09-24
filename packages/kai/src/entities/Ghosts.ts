@@ -1,5 +1,5 @@
 // Other visitors on this map, drawn as translucent tinted copies of the player sprite
-// (docs/game/PLAN.md M4.4). They walk from tile to tile as the room reports their moves,
+// (apps/datagutt/docs/PLAN.md M4.4). They walk from tile to tile as the room reports their moves,
 // pass through everything, and never block anyone. Only the nearest are drawn, and one
 // who stands still long enough fades away until they move again.
 import Phaser from "phaser";

@@ -1,4 +1,4 @@
-// Northern lights (docs/game/PLAN.md M5.3). The game looks straight down, so the aurora is
+// Northern lights (apps/datagutt/docs/PLAN.md M5.3). The game looks straight down, so the aurora is
 // what you would glimpse overhead: curtains of light in the site's greens, drifting down
 // from the top of the screen on dark nights outdoors, strongest in winter and gone in the
 // light summer nights. Added over the world (and reflected in the fjord's ripples,

@@ -1,4 +1,4 @@
-// What the ambience should sound like where the player stands (docs/game/PLAN.md M5.6):
+// What the ambience should sound like where the player stands (apps/datagutt/docs/PLAN.md M5.6):
 // a level from 0 to 1 for each layer, from how near the sea, the forest and a fire are,
 // whether it's indoors, the time of day, the season and the weather. Pure, so it can be
 // tested; the sounds themselves are in Ambience.ts.

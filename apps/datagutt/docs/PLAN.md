@@ -24,7 +24,7 @@ Goal: repo, assets and toolchain ready so game code can start.
 Issue: see README.md (issue links table).
 
 - [x] **M0.1** Create the `game` branch. *Done when* the branch exists.
-- [x] **M0.2** Write DESIGN, PLAN, HANDOFF and README under `docs/game/`. *Done when*
+- [x] **M0.2** Write DESIGN, PLAN, HANDOFF and README under `docs/`. *Done when*
       committed.
 - [x] **M0.3** Session continuity: SessionStart hook injects HANDOFF and open tasks; Stop
       hook blocks when code commits are newer than the last HANDOFF commit. *Done when*

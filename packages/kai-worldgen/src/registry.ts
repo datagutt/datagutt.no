@@ -1,4 +1,4 @@
-// Stable tile ids for generated maps (docs/game/PLAN.md M3.1). Maps store ids into one
+// Stable tile ids for generated maps (apps/datagutt/docs/PLAN.md M3.1). Maps store ids into one
 // packed tileset; this registry says which LimeZu tile each id is. It is append-only, so
 // committed maps keep meaning the same tiles when new tiles are registered.
 import type { TileRef } from "./autotile.ts";

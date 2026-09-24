@@ -1,4 +1,4 @@
-// Game feel (docs/game/PLAN.md M5.5): the small reactions that make moving around read as
+// Game feel (apps/datagutt/docs/PLAN.md M5.5): the small reactions that make moving around read as
 // physical. Dust at each footstep, a nudge and a thud when walking into something, a
 // squash on stepping through a door, a shake when a stamp lands, and a camera that eases
 // after the player and looks a little ahead. Reduced motion drops the shake and the

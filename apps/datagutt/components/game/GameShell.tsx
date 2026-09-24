@@ -14,7 +14,7 @@ const loadGame = () => import("@/game").then((game) => game.startFjordTown);
 const JOURNAL_LABEL = "Read it as a normal website";
 
 /**
- * Hosts the game canvas behind the server-rendered title screen (docs/game/PLAN.md M5.11).
+ * Hosts the game canvas behind the server-rendered title screen (docs/PLAN.md M5.11).
  * The game module starts downloading as soon as the page is interactive. "Press start"
  * opens the menu straight away; picking a way in waits for loading to finish.
  */

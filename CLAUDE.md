@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Fjord Town
 
-The site is a top-down pixel-art game, "Fjord Town", with a plain-text twin, the Journal. Before working on the game, read `docs/game/README.md` (workflow), `docs/game/HANDOFF.md` (where the last session stopped) and `docs/game/PLAN.md` (tasks). Decisions in `docs/game/DESIGN.md` are settled.
+The site is a top-down pixel-art game, "Fjord Town", with a plain-text twin, the Journal. Before working on the game, read `apps/datagutt/docs/README.md` (workflow), `apps/datagutt/docs/HANDOFF.md` (where the last session stopped) and `apps/datagutt/docs/PLAN.md` (tasks). Decisions in `apps/datagutt/docs/DESIGN.md` are settled.
 
 The engine is being split out as **kai** (`packages/`), with the site as `apps/datagutt`. On the `kai` branch, read `docs/kai/HANDOFF.md`, `docs/kai/PLAN.md` and `docs/kai/DESIGN.md` instead.
 

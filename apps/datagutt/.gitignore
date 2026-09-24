@@ -1,7 +1,7 @@
 # Next.js static export and build output
 /out/
 /build/
-# Licensed or generated asset output. Never commit LimeZu pixels (docs/game/DESIGN.md §9).
+# Licensed or generated asset output. Never commit LimeZu pixels (docs/DESIGN.md §9).
 /public/game/
 /.assets-cache/
 /game/generated/

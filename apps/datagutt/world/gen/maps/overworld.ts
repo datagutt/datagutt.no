@@ -1,5 +1,5 @@
 // The overworld, map id `town`: Fjord Town on the north shore of a fjord
-// (docs/game/DESIGN.md §5). Approved by the user on 2026-09-23 (M3.7).
+// (docs/DESIGN.md §5). Approved by the user on 2026-09-23 (M3.7).
 //
 //   x:  0-4 forest | 5-34 farm, datagutt's street, boathouse | 35-62 library, town hall,
 //       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest

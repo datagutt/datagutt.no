@@ -32,7 +32,7 @@ const CONTENTS = [
 ] as const;
 
 /**
- * The Journal (docs/game/PLAN.md M6.1): the whole site as a plain page, for anyone who
+ * The Journal (docs/PLAN.md M6.1): the whole site as a plain page, for anyone who
  * would rather read than play, and for screen readers and search engines. Everything
  * comes from content/ and the same live data as the game, so the two never disagree.
  */

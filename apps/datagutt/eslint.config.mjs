@@ -11,7 +11,7 @@ const config = [
 		patterns: [
 			{
 				group: ["@/app", "@/app/*", "@/components", "@/components/*", "@/hooks", "@/hooks/*", "@/lib", "@/lib/*"],
-				message: "game/ may not import Next.js app code. Pass data in through the WorldState payload (docs/game/PLAN.md M2.2).",
+				message: "game/ may not import Next.js app code. Pass data in through the WorldState payload (docs/PLAN.md M2.2).",
 			},
 		],
 	}),

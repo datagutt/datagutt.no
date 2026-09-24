@@ -1,4 +1,4 @@
-// Every function dialogue can call to read content or live data (docs/game/DESIGN.md §11).
+// Every function dialogue can call to read content or live data (docs/DESIGN.md §11).
 // The build turns this registry into Ink EXTERNAL declarations and validates literal ids
 // in the .ink sources against it; the game binds the implementations at runtime.
 // Imported by Node build scripts too, hence the explicit .ts extensions.

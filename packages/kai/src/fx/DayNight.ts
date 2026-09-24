@@ -1,4 +1,4 @@
-// Time of day on screen (docs/game/PLAN.md M5.1; the clock is game/world/dayNight.ts).
+// Time of day on screen (apps/datagutt/docs/PLAN.md M5.1; the clock is game/world/dayNight.ts).
 // Outdoors, a colour multiplied over the world tints it. It sits below the lights, which
 // add on top and so really glow after dark. Indoors nothing is tinted; daylight through
 // the windows fades at night. Timed lights follow the clock everywhere.
