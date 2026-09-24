@@ -9,8 +9,11 @@ import type { FrameInput } from "../input/InputController";
 const DEPTH = 115_000;
 const INK = 0xf2eef7;
 const HEADING = 0x7ee0a8;
-/** Pixels a second, how much faster after interact or a tap, and for how long. */
-const SPEED = 18;
+/**
+ * Pixels a second, how much faster after interact or a tap, and for how long. 20 is a
+ * whole pixel every third frame at 60 fps, so the roll steps evenly instead of stuttering.
+ */
+const SPEED = 20;
 const FAST = 6;
 const FAST_MS = 900;
 
@@ -18,6 +21,11 @@ export class CreditsRoll {
 	private readonly shade: Phaser.GameObjects.Rectangle;
 	private readonly column: Phaser.GameObjects.Container;
 	private readonly height: number;
+	/**
+	 * Where the column is, kept as a fraction; the container is drawn at the whole pixel
+	 * below it. At a fraction the pixel font loses rows of its glyphs ("o" turns to "c").
+	 */
+	private y: number;
 	private done = false;
 	private fastMs = 0;
 
@@ -38,14 +46,17 @@ export class CreditsRoll {
 		let y = 0;
 		for (const line of lines) {
 			y += line.gap;
-			const text = scene.add.bitmapText(0, y, "pixel", line.text).setOrigin(0.5, 0).setTint(line.tint);
+			const text = scene.add.bitmapText(0, y, "pixel", line.text).setTint(line.tint);
+			// Centred by hand at a whole pixel: origin 0.5 puts odd widths on half pixels.
+			text.x = -Math.round(text.width / 2);
 			parts.push(text);
 			y += Math.ceil(text.height);
 		}
 		this.height = y;
 		this.column = scene.add.container(Math.round(cam.width / 2), cam.height, parts).setScrollFactor(0).setDepth(DEPTH + 1);
+		this.y = cam.height;
 		// Reduced motion: no scrolling, the whole list centred (it fits a phone screen).
-		if (reducedMotion) this.column.y = Math.round((cam.height - this.height) / 2);
+		if (reducedMotion) this.column.y = this.y = Math.round((cam.height - this.height) / 2);
 	}
 
 	/** Returns true once finished. */
@@ -59,9 +70,10 @@ export class CreditsRoll {
 		if (input.interact || input.taps.length) this.fastMs = FAST_MS;
 		this.fastMs = Math.max(0, this.fastMs - dtMs);
 		const speed = SPEED * (this.fastMs > 0 ? FAST : 1);
-		this.column.y -= (speed * dtMs) / 1000;
+		this.y -= (speed * dtMs) / 1000;
+		this.column.y = Math.round(this.y);
 		if (input.back) this.finish();
-		if (this.column.y + this.height < cam.height / 3) this.finish();
+		if (this.y + this.height < cam.height / 3) this.finish();
 		return this.done;
 	}
 
