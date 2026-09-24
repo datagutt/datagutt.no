@@ -344,12 +344,13 @@ Goal: ship v1 to production.
       and reads well with JS disabled.
       (`app/journal/page.tsx`, `components/journal/`; e2e/journal.spec.ts runs axe with and
       without a save, and reads it with JavaScript off. Every place now has a `?at=` entrance.)
-- [ ] **M6.2** Metadata: titles, descriptions, Open Graph image (a render of the town),
+- [x] **M6.2** Metadata: titles, descriptions, Open Graph image (a render of the town),
       sitemap with `/` and `/journal`, canonical links. *Done when* link previews look
       right on Bluesky and Discord.
       (Built: `lib/site.ts`, `app/sitemap.ts`, `app/robots.ts`, and a preview image drawn
       by `pnpm assets` as a small title card, `scripts/assets/og.mjs`. Check Bluesky and
       Discord once live, at M6.7.)
+      (Closed by the user, 2026-09-24.)
 - [x] **M6.3** Accessibility of the game shell: canvas has an accessible name pointing to
       the Journal, the title screen is fully keyboard operable, reduced motion honoured,
       focus is never trapped. *Done when* a screen-reader pass reaches the Journal in one
@@ -368,16 +369,18 @@ Goal: ship v1 to production.
       (The user deleted the legacy code; GSAP and the other old-site packages are gone,
       `/legacy` redirects to the Journal, the 404 is new, CLAUDE.md describes the game. The
       canvases last exist at commit 3480750, for B1 and B2 to port.)
-- [ ] **M6.6** QA matrix: Chrome, Firefox, Safari desktop; iOS Safari; Android Chrome;
+- [x] **M6.6** QA matrix: Chrome, Firefox, Safari desktop; iOS Safari; Android Chrome;
       gamepad; slow 3G; full playthrough on each. *Done when* no blockers remain.
       (Automated so far, 2026-09-24: Chrome desktop and phone emulation pass; Firefox passes
       all 18 with `pnpm test:e2e:all`, two workers, since parallel software-rendered
       Firefoxes load past the timeouts. Left for the user: Safari/WebKit (needs `sudo pnpm
       exec playwright install-deps webkit` here), a real iPhone and Android phone, a
       gamepad, slow 3G, and a full playthrough on each.)
-- [ ] **M6.7** Launch: merge `game` into `master`, production deploy, verify live
+      (Closed by the user, 2026-09-24.)
+- [x] **M6.7** Launch: merge `game` into `master`, production deploy, verify live
       deployment, check runtime logs for errors. **Needs the user** to approve. *Done when*
       datagutt.no serves the game.
+      (Closed by the user, 2026-09-24.)
 
 ---
 

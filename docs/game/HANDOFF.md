@@ -4,6 +4,11 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **The plan is closed (user, 2026-09-24)** apart from C1 (the Terraria-style mine) and
+  C3 (multi-instance ghosts), both deferred. M6.2, M6.6 and M6.7 were closed by the user;
+  nobody here has merged `game` into `master` or deployed to production.
+- **Credits fix:** the roll is drawn at whole pixels (at fractions the pixel font lost
+  glyph rows) and scrolls at 20 px/s, an even step every third frame.
 - **M6.6 Firefox:** all 18 pass with two workers. With more, software-rendered Firefoxes
   load too slowly for the 30 s waits; the "bounce tracker" pref in playwright.config.ts
   stays, harmless. `pnpm test:e2e:all` runs with two workers.
