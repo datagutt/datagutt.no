@@ -2,9 +2,15 @@
 // player is on and where, passes on what the room says, and rejoins after a reconnect.
 // Visitors can switch it off with localStorage `rx_off` (DESIGN §14, the old reactions
 // kill switch), in which case nothing is sent or received.
-import { OPEN, Reconnecting, browserSocket, type SocketLike } from "./reconnect";
-import { parseServerMessage, WORLD_SOCKET_PATH, type ClientMessage, type GhostEmote, type ServerMessage } from "./protocol";
-import type { Facing } from "../world/objects";
+import { OPEN, Reconnecting, browserSocket, type SocketLike } from "./reconnect.ts";
+import {
+	parseServerMessage,
+	WORLD_SOCKET_PATH,
+	type ClientMessage,
+	type Facing,
+	type GhostEmote,
+	type ServerMessage,
+} from "./protocol.ts";
 
 type Where = { map: string; x: number; y: number; facing: Facing };
 

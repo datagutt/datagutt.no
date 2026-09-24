@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { ServerMessage } from "../../game/net/protocol";
-import { WorldRooms, type WorldSocket } from "./rooms";
+import type { ServerMessage } from "./protocol.ts";
+import { WorldRooms, type WorldSocket } from "./rooms.ts";
 
 class Inbox implements WorldSocket {
 	messages: ServerMessage[] = [];

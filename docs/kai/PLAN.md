@@ -29,7 +29,7 @@ Goal: the same site, built by Bun and Turborepo from its new place. No behaviour
 - [x] **K1.4** Paths that assume the repo root: the Geist font path in the asset build,
       `.gitignore` and `.prettierignore` entries, the `.claude` hooks. *Done when* a
       full asset build with the real art matches the old output.
-- [ ] **K1.5** CI on Bun and Turborepo. *Done when* the workflow passes on the `kai`
+- [x] **K1.5** CI on Bun and Turborepo. *Done when* the workflow passes on the `kai`
       branch.
 - [ ] **K1.6** Merge into `game`, then set the Vercel Root Directory to `apps/datagutt`
       through the MCP. **Needs the user** to see the change first. *Done when* a
@@ -43,9 +43,11 @@ Goal: shared presets, and the three packages with the fewest ties to Fjord Town.
       `phaser`, `next`) and `tooling/vitest-config`. The app moves to ESLint 9 and
       `eslint-config-next@16`. *Done when* `turbo run lint` passes and a deliberate bad
       import still fails.
-- [ ] **K2.2** `@datagutt/kai-net`: protocol, ghosts client, reconnect, the room server
+- [x] **K2.2** `@datagutt/kai-net`: protocol, ghosts client, reconnect, the room server
       (`lib/world/rooms.ts`) and the dev socket. *Done when* the app imports ghosts and
-      rooms from the package and the ghost e2e passes.
+      rooms from the package and the ghost e2e passes. (There is no ghost e2e: `next start`
+      cannot upgrade. The package's socket test and a manual run of the dev harness cover
+      it.)
 - [ ] **K2.3** `@datagutt/kai-arcade`: the cabinet games and the arcade screen. Arcade
       ids become strings. *Done when* both lounge cabinets play and share the best score.
 - [ ] **K2.4** `@datagutt/kai-live`: the Lanyard client, the WorldState types (from

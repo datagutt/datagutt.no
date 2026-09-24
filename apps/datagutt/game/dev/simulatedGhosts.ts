@@ -3,7 +3,7 @@
 // layer as if the room had sent them.
 import type { CollisionGrid, Point } from "../world/grid";
 import type { Facing } from "../world/objects";
-import type { ServerMessage } from "../net/protocol";
+import type { ServerMessage } from "@datagutt/kai-net/protocol";
 
 const STEP_MS = [250, 900] as const;
 const DIRS: [Facing, number, number][] = [["right", 1, 0], ["left", -1, 0], ["down", 0, 1], ["up", 0, -1]];

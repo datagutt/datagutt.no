@@ -1,6 +1,6 @@
 import { experimental_upgradeWebSocket, type WebSocketData } from "@vercel/functions";
 import { connection } from "next/server";
-import { WorldRooms } from "@/lib/world/rooms";
+import { WorldRooms } from "@datagutt/kai-net/rooms";
 
 export const maxDuration = 300;
 

@@ -4,7 +4,7 @@
 // Lanyard only tracks users who are in its Discord server; for anyone else the feed
 // stays empty and the NPC keeps its default place.
 
-import { browserSocket, Reconnecting, type SocketLike } from "./reconnect";
+import { browserSocket, Reconnecting, type SocketLike } from "@datagutt/kai-net/reconnect";
 
 export const LANYARD_SOCKET = "wss://api.lanyard.rest/socket";
 

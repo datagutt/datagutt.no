@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { Actor } from "./Actor";
 import { PLAYER_MOVEMENT } from "../world/movement";
 import { directionBetween, type Point } from "../world/grid";
-import type { Ghost, GhostEmote, ServerMessage } from "../net/protocol";
+import type { Ghost, GhostEmote, ServerMessage } from "@datagutt/kai-net/protocol";
 import { EmoteBubble } from "../ui/Bubbles";
 
 /** Drawn at most, nearest to the player first. */

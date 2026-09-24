@@ -1,34 +1,40 @@
 import http from "node:http";
+import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 import WebSocket from "ws";
-import { attachWorldSocket } from "./world-socket.mjs";
+import { attachWorldSocket } from "./node.ts";
+import type { ClientMessage, ServerMessage } from "./protocol.ts";
 
-let server;
+let server: http.Server | undefined;
 afterEach(() => server?.close());
 
+async function listen(): Promise<number> {
+	server = http.createServer();
+	attachWorldSocket(server);
+	await new Promise<void>((resolve) => server!.listen(0, "127.0.0.1", resolve));
+	return (server.address() as AddressInfo).port;
+}
+
 /** A client that collects what the server sends. */
-function client(port) {
+function client(port: number) {
 	const ws = new WebSocket(`ws://127.0.0.1:${port}/api/world/ws`);
-	const inbox = [];
+	const inbox: ServerMessage[] = [];
 	ws.on("message", (data) => inbox.push(JSON.parse(data.toString())));
 	const opened = new Promise((resolve) => ws.once("open", resolve));
-	const until = async (t) => {
+	const until = async <T extends ServerMessage["t"]>(t: T) => {
 		for (let i = 0; i < 100; i++) {
-			const found = inbox.find((m) => m.t === t);
+			const found = inbox.find((m): m is Extract<ServerMessage, { t: T }> => m.t === t);
 			if (found) return found;
 			await new Promise((r) => setTimeout(r, 10));
 		}
 		throw new Error(`no "${t}" message; got ${JSON.stringify(inbox)}`);
 	};
-	return { ws, inbox, opened, until, send: (m) => ws.send(JSON.stringify(m)) };
+	return { ws, inbox, opened, until, send: (m: ClientMessage) => ws.send(JSON.stringify(m)) };
 }
 
 describe("world socket over HTTP", () => {
 	it("lets two visitors on the same map see each other move", async () => {
-		server = http.createServer();
-		attachWorldSocket(server);
-		await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-		const { port } = server.address();
+		const port = await listen();
 
 		const a = client(port);
 		const b = client(port);
@@ -49,10 +55,8 @@ describe("world socket over HTTP", () => {
 	});
 
 	it("turns away other paths", async () => {
-		server = http.createServer();
-		attachWorldSocket(server);
-		await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-		const ws = new WebSocket(`ws://127.0.0.1:${server.address().port}/somewhere-else`);
+		const port = await listen();
+		const ws = new WebSocket(`ws://127.0.0.1:${port}/somewhere-else`);
 		await expect(new Promise((resolve, reject) => (ws.once("open", resolve), ws.once("error", reject)))).rejects.toBeTruthy();
 	});
 });

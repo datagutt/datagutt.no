@@ -3,8 +3,10 @@
 // it changes; the server gives each connection a random name and tint, tells the room
 // who came, moved, emoted or left, and never echoes a message back to its sender.
 // Shared by the game (client), the Vercel route and the dev harness server, which loads
-// it with Node's type stripping: keep its imports type-only.
-import type { Facing } from "../world/objects";
+// it with Node's type stripping: keep it free of runtime imports.
+
+/** A direction on the tile grid. The runtime's map objects use this same type. */
+export type Facing = "right" | "up" | "left" | "down";
 
 export const WORLD_SOCKET_PATH = "/api/world/ws";
 

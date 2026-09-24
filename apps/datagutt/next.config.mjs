@@ -2,8 +2,14 @@
 // (/mnt/c/...). Keep the cache everywhere else, including Vercel.
 const onWslMountedDrive = process.platform === "linux" && process.cwd().startsWith("/mnt/");
 
+import pkg from "./package.json" with { type: "json" };
+
+// The kai packages ship TypeScript source, so Next compiles them like app code.
+const kaiPackages = Object.keys(pkg.dependencies).filter((name) => name.startsWith("@datagutt/kai"));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: kaiPackages,
   productionBrowserSourceMaps: true,
   // The old site lived at /legacy while the game was built; its content is the Journal now.
   async redirects() {

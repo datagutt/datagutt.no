@@ -4,8 +4,9 @@
 
 import { ARCADE_IDS, type ArcadeId } from "../arcade/ids.ts";
 import { UNLOCK_IDS, type UnlockId } from "../progress/unlockIds.ts";
+import type { Facing } from "@datagutt/kai-net/protocol";
 
-export type Facing = "right" | "up" | "left" | "down";
+export type { Facing };
 
 export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }

@@ -1,5 +1,4 @@
-// Ghost rooms for the world socket (docs/game/PLAN.md M4.3; protocol in
-// game/net/protocol.ts). Transport-free, so the Vercel route and the dev harness server
+// Ghost rooms for the world socket (protocol in ./protocol.ts). Transport-free, so the Vercel route and the dev harness server
 // share it. Fan-out stays within one server instance: two visitors on different
 // instances don't see each other, which DESIGN §14 accepts (upgrade path: Redis pub/sub
 // or a Durable Object per room).
@@ -8,7 +7,7 @@ import {
 	type ClientMessage,
 	type Ghost,
 	type ServerMessage,
-} from "../../game/net/protocol.ts";
+} from "./protocol.ts";
 
 /** What a room needs from a connection. */
 export type WorldSocket = { send(text: string): void };

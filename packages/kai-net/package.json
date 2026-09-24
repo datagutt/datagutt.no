@@ -1,0 +1,32 @@
+{
+  "name": "@datagutt/kai-net",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    "./protocol": "./src/protocol.ts",
+    "./client": "./src/ghosts.ts",
+    "./rooms": "./src/rooms.ts",
+    "./node": "./src/node.ts",
+    "./reconnect": "./src/reconnect.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@datagutt/kai-eslint-config": "workspace:*",
+    "@datagutt/kai-tsconfig": "workspace:*",
+    "@datagutt/kai-vitest-config": "workspace:*",
+    "@types/node": "^24.13.6",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9",
+    "typescript": "^5.9.3",
+    "vitest": "^5"
+  }
+}

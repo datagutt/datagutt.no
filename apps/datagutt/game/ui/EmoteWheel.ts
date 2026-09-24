@@ -3,7 +3,7 @@
 // arrows or the stick move round it, interact picks, back or a tap elsewhere cancels.
 import Phaser from "phaser";
 import { EMOTES, emoteFrame } from "./emotes";
-import { GHOST_EMOTES, type GhostEmote } from "../net/protocol";
+import { GHOST_EMOTES, type GhostEmote } from "@datagutt/kai-net/protocol";
 import type { FrameInput } from "../input/InputController";
 
 const DEPTH = 110_000;

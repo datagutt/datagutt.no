@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LanyardClient, parsePresence, PresenceFeed, type Presence } from "./lanyard";
-import type { SocketLike } from "./reconnect";
+import type { SocketLike } from "@datagutt/kai-net/reconnect";
 
 class FakeSocket implements SocketLike {
 	sent: unknown[] = [];

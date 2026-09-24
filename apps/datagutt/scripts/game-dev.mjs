@@ -3,12 +3,12 @@
 // Open http://localhost:3200/game/dev.html  (add ?debug for the debug overlay).
 // Files are written under public/game/ (gitignored) so built assets are served too.
 // A small server in front of esbuild's also answers the world socket, so ghosts work
-// between two tabs (scripts/world-socket.mjs).
+// between two tabs (@datagutt/kai-net/node).
 import * as esbuild from "esbuild";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
-import { attachWorldSocket } from "./world-socket.mjs";
+import { attachWorldSocket } from "@datagutt/kai-net/node";
 
 const root = process.cwd();
 const outDir = path.join(root, "public/game/dev");

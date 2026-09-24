@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GhostClient, ghostsDisabled, worldSocketUrl } from "./ghosts";
-import type { SocketLike } from "./reconnect";
-import type { ServerMessage } from "./protocol";
+import { GhostClient, ghostsDisabled, worldSocketUrl } from "./ghosts.ts";
+import type { SocketLike } from "./reconnect.ts";
+import type { ServerMessage } from "./protocol.ts";
 
 class FakeSocket implements SocketLike {
 	sent: unknown[] = [];

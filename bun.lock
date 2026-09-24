@@ -14,6 +14,7 @@
       "name": "datagutt",
       "version": "0.1.0",
       "dependencies": {
+        "@datagutt/kai-net": "workspace:*",
         "@vercel/functions": "^3.7.3",
         "babel-plugin-react-compiler": "1.0.0",
         "critters": "^0.0.25",
@@ -38,7 +39,6 @@
         "@types/pngjs": "^6.0.5",
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",
-        "@types/ws": "^8.18.1",
         "autoprefixer": "^10.4.22",
         "esbuild": "^0.28.2",
         "eslint": "^9",
@@ -50,6 +50,23 @@
         "typescript": "^5.9.3",
         "vitest": "^5",
         "wawoff2": "^2.0.1",
+      },
+    },
+    "packages/kai-net": {
+      "name": "@datagutt/kai-net",
+      "version": "0.0.0",
+      "dependencies": {
+        "ws": "^8.21.0",
+      },
+      "devDependencies": {
+        "@datagutt/kai-eslint-config": "workspace:*",
+        "@datagutt/kai-tsconfig": "workspace:*",
+        "@datagutt/kai-vitest-config": "workspace:*",
+        "@types/node": "^24.13.6",
+        "@types/ws": "^8.18.1",
+        "eslint": "^9",
+        "typescript": "^5.9.3",
+        "vitest": "^5",
       },
     },
     "tooling/eslint-config": {
@@ -115,6 +132,8 @@
     "@builder.io/partytown": ["@builder.io/partytown@0.10.3", "", { "bin": { "partytown": "bin/partytown.cjs" } }, "sha512-N2SWA3c5vEad3rgdAFM3zMb6uc7aXqibkgAz4ijvYzycgQXJ4dE5oH6fGFMXSQWj6ayVlLT1/CmpflYUJHfmQg=="],
 
     "@datagutt/kai-eslint-config": ["@datagutt/kai-eslint-config@workspace:tooling/eslint-config"],
+
+    "@datagutt/kai-net": ["@datagutt/kai-net@workspace:packages/kai-net"],
 
     "@datagutt/kai-tsconfig": ["@datagutt/kai-tsconfig@workspace:tooling/tsconfig"],
 

@@ -15,7 +15,7 @@ import { resolveSeason, type Season } from "./world/season";
 import { clock, monthNow } from "./world/dayNight";
 import { LanyardClient, PresenceFeed } from "./net/lanyard";
 import { MOCK_PRESENCES } from "./live/datagutt";
-import { GhostClient, ghostsDisabled, worldSocketUrl } from "./net/ghosts";
+import { GhostClient, ghostsDisabled, worldSocketUrl } from "@datagutt/kai-net/client";
 import { Music } from "./audio/Music";
 import { trackFor } from "./audio/playlist";
 
