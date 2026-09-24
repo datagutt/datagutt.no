@@ -36,6 +36,8 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		if (!inside(o.x, o.y)) problems.push(`${where} is outside the map`);
 		else if ((o.type === "spawn" || o.type === "npc" || o.type === "cat" || o.type === "door") && !walkable(o.x, o.y)) {
 			problems.push(`${where} is on a blocked tile`);
+		} else if (o.type === "cat" && !walkable(o.x + 1, o.y)) {
+			problems.push(`${where} lies across a blocked tile east of it`);
 		}
 		if ((o.type === "sign" || o.type === "arcade") && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
 		// A sign is read from next to it, so it must sit on something solid, not open floor.

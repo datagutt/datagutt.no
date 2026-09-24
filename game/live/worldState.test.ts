@@ -9,7 +9,7 @@ describe("parseWorldState", () => {
 			stats: { public_repos: 90, followers: 10, total_stars: 200, years_coding: 16 },
 			contributions: [{ date: "2026-09-22", count: 4, level: 2 }],
 			discordId: "42",
-			weather: { kind: "rain", wind: 6.1, windFrom: 200, temperature: 9.5, symbol: "rain", live: true },
+			weather: { kind: "rain", wind: 6.1, windFrom: 200, temperature: 9.5, symbol: "rain", place: "Bergen", live: true },
 			fetchedAt: "2026-09-22T12:00:00.000Z",
 		};
 		expect(parseWorldState(JSON.stringify(state))).toEqual(state);
@@ -34,6 +34,7 @@ describe("parseWorldState", () => {
 			windFrom: 0,
 			temperature: null,
 			symbol: "",
+			place: "Oslo",
 			live: true,
 		});
 	});

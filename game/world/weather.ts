@@ -12,7 +12,7 @@ export function resolveWeather(search: string, served: WeatherNow): WeatherNow {
 	const params = new URLSearchParams(search);
 	const asked = params.has("debug") ? params.get("weather") : null;
 	if (!isWeatherKind(asked)) return served;
-	return { kind: asked, wind: DEBUG_WIND[asked], windFrom: 270, temperature: null, symbol: "debug", live: true };
+	return { kind: asked, wind: DEBUG_WIND[asked], windFrom: 270, temperature: null, symbol: "debug", place: served.place, live: true };
 }
 
 /** What falls: rain streaks, snowflakes, or the season's own particles on a dry day. */

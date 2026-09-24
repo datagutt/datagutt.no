@@ -30,7 +30,7 @@ export type WeatherKind = (typeof WEATHER_KINDS)[number];
 
 export const isWeatherKind = (value: unknown): value is WeatherKind => WEATHER_KINDS.includes(value as WeatherKind);
 
-/** The weather in Oslo now, from MET Norway (lib/weather.ts). */
+/** The weather now where the visitor is (Oslo when unknown), from MET Norway (lib/weather.ts). */
 export type WeatherNow = {
 	kind: WeatherKind;
 	/** Wind speed in m/s. */
@@ -41,6 +41,8 @@ export type WeatherNow = {
 	temperature: number | null;
 	/** MET's symbol code it was read from ("clearsky_day", "heavyrain"); empty when not live. */
 	symbol: string;
+	/** The city it is for: the visitor's, as Vercel places them, or "Oslo". */
+	place: string;
 	/**
 	 * True when it came from the forecast. False is the calm fallback (MET was down, or the
 	 * dev harness has no payload): the game then shows only its seasonal particles.
@@ -48,7 +50,7 @@ export type WeatherNow = {
 	live: boolean;
 };
 
-export const CALM_WEATHER: WeatherNow = { kind: "clear", wind: 0, windFrom: 0, temperature: null, symbol: "", live: false };
+export const CALM_WEATHER: WeatherNow = { kind: "clear", wind: 0, windFrom: 0, temperature: null, symbol: "", place: "Oslo", live: false };
 
 /** Everything live the game needs, embedded in the page as JSON (docs/game/PLAN.md M2.2). */
 export type WorldState = {

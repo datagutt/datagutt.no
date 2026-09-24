@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { weatherFromForecast, weatherFromSymbol } from "./weather";
+import { OSLO, placeFromHeaders, weatherFromForecast, weatherFromSymbol } from "./weather";
 
 const calm = { wind_speed: 3, air_temperature: 12, cloud_area_fraction: 40, wind_from_direction: 200 };
 const kind = (symbol: string, details: Parameters<typeof weatherFromSymbol>[1] = calm) => weatherFromSymbol(symbol, details).kind;
@@ -48,7 +48,7 @@ describe("weatherFromSymbol", () => {
 	});
 
 	it("carries wind, direction and temperature", () => {
-		expect(weatherFromSymbol("rain_day", calm)).toEqual({ kind: "rain", wind: 3, windFrom: 200, temperature: 12, symbol: "rain_day", live: true });
+		expect(weatherFromSymbol("rain_day", calm)).toEqual({ kind: "rain", wind: 3, windFrom: 200, temperature: 12, symbol: "rain_day", place: "Oslo", live: true });
 		expect(weatherFromSymbol("rain", {})).toMatchObject({ wind: 0, windFrom: 0, temperature: null });
 	});
 });
@@ -76,5 +76,26 @@ describe("weatherFromForecast", () => {
 		expect(weatherFromForecast(null)).toBeNull();
 		expect(weatherFromForecast({ properties: { timeseries: [] } })).toBeNull();
 		expect(weatherFromForecast({ properties: { timeseries: [{ time: "2026-09-24T13:00:00Z", data: { instant: { details: calm } } }] } })).toBeNull();
+	});
+});
+
+describe("placeFromHeaders", () => {
+	const headers = (entries: Record<string, string>) => new Headers(entries);
+
+	it("reads Vercel's city and coordinates, to one decimal", () => {
+		expect(
+			placeFromHeaders(headers({ "x-vercel-ip-city": "S%C3%A3o%20Paulo", "x-vercel-ip-latitude": "-23.5475", "x-vercel-ip-longitude": "-46.63611" })),
+		).toEqual({ city: "São Paulo", lat: -23.5, lon: -46.6 });
+	});
+
+	it("falls back to Oslo without a usable location", () => {
+		expect(placeFromHeaders(headers({}))).toEqual(OSLO);
+		expect(placeFromHeaders(headers({ "x-vercel-ip-city": "Bergen" }))).toEqual(OSLO);
+		expect(placeFromHeaders(headers({ "x-vercel-ip-city": "Nowhere", "x-vercel-ip-latitude": "123", "x-vercel-ip-longitude": "10" }))).toEqual(OSLO);
+		expect(placeFromHeaders(headers({ "x-vercel-ip-city": "Nowhere", "x-vercel-ip-latitude": "x", "x-vercel-ip-longitude": "10" }))).toEqual(OSLO);
+	});
+
+	it("keeps the coordinates when the city can't be decoded", () => {
+		expect(placeFromHeaders(headers({ "x-vercel-ip-city": "%E0%A4%A", "x-vercel-ip-latitude": "60.39", "x-vercel-ip-longitude": "5.32" }))).toEqual({ city: "%E0%A4%A", lat: 60.4, lon: 5.3 });
 	});
 });

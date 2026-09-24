@@ -4,6 +4,13 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **Weather is the visitor's own (user's request, 2026-09-24).** Vercel's IP location
+  headers (city, latitude, longitude) pick the forecast; anything missing means Oslo.
+  Forecasts are cached per place at one decimal (about 11 km). `WeatherNow.place` names
+  the city. The world state script now reads request headers, so `/` streams that one
+  script per request (Partial Prerender); `getWorldState` is GitHub only again (hours).
+- **Cat fix:** LimeZu's cat strip is 12 frames of 48×16, not 36 of 16; the cat lies
+  across its tile and the one east of it.
 - **C2 weather, done; waiting on the user's look.** The sky follows Oslo's real weather.
   `lib/weather.ts` fetches MET Norway's Locationforecast (compact, with the User-Agent
   their terms require) and maps the current hour's symbol to `clear | cloudy | rain |

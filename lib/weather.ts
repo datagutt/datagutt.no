@@ -1,9 +1,32 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { CALM_WEATHER, type WeatherKind, type WeatherNow } from "@/content/live";
 
-// The town is Oslo-ish, so the game's sky follows Oslo's (docs/game/PLAN.md C2).
-const OSLO = { lat: 59.9139, lon: 10.7522 };
-const FORECAST_URL = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${OSLO.lat}&lon=${OSLO.lon}`;
+// The game's sky follows the visitor's weather (docs/game/PLAN.md C2): Vercel places each
+// request by IP, with a city and its coordinates. Without those (local runs, or a place
+// Vercel can't tell) the sky is Oslo's, the town being Oslo-ish.
+const FORECAST_URL = "https://api.met.no/weatherapi/locationforecast/2.0/compact";
+
+export type WeatherPlace = { city: string; lat: number; lon: number };
+
+/** Coordinates to one decimal (about 11 km): one forecast per area, and MET asks for few decimals. */
+const coarse = (n: number) => Math.round(n * 10) / 10;
+
+export const OSLO: WeatherPlace = { city: "Oslo", lat: coarse(59.9139), lon: coarse(10.7522) };
+
+/** Where the visitor is, from Vercel's `x-vercel-ip-*` headers, or Oslo. */
+export function placeFromHeaders(headers: Pick<Headers, "get">): WeatherPlace {
+	const lat = Number(headers.get("x-vercel-ip-latitude"));
+	const lon = Number(headers.get("x-vercel-ip-longitude"));
+	const raw = headers.get("x-vercel-ip-city");
+	if (raw === null || !headers.get("x-vercel-ip-latitude") || !headers.get("x-vercel-ip-longitude")) return OSLO;
+	if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return OSLO;
+	// Vercel URL-encodes the city ("S%C3%A3o%20Paulo").
+	let city = raw;
+	try {
+		city = decodeURIComponent(raw);
+	} catch {}
+	return { city: city.trim() || OSLO.city, lat: coarse(lat), lon: coarse(lon) };
+}
 // MET Norway's terms of service block requests that don't identify the site and a contact.
 const USER_AGENT = "datagutt.no github.com/datagutt/datagutt.no";
 const TIMEOUT_MS = 5_000;
@@ -35,7 +58,7 @@ type Step = { time: string; data: { instant: { details: Details }; next_1_hours?
 const finite = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
 
 /** The game's weather for one MET symbol code and the instant details beside it. */
-export function weatherFromSymbol(symbol: string, details: Details): WeatherNow {
+export function weatherFromSymbol(symbol: string, details: Details, place = OSLO.city): WeatherNow {
 	const wind = finite(details.wind_speed) ? details.wind_speed : 0;
 	return {
 		kind: kindOf(symbol, details, wind),
@@ -43,6 +66,7 @@ export function weatherFromSymbol(symbol: string, details: Details): WeatherNow 
 		windFrom: finite(details.wind_from_direction) ? details.wind_from_direction : 0,
 		temperature: finite(details.air_temperature) ? details.air_temperature : null,
 		symbol,
+		place,
 		live: true,
 	};
 }
@@ -72,7 +96,7 @@ function kindOf(symbol: string, details: Details, wind: number): WeatherKind {
  * The weather now from a Locationforecast response: the step for the current hour (the
  * first step is often an hour behind), or null if the response isn't the shape we know.
  */
-export function weatherFromForecast(forecast: unknown, now = new Date()): WeatherNow | null {
+export function weatherFromForecast(forecast: unknown, now = new Date(), place = OSLO.city): WeatherNow | null {
 	const steps = (forecast as { properties?: { timeseries?: Step[] } } | null)?.properties?.timeseries;
 	if (!Array.isArray(steps) || steps.length === 0) return null;
 	const past = steps.filter((s) => Date.parse(s.time) <= now.getTime());
@@ -80,30 +104,33 @@ export function weatherFromForecast(forecast: unknown, now = new Date()): Weathe
 	const details = step.data?.instant?.details;
 	const symbol = step.data?.next_1_hours?.summary?.symbol_code ?? step.data?.next_6_hours?.summary?.symbol_code;
 	if (!details || typeof symbol !== "string") return null;
-	return weatherFromSymbol(symbol, details);
+	return weatherFromSymbol(symbol, details, place);
 }
 
-async function fetchWeather(): Promise<WeatherNow> {
+async function fetchWeather(place: WeatherPlace): Promise<WeatherNow> {
 	try {
-		const res = await fetch(FORECAST_URL, {
+		const res = await fetch(`${FORECAST_URL}?lat=${place.lat}&lon=${place.lon}`, {
 			headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
 			signal: AbortSignal.timeout(TIMEOUT_MS),
 		});
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-		const weather = weatherFromForecast(await res.json());
+		const weather = weatherFromForecast(await res.json(), new Date(), place.city);
 		if (!weather) throw new Error("unexpected response");
 		return weather;
 	} catch (err) {
 		console.warn("[weather] forecast failed:", err instanceof Error ? (err.cause ?? err.message) : err);
-		return CALM_WEATHER;
+		return { ...CALM_WEATHER, place: place.city };
 	}
 }
 
-/** Oslo's weather now. Half an hour on success; minutes after a failure, which gets the calm fallback. */
-export async function getWeather(): Promise<WeatherNow> {
+/**
+ * The weather now at a place, cached per place (the arguments are the cache key). Half an
+ * hour on success; minutes after a failure, which gets the calm fallback.
+ */
+export async function getWeather(place: WeatherPlace = OSLO): Promise<WeatherNow> {
 	"use cache";
 	cacheTag("weather");
-	const weather = await fetchWeather();
+	const weather = await fetchWeather(place);
 	if (weather.live) cacheLife(WEATHER_CACHE_LIFE);
 	else cacheLife("minutes");
 	return weather;

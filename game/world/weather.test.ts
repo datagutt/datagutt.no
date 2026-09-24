@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CALM_WEATHER, type WeatherNow } from "../../content/live";
 import { resolveWeather, skyFor, weatherSound } from "./weather";
 
-const live = (kind: WeatherNow["kind"], wind = 3, windFrom = 270): WeatherNow => ({ kind, wind, windFrom, temperature: 8, symbol: kind, live: true });
+const live = (kind: WeatherNow["kind"], wind = 3, windFrom = 270): WeatherNow => ({ kind, wind, windFrom, temperature: 8, symbol: kind, place: "Oslo", live: true });
 
 describe("resolveWeather", () => {
 	const served = live("cloudy");

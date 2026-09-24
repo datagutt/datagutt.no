@@ -201,9 +201,13 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
 			if (obj.type === "gate") gates.push(obj);
 			if (obj.type === "cat") {
-				this.cats.add(tileKey(obj));
-				this.grid.occupy(obj.x, obj.y, "cat");
-				this.add.sprite((obj.x + 0.5) * TILE, (obj.y + 1) * TILE, "ui:cat").setOrigin(0.5, 1).setDepth((obj.y + 1) * TILE).play("cat");
+				// The cat lies across its tile and the next one east (the frame is 48 wide,
+				// the cat about 26 of it, centred at x 22.5).
+				for (const x of [obj.x, obj.x + 1]) {
+					this.cats.add(tileKey({ x, y: obj.y }));
+					this.grid.occupy(x, obj.y, "cat");
+				}
+				this.add.sprite((obj.x + 1) * TILE, (obj.y + 1) * TILE, "ui:cat").setOrigin(22.5 / 48, 1).setDepth((obj.y + 1) * TILE).play("cat");
 			}
 			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));

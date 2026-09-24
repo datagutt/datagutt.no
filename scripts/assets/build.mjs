@@ -115,12 +115,12 @@ async function buildEmotes() {
 }
 fs.writeFileSync(path.join(outDir, "ui/emotes.png"), await shrinkPng(await buildEmotes()));
 
-// The hidden cat (B3): LimeZu's animated cat, 36 frames of 16×16, or a grey loaf that
-// breathes in placeholder mode.
+// The hidden cat (B3): LimeZu's animated cat, 12 frames of 48×16 (the cat lies across
+// two tiles in the middle of each), or a grey loaf that breathes in placeholder mode.
 async function buildCat() {
 	if (source.mode !== "placeholder") return sharp(path.join(source.dir, "limezu/interiors/animated/animated_cat.png")).png().toBuffer();
-	const img = new Raster(16 * 36, 16);
-	for (let f = 0; f < 36; f++) img.rect(f * 16 + 3, f % 12 < 6 ? 9 : 10, 10, f % 12 < 6 ? 6 : 5, hex("8a8fa8"));
+	const img = new Raster(48 * 12, 16);
+	for (let f = 0; f < 12; f++) img.rect(f * 48 + 11, f % 4 < 2 ? 9 : 10, 24, f % 4 < 2 ? 6 : 5, hex("8a8fa8"));
 	return img.toPng();
 }
 fs.writeFileSync(path.join(outDir, "ui/cat.png"), await shrinkPng(await buildCat()));

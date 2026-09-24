@@ -421,4 +421,5 @@ Goal: ship v1 to production.
       particles. Rain, heavy rain, sleet, snow in any season, fog banks, storms with wind
       and dim lightning (none with reduced motion). Rain and thunder in the ambience,
       faintly indoors. `?debug&weather=<kind>`.)
+      (Since 2026-09-24: the visitor's own weather, by Vercel's IP location, Oslo as the fallback.)
 - [ ] **C3** Multi-instance ghosts: Upstash Redis pub/sub or Durable Objects.

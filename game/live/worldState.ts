@@ -13,6 +13,7 @@ function parseWeather(raw: Partial<WeatherNow> | undefined): WeatherNow {
 		windFrom: finite(raw.windFrom) ? raw.windFrom : 0,
 		temperature: finite(raw.temperature) ? raw.temperature : null,
 		symbol: typeof raw.symbol === "string" ? raw.symbol : "",
+		place: typeof raw.place === "string" && raw.place ? raw.place : CALM_WEATHER.place,
 		live: raw.live === true,
 	};
 }

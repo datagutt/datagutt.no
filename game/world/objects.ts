@@ -18,7 +18,7 @@ export type MapObject =
 	 */
 	| { type: "sign"; x: number; y: number; w?: number; h?: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
-	/** The hidden cat (docs/game/PLAN.md B3): lies there flicking its tail; pet it. */
+	/** The hidden cat (docs/game/PLAN.md B3), lying across (x, y) and the tile east of it; pet it. */
 	| { type: "cat"; x: number; y: number }
 	/** An arcade cabinet: interact to play `game` (game/arcade/). */
 	| { type: "arcade"; x: number; y: number; game: ArcadeId }
