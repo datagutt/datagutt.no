@@ -5,8 +5,6 @@ node_modules/
 
 # build and tool output
 .next/
-out/
-build/
 .turbo/
 coverage/
 *.tsbuildinfo
