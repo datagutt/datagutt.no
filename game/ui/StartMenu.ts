@@ -19,6 +19,8 @@ export type MenuSettings = { muted: boolean; music: boolean; reducedMotion: bool
 
 export type MenuHooks = {
 	stamps(): readonly string[];
+	/** Earned achievement ids (game/progress/achievements.ts). */
+	achievements(): readonly string[];
 	settings(): MenuSettings;
 	changeSettings(next: MenuSettings): void;
 	openJournal(): void;
@@ -34,6 +36,7 @@ const CREDITS = [`${credits.title}, ${credits.byline.toLowerCase()}.`, ...credit
 export class StartMenu {
 	private view: View = "closed";
 	private selected = 0;
+	private passportPage = 0;
 	private container?: Phaser.GameObjects.Container;
 	private readonly passport: PassportPanel;
 	private rows: { x: number; y: number; w: number; h: number }[] = [];
@@ -69,7 +72,17 @@ export class StartMenu {
 
 	/** Handle one frame of input while open. */
 	handle(input: { dirPresses: Facing[]; interact: boolean; back: boolean; menu: boolean; taps: { screenX: number; screenY: number }[] }): void {
-		if (this.view === "passport" || this.view === "credits" || this.view === "status") {
+		if (this.view === "passport") {
+			// Left and right, or a tap on the page, turn it; anything else goes back.
+			const turn = input.dirPresses.some((d) => d === "left" || d === "right") || input.taps.some((t) => this.passport.bounds.contains(t.screenX, t.screenY));
+			if (turn) {
+				this.passportPage = 1 - this.passportPage;
+				this.hooks.sound("move");
+				this.passport.show(this.hooks.stamps(), this.hooks.achievements(), this.passportPage);
+			} else if (input.interact || input.back || input.menu || input.taps.length) this.backToMain();
+			return;
+		}
+		if (this.view === "credits" || this.view === "status") {
 			if (input.interact || input.back || input.menu || input.taps.length) this.backToMain();
 			return;
 		}
@@ -150,7 +163,8 @@ export class StartMenu {
 		this.container?.destroy();
 		this.container = undefined;
 		this.rows = [];
-		this.passport.show(this.hooks.stamps());
+		this.passportPage = 0;
+		this.passport.show(this.hooks.stamps(), this.hooks.achievements(), 0);
 	}
 
 	private render(): void {

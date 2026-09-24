@@ -22,7 +22,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 	const problems: string[] = [];
 	const at = new Map<string, MapObject>();
 	// A spot counts as taken: the NPC who goes there may be standing on it.
-	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "sign" || o.type === "arcade" || o.type === "spot").map((o) => `${o.x},${o.y}`));
+	const occupied = new Set(objects.filter((o) => o.type === "npc" || o.type === "cat" || o.type === "sign" || o.type === "arcade" || o.type === "spot").map((o) => `${o.x},${o.y}`));
 	const reachableFrom = (o: MapObject) =>
 		cellsOf(o, walkable).some(([x, y]) => NEIGHBOURS.some(([dx, dy]) => walkable(x + dx, y + dy) && !occupied.has(`${x + dx},${y + dy}`)));
 
@@ -34,7 +34,7 @@ export function validateMap(id: string, tmj: Tmj): string[] {
 		if (other) problems.push(`${where} shares its tile with a ${other.type}`);
 		at.set(key, o);
 		if (!inside(o.x, o.y)) problems.push(`${where} is outside the map`);
-		else if ((o.type === "spawn" || o.type === "npc" || o.type === "door") && !walkable(o.x, o.y)) {
+		else if ((o.type === "spawn" || o.type === "npc" || o.type === "cat" || o.type === "door") && !walkable(o.x, o.y)) {
 			problems.push(`${where} is on a blocked tile`);
 		}
 		if ((o.type === "sign" || o.type === "arcade") && !reachableFrom(o)) problems.push(`${where} can't be reached from any side`);
@@ -97,7 +97,7 @@ function checkReachable(
 		const ok =
 			o.type === "door" || o.type === "spawn"
 				? reached(o.x, o.y)
-				: o.type === "npc" || o.type === "spot"
+				: o.type === "npc" || o.type === "cat" || o.type === "spot"
 					? fromSide(o) || acrossCounter(o)
 					: fromSide(o);
 		if (!ok) problems.push(`${where} can't be reached from ${start.id}`);

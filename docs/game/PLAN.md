@@ -386,8 +386,11 @@ Goal: ship v1 to production.
       starfield at night.
       (No telescope in the art: binoculars left on a bench at the radio hill's edge show
       the night sky after dark. The left PC upstairs opens a Game of Life screensaver.)
-- [ ] **B3** Secrets and achievements: hidden cat, fourth-wall lines when walking off the
+- [x] **B3** Secrets and achievements: hidden cat, fourth-wall lines when walking off the
       map edge, achievement list in the passport.
+      (Eight achievements in `game/progress/achievements.ts`, kept as flags, on the
+      passport's second page with a banner when earned. LimeZu's animated cat lies on the
+      far east beach; the map edge answers with fourth-wall lines.)
 - [x] **B4** Music: pick or commission tracks per area with day and night variants.
       (Seven loops from Towball's Crossing: Deluxe!, CC BY 4.0, credited: town by day, by
       night (and the finale) and in winter, three moods for rooms, the main theme on the

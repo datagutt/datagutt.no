@@ -41,6 +41,7 @@ import { CreditsRoll } from "../ui/CreditsRoll";
 import { ArcadeScreen } from "../ui/ArcadeScreen";
 import { makeArcade } from "../arcade";
 import { isUnlocked } from "../progress/unlocks";
+import { ACHIEVEMENTS, achievement, BLOCKS_TARGET, EDGE_LINES, type AchievementId } from "../progress/achievements";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
@@ -81,6 +82,11 @@ export class WorldScene extends Phaser.Scene {
 	/** A cabinet being played (game/ui/ArcadeScreen.ts). */
 	private arcade: { screen: ArcadeScreen; title: string } | null = null;
 	private cabinets = new Map<string, Extract<MapObject, { type: "arcade" }>>();
+	/** Where the hidden cat lies (B3). */
+	private cats = new Set<string>();
+	/** Fourth-wall lines at the map's edge: which is next, and when it may speak again. */
+	private edgeLines = 0;
+	private edgeQuietUntil = 0;
 	private ghosts!: GhostLayer;
 	private wheel!: EmoteWheel;
 	/** The player's own emote, shown for a moment after picking it. */
@@ -121,6 +127,7 @@ export class WorldScene extends Phaser.Scene {
 		this.doors = new Map();
 		this.signs = new Map();
 		this.cabinets = new Map();
+		this.cats = new Set();
 		this.arcade = null;
 		this.path = [];
 		this.pathMarkers = [];
@@ -188,6 +195,11 @@ export class WorldScene extends Phaser.Scene {
 			if (obj.type === "sign") signs.push(obj);
 			if (obj.type === "arcade") this.cabinets.set(tileKey(obj), obj);
 			if (obj.type === "gate") gates.push(obj);
+			if (obj.type === "cat") {
+				this.cats.add(tileKey(obj));
+				this.grid.occupy(obj.x, obj.y, "cat");
+				this.add.sprite((obj.x + 0.5) * TILE, (obj.y + 1) * TILE, "ui:cat").setOrigin(0.5, 1).setDepth((obj.y + 1) * TILE).play("cat");
+			}
 			if (obj.type === "light") lights.push(obj);
 			if (obj.type === "crops") this.plantField(obj, layers.get("decal"));
 			if (obj.type === "books") this.stockShelf(obj);
@@ -304,6 +316,7 @@ export class WorldScene extends Phaser.Scene {
 		this.menuButton = new MenuButton(this);
 		this.menu = new StartMenu(this, {
 			stamps: () => this.progress.stamps,
+			achievements: () => ACHIEVEMENTS.filter((a) => this.progress.hasAchievement(a.id)).map((a) => a.id),
 			settings: () => {
 				const { muted, music, reducedMotion, showVisitors, effects } = this.progress.settings;
 				return { muted, music, reducedMotion, showVisitors, effects };
@@ -324,6 +337,9 @@ export class WorldScene extends Phaser.Scene {
 			sound: (kind) => (kind === "open" ? playPaper(this.audioOut) : playTick(this.audioOut, kind === "select" ? 660 : 880)),
 		});
 		this.stampToast = new StampToast(this);
+		// Saves from before achievements with a full passport get it quietly.
+		if (isUnlocked("passport", this.progress)) this.progress.achieve("passport");
+		if (this.target.map === "mountain") this.time.delayedCall(600, () => this.achieve("summit"));
 		this.fitCamera();
 		this.feel = new Feel(this, this.player, () => this.progress.reducedMotion);
 		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.feel.destroy());
@@ -648,6 +664,8 @@ export class WorldScene extends Phaser.Scene {
 					arrive();
 				}
 			} else if (e.type === "bumped") {
+				const ahead = neighbour(this.player.mover.tile, e.facing);
+				if (ahead.x < 0 || ahead.y < 0 || ahead.x >= this.mapWidth || ahead.y >= this.mapHeight) this.bumpedEdge();
 				this.clearPath();
 				this.feel.bump(e.facing);
 				playBump(this.audioOut);
@@ -778,6 +796,7 @@ export class WorldScene extends Phaser.Scene {
 			return this.prompt.show(npc.def.dialogue.endsWith("_asleep") ? "Wake" : "Talk", device, npc.actor.centerX, npc.actor.headTop - 3);
 		}
 		const x = (target.x + 0.5) * TILE;
+		if (this.cats.has(tileKey(target))) return this.prompt.show("Pet", device, x, target.y * TILE - 1);
 		const cabinet = this.cabinets.get(tileKey(target));
 		if (cabinet) return this.prompt.show(cabinet.game === "stargazing" ? "Look" : cabinet.game === "screensaver" ? "Use" : "Play", device, x, target.y * TILE - 1);
 		if (this.signs.has(tileKey(target))) return this.prompt.show("Read", device, x, target.y * TILE - 1);
@@ -793,11 +812,36 @@ export class WorldScene extends Phaser.Scene {
 			this.talk(npc.def);
 			return;
 		}
+		if (this.cats.has(tileKey(p))) {
+			this.dialogue.say("* Mjau. The cat allows it, this once.", null, () => {
+				this.dialogue.close();
+				this.achieve("cat");
+			});
+			return;
+		}
 		const cabinet = this.cabinets.get(tileKey(p));
 		if (cabinet) return this.playCabinet(cabinet);
 		const sign = this.signs.get(tileKey(p));
 		if (sign?.dialogue) this.playKnot(sign.dialogue, null, () => this.save());
 		else if (sign) this.dialogue.say(sign.text, null, () => this.dialogue.close());
+	}
+
+	/** Earn an achievement once: a banner (unless `announce` is false) and a save. */
+	private achieve(id: AchievementId, announce = true) {
+		if (!this.progress.achieve(id)) return;
+		if (announce) this.stampToast.showAchievement(achievement(id).name, this.progress.reducedMotion);
+		this.save();
+	}
+
+	/** Walking into the edge of the map: a fourth-wall line now and then (B3). */
+	private bumpedEdge() {
+		if (this.time.now < this.edgeQuietUntil || this.dialogue.open) return;
+		this.edgeQuietUntil = this.time.now + 20_000;
+		const line = EDGE_LINES[this.edgeLines++ % EDGE_LINES.length];
+		this.dialogue.say(line, null, () => {
+			this.dialogue.close();
+			this.achieve("edge");
+		});
 	}
 
 	/** Step up to a cabinet: its game takes the input until the player leaves (back). */
@@ -807,10 +851,14 @@ export class WorldScene extends Phaser.Scene {
 			this.dialogue.say("* Just the town and the fjord in daylight. The stars come out after dark.", null, () => this.dialogue.close());
 			return;
 		}
+		if (cabinet.game === "stargazing") this.achieve("stars");
 		const progress = this.progress;
 		const game = makeArcade(cabinet.game, {
 			best: (name) => progress.records[name] ?? 0,
-			record: (name, score) => progress.record(name, score) && this.save(),
+			record: (name, score) => {
+				if (progress.record(name, score)) this.save();
+				if (name === "blocks" && score >= BLOCKS_TARGET) this.achieve("blocks");
+			},
 		});
 		this.clearPath();
 		this.arcade = { screen: new ArcadeScreen(this, game, () => this.save()), title: game.title };
@@ -827,7 +875,10 @@ export class WorldScene extends Phaser.Scene {
 		this.playKnot(knot, npc, () => {
 			if (runner.visits(npc.id) > visits) {
 				// Woken up and talked to: he gets out of bed rather than lying back down.
-				if (npc.id === THOMAS_ID && knot === "datagutt_asleep") this.thomas.wokenByPlayer();
+				if (npc.id === THOMAS_ID && knot === "datagutt_asleep") {
+					this.thomas.wokenByPlayer();
+					this.achieve("wake");
+				}
 				this.finishedTalking(npc.id);
 			}
 			this.save();
@@ -880,6 +931,8 @@ export class WorldScene extends Phaser.Scene {
 		this.feel.shake();
 		this.stampToast.show(result.newStamp, result.stamps.length, this.progress.reducedMotion);
 		// The last stamp: once the toast has had its moment, the finale begins.
+		// The last stamp's banner and the finale celebrate it; the achievement comes quietly.
+		if (result.complete) this.achieve("passport", false);
 		if (result.complete && !this.progress.flags.finale) this.time.delayedCall(1600, () => this.beginFinale());
 	}
 
@@ -896,6 +949,7 @@ export class WorldScene extends Phaser.Scene {
 		this.playKnot(npc.dialogue, npc, () => {
 			this.credits = new CreditsRoll(this, this.progress.reducedMotion, () => {
 				this.credits = null;
+				this.achieve("credits");
 				this.playKnot("datagutt_contact", npc, () => {
 					// This night stays until the player moves on; the next map is back to normal.
 					this.progress.flags.finale = true;

@@ -1,6 +1,7 @@
 // The player's progress for this session, loaded once from the save and written back by
 // the world scene. Shared through the Phaser registry under PROGRESS_KEY.
 import type { SaveData } from "../save/save";
+import { achievementFlag, type AchievementId } from "./achievements";
 import { awardStamp, type StampResult } from "./passport";
 
 export const PROGRESS_KEY = "progress";
@@ -28,6 +29,17 @@ export class Progress {
 		const result = awardStamp(this.stamps, place);
 		this.stamps = result.stamps;
 		return result;
+	}
+
+	hasAchievement(id: AchievementId): boolean {
+		return this.flags[achievementFlag(id)] === true;
+	}
+
+	/** Earn an achievement; true only the first time. */
+	achieve(id: AchievementId): boolean {
+		if (this.hasAchievement(id)) return false;
+		this.flags[achievementFlag(id)] = true;
+		return true;
 	}
 
 	/** Keep `value` under `name` if it beats what is there; true when it did. */

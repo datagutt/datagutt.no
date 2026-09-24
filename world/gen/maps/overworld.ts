@@ -182,6 +182,8 @@ export function overworld(): MapCanvas {
 	c.add({ type: "spawn", id: "town_hall_door", ...hallDoor, facing: "down" });
 	c.add({ type: "spawn", id: "youth_club_door", ...clubDoor, facing: "down" });
 	c.add({ type: "spawn", id: "trail", x: 61, y: 2, facing: "down" });
+	// The hidden cat (B3), sunning itself on the far end of the beach behind the last pines.
+	c.add({ type: "cat", x: 94, y: 61 });
 	sign(c, HARBOUR_X + 3, pierTop - 2, "Welcome to Fjord Town. Population: small, but opinionated.");
 	// A name sign in front of every building, so the town reads without talking to anyone.
 	sign(c, 24, 41, "datagutt's house. Thomas lives here. The door is open, and so is the fridge (energy drinks only).");

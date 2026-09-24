@@ -4,7 +4,7 @@
 import Phaser from "phaser";
 import type { InputDevice } from "../input/InputController";
 
-export type PromptAction = "Talk" | "Read" | "Enter" | "Wake" | "Play" | "Look" | "Use";
+export type PromptAction = "Talk" | "Read" | "Enter" | "Wake" | "Play" | "Look" | "Use" | "Pet";
 
 const INK = 0x3b2a3a;
 const PAPER = 0xf2eef7;

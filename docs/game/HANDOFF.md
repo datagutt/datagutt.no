@@ -4,6 +4,17 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **B3 secrets and achievements, done; waiting on the user's look.**
+  - `game/progress/achievements.ts`: eight achievements, kept as `achievement:<id>` flags,
+    so old saves need nothing.
+  - How they're earned: full passport (quietly, since the last stamp's banner and the
+    finale already make noise), the credits, the mountain, waking Thomas, petting the
+    cat, the map's edge, the stars, and 1,000 points at falling blocks.
+  - `WorldScene.achieve` shows a banner (`StampToast.showAchievement`) and saves. The
+    passport has a second page (left, right or a tap turns it).
+  - The cat is LimeZu's `interiors/animated/animated_cat.png` (36 frames), copied to
+    `ui/cat.png` by the asset build, as a `cat` map object on the far east beach.
+  - Walking into the map's edge gives one of `EDGE_LINES`, at most every 20 seconds.
 - **B6 mountain trail, done; waiting on the user's look.** A path north between the
   town hall and the radio hill, shut by worksite barriers and a rockfall inside a `gate`
   map object (`unlock: "passport"`). A shut gate reads like a sign; an open one has its

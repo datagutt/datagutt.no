@@ -39,6 +39,7 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.bitmapFont("pixel", "fonts/pixel.png", "fonts/pixel.xml");
 		this.load.image("ui:frame", "ui/frame.png");
 		this.load.spritesheet("ui:emotes", "ui/emotes.png", { frameWidth: EMOTE_FRAME, frameHeight: EMOTE_FRAME });
+		this.load.spritesheet("ui:cat", "ui/cat.png", { frameWidth: 16, frameHeight: 16 });
 		for (const [id, recipe] of Object.entries(CHARACTERS)) {
 			this.load.spritesheet(`char:${id}`, `characters/${id}.png`, { frameWidth: FRAME_WIDTH, frameHeight: FRAME_HEIGHT });
 			if (!("portrait" in recipe && recipe.portrait === false)) {
@@ -75,6 +76,7 @@ export class PreloadScene extends Phaser.Scene {
 				});
 			}
 		}
+		this.anims.create({ key: "cat", frames: this.anims.generateFrameNumbers("ui:cat", {}), frameRate: 8, repeat: -1 });
 		// One story for the whole game, so visit counts survive map changes and reloads.
 		const saved = loadSave(browserStorage());
 		this.beginStory(services, saved);

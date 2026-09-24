@@ -1,6 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { GENERATED_MAPS } from "../../world/gen/maps/index";
 import { MUSIC } from "../assets/manifest";
 import { ROOMS, trackFor, type Moment } from "./playlist";
 
@@ -41,8 +40,8 @@ describe("music by place and time", () => {
 	});
 
 	it("has a mood for every interior map and only names tracks that exist", () => {
-		const maps = fs.readdirSync(path.join(import.meta.dirname, "../../world/maps")).map((f) => f.replace(/\.tmj$/, ""));
-		for (const map of maps.filter((m) => m !== "town")) expect(ROOMS[map], map).toBeDefined();
+		const interiors = GENERATED_MAPS.filter((m) => !m.outdoor).map((m) => m.id);
+		for (const map of interiors) expect(ROOMS[map], map).toBeDefined();
 		for (const id of Object.values(ROOMS)) expect(MUSIC).toHaveProperty(id);
 	});
 });
