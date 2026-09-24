@@ -2,7 +2,7 @@
 // pieces by itself; that is the attract mode here, until A starts a game. Left and
 // right move, up rotates, down drops faster, A drops at once. Lines score by level.
 import { drawText, textWidth } from "./digits";
-import { GREENS, rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
+import { rng, SCREEN_BG, SCREEN_H, SCREEN_W, type ArcadeGame, type ArcadeInput } from "./types";
 
 export const COLS = 10;
 export const ROWS = 20;
@@ -20,7 +20,27 @@ const SHAPES: [number, number][][][] = [
 	[[[2, 0], [0, 1], [1, 1], [2, 1]], [[1, 0], [1, 1], [1, 2], [2, 2]], [[0, 1], [1, 1], [2, 1], [0, 2]], [[0, 0], [1, 0], [1, 1], [1, 2]]], // L
 	[[[0, 0], [0, 1], [1, 1], [2, 1]], [[1, 0], [2, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [1, 1], [0, 2], [1, 2]]], // J
 ];
-const PIECE_COLORS = [GREENS[5], GREENS[3], GREENS[6], GREENS[4], GREENS[2], GREENS[7], GREENS[4]];
+/**
+ * One colour per piece, bright enough to tell apart at a glance, in the order of SHAPES
+ * (I, O, T, S, Z, L, J). Deliberately not the classic guideline colours.
+ */
+const PIECE_COLORS = ["#2ec4b6", "#f4b942", "#e05297", "#8ac926", "#ef5b3a", "#4aa8ff", "#8e6cf0"];
+const BOARD_BG = "#0b1320";
+const FRAME = "#3a4a6a";
+const LABEL = "#8fa3c8";
+const VALUE = "#f2eef7";
+
+/** A block with a lit top-left edge and a shaded bottom-right one. */
+function block(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+	ctx.fillStyle = color;
+	ctx.fillRect(x, y, CELL - 1, CELL - 1);
+	ctx.fillStyle = "rgba(255,255,255,0.35)";
+	ctx.fillRect(x, y, CELL - 1, 1);
+	ctx.fillRect(x, y, 1, CELL - 1);
+	ctx.fillStyle = "rgba(0,0,0,0.3)";
+	ctx.fillRect(x + 1, y + CELL - 2, CELL - 2, 1);
+	ctx.fillRect(x + CELL - 2, y + 1, 1, CELL - 2);
+}
 /** Points for 1 to 4 lines at once, times the level. */
 const LINE_POINTS = [0, 40, 100, 300, 1200];
 
@@ -207,38 +227,58 @@ export class FallingBlocks implements ArcadeGame {
 	draw(ctx: CanvasRenderingContext2D): void {
 		ctx.fillStyle = SCREEN_BG;
 		ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
-		ctx.fillStyle = GREENS[0];
+		ctx.fillStyle = FRAME;
 		ctx.fillRect(BOARD_X - 2, BOARD_Y - 2, COLS * CELL + 4, ROWS * CELL + 4);
-		ctx.fillStyle = SCREEN_BG;
+		ctx.fillStyle = BOARD_BG;
 		ctx.fillRect(BOARD_X, BOARD_Y, COLS * CELL, ROWS * CELL);
-		const cell = (x: number, y: number, shape: number) => {
-			if (y < 0) return;
-			ctx.fillStyle = PIECE_COLORS[shape];
-			ctx.fillRect(BOARD_X + x * CELL, BOARD_Y + y * CELL, CELL - 1, CELL - 1);
-		};
+		const cell = (x: number, y: number, shape: number) => y >= 0 && block(ctx, BOARD_X + x * CELL, BOARD_Y + y * CELL, PIECE_COLORS[shape]);
 		this.board.cells.forEach((row, y) => row.forEach((shape, x) => shape >= 0 && cell(x, y, shape)));
 		if (this.mode !== "over") for (const [x, y] of this.board.cellsOf(this.piece)) cell(x, y, this.piece.shape);
 
-		drawText(ctx, "SCORE", 112, 12, GREENS[4]);
-		drawText(ctx, String(this.score), 112, 20, GREENS[7]);
-		drawText(ctx, "BEST", 112, 34, GREENS[4]);
-		drawText(ctx, String(Math.max(this.high, this.score)), 112, 42, GREENS[7]);
-		drawText(ctx, "LEVEL", 112, 56, GREENS[4]);
-		drawText(ctx, String(this.level), 112, 64, GREENS[7]);
-		drawText(ctx, "NEXT", 112, 78, GREENS[4]);
-		for (const [cx, cy] of SHAPES[this.next][0]) {
-			ctx.fillStyle = PIECE_COLORS[this.next];
-			ctx.fillRect(114 + cx * CELL, 88 + cy * CELL, CELL - 1, CELL - 1);
-		}
-		drawText(ctx, "LINES", 8, 12, GREENS[4]);
-		drawText(ctx, String(this.lines), 8, 20, GREENS[7]);
+		drawText(ctx, "SCORE", 112, 12, LABEL);
+		drawText(ctx, String(this.score), 112, 20, VALUE);
+		drawText(ctx, "BEST", 112, 34, LABEL);
+		drawText(ctx, String(Math.max(this.high, this.score)), 112, 42, VALUE);
+		drawText(ctx, "LEVEL", 112, 56, LABEL);
+		drawText(ctx, String(this.level), 112, 64, VALUE);
+		drawText(ctx, "NEXT", 112, 78, LABEL);
+		for (const [cx, cy] of SHAPES[this.next][0]) block(ctx, 114 + cx * CELL, 88 + cy * CELL, PIECE_COLORS[this.next]);
+		drawText(ctx, "LINES", 8, 12, LABEL);
+		drawText(ctx, String(this.lines), 8, 20, VALUE);
 
-		const banner = this.mode === "attract" ? "PRESS A" : this.mode === "over" ? "GAME OVER" : "";
-		if (banner) {
-			const w = textWidth(banner, 1);
-			ctx.fillStyle = SCREEN_BG;
-			ctx.fillRect(BOARD_X + (COLS * CELL - w) / 2 - 3, 52, w + 6, 11);
-			drawText(ctx, banner, BOARD_X + (COLS * CELL - w) / 2, 55, GREENS[7]);
+		if (this.mode === "attract") {
+			// An arcade's attract loop: the board plays itself behind a blinking prompt.
+			if (this.blink()) this.panel(ctx, ["PRESS", "START"], []);
+		} else if (this.mode === "over") {
+			ctx.fillStyle = "rgba(11,19,32,0.7)";
+			ctx.fillRect(BOARD_X, BOARD_Y, COLS * CELL, ROWS * CELL);
+			this.panel(ctx, ["GAME", "OVER"], [`SCORE ${this.score}`]);
+		}
+	}
+
+	/** Whether a blinking prompt shows this moment (on for most of each second). */
+	private blink(): boolean {
+		return Date.now() % 1000 < 650;
+	}
+
+	/** A framed panel in the middle of the board: big lines, then small ones. */
+	private panel(ctx: CanvasRenderingContext2D, big: string[], small: string[]): void {
+		const w = COLS * CELL - 6;
+		const h = big.length * 12 + small.length * 8 + 8;
+		const x = BOARD_X + 3;
+		const y = BOARD_Y + Math.round((ROWS * CELL - h) / 2);
+		ctx.fillStyle = FRAME;
+		ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+		ctx.fillStyle = SCREEN_BG;
+		ctx.fillRect(x, y, w, h);
+		let ty = y + 4;
+		for (const line of big) {
+			drawText(ctx, line, x + Math.round((w - textWidth(line, 2)) / 2), ty, VALUE, 2);
+			ty += 12;
+		}
+		for (const line of small) {
+			drawText(ctx, line, x + Math.round((w - textWidth(line)) / 2), ty, PIECE_COLORS[1]);
+			ty += 8;
 		}
 	}
 }

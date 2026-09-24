@@ -4,6 +4,10 @@ Last updated: 2026-09-23 (session 1: design through M5; the Nettbureau office on
 
 ## Current state
 
+- **Falling blocks, second pass (user):** its own bright piece colours (not the guideline
+  ones), bevelled blocks on a navy board, a framed GAME OVER panel with the score, and a
+  blinking PRESS START in the attract loop. The office lounge's first arcade machine plays
+  it too (shared best score).
 - **Weather is the visitor's own (user's request, 2026-09-24).** Vercel's IP location
   headers (city, latitude, longitude) pick the forecast; anything missing means Oslo.
   Forecasts are cached per place at one decimal (about 11 km). `WeatherNow.place` names

@@ -92,6 +92,8 @@ export function office(): MapCanvas {
 	c.stamp(F.moneyPile, 28, 24);
 	// Lounge: arcade machines, ping pong, sofas, bean bags.
 	c.stamp(F.arcade, 31, 15).stamp(F.arcadeRed, 32, 15);
+	// The first one really plays: falling blocks, same best score as the youth club's.
+	c.add({ type: "arcade", x: 31, y: 17, game: "blocks" });
 	c.stamp(F.loungeSofaWide, 34, 15).stamp(F.loungeSofa, 37, 15);
 	c.stamp(F.pingPong, 34, 19);
 	c.stamp(F.beanBagBlue, 32, 22).stamp(F.beanBagYellow, 38, 22).stamp(F.plantTall, 38, 24);

@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 37,
+  "nextobjectid": 38,
   "properties": [
     {
       "name": "name",
@@ -1093,6 +1093,24 @@
         {
           "id": 21,
           "name": "",
+          "type": "arcade",
+          "x": 496,
+          "y": 272,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "game",
+              "type": "string",
+              "value": "blocks"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "name": "",
           "type": "light",
           "x": 256,
           "y": 352,
@@ -1129,7 +1147,7 @@
           ]
         },
         {
-          "id": 22,
+          "id": 23,
           "name": "",
           "type": "door",
           "x": 320,
@@ -1152,7 +1170,7 @@
           ]
         },
         {
-          "id": 23,
+          "id": 24,
           "name": "entrance",
           "type": "spawn",
           "x": 320,
@@ -1170,7 +1188,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 25,
           "name": "coworker",
           "type": "npc",
           "x": 256,
@@ -1203,7 +1221,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 26,
           "name": "officeDev",
           "type": "npc",
           "x": 160,
@@ -1236,7 +1254,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 27,
           "name": "officeDesigner",
           "type": "npc",
           "x": 416,
@@ -1269,7 +1287,7 @@
           ]
         },
         {
-          "id": 27,
+          "id": 28,
           "name": "officeData",
           "type": "npc",
           "x": 464,
@@ -1302,7 +1320,7 @@
           ]
         },
         {
-          "id": 28,
+          "id": 29,
           "name": "officeSupport",
           "type": "npc",
           "x": 176,
@@ -1335,7 +1353,7 @@
           ]
         },
         {
-          "id": 29,
+          "id": 30,
           "name": "officeGrowth",
           "type": "npc",
           "x": 400,
@@ -1368,7 +1386,7 @@
           ]
         },
         {
-          "id": 30,
+          "id": 31,
           "name": "officeFinance",
           "type": "npc",
           "x": 480,
@@ -1401,7 +1419,7 @@
           ]
         },
         {
-          "id": 31,
+          "id": 32,
           "name": "",
           "type": "sign",
           "x": 48,
@@ -1419,7 +1437,7 @@
           ]
         },
         {
-          "id": 32,
+          "id": 33,
           "name": "",
           "type": "sign",
           "x": 96,
@@ -1437,7 +1455,7 @@
           ]
         },
         {
-          "id": 33,
+          "id": 34,
           "name": "",
           "type": "sign",
           "x": 288,
@@ -1455,7 +1473,7 @@
           ]
         },
         {
-          "id": 34,
+          "id": 35,
           "name": "",
           "type": "sign",
           "x": 352,
@@ -1473,7 +1491,7 @@
           ]
         },
         {
-          "id": 35,
+          "id": 36,
           "name": "",
           "type": "sign",
           "x": 528,
@@ -1491,7 +1509,7 @@
           ]
         },
         {
-          "id": 36,
+          "id": 37,
           "name": "",
           "type": "sign",
           "x": 448,
