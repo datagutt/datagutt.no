@@ -361,9 +361,12 @@ Goal: ship v1 to production.
       the Journal footer; CC0 audio sources. *Done when* visible in all three.
       (All three read `content/credits.ts`; a test keeps the LimeZu line. No recordings are
       used yet, so there are no CC0 sources to list; CREDITS.md says where they go.)
-- [ ] **M6.5** Remove the legacy site: `app/_legacy/`, old section components, canvases
+- [x] **M6.5** Remove the legacy site: `app/_legacy/`, old section components, canvases
       that were not ported, GSAP if unused, `data/`. Update `CLAUDE.md` to describe the new
       architecture. *Done when* no references remain and `pnpm build` passes.
+      (The user deleted the legacy code; GSAP and the other old-site packages are gone,
+      `/legacy` redirects to the Journal, the 404 is new, CLAUDE.md describes the game. The
+      canvases last exist at commit 3480750, for B1 and B2 to port.)
 - [ ] **M6.6** QA matrix: Chrome, Firefox, Safari desktop; iOS Safari; Android Chrome;
       gamepad; slow 3G; full playthrough on each. *Done when* no blockers remain.
 - [ ] **M6.7** Launch: merge `game` into `master`, production deploy, verify live
