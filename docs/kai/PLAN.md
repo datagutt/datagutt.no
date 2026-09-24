@@ -154,10 +154,11 @@ it first would make the package import app code.
       the live payload as `{ weather, ...slices }`; the weather types live in the runtime
       and `kai-live` depends on it, so there is no package cycle. The save key and the
       visitors kill switch come from `kai.json`. The triggers plugin is built in.)
-- [ ] **K5.2** `KaiPlugin` API: setup, map enter, interaction, update, map object types,
+- [x] **K5.2** `KaiPlugin` API: setup, map enter, interaction, update, map object types,
       Ink externals, start menu items. *Done when* the API has unit tests with a fake
-      scene. (The API is in `game/plugins/api.ts` and runs Fjord Town; it moves with the
-      runtime in K5.1. Still open: its unit tests.)
+      scene. (`@datagutt/kai/plugins/api`. Unit tests drive the triggers plugin through a
+      fake `World` and cover `GameData`; the world scene's dispatch to the hooks needs
+      Phaser, so the e2e suite covers it through Fjord Town's plugins.)
 - [x] **K5.3** Declarative triggers in content (enter map, talk to NPC, finish knot,
       flag set) that grant achievements and set flags. *Done when* `summit` comes from a
       trigger. (`content/triggers.json`: `enterMap`, `bumpEdge`, `passportFull`, each able
