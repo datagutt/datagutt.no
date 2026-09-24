@@ -1,5 +1,5 @@
 // The title scene's shapes and colours, shared by the title screen's SVG (TitleArt.tsx)
-// and the link-preview image drawn by `pnpm assets` (scripts/assets/og.mjs), so the two
+// and the link-preview image drawn by `bun run assets` (scripts/assets/og.mjs), so the two
 // always show the same fjord. Units are game pixels. Plain TypeScript: the asset build
 // imports it from Node.
 

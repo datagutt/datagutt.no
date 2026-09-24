@@ -15,7 +15,7 @@ So:
    (`single("vehicles", "Boat_3_Right_1")`). Recoloured sheets work too
    (`single("villaRed", "Villa_5")`). The atlas packs the single's own image, so it is
    always whole.
-2. **Pick by eye from the contact sheets.** `pnpm world:catalog` (needs the art, takes
+2. **Pick by eye from the contact sheets.** `bun run world:catalog` (needs the art, takes
    ~10 minutes) writes `world/art/catalog/<sheet>.json` (committed; positions and sizes
    only, no pixels) and, in `world/out/catalog/`, `<sheet>-singles.png` (every single,
    numbered) and `<sheet>.png` (the sheet with objects boxed). Rerun it when the art
@@ -50,7 +50,7 @@ The town changes with the Norwegian calendar (December to February is winter, an
 The generator draws the town in summer; for each other season it writes a swap table
 into the map (`season:winter` and friends, tile id to seasonal tile id) and the game
 applies it when the map loads. `?debug&season=winter` picks a season, and
-`pnpm world:render --only=town --season=winter` renders one.
+`bun run world:render --only=town --season=winter` renders one.
 
 Where the seasonal tiles come from, in `world/art/seasons.ts`:
 
@@ -70,12 +70,12 @@ Where the seasonal tiles come from, in `world/art/seasons.ts`:
    single; `<sheet>@<col>,<row>.png` is pasted over a sheet with its top-left corner at
    that tile (for buildings cut from a sheet, like `houses@16,250.png`, the boathouse).
 
-Full snow roofs are overrides. `pnpm world:snow` drafts one per building into
+Full snow roofs are overrides. `bun run world:snow` drafts one per building into
 datagutt-assets `seasons/winter/` (shaded snow over the whole roof, known walls cut out
 in `world/gen/snowDraft.ts`) and writes `world/out/snow-drafts.png` to review them. It
 never overwrites a file that exists, since it may be hand-edited; `--force` redrafts
 (and `--only=<prefab>` limits it to one building). Clean the drafts up in Aseprite,
-commit them in datagutt-assets, then run `pnpm world:gen` to rebuild the atlas.
+commit them in datagutt-assets, then run `bun run world:gen` to rebuild the atlas.
 
 
 # Characters
@@ -86,7 +86,7 @@ generator layers in datagutt-assets, per recipe in `game/assets/manifest.ts`
 hair and accessories in that order; the portrait is derived from the same layers because
 the two generators share numbering.
 
-- `pnpm characters:review` writes `world/out/characters.png`: every character facing
+- `bun run characters:review` writes `world/out/characters.png`: every character facing
   all four ways plus its portrait, at 1x on grass and at 4x. Judge looks at 1x.
 - Natural skin tones are Body_01 to 04 and 07 (05, 06, 08 and 09 are yellow, grey, pink
   and blue). Hair colours 1 to 7 are ginger, light brown, auburn, dark brown, grey,

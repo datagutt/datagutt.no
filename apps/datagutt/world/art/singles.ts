@@ -1,6 +1,6 @@
 // Prefabs from LimeZu "singles": whole objects as LimeZu cut them, including ones that
 // are assembled from parts laid out separately in their sheet. Sizes come from the
-// committed catalogue (world/art/catalog/, built by `pnpm world:catalog`), so maps
+// committed catalogue (world/art/catalog/, built by `bun run world:catalog`), so maps
 // generate without the art. Browse world/out/catalog/<sheet>-singles.png to pick numbers.
 import fs from "node:fs";
 import type { LayerName, Prefab } from "../gen/canvas.ts";

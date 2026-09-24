@@ -1,4 +1,4 @@
-// Every map the generator owns. `pnpm world:gen` writes each to world/maps/<id>.tmj.
+// Every map the generator owns. `bun run world:gen` writes each to world/maps/<id>.tmj.
 import type { MapCanvas } from "../canvas.ts";
 import { boathouse } from "./boathouse.ts";
 import { farmhouse } from "./farmhouse.ts";

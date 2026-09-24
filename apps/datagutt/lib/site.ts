@@ -3,7 +3,7 @@
 export const SITE_URL = "https://datagutt.no";
 
 /**
- * Drawn by `pnpm assets` (scripts/assets/og.mjs) from the licensed art, so it is built,
+ * Drawn by `bun run assets` (scripts/assets/og.mjs) from the licensed art, so it is built,
  * not committed. A page's `openGraph` replaces the layout's whole, so pages that set
  * their own repeat it.
  */

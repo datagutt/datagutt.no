@@ -69,7 +69,7 @@ outputs.set(files.registry, JSON.stringify(registry.toJSON(), null, "\t") + "\n"
 if (flag("check")) {
 	const stale = [...outputs].filter(([file, text]) => !fs.existsSync(file) || fs.readFileSync(file, "utf8") !== text);
 	if (stale.length) {
-		console.error(`[world] Out of date: ${stale.map(([f]) => path.relative(root, f)).join(", ")}. Run \`pnpm world:gen\`.`);
+		console.error(`[world] Out of date: ${stale.map(([f]) => path.relative(root, f)).join(", ")}. Run \`bun run world:gen\`.`);
 		process.exit(1);
 	}
 	console.log(`[world] ${outputs.size - 1} maps up to date`);

@@ -14,19 +14,19 @@ Commit and push after each finished task.
 
 Goal: the same site, built by Bun and Turborepo from its new place. No behaviour change.
 
-- [ ] **K1.1** Move the site into `apps/datagutt` with `git mv`: `app`, `components`,
+- [x] **K1.1** Move the site into `apps/datagutt` with `git mv`: `app`, `components`,
       `content`, `game`, `lib`, `world`, `scripts`, `e2e`, `fonts`, `public`, the Next,
       Tailwind, PostCSS, Playwright, Vitest and TypeScript configs, `CREDITS.md`.
       `LICENSE`, `README.md`, `docs/` and `.github/` stay at the root. *Done when* the
       root holds only workspace files.
-- [ ] **K1.2** Bun workspaces: a root `package.json` (`workspaces`,
+- [x] **K1.2** Bun workspaces: a root `package.json` (`workspaces`,
       `packageManager: bun`), `bun.lock` in place of `pnpm-lock.yaml`, every `pnpm` call
       in scripts, configs and comments replaced. *Done when* `bun install` from a clean
       clone succeeds.
-- [ ] **K1.3** Turborepo: `turbo.json` with `assets`, `build`, `dev`, `lint`,
+- [x] **K1.3** Turborepo: `turbo.json` with `assets`, `build`, `dev`, `lint`,
       `typecheck`, `test`, `test:e2e`, `world:check`; root scripts call `turbo run`.
       *Done when* `bun run build` from the root builds the site.
-- [ ] **K1.4** Paths that assume the repo root: the Geist font path in the asset build,
+- [x] **K1.4** Paths that assume the repo root: the Geist font path in the asset build,
       `.gitignore` and `.prettierignore` entries, the `.claude` hooks. *Done when* a
       full asset build with the real art matches the old output.
 - [ ] **K1.5** CI on Bun and Turborepo. *Done when* the workflow passes on the `kai`

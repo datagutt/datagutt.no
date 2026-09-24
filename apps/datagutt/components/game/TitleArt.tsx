@@ -2,7 +2,7 @@
 // The sky, clouds and mountains are drawn here on a pixel grid where one unit is one game
 // pixel: a wide screen sees the bottom 512×288 (18 tiles tall, like the game's own view),
 // a tall phone screen sees more sky above it at about the game's phone zoom. The waterfront in front is the
-// game's own tiles, rendered by `pnpm assets` (world/gen/title.ts). Placeholder builds
+// game's own tiles, rendered by `bun run assets` (world/gen/title.ts). Placeholder builds
 // have no such image, and the sky stands alone. It all renders on the server and moves
 // with CSS alone; GameShell sets --title-x and --title-y from the pointer for parallax.
 import {

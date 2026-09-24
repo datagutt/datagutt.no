@@ -11,8 +11,8 @@ export default defineConfig({
 	projects: [
 		{ name: "desktop", use: { ...devices["Desktop Chrome"] } },
 		{ name: "phone", use: { ...devices["Pixel 7"] } },
-		// The QA matrix (docs/game/PLAN.md M6.6): `pnpm test:e2e:all`. Off by default, since
-		// WebKit needs system libraries (`sudo pnpm exec playwright install-deps webkit`).
+		// The QA matrix (docs/game/PLAN.md M6.6): `bun run test:e2e:all`. Off by default, since
+		// WebKit needs system libraries (`sudo bunx playwright install-deps webkit`).
 		...(process.env.E2E_ALL_BROWSERS
 			? [
 					// Firefox's bounce-tracking protection purges the saves the tests plant in
@@ -23,13 +23,13 @@ export default defineConfig({
 				]
 			: []),
 	],
-	// Runs against a production build (`pnpm build` first): the canary dev server's
+	// Runs against a production build (`bun run build` first): the canary dev server's
 	// Turbopack panics intermittently on this repo. Point E2E_BASE_URL at a preview
 	// deployment to skip the local server entirely.
 	webServer: process.env.E2E_BASE_URL
 		? undefined
 		: {
-				command: `pnpm exec next start --port ${port}`,
+				command: `bunx next start --port ${port}`,
 				url: baseURL,
 				reuseExistingServer: !process.env.CI,
 				timeout: 180_000,

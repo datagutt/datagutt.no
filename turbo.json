@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  // The asset build reads the licensed art from outside the repository (a sibling
+  // checkout or a clone), so Turborepo cannot hash it. Anything that consumes
+  // public/game/ is therefore never restored from cache.
+  "globalPassThroughEnv": ["ASSETS_DIR", "ASSETS_REPO_TOKEN", "VERCEL_*", "CI", "PORT", "E2E_*"],
+  "tasks": {
+    "assets": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["assets", "^build"],
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": ["assets"],
+      "cache": false,
+      "persistent": true
+    },
+    "game:dev": {
+      "dependsOn": ["assets"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {},
+    "test": {},
+    "world:check": {},
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "cache": false
+    }
+  }
+}

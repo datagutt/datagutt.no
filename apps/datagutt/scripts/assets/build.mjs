@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Builds everything the game loads into public/game/ (gitignored: it contains licensed
-// pixels when real art is available). Run scripts/assets/fetch.mjs first; `pnpm build`
+// pixels when real art is available). Run scripts/assets/fetch.mjs first; `bun run assets`
 // does both. Placeholder mode produces files of the same shape without LimeZu art.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { CHARACTERS, MUSIC } from "../../game/assets/manifest.ts";
 import { parseMapObject } from "../../game/world/objects.ts";
@@ -27,7 +28,7 @@ const outDir = path.join(root, "public/game");
 const sourceFile = path.join(root, ".assets-cache/source.json");
 
 if (!fs.existsSync(sourceFile)) {
-	console.error("[assets] .assets-cache/source.json is missing: run `pnpm assets` (fetch + build) instead.");
+	console.error("[assets] .assets-cache/source.json is missing: run `bun run assets` (fetch + build) instead.");
 	process.exit(1);
 }
 const source = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
@@ -53,7 +54,7 @@ for (const [id, recipe] of Object.entries(CHARACTERS)) {
 	}
 }
 
-// Maps come from `pnpm world:gen` (world/maps). They share one packed tileset, from the
+// Maps come from `bun run world:gen` (world/maps). They share one packed tileset, from the
 // art or from the committed colour sketches.
 const worldDir = path.join(root, "world");
 const generated = fs.readdirSync(path.join(worldDir, "maps")).filter((f) => f.endsWith(".tmj"));
@@ -138,7 +139,8 @@ if (source.mode !== "placeholder") {
 }
 
 // Geist Pixel (OFL, from the geist package) as a 1-bit bitmap font for in-game text.
-const font = await buildBitmapFont("node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2", 76, "pixel");
+const geistDist = path.dirname(fileURLToPath(import.meta.resolve("geist/font/pixel")));
+const font = await buildBitmapFont(path.join(geistDist, "fonts/geist-pixel/GeistPixel-Square.woff2"), 76, "pixel");
 fs.writeFileSync(path.join(outDir, "fonts/pixel.png"), font.png);
 fs.writeFileSync(path.join(outDir, "fonts/pixel.xml"), font.xml);
 if (waterfront) fs.writeFileSync(path.join(outDir, "og.png"), await shrinkPng(await buildOgImage(waterfront, font)));

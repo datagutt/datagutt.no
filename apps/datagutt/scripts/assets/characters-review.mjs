@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Contact sheet of every character recipe for review: the four standing directions and the
 // portrait, at 1x on grass (how they read in game) and at 4x (to check the pixels).
-// Composes straight from the recipes, so no `pnpm assets` run is needed in between.
+// Composes straight from the recipes, so no `bun run assets` run is needed in between.
 // Writes world/out/characters.png (gitignored: LimeZu pixels).
 import fs from "node:fs";
 import path from "node:path";

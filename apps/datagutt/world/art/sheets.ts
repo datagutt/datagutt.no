@@ -44,7 +44,7 @@ export const SHEETS = {
 export type SheetId = keyof typeof SHEETS;
 
 /**
- * LimeZu's "Singles": every object in a sheet as its own PNG. `pnpm world:catalog` finds
+ * LimeZu's "Singles": every object in a sheet as its own PNG. `bun run world:catalog` finds
  * where each one sits in its sheet (world/art/catalog/), so prefabs can be whole objects
  * instead of hand-measured rectangles. Sheets without singles get sprites detected from
  * their pixels instead.

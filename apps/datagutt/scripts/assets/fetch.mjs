@@ -3,13 +3,13 @@
 // where it came from in .assets-cache/source.json. See docs/game/DESIGN.md §9.
 //
 //   ASSETS_DIR=<path>        use this checkout of datagutt-assets (must exist)
-//   ../datagutt-assets       used automatically when present
+//   ../datagutt-assets       next to the repository, used automatically when present
 //   ASSETS_REPO_TOKEN=<tok>  shallow-clone the private repo (Vercel builds)
 //   otherwise                placeholder mode (coloured rectangles), never in production
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { ASSETS_REPO, resolveAssetSource } from "./source.mjs";
+import { ASSETS_REPO, findRepoRoot, resolveAssetSource } from "./source.mjs";
 
 const cwd = process.cwd();
 const cacheDir = path.join(cwd, ".assets-cache");
@@ -47,7 +47,7 @@ function cloneOrUpdate(dir, token) {
 }
 
 try {
-	const source = resolveAssetSource({ env: process.env, cwd, isAssetsDir });
+	const source = resolveAssetSource({ env: process.env, cwd, repoRoot: findRepoRoot(cwd), isAssetsDir });
 	if (source.mode === "clone") cloneOrUpdate(source.dir, process.env.ASSETS_REPO_TOKEN);
 
 	fs.mkdirSync(cacheDir, { recursive: true });
@@ -56,7 +56,7 @@ try {
 	if (source.mode === "placeholder") {
 		console.warn(
 			"[assets] No licensed art found: building in PLACEHOLDER mode (coloured rectangles).\n" +
-				"[assets] Clone the private assets repo to ../datagutt-assets, set ASSETS_DIR, " +
+				"[assets] Clone the private assets repo next to this repository (../datagutt-assets), set ASSETS_DIR, " +
 				"or set ASSETS_REPO_TOKEN.",
 		);
 	} else {

@@ -25,7 +25,7 @@ export type CharacterRecipe = {
 
 // Looks follow each NPC's job and personality in game/npcs.ts, kept apart by skin tone
 // (Body_01 to 04 and 07 are the natural ones), hair and a signature colour, so they stay
-// distinguishable at 1x. Check changes with `pnpm characters:review`.
+// distinguishable at 1x. Check changes with `bun run characters:review`.
 export const CHARACTERS = {
 	/** The visitor: a traveller with a backpack. */
 	player: {
