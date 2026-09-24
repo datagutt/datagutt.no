@@ -1,8 +1,8 @@
 // Renders a generated map (.tmj, manual layers included) to a PNG straight from the
 // LimeZu sheets, for reviewing maps (docs/game/PLAN.md M3.5). Needs the private art.
 import sharp from "sharp";
-import { beamAlpha, glowAlpha, hexRgb } from "../../game/fx/lightShapes.ts";
-import { parseMapObject, type MapObject, type TiledObject } from "../../game/world/objects.ts";
+import { beamAlpha, glowAlpha, hexRgb } from "@datagutt/kai/fx/lightShapes";
+import { parseMapObject, type MapObject, type TiledObject } from "@datagutt/kai/world/objects";
 import { drawKey, type SheetCache } from "./atlas.ts";
 import { CLEAR_ID, COLLISION_ID } from "./registry.ts";
 import { decodeGid, type Tmj } from "./tmj.ts";

@@ -1,8 +1,8 @@
 // Writes a generated MapCanvas as a Tiled map (.tmj). Generated layers are rewritten on
 // every run; layers named `manual_*` in the previous file are the user's touch-ups in
 // Tiled and are carried over untouched, after the generated layers (DESIGN.md §10).
-import { toTiledObject } from "../../game/world/objects.ts";
-import { CHANGED_SEASONS, formatSeasonTable, seasonProperty } from "../../game/world/season.ts";
+import { toTiledObject } from "@datagutt/kai/world/objects";
+import { CHANGED_SEASONS, formatSeasonTable, seasonProperty } from "@datagutt/kai/world/season";
 import type { TileRef } from "../art/autotile.ts";
 import { seasonalTile } from "../art/seasons.ts";
 import { FLIP, LAYER_BLEND, LAYERS, type MapCanvas } from "./canvas.ts";

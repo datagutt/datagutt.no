@@ -6,12 +6,13 @@ import { PreloadScene } from "./scenes/PreloadScene";
 import { WorldScene } from "./scenes/WorldScene";
 import { readWorldState, type WorldState } from "@datagutt/kai-live";
 import { EMPTY_WORLD_STATE } from "../content/live";
+import config from "../kai.json";
 import { browserStorage, clearSave, loadSave } from "./save/save";
 import { computeViewport } from "./viewport";
 import type { Point } from "./world/grid";
-import type { Facing } from "./world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import { START_PLACE, place, placeFromSearch } from "../content/places";
-import { resolveSeason, type Season } from "./world/season";
+import { resolveSeason, type Season } from "@datagutt/kai/world/season";
 import { clock, monthNow } from "./world/dayNight";
 import { LanyardClient, PresenceFeed } from "@datagutt/kai-live";
 import { MOCK_PRESENCES } from "./live/datagutt";
@@ -120,7 +121,7 @@ export function bootGame(parent: HTMLElement, options: BootOptions = {}): GameHa
 		startRequested,
 		start: target,
 		world: readWorldState(EMPTY_WORLD_STATE),
-		season: resolveSeason(window.location.search),
+		season: resolveSeason(window.location.search, config.timezone),
 		presence: new PresenceFeed(),
 		finale: false,
 		autoLow: false,

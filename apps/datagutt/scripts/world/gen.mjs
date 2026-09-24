@@ -20,7 +20,7 @@ import { buildAtlas, SheetCache, tileColors } from "../../world/gen/atlas.ts";
 import { renderTmj } from "../../world/gen/render.ts";
 import { validateMap } from "../../world/gen/validate.ts";
 import { checkCuts } from "../../world/gen/cuts.ts";
-import { applySeason, isSeason } from "../../game/world/season.ts";
+import { applySeason, isSeason } from "@datagutt/kai/world/season";
 import { localArtDir } from "../assets/source.mjs";
 
 const root = process.cwd();

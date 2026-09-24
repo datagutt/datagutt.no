@@ -1,6 +1,6 @@
 // Map checks run on every generation (docs/game/PLAN.md M3.6): catches NPCs in walls,
 // signs nobody can reach, blocked doors and stacked objects.
-import { parseMapObject, type MapObject, type TiledObject } from "../../game/world/objects.ts";
+import { parseMapObject, type MapObject, type TiledObject } from "@datagutt/kai/world/objects";
 import { collisionOf } from "./render.ts";
 import type { Tmj } from "./tmj.ts";
 

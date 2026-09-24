@@ -6,7 +6,7 @@ import type Phaser from "phaser";
 import { NPC_MOVEMENT, type MoverEvent } from "../world/movement";
 import { directionBetween, type CollisionGrid, type Point } from "../world/grid";
 import { findPath, findPathAdjacent } from "../world/pathfind";
-import type { MapObject } from "../world/objects";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import { doingFor, nextMap, PLACE_MAPS, spotId, type Doing } from "../live/datagutt";
 import type { Presence, PresenceFeed } from "@datagutt/kai-live";
 import { EmoteBubble, SpeechBubble } from "../ui/Bubbles";

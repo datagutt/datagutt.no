@@ -2,7 +2,7 @@
 // (lib/weather.ts), or `?debug&weather=<kind>`. This file decides what the sky should hold;
 // fx/Weather.ts draws it and audio/mix.ts hears it.
 import { isWeatherKind, type WeatherKind, type WeatherNow } from "@datagutt/kai-live";
-import type { Season } from "./season";
+import type { Season } from "@datagutt/kai/world/season";
 
 /** Wind (m/s) for a debug override, which names only the kind. */
 const DEBUG_WIND: Record<WeatherKind, number> = { clear: 2, cloudy: 4, rain: 5, heavyRain: 8, snow: 3, sleet: 6, fog: 1, storm: 18 };

@@ -4,7 +4,7 @@
 //   x:  0-4 forest | 5-34 farm, datagutt's street, boathouse | 35-62 library, town hall,
 //       square, post office, harbour | 63-90 radio hill, office, gym | 91-95 forest
 import { NPCS } from "../../../game/npcs.ts";
-import type { Facing, MapObject } from "../../../game/world/objects.ts";
+import type { Facing, MapObject } from "@datagutt/kai/world/objects";
 import { COBBLE, CROPS, GRASS, TERRAIN } from "../../art/palette.ts";
 import { refKey } from "../registry.ts";
 import { glow, NIGHT_LIGHTS } from "../../art/lighting.ts";

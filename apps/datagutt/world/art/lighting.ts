@@ -1,6 +1,6 @@
 // Shade pieces (tiles from the generated fx sheet, on the multiplied `shade` layer) and
 // light presets (map objects the game draws additively; see game/fx/Lights.ts).
-import type { LightObject } from "../../game/world/objects.ts";
+import type { LightObject } from "@datagutt/kai/world/objects";
 import type { MapCanvas, Prefab } from "../gen/canvas.ts";
 import { SHADOW_COL } from "../gen/fx.ts";
 

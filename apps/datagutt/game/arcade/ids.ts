@@ -4,3 +4,5 @@
 // hill (docs/game/PLAN.md B2).
 export const ARCADE_IDS = ["blocks", "life", "terrain", "dungeon", "starfield", "screensaver", "stargazing"] as const;
 export type ArcadeId = (typeof ARCADE_IDS)[number];
+
+export const isArcadeId = (id: string): id is ArcadeId => ARCADE_IDS.includes(id as ArcadeId);

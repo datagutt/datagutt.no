@@ -12,6 +12,15 @@ export const kaiConfigSchema = z.object({
 	/** The game's id. Its art overrides live under `games/<id>/` in the art repository. */
 	id,
 	title: z.string().min(1),
+	/** The IANA time zone the game's clock and seasons follow ("Europe/Oslo"). */
+	timezone: z.string().refine((zone) => {
+		try {
+			new Intl.DateTimeFormat("en", { timeZone: zone });
+			return true;
+		} catch {
+			return false;
+		}
+	}, "not an IANA time zone"),
 	assets: z.object({
 		/** The private art repository on GitHub, as "owner/name". */
 		repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, 'use "owner/name"'),

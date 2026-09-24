@@ -6,7 +6,7 @@ import { TILE } from "../constants";
 import { ANIMS, animKey, type AnimName } from "../characters/sheet";
 import { GridMover, type MoverConfig } from "../world/movement";
 import type { Point } from "../world/grid";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 
 export class Actor {
 	readonly sprite: Phaser.GameObjects.Sprite;

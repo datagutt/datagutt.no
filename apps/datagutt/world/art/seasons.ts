@@ -3,7 +3,7 @@
 // by the rules below and, in winter, a snow cap along the top of its roofs. Where the
 // pack has seasonal art it is used instead (the camping sheet's autumn trees), and
 // hand-drawn overrides in datagutt-assets `seasons/` win over all of it (atlas.ts).
-import type { ChangedSeason } from "../../game/world/season.ts";
+import type { ChangedSeason } from "@datagutt/kai/world/season";
 import type { TileRef } from "./autotile.ts";
 import { DECALS } from "./palette.ts";
 import { PREFABS } from "./prefabs.ts";

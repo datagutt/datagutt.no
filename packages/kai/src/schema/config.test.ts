@@ -13,6 +13,7 @@ function appWith(config: unknown) {
 const valid = {
 	id: "demo",
 	title: "Demo",
+	timezone: "Europe/Oslo",
 	assets: { repo: "someone/art", localPath: "../art", tokenEnv: "ART_TOKEN" },
 	ui: { frame: { file: "ui.png", x: 0, y: 0, width: 8, height: 8 }, emotes: "emotes.png" },
 	font: { module: "geist/font/pixel", file: "f.woff2", unitsPerPixel: 76 },
@@ -27,7 +28,7 @@ describe("loadKaiConfig", () => {
 	});
 
 	it("names every problem with its path", () => {
-		const broken = { ...valid, id: "Demo Game", assets: { ...valid.assets, repo: "art" } };
-		expect(() => loadKaiConfig(appWith(broken))).toThrow(/kai\.json › id: .*\n.*kai\.json › assets\.repo: use "owner\/name"/s);
+		const broken = { ...valid, id: "Demo Game", timezone: "Norway/Fjord", assets: { ...valid.assets, repo: "art" } };
+		expect(() => loadKaiConfig(appWith(broken))).toThrow(/kai\.json › id: .*\n.*timezone: not an IANA time zone\n.*kai\.json › assets\.repo: use "owner\/name"/s);
 	});
 });

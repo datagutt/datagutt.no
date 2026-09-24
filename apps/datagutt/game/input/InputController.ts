@@ -1,7 +1,7 @@
 // Merges keyboard, gamepad and pointer into one set of actions per frame
 // (docs/game/PLAN.md M1.9). Scenes read `poll()` and never touch devices directly.
 import Phaser from "phaser";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import { DirectionStack } from "./directionStack";
 
 export type FrameInput = {

@@ -1,6 +1,6 @@
 // A map under construction: tile layers of LimeZu tile references, an explicit collision
 // layer, and map objects. The generator paints into it; tiled.ts writes it out.
-import type { MapObject } from "../../game/world/objects.ts";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import { pieceAt, variant, type AutotileSet, type Mask, type TileRef } from "../art/autotile.ts";
 
 /**

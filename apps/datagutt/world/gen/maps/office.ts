@@ -9,7 +9,7 @@
 //   glass wall (y 13-14), with openings
 //   bottom: Customer service (x 3-15) | reception by the door | Growth (x 23-29) | Lounge
 import { NPCS } from "../../../game/npcs.ts";
-import type { MapObject } from "../../../game/world/objects.ts";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import { FURNITURE as F } from "../../art/furniture.ts";
 import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas, type Prefab } from "../canvas.ts";

@@ -8,7 +8,9 @@ import { createRequire } from "node:module";
 import sharp from "sharp";
 import { loadKaiConfig } from "@datagutt/kai/schema";
 import { CHARACTERS, MUSIC } from "../../game/assets/manifest.ts";
-import { parseMapObject } from "../../game/world/objects.ts";
+import { parseMapObject } from "@datagutt/kai/world/objects";
+import { isArcadeId } from "../../game/arcade/ids.ts";
+import { isUnlockId } from "../../game/progress/unlockIds.ts";
 import { EMOTE_COLUMNS, EMOTE_FRAME, EMOTE_TAIL, EMOTES } from "../../game/ui/emotes.ts";
 import { buildAtlas, buildPlaceholderAtlas, SheetCache } from "../../world/gen/atlas.ts";
 import { TileRegistry } from "../../world/gen/registry.ts";
@@ -172,6 +174,14 @@ for (const { id, objects } of mapObjects) {
 		const spawns = spawnsByMap.get(obj.toMap);
 		if (!spawns) throw new Error(`${id}: door at (${obj.x}, ${obj.y}) leads to unknown map "${obj.toMap}"`);
 		if (!spawns.has(obj.toSpawn)) throw new Error(`${id}: door at (${obj.x}, ${obj.y}) leads to missing spawn "${obj.toSpawn}" on ${obj.toMap}`);
+	}
+}
+// Map objects name Fjord Town's unlocks and arcade games as plain strings.
+for (const { id, objects } of mapObjects) {
+	for (const obj of objects) {
+		const unlock = obj.type === "door" || obj.type === "gate" ? obj.unlock : undefined;
+		if (unlock !== undefined && !isUnlockId(unlock)) throw new Error(`${id}: ${obj.type} at (${obj.x}, ${obj.y}) has unknown unlock "${unlock}"`);
+		if (obj.type === "arcade" && !isArcadeId(obj.game)) throw new Error(`${id}: arcade at (${obj.x}, ${obj.y}) has unknown game "${obj.game}"`);
 	}
 }
 for (const { id, objects } of mapObjects) {

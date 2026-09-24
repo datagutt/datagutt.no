@@ -1,5 +1,5 @@
 // Reusable pieces of landscape for map generators: plateaus, piers, forests, buildings.
-import type { MapObject } from "../../game/world/objects.ts";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import { variant } from "../art/autotile.ts";
 import { DECALS, DOOR, FENCE, PIER, PLATEAU } from "../art/palette.ts";
 import { glow, NIGHT_LIGHTS } from "../art/lighting.ts";

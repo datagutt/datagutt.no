@@ -24,7 +24,7 @@ import type { DialogueRunner } from "../dialogue/DialogueRunner";
 import { DIALOGUE_KEY } from "./PreloadScene";
 import { CollisionGrid, directionBetween, neighbour, type Point } from "../world/grid";
 import { NPC_MOVEMENT, PLAYER_MOVEMENT, type MoverEvent } from "../world/movement";
-import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "../world/objects";
+import { parseMapObject, type Facing, type LightObject, type MapObject, type TiledObject } from "@datagutt/kai/world/objects";
 import { addLights } from "../fx/Lights";
 import { DayNight } from "../fx/DayNight";
 import { Weather } from "../fx/Weather";
@@ -40,12 +40,13 @@ import { Intro } from "./Intro";
 import { CreditsRoll } from "../ui/CreditsRoll";
 import { ArcadeScreen } from "../ui/ArcadeScreen";
 import { makeArcade } from "../arcade";
+import { isArcadeId } from "../arcade/ids";
 import { isUnlocked } from "../progress/unlocks";
 import { ACHIEVEMENTS, achievement, BLOCKS_TARGET, EDGE_LINES, type AchievementId } from "../progress/achievements";
 import { fieldLevels } from "../live/field";
 import { spines } from "../live/shelf";
 import { findPath, findPathAdjacent } from "../world/pathfind";
-import { applySeason } from "../world/season";
+import { applySeason } from "@datagutt/kai/world/season";
 import { resolveWeather, weatherSound } from "../world/weather";
 import type { WeatherNow } from "@datagutt/kai-live";
 import { CALM_WEATHER } from "../../content/live";
@@ -861,6 +862,7 @@ export class WorldScene extends Phaser.Scene {
 			this.dialogue.say("* Just the town and the fjord in daylight. The stars come out after dark.", null, () => this.dialogue.close());
 			return;
 		}
+		if (!isArcadeId(cabinet.game)) return;
 		if (cabinet.game === "stargazing") this.achieve("stars");
 		const progress = this.progress;
 		const game = makeArcade(cabinet.game, {

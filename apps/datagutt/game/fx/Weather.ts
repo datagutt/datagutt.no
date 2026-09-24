@@ -7,7 +7,7 @@
 // quality thins it too and drops the frost, the splashes and one of the fog's layers.
 import Phaser from "phaser";
 import type { WeatherNow } from "@datagutt/kai-live";
-import type { Season } from "../world/season";
+import type { Season } from "@datagutt/kai/world/season";
 import { skyFor, type FallKind, type Sky } from "../world/weather";
 import { LIGHT_DEPTH } from "./Lights";
 

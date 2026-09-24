@@ -3,8 +3,8 @@
 // number of lights overlap and add up smoothly.
 import Phaser from "phaser";
 import { TILE } from "../constants";
-import type { LightObject } from "../world/objects";
-import { beamAlpha, glowAlpha } from "./lightShapes";
+import type { LightObject } from "@datagutt/kai/world/objects";
+import { beamAlpha, glowAlpha } from "@datagutt/kai/fx/lightShapes";
 
 const GLOW_KEY = "fx:glow";
 const BEAM_KEY = "fx:beam";

@@ -2,7 +2,7 @@
 // a level from 0 to 1 for each layer, from how near the sea, the forest and a fire are,
 // whether it's indoors, the time of day, the season and the weather. Pure, so it can be
 // tested; the sounds themselves are in Ambience.ts.
-import type { Season } from "../world/season";
+import type { Season } from "@datagutt/kai/world/season";
 
 export const LAYERS = ["waves", "wind", "gulls", "birds", "fire", "room", "rain", "thunder"] as const;
 export type Layer = (typeof LAYERS)[number];

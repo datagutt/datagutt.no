@@ -3,7 +3,7 @@
 // be tested; Music.ts plays and crossfades.
 import type { MusicId } from "../assets/manifest";
 import type { Phase } from "../world/dayNight";
-import type { Season } from "../world/season";
+import type { Season } from "@datagutt/kai/world/season";
 
 export type Moment =
 	| { scene: "title" }

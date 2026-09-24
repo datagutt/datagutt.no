@@ -4,7 +4,7 @@
 // light summer nights. Added over the world (and reflected in the fjord's ripples,
 // fx/Water.ts). Reduced motion slows the drift.
 import Phaser from "phaser";
-import type { Season } from "../world/season";
+import type { Season } from "@datagutt/kai/world/season";
 import { LIGHT_DEPTH } from "./Lights";
 
 /** How bright the aurora gets in each season, on the darkest night. */

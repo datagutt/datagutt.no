@@ -5,7 +5,7 @@
 // look-ahead and thins the dust.
 import Phaser from "phaser";
 import { STEP, type Point } from "../world/grid";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import type { Actor } from "../entities/Actor";
 
 const DUST_KEY = "fx:dust";

@@ -60,6 +60,7 @@
       "name": "@datagutt/kai",
       "version": "0.0.0",
       "dependencies": {
+        "@datagutt/kai-net": "workspace:*",
         "zod": "^4",
       },
       "devDependencies": {

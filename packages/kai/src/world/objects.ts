@@ -2,8 +2,8 @@
 // (`type` plus custom properties) and the game reads them back with parseMapObject().
 // Coordinates are in tiles.
 
-import { ARCADE_IDS, type ArcadeId } from "../arcade/ids.ts";
-import { UNLOCK_IDS, type UnlockId } from "../progress/unlockIds.ts";
+// Ids that name the game's own things (an unlock, an arcade game) are plain strings here:
+// the game's build checks them against its registries.
 import type { Facing } from "@datagutt/kai-net/protocol";
 
 export type { Facing };
@@ -11,7 +11,7 @@ export type { Facing };
 export type MapObject =
 	| { type: "spawn"; id: string; x: number; y: number; facing: Facing }
 	/** A warp to another map. With `unlock`, it stays shut (and solid) until that holds. */
-	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string; unlock?: UnlockId }
+	| { type: "door"; x: number; y: number; toMap: string; toSpawn: string; unlock?: string }
 	/**
 	 * A readable thing: fixed `text`, or an Ink knot (`dialogue`) for live content. The
 	 * map build grows it over the object it describes (world/gen/signs.ts): then (x, y)
@@ -19,25 +19,25 @@ export type MapObject =
 	 */
 	| { type: "sign"; x: number; y: number; w?: number; h?: number; text: string; dialogue?: string }
 	| { type: "npc"; id: string; character: string; x: number; y: number; facing: Facing; name: string; dialogue: string }
-	/** The hidden cat (docs/game/PLAN.md B3), lying across (x, y) and the tile east of it; pet it. */
+	/** A cat lying across (x, y) and the tile east of it; pet it. */
 	| { type: "cat"; x: number; y: number }
-	/** An arcade cabinet: interact to play `game` (game/arcade/). */
-	| { type: "arcade"; x: number; y: number; game: ArcadeId }
+	/** An arcade cabinet: interact to play `game`, an id in the game's arcade registry. */
+	| { type: "arcade"; x: number; y: number; game: string }
 	/**
-	 * A way that stays shut until `unlock` holds (game/progress/unlocks.ts): the w×h
+	 * A way that stays shut until `unlock` holds: the w×h
 	 * rectangle's barriers block it and read `text`; once open, they are cleared away.
 	 */
-	| { type: "gate"; id: string; x: number; y: number; w: number; h: number; unlock: UnlockId; text: string }
+	| { type: "gate"; id: string; x: number; y: number; w: number; h: number; unlock: string; text: string }
 	/**
-	 * A named place an NPC who moves between maps can be, facing a way: the live datagutt
-	 * NPC goes to the spot his presence picks (game/live/datagutt.ts).
+	 * A named place an NPC who moves between maps can be, facing a way: a live NPC goes to
+	 * the spot its presence picks.
 	 */
 	| { type: "spot"; id: string; x: number; y: number; facing: Facing }
 	| LightObject
 	/**
-	 * Live content drawn by the game from the WorldState (M3.11): `crops` is the farm field
+	 * Live content drawn by the game from the WorldState: `crops` is a field
 	 * (one tile per day; `stages` lists the growth-stage tiles as gids, smallest first),
-	 * `books` the library's featured shelf (one spine per pinned repo).
+	 * `books` a featured shelf (one spine per pinned repo).
 	 */
 	| { type: "crops"; x: number; y: number; w: number; h: number; stages: string }
 	| { type: "books"; x: number; y: number; w: number; h: number }
@@ -45,7 +45,7 @@ export type MapObject =
 	| { type: "area"; id: string; x: number; y: number; w: number; h: number };
 
 /**
- * A light, drawn additively over the map and characters (game/fx/Lights.ts). A glow is
+ * A light, drawn additively over the map and characters. A glow is
  * centred on its tile with a radius in tiles; a beam covers w×h tiles from its tile.
  * `color` is rrggbb, `intensity` 0..1. `when` ties it to the visitor's clock: "day" for
  * daylight through a window, "night" for street lamps and porch lights; always on without.
@@ -93,8 +93,7 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 			return { type: "spawn", id: obj.name || str("id"), x, y, facing: facing() };
 		case "door": {
 			const unlock = props.get("unlock");
-			if (unlock !== undefined && !UNLOCK_IDS.includes(unlock as UnlockId)) throw new Error(`door object ${obj.id} has unknown unlock "${unlock}"`);
-			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn"), ...(unlock ? { unlock: unlock as UnlockId } : {}) };
+			return { type: "door", x, y, toMap: str("toMap"), toSpawn: str("toSpawn"), ...(typeof unlock === "string" && unlock ? { unlock } : {}) };
 		}
 		case "sign": {
 			const dialogue = props.get("dialogue");
@@ -111,16 +110,10 @@ export function parseMapObject(obj: TiledObject, tileSize: number): MapObject {
 		}
 		case "cat":
 			return { type: "cat", x, y };
-		case "arcade": {
-			const game = str("game");
-			if (!ARCADE_IDS.includes(game as ArcadeId)) throw new Error(`arcade object ${obj.id} has unknown game "${game}"`);
-			return { type: "arcade", x, y, game: game as ArcadeId };
-		}
-		case "gate": {
-			const unlock = str("unlock");
-			if (!UNLOCK_IDS.includes(unlock as UnlockId)) throw new Error(`gate object ${obj.id} has unknown unlock "${unlock}"`);
-			return { type: "gate", id: obj.name || str("id"), x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize), unlock: unlock as UnlockId, text: str("text") };
-		}
+		case "arcade":
+			return { type: "arcade", x, y, game: str("game") };
+		case "gate":
+			return { type: "gate", id: obj.name || str("id"), x, y, w: Math.round(obj.width / tileSize), h: Math.round(obj.height / tileSize), unlock: str("unlock"), text: str("text") };
 		case "spot":
 			return { type: "spot", id: obj.name || str("id"), x, y, facing: facing() };
 		case "npc":

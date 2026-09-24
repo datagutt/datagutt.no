@@ -2,7 +2,7 @@
 // Settings, Credits. Opened with Enter, Start on a gamepad, or the on-screen Menu button.
 // Items that depend on later milestones (other visitors) join the list when they exist.
 import Phaser from "phaser";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import { PassportPanel } from "./Passport";
 import { credits } from "../../content/credits";
 import type { EffectsSetting } from "../save/save";

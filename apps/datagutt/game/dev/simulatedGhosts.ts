@@ -2,7 +2,7 @@
 // a phone). They join around the player and wander one tile at a time, fed to the ghost
 // layer as if the room had sent them.
 import type { CollisionGrid, Point } from "../world/grid";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import type { ServerMessage } from "@datagutt/kai-net/protocol";
 
 const STEP_MS = [250, 900] as const;

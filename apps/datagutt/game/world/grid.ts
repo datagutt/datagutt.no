@@ -1,4 +1,4 @@
-import type { Facing } from "./objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 
 export type Point = { x: number; y: number };
 

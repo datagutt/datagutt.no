@@ -5,7 +5,9 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "exports": {
-    "./schema": "./src/schema/index.ts"
+    "./schema": "./src/schema/index.ts",
+    "./world/*": "./src/world/*.ts",
+    "./fx/*": "./src/fx/*.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -13,6 +15,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@datagutt/kai-net": "workspace:*",
     "zod": "^4"
   },
   "devDependencies": {

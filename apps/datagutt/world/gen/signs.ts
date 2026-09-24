@@ -1,7 +1,7 @@
 // A sign is placed on one tile of the thing it describes, but players read it by facing
 // any part of that thing: a whiteboard two tiles wide, a vending machine, a fountain.
 // Before a map is written, each sign grows to the footprint of the object under it.
-import type { MapObject } from "../../game/world/objects.ts";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import type { MapCanvas, Placement } from "./canvas.ts";
 
 type Sign = Extract<MapObject, { type: "sign" }>;

@@ -6,7 +6,7 @@
 // - A held direction continues into the next step on the same frame the last one ends,
 //   so walking never stutters and no input is dropped.
 // - Walking into something blocked reports a single "bumped" per hold.
-import type { Facing } from "./objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import { neighbour, type Point } from "./grid";
 
 export type MoverConfig = {

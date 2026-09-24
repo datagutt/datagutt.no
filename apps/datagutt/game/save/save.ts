@@ -1,6 +1,6 @@
 // Versioned save in localStorage (docs/game/PLAN.md M1.10). Every read and write is
 // guarded: private windows, blocked storage and corrupt data all fall back to a new game.
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 
 export const SAVE_KEY = "fjordtown.save";
 export const SAVE_VERSION = 1;

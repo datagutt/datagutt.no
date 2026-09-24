@@ -2,7 +2,7 @@
 // website's five canvases live on as arcade cabinets (docs/game/PLAN.md B1). Teal walls,
 // dark boards; the cabinets along the back wall, the TV corner with its rug and bean bags,
 // a pool table, and Siv who runs the place.
-import type { MapObject } from "../../../game/world/objects.ts";
+import type { MapObject } from "@datagutt/kai/world/objects";
 import { FURNITURE as F } from "../../art/furniture.ts";
 import { glow, GLOWS, shadowUnder } from "../../art/lighting.ts";
 import { MapCanvas } from "../canvas.ts";

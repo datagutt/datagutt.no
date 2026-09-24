@@ -3,7 +3,7 @@
 // add on top and so really glow after dark. Indoors nothing is tinted; daylight through
 // the windows fades at night. Timed lights follow the clock everywhere.
 import Phaser from "phaser";
-import type { LightObject } from "../world/objects";
+import type { LightObject } from "@datagutt/kai/world/objects";
 import { daylightAt, lightFactor, type Daylight } from "../world/dayNight";
 import { LIGHT_DEPTH } from "./Lights";
 

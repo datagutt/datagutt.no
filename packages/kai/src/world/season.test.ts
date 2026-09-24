@@ -1,22 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { applySeason, formatSeasonTable, parseSeasonTable, resolveSeason, seasonOn } from "./season";
+import { applySeason, formatSeasonTable, parseSeasonTable, resolveSeason, seasonOn } from "./season.ts";
 
 describe("seasons", () => {
 	it("follow the Norwegian calendar", () => {
-		expect(seasonOn(new Date("2026-01-15T12:00:00Z"))).toBe("winter");
-		expect(seasonOn(new Date("2026-03-01T12:00:00Z"))).toBe("spring");
-		expect(seasonOn(new Date("2026-07-01T12:00:00Z"))).toBe("summer");
-		expect(seasonOn(new Date("2026-10-31T12:00:00Z"))).toBe("autumn");
-		expect(seasonOn(new Date("2026-12-01T12:00:00Z"))).toBe("winter");
+		expect(seasonOn(new Date("2026-01-15T12:00:00Z"), "Europe/Oslo")).toBe("winter");
+		expect(seasonOn(new Date("2026-03-01T12:00:00Z"), "Europe/Oslo")).toBe("spring");
+		expect(seasonOn(new Date("2026-07-01T12:00:00Z"), "Europe/Oslo")).toBe("summer");
+		expect(seasonOn(new Date("2026-10-31T12:00:00Z"), "Europe/Oslo")).toBe("autumn");
+		expect(seasonOn(new Date("2026-12-01T12:00:00Z"), "Europe/Oslo")).toBe("winter");
 		// 23:30 UTC on 30 November is already December in Oslo.
-		expect(seasonOn(new Date("2026-11-30T23:30:00Z"))).toBe("winter");
+		expect(seasonOn(new Date("2026-11-30T23:30:00Z"), "Europe/Oslo")).toBe("winter");
 	});
 
 	it("can be picked with ?season= in debug only", () => {
 		const july = new Date("2026-07-01T12:00:00Z");
-		expect(resolveSeason("?debug&season=winter", july)).toBe("winter");
-		expect(resolveSeason("?season=winter", july)).toBe("summer");
-		expect(resolveSeason("?debug&season=monsoon", july)).toBe("summer");
+		expect(resolveSeason("?debug&season=winter", "Europe/Oslo", july)).toBe("winter");
+		expect(resolveSeason("?season=winter", "Europe/Oslo", july)).toBe("summer");
+		expect(resolveSeason("?debug&season=monsoon", "Europe/Oslo", july)).toBe("summer");
 	});
 
 	it("round-trip swap tables", () => {

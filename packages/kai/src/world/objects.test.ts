@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parseMapObject, toTiledObject, type MapObject } from "./objects";
-import { beamAlpha, glowAlpha } from "../fx/lightShapes";
+import { parseMapObject, toTiledObject, type MapObject } from "./objects.ts";
+import { beamAlpha, glowAlpha } from "../fx/lightShapes.ts";
 
 const roundTrip = (obj: MapObject) => parseMapObject(toTiledObject(obj, 1, 16), 16);
 

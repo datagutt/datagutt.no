@@ -1,4 +1,4 @@
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 
 /**
  * Tracks held direction keys so the most recently pressed one wins, and releasing it

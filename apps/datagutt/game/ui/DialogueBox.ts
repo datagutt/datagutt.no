@@ -1,7 +1,7 @@
 // In-engine dialogue box (docs/game/PLAN.md M1.6, growing into M2.4): a typewriter
 // reveal of paged text, and a choice list for Ink choices. Input is fed in by the scene.
 import Phaser from "phaser";
-import type { Facing } from "../world/objects";
+import type { Facing } from "@datagutt/kai/world/objects";
 import { PORTRAIT_CROP, portraitKey } from "../characters/sheet";
 import { charDelayMs, choiceOfLine, paginate, wrapChoices, wrapText } from "./text";
 

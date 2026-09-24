@@ -3,7 +3,7 @@
 import path from "node:path";
 import sharp from "sharp";
 import fs from "node:fs";
-import type { ChangedSeason } from "../../game/world/season.ts";
+import type { ChangedSeason } from "@datagutt/kai/world/season";
 import { paintSnowCaps, seasonalColor } from "../art/seasons.ts";
 import { DERIVED, SHEETS, SINGLES, type SheetId } from "../art/sheets.ts";
 import { singleKeys } from "../art/singleKey.ts";
