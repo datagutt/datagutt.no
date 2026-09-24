@@ -4,44 +4,37 @@ Last updated: 2026-09-24 (kai session 1)
 
 ## Current state
 
-- The grilling session settled the engine split. Decisions are in DESIGN.md, tasks in
-  PLAN.md. Work happens on the `kai` branch, off `game`.
-- K1.1 to K1.5 are done: the site lives in `apps/datagutt`, Bun installs (isolated
-  installs, so each workspace has its own `node_modules`), Turborepo runs the tasks, CI
-  runs on Bun and passes.
-- K2.1 is done: `tooling/` holds the tsconfig, ESLint 9 flat config and Vitest presets.
-- K2.2 is done: `@datagutt/kai-net` holds the ghost protocol, client, reconnect, rooms
-  and the Node socket server. `Facing` lives in its protocol.
-- `apps/datagutt/vercel.ts` sets the Vercel install and build commands (Turborepo from
-  the repository root, so `assets` runs before `next build`).
-
-## Blocked on the user
-
-K1.6: the user must approve setting the Vercel project's Root Directory to
-`apps/datagutt` (project `prj_p08fce0IPL6JbrShucM7GGQhuBjI`, team
-`team_XkRYw9JzRve6csIDU6c9qnGf`). After the approval: flip it through the MCP,
-fast-forward `game` to `kai`, push, and check that the preview used the licensed art.
-Until then, every Vercel preview of `kai` fails, because the project still builds from
-the repository root.
-
-## Gotchas
-
-- The local Bun is a 1.4.0 canary; `packageManager` pins the released 1.4.2. Watch the
-  first Vercel build for lockfile trouble (`bun.lock` is lockfile version 2).
-- `assets`, `build` and `test:e2e` are never cached by Turborepo: the licensed art sits
-  outside the repository, so Turborepo cannot hash it.
-- Next compiles the kai packages from source: `next.config.mjs` passes every
-  `@datagutt/kai*` dependency to `transpilePackages`.
-- A tooling preset that imports a tool (Vitest, ESLint) needs it as a peer dependency,
-  or isolated installs cannot resolve it.
-- Node's type stripping loads package `.ts` files through the workspace symlinks, so
-  package imports need explicit `.ts` extensions and erasable syntax only, until the
-  scripts move to Bun in K3.4.
-- The e2e finale test ("the last stamp leads to the finale") can fail once under a full
-  parallel run on WSL. It passes alone.
-- `game:dev` from `apps/datagutt` does not build assets first. Run it from the root
-  (`turbo run game:dev` runs `assets` first) or run `bun run assets` before it.
+- Decisions are in DESIGN.md (with a changelog of the corrections made while building),
+  tasks in PLAN.md. Work happens on `kai`; `game` was fast-forwarded to it at K1.6 and
+  the Vercel project builds from `apps/datagutt` (Root Directory flipped with the user's
+  approval, preview verified with the licensed art).
+- Done: K1 (Bun, Turborepo, CI, Vercel), K2 (tooling presets, kai-net, kai-arcade,
+  kai-live), K3.1 to K3.3 (kai.json, kai-worldgen, kai-limezu), K4.1 to K4.3 (`kai
+  content`, engine and site content as JSON and Markdown).
+- Every stage was checked the same way: the asset output byte-identical to before, the
+  generated maps unchanged, the Journal's visible text unchanged, e2e green.
 
 ## Next step
 
-K1.6 once the user approves, then K2.3 (`@datagutt/kai-arcade`).
+K3.4: move the asset pipeline (`scripts/assets`, `scripts/world`) into the `kai` CLI in
+`@datagutt/kai-assets`, running on Bun. The link preview image and the title strip stay
+an app script. Then K3.5 (assets repo move, needs the user), K4.4, K4.5, K5.
+
+## Gotchas
+
+- `packageManager` pins Bun 1.4.2. Vercel's image ships Bun 1.3, which cannot read the
+  version 2 lockfile, so `apps/datagutt/vercel.ts` installs with `npx bun@1.4.2`.
+- `assets`, `build`, `test:e2e` and `content` are never cached by Turborepo: the art
+  sits outside the repository, and the content bundle also depends on the engine's
+  schemas in `packages/`.
+- Node's type stripping loads package `.ts` files through the workspace symlinks, so
+  imports need explicit `.ts` extensions and erasable syntax. JSON imports that Node can
+  reach (content/index.ts, content/places.ts) need `with { type: "json" }`.
+- Content types come from `ContentOf` the schemas (`content/schema.ts` in the app), so
+  ids that were literal unions (place, music, achievement) are plain strings now.
+- `pkill -f next-server` in a Bash call kills the call's own shell. Use
+  `pkill -f "[n]ext-server"`.
+- The e2e finale test ("the last stamp leads to the finale") fails now and then under a
+  full parallel run on WSL. It passes alone.
+- `game:dev` from `apps/datagutt` does not build assets or content first. Run it from the
+  root (`turbo run game:dev`) or run `bun run content && bun run assets` before it.
