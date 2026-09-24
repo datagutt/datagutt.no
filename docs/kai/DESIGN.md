@@ -5,7 +5,8 @@ records the decisions from the grilling session on 2026-09-24. Later sessions mu
 re-litigate them. If a decision changes, edit it here and add a line to the changelog.
 
 Related files: [PLAN.md](./PLAN.md) (tasks and progress), [HANDOFF.md](./HANDOFF.md)
-(session state).
+(session state). How the engine works: [ARCHITECTURE.md](./ARCHITECTURE.md),
+[PLUGINS.md](./PLUGINS.md), [CONTENT.md](./CONTENT.md), [NEW-GAME.md](./NEW-GAME.md).
 
 ## 1. Purpose
 
@@ -149,3 +150,7 @@ Visitors must not notice the refactor.
   adapter (`assets.adapter`, exporting an `ArtAdapter`), the map builders
   (`paths.maps`), the dialogue host (`paths.dialogueHost`) and the harness entry
   (`paths.harness`). This keeps `kai-assets` free of any art family and any one game.
+- 2026-09-24: the GitHub map objects are one plugin, `githubObjects`, instead of
+  `githubField` and `repoShelf`: both read the same live data and place one object type
+  each. A game's own plugins live where its game code lives (`game/plugins/` in
+  datagutt), not necessarily `src/plugins/`.

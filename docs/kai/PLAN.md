@@ -208,7 +208,7 @@ Goal: a second app proves the engine needs nothing from datagutt.
 
 - [x] **K7.1** Move `docs/game/` to `apps/datagutt/docs/` and update the `.claude` hooks.
       *Done when* the SessionStart hook prints the right handoff on both branches.
-- [ ] **K7.2** `docs/kai/`: architecture and package map, plugin API, content schemas,
+- [x] **K7.2** `docs/kai/`: architecture and package map, plugin API, content schemas,
       the CLI, "start a new game from the sandbox". *Done when* written.
 - [ ] **K7.3** A README per package (what it is, what it must not import). A root
       `CLAUDE.md` for the monorepo, `apps/datagutt/CLAUDE.md` for Fjord Town. *Done when*
