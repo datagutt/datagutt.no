@@ -19,6 +19,12 @@ export type WorldState = {
 
 export const WORLD_STATE_ELEMENT_ID = "world-state";
 
+/**
+ * A host that streams the live data (behind Suspense, say) puts an element with this id in
+ * its place until the data arrives, so the game knows to wait for it.
+ */
+export const WORLD_STATE_PENDING_ID = "world-state-pending";
+
 /** The state before anything is fetched: the game's own Discord user and fallback place. */
 export const emptyWorldState = ({ discordId, place }: { discordId: string; place: string }): WorldState => ({
 	repos: [],
@@ -64,4 +70,28 @@ export function parseWorldState(json: string | null | undefined, empty: WorldSta
 
 export function readWorldState(empty: WorldState, doc: Document = document): WorldState {
 	return parseWorldState(doc.getElementById(WORLD_STATE_ELEMENT_ID)?.textContent, empty);
+}
+
+/**
+ * Resolves once readWorldState has something to read: at once when nothing is pending (the
+ * data is inline, or a harness page has none), else when the pending marker leaves the
+ * document. The marker is waited for rather than the data element, since the parser can
+ * insert that element before all of its text has streamed in. After `timeoutMs` the game
+ * boots without the data rather than behind a stalled stream.
+ */
+export function whenWorldStateReady(doc: Document = document, timeoutMs = 10_000): Promise<void> {
+	const pending = () => doc.getElementById(WORLD_STATE_PENDING_ID) !== null;
+	if (!pending()) return Promise.resolve();
+	return new Promise((resolve) => {
+		const done = () => {
+			observer.disconnect();
+			clearTimeout(timer);
+			resolve();
+		};
+		const observer = new MutationObserver(() => {
+			if (!pending()) done();
+		});
+		observer.observe(doc, { childList: true, subtree: true });
+		const timer = setTimeout(done, timeoutMs);
+	});
 }

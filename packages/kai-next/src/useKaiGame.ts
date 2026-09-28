@@ -5,6 +5,7 @@
 // hook reports loading, and starts or continues the game when the page asks.
 import { useEffect, useRef, useState } from "react";
 import type { BootOptions, GameHandle } from "@datagutt/kai";
+import { whenWorldStateReady } from "@datagutt/kai-live/world-state";
 
 export type GamePhase = "loading" | "ready" | "playing" | "failed";
 
@@ -21,8 +22,10 @@ export function useKaiGame(load: () => Promise<StartGame>) {
 
 	useEffect(() => {
 		let cancelled = false;
-		load()
-			.then((startGame) => {
+		// The game reads the live data once, at boot, and a page that streams it
+		// (LiveDataPending) hydrates before it has arrived.
+		Promise.all([load(), whenWorldStateReady()])
+			.then(([startGame]) => {
 				if (cancelled || !containerRef.current) return;
 				const handle = startGame(containerRef.current, {
 					onProgress: (p) => setProgress(p),
