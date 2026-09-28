@@ -1,0 +1,14 @@
+{
+  "$schema": "../.kai/schema/characters.json",
+  "player": {
+    "description": "The visitor.",
+    "layers": ["Bodies/Body_03.png", "Eyes/Eyes_01.png", "Outfits/Outfit_01_05.png", "Hairstyles/Hairstyle_05_03.png"],
+    "portrait": false,
+    "placeholder": "4f8a5b"
+  },
+  "keeper": {
+    "description": "The keeper: an apron over a checked shirt.",
+    "layers": ["Bodies/Body_02.png", "Eyes/Eyes_04.png", "Outfits/Outfit_09_01.png", "Hairstyles/Hairstyle_11_01.png"],
+    "placeholder": "c46a3a"
+  }
+}

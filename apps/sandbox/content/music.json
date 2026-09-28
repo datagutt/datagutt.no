@@ -1,0 +1,12 @@
+{
+  "$schema": "../.kai/schema/music.json",
+  "tracks": {
+    "theme": { "file": "towballs-crossing-deluxe/Towballs Crossing Deluxe! Loopable Tracks/05 At the Farmers Market (Loopable Version).mp3" }
+  },
+  "playlist": {
+    "title": "theme",
+    "credits": "theme",
+    "outdoors": { "day": "theme", "night": "theme", "winter": "theme" },
+    "indoors": { "default": "theme" }
+  }
+}

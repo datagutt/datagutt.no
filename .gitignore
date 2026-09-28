@@ -1,36 +1,33 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# build and tool output
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+# kai content output (`kai content`), written into each app
+.kai/
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+
+# test output
+test-results/
+playwright-report/

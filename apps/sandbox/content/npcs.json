@@ -1,0 +1,9 @@
+{
+  "$schema": "../.kai/schema/npcs.json",
+  "keeper": {
+    "name": "Keeper",
+    "place": "workshop",
+    "personality": "Keeps the workshop tidy and explains the engine to anyone who asks.",
+    "voice": { "wave": "triangle", "pitch": 330, "variance": 0.05, "volume": 0.07, "every": 2 }
+  }
+}

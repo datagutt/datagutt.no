@@ -1,0 +1,6 @@
+{
+  "$schema": "../.kai/schema/unlocks.json",
+  "passport": {
+    "stamps": "all"
+  }
+}

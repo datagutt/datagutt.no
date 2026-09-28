@@ -1,0 +1,10 @@
+{
+  "$schema": "../.kai/schema/credits.json",
+  "title": "Kai Sandbox",
+  "byline": "The smallest kai game",
+  "sections": [
+    { "heading": "Art", "lines": ["LimeZu (limezu.itch.io)", "or placeholders"] },
+    { "heading": "Code", "lines": ["GPL-3.0 on GitHub", "datagutt/datagutt.no"] }
+  ],
+  "thanks": "Now make your own."
+}

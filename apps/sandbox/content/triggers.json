@@ -1,0 +1,7 @@
+{
+  "$schema": "../.kai/schema/triggers.json",
+  "list": [
+    { "on": "enterMap", "map": "workshop", "delay": 300, "grant": "arrived" },
+    { "on": "passportFull", "grant": "passport" }
+  ]
+}

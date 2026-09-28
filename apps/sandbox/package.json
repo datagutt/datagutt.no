@@ -1,0 +1,33 @@
+{
+  "name": "sandbox",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "content": "kai content",
+    "assets": "kai assets",
+    "dev": "kai dev",
+    "world:gen": "kai world gen",
+    "world:check": "kai world check",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@datagutt/kai": "workspace:*",
+    "geist": "^1.7.0",
+    "phaser": "^4.2.1"
+  },
+  "devDependencies": {
+    "@datagutt/kai-assets": "workspace:*",
+    "@datagutt/kai-eslint-config": "workspace:*",
+    "@datagutt/kai-limezu": "workspace:*",
+    "@datagutt/kai-tsconfig": "workspace:*",
+    "@datagutt/kai-worldgen": "workspace:*",
+    "@playwright/test": "^1.63",
+    "@types/node": "^24.13.6",
+    "eslint": "^9",
+    "typescript": "^5.9.3"
+  }
+}

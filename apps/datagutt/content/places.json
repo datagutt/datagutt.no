@@ -1,0 +1,174 @@
+{
+  "$schema": "../.kai/schema/places.json",
+  "list": [
+    {
+      "id": "dock",
+      "name": "Ferry dock",
+      "presents": [],
+      "stamp": false,
+      "entrance": {
+        "map": "town",
+        "spawn": "ferry"
+      }
+    },
+    {
+      "id": "home",
+      "name": "datagutt's house",
+      "presents": [
+        {
+          "kind": "profile"
+        },
+        {
+          "kind": "project",
+          "id": "portfolio"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "house_door"
+      }
+    },
+    {
+      "id": "boathouse",
+      "name": "Boathouse studio",
+      "presents": [
+        {
+          "kind": "project",
+          "id": "guac"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "boathouse_door"
+      }
+    },
+    {
+      "id": "radio-tower",
+      "name": "Radio tower",
+      "presents": [
+        {
+          "kind": "project",
+          "id": "irlserver"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "radio_hut_door"
+      }
+    },
+    {
+      "id": "kiosk",
+      "name": "Kiosk",
+      "presents": [
+        {
+          "kind": "project",
+          "id": "donate-chat"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "kiosk_door"
+      }
+    },
+    {
+      "id": "office",
+      "name": "Nettbureau office",
+      "presents": [
+        {
+          "kind": "experience",
+          "id": "nettbureau"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "office_door"
+      }
+    },
+    {
+      "id": "town-hall",
+      "name": "Town hall",
+      "presents": [
+        {
+          "kind": "experience",
+          "id": "iod"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "town_hall_door"
+      }
+    },
+    {
+      "id": "gym",
+      "name": "Gym",
+      "presents": [
+        {
+          "kind": "skills"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "gym_door"
+      }
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "presents": [
+        {
+          "kind": "repos"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "library_door"
+      }
+    },
+    {
+      "id": "farm",
+      "name": "Farm",
+      "presents": [
+        {
+          "kind": "stats"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "farmhouse_door"
+      }
+    },
+    {
+      "id": "post-office",
+      "name": "Post office",
+      "presents": [
+        {
+          "kind": "contact"
+        }
+      ],
+      "stamp": true,
+      "entrance": {
+        "map": "town",
+        "spawn": "post_office_door"
+      }
+    },
+    {
+      "id": "youth-club",
+      "name": "Youth club",
+      "presents": [],
+      "stamp": false,
+      "entrance": {
+        "map": "town",
+        "spawn": "youth_club_door"
+      }
+    }
+  ]
+}

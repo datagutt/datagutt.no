@@ -1,0 +1,10 @@
+# Next.js static export and build output
+/out/
+/build/
+# Licensed or generated asset output. Never commit LimeZu pixels (docs/DESIGN.md §9).
+/public/game/
+/.assets-cache/
+/game/generated/
+# World generator renders and the Tiled tileset contain LimeZu pixels.
+/world/out/
+/world/tilesets/

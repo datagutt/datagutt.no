@@ -1,0 +1,8 @@
+{
+  "$schema": "../.kai/schema/strings.json",
+  "menu.status": "datagutt's status",
+  "menu.journal": "Journal (plain text)",
+  "status.title": "datagutt's status",
+  "passport.title": "Fjord Passport",
+  "passport.fullHint": "Full passport. Every stamp in town! {pageHint}"
+}

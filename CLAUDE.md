@@ -2,97 +2,54 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## What this is
 
-Personal portfolio site for datagutt, built with **Next.js 16** (canary), **React 19**, and **TypeScript**. Uses **pnpm** as package manager.
+A Bun workspace driven by Turborepo. It holds **kai**, an engine for top-down pixel-art walking games (Phaser 4, Ink dialogue, generated maps, LimeZu art), and the games built on it:
+
+- `apps/datagutt`: datagutt.no, the portfolio site as a game, "Fjord Town", with a plain-text twin, the Journal. Next.js 16.3. See `apps/datagutt/CLAUDE.md`.
+- `apps/sandbox`: the smallest kai game. It proves the engine needs nothing from Fjord Town and is the template for new games.
+- `packages/kai*`: the engine, as TypeScript source with no build step.
+- `tooling/`: shared TypeScript, ESLint and Vitest presets.
+
+## Docs and session workflow
+
+- Engine: `docs/kai/`. Start with `ARCHITECTURE.md`; then `PLUGINS.md`, `CONTENT.md` and `NEW-GAME.md` as needed. Decisions in `docs/kai/DESIGN.md` are settled.
+- Fjord Town: `apps/datagutt/docs/` (`DESIGN.md`, `PLAN.md`, `ART.md`, `README.md` for the workflow).
+- Each package has a README saying what it is and what it must not import.
+- The SessionStart hook prints the handoff for the branch: `docs/kai/` on `kai` branches, `apps/datagutt/docs/` otherwise. The Stop hook asks for a HANDOFF.md update when there are newer code commits.
 
 ## Commands
 
 ```bash
-pnpm dev          # Start dev server
-pnpm build        # Production build
-pnpm start        # Start production server
-pnpm lint         # ESLint (Next.js config)
-pnpm format       # Format with Prettier (includes Tailwind class sorting)
-pnpm format:check # Check formatting
+# From the repository root (Turborepo runs the task in every workspace)
+bun install              # Install dependencies (Bun 1.4; the lockfile is version 2)
+bun run dev              # Content and assets, then every app's dev server
+bun run build            # Content and assets, then the production builds
+bun run lint             # ESLint, including the import boundaries
+bun run typecheck        # tsc --noEmit
+bun run test             # Vitest unit tests
+bun run world:check      # Fail if generated maps are stale or invalid
+bun run test:e2e         # Build, then every app's Playwright tests
+bun run format           # Prettier
+bunx turbo run <task> --filter=<app or package>   # One workspace only
 ```
 
-## Architecture
+The `kai` command (from `@datagutt/kai-assets`) runs inside an app folder: `kai content`, `kai assets`, `kai world gen|check|render`, `kai characters`, `kai art <tool>`, `kai dev`. Each app wraps them as `bun run` scripts. See `docs/kai/ARCHITECTURE.md`.
 
-### Page Structure
+## Rules the code relies on
 
-Single-page portfolio (`app/page.tsx`) — a server component that fetches GitHub data, then renders sections with `Suspense` boundaries. Below-fold components using GSAP/ScrollTrigger are dynamically imported to reduce initial bundle.
+- **Import boundaries** (`tooling/eslint-config/boundaries.js`): packages never import an app; runtime packages (`kai`, `kai-net`, `kai-live`, `kai-arcade`, `kai-next`) never import build time packages (`kai-worldgen`, `kai-limezu`, `kai-assets`) and import schemas only with `import type`; the runtime never imports Next or React; `kai-worldgen` and `kai-assets` never import the art adapter `kai-limezu`.
+- **No game content in `packages/`.** Content is JSON and Markdown in `apps/<app>/content/`, checked by Zod schemas; behaviour one game needs is a plugin in that app.
+- **Licensed pixels never enter this repository**, including packed atlases and renders. The art is in the private `datagutt/datagutt-assets`, used from a sibling checkout (`../datagutt-assets`) or cloned with a token. Without it builds use placeholder art.
+- **Imports inside packages carry their `.ts` extension**, and JSON imports that Node reaches need `with { type: "json" }`: Node and Bun load the source directly.
+- Code that the build loads (dialogue hosts, map builders) must not import `@datagutt/kai`'s index, which pulls in Phaser. Import by path, such as `@datagutt/kai/data`.
+- Dependencies change through `bun add`/`bun remove` in the workspace, never by editing `package.json`.
 
-### Canvas System
+## Turborepo
 
-Five interactive canvas backgrounds rendered in the hero section via `components/canvas/CanvasSwitcher.tsx`:
+`content`, `assets`, `build`, `dev`, `game:dev` and `test:e2e` are never cached: the asset build reads art from outside the repository, and the content bundle depends on schemas in other packages. `typecheck`, `test` and `world:check` run `content` first.
 
-- **PixelCanvas** — Conway's Game of Life with data pulses, mouse-seeded life, avatar hover burst effect
-- **TerrainCanvas** — Simplex noise terrain with mouse-driven elevation, continuous drift via GSAP
-- **FallingBlocksCanvas** — Tetris-style falling blocks
-- **DungeonCanvas** — Procedural dungeon generation
-- **StarfieldCanvas** — Parallax starfield
+## CI and hosting
 
-All canvases use `app/utils/canvas.ts` for DPI-aware setup and `hooks/useResizeKey.ts` for responsive resizing.
-
-### Data Fetching (lib/github.ts)
-
-Three server-side functions, all cached for 1 hour via `unstable_cache` + React `cache()`:
-
-- `getPinnedRepos()` — Scrapes GitHub profile HTML for pinned repos
-- `getGitHubStats()` — GitHub REST API for user stats + total stars
-- `getContributions()` — External API for contribution calendar data
-
-GitHub username is hardcoded as `datagutt`.
-
-### Animation
-
-GSAP with ScrollTrigger for scroll-based section entrances. All animation code respects `prefers-reduced-motion`. Canvas animations run at 60fps via requestAnimationFrame.
-
-### Styling
-
-Tailwind CSS with dark mode (class strategy). Custom green color palette (`primary-50` through `primary-950`). Custom pixel font families defined in `tailwind.config.ts`. Global styles in `app/globals.css` include glitch effects, pixel dividers, and custom scrollbar.
-
-### Data Files
-
-Static data lives in `data/` — `projects.ts`, `experience.ts`, `skills.ts`. Each exports typed arrays used by their respective components.
-
-### Lanyard live status (components/LanyardCard.tsx)
-
-Live Discord/Spotify presence card in the hero, right side. Uses `react-use-lanyard` (client WebSocket to `wss://api.lanyard.rest/socket`).
-
-- Discord ID resolves from `NEXT_PUBLIC_DISCORD_ID` (override) or the hardcoded `DEFAULT_DISCORD_ID` constant in `lib/lanyard.ts`. The card works out of the box, no env var required.
-- Requires the Discord user to be a member of the Lanyard guild (`discord.gg/lanyard`). If not joined, the card silently renders nothing.
-- Card is absolutely positioned to avoid layout shift on data arrival, fades in with GSAP. Hidden on mobile (`<md`) since the absolute slot would clip the content column.
-
-### Reactions overlay (components/reactions/, lib/reactions/, app/api/reactions/)
-
-Canvas-agnostic ephemeral multiplayer reaction layer. Visitors drop a chunky pixel ripple on click; click-and-hold (220ms) opens a radial palette of 8-bit pixel sprites (heart, star, fire, skull, sparkle).
-
-- Transport: a single bidirectional WebSocket at `/api/reactions/ws` (Node runtime, Fluid Compute, `maxDuration: 300`, 30s server ping). The client sends its reaction over the same socket it receives others on. Built on `experimental_upgradeWebSocket` from `@vercel/functions` (needs the `ws` package). Because `cacheComponents` is enabled, the route handler calls `connection()` before upgrading so it opts out of static prerendering. Local dev needs `vc dev` (Vercel CLI), since `next dev` does not run the WebSocket upgrade.
-- Coordinates normalize to the nearest top-level `<section id>` (hero/portfolio/about/techstack/experience/opensource/stats/contact). Receivers re-project per RAF against their own section rect, so scroll/resize tracks naturally.
-- The server skips echoing an event back to the connection that sent it (the sender already renders its own drop optimistically), so there is no client side sid filtering. Clients reconnect with exponential backoff on close, and buffer a small outbox of unsent reactions while the socket is down.
-- Single-instance fan-out only. A WebSocket connection is pinned to one Fluid instance, and one instance can host many connections, but two clients pinned to different instances under load will not see each other. Acceptable for ephemeral vibes; upgrade path is Upstash Redis pub/sub if needed.
-- Rate limit: in-process token bucket per WebSocket connection (5 tokens, 1/sec refill). The bucket lives and dies with the connection, so no shared map or GC is needed.
-- Click capture is window-level (`pointerdown` capture phase). Canvas mousemove and other handlers are not affected. Interactive targets and any element with `[data-no-reactions]` are skipped.
-
-#### Kill switch
-
-Visitors can disable the overlay locally:
-
-```js
-localStorage.setItem("rx_off", "1"); // disables sending and receiving
-localStorage.removeItem("rx_off");   // re-enable
-```
-
-#### Environment
-
-- `NEXT_PUBLIC_DISCORD_ID` (optional). Discord snowflake for Lanyard. Defaults to the constant in `lib/lanyard.ts`.
-
-## Key Configuration
-
-- **React Compiler** enabled (`babel-plugin-react-compiler`)
-- **View Transitions** enabled experimentally
-- **Inline CSS** enabled via Next.js experimental config
-- **Path alias**: `@/*` maps to project root
-- **TypeScript strict mode** enabled
+- `.github/workflows/ci.yml`: `bun install --frozen-lockfile`, then lint, typecheck, unit tests and `world:check`, then every app's e2e tests.
+- Vercel builds `apps/datagutt` (the project's Root Directory). `apps/datagutt/vercel.ts` installs with `npx bun@1.4.2`, because the build image's Bun 1.3 cannot read the lockfile.

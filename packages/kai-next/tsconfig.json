@@ -1,0 +1,7 @@
+{
+  "extends": "@datagutt/kai-tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

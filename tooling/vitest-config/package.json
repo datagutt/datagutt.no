@@ -1,0 +1,13 @@
+{
+  "name": "@datagutt/kai-vitest-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "vitest": "^5"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "$schema": "../.kai/schema/presence.json",
+  "npc": "datagutt",
+  "asleepKnot": "datagutt_asleep",
+  "places": {
+    "desk": {
+      "map": "house-up",
+      "where": "At his desk, upstairs at home."
+    },
+    "bed": {
+      "map": "house-up",
+      "where": "Asleep, upstairs at home."
+    },
+    "fjord": {
+      "map": "town",
+      "where": "By the fjord, down at the harbour."
+    },
+    "square": {
+      "map": "town",
+      "where": "Around the town square."
+    },
+    "pier": {
+      "map": "town",
+      "where": "At the end of the pier, waiting for you."
+    }
+  },
+  "routes": {
+    "house-up": [
+      "house"
+    ],
+    "house": [
+      "house-up",
+      "town"
+    ],
+    "town": [
+      "house"
+    ]
+  },
+  "coding": "visual studio|vs ?code|\\bcode\\b|cursor|zed|intellij|webstorm|phpstorm|pycharm|rustrover|goland|clion|rider|android studio|xcode|n?vim|neovim|emacs|sublime|windsurf|fleet|terminal|iterm|warp|ghostty|wezterm|alacritty|kitty",
+  "rules": [
+    {
+      "when": "none",
+      "place": "desk"
+    },
+    {
+      "when": "offline",
+      "place": "bed",
+      "emote": "sleep",
+      "asleep": true,
+      "quiet": true
+    },
+    {
+      "when": "coding",
+      "place": "desk",
+      "emote": "computer"
+    },
+    {
+      "when": "playing",
+      "place": "desk",
+      "emote": "computer"
+    },
+    {
+      "when": "music",
+      "place": "fjord",
+      "emote": "music"
+    },
+    {
+      "when": "idle",
+      "place": "square",
+      "emote": "dots"
+    },
+    {
+      "when": "online",
+      "place": "square",
+      "wanders": true
+    }
+  ],
+  "lines": {
+    "codingDetails": "Just in the middle of something in {app}. {details}, to be exact.",
+    "coding": "Just writing some code in {app}.",
+    "streaming": "I'm streaming {game} right now, so wave at the chat.",
+    "playing": "Taking a break with a bit of {game}.",
+    "music": "I'm listening to \"{song}\" by {artist}. Good song for the fjord."
+  },
+  "status": {
+    "none": "No word from Thomas yet.",
+    "discord": "Discord: {status}",
+    "names": {
+      "online": "Online",
+      "idle": "Away",
+      "dnd": "Do not disturb",
+      "offline": "Offline"
+    },
+    "listening": "Listening to {song}",
+    "listeningBy": "Listening to {song} by {artist}"
+  },
+  "night": {
+    "place": "pier",
+    "dialogue": "datagutt_finale"
+  },
+  "wakeGrants": "wake",
+  "mocks": {
+    "offline": {
+      "status": "offline",
+      "customStatus": null,
+      "spotify": null,
+      "activities": []
+    },
+    "coding": {
+      "status": "dnd",
+      "customStatus": "shipping it",
+      "spotify": null,
+      "activities": [
+        {
+          "kind": "playing",
+          "name": "Visual Studio Code",
+          "details": "Editing WorldScene.ts",
+          "state": "Workspace: datagutt"
+        }
+      ]
+    },
+    "gaming": {
+      "status": "online",
+      "customStatus": null,
+      "spotify": null,
+      "activities": [
+        {
+          "kind": "playing",
+          "name": "Factorio",
+          "details": null,
+          "state": null
+        }
+      ]
+    },
+    "music": {
+      "status": "online",
+      "customStatus": null,
+      "spotify": {
+        "song": "Midnight City",
+        "artist": "M83"
+      },
+      "activities": []
+    },
+    "idle": {
+      "status": "idle",
+      "customStatus": null,
+      "spotify": null,
+      "activities": []
+    },
+    "online": {
+      "status": "online",
+      "customStatus": "touching grass",
+      "spotify": null,
+      "activities": []
+    }
+  }
+}

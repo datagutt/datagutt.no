@@ -1,0 +1,33 @@
+{
+  "name": "@datagutt/kai-live",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@datagutt/kai": "workspace:*",
+    "@datagutt/kai-net": "workspace:*",
+    "node-html-parser": "^7.0.2"
+  },
+  "devDependencies": {
+    "@datagutt/kai-eslint-config": "workspace:*",
+    "@datagutt/kai-tsconfig": "workspace:*",
+    "@datagutt/kai-vitest-config": "workspace:*",
+    "@types/node": "^24.13.6",
+    "eslint": "^9",
+    "typescript": "^5.9.3",
+    "vitest": "^5"
+  },
+  "peerDependencies": {
+    "phaser": "^4.2.1"
+  }
+}

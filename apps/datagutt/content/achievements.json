@@ -1,0 +1,45 @@
+{
+  "$schema": "../.kai/schema/achievements.json",
+  "list": [
+    {
+      "id": "passport",
+      "name": "Full passport",
+      "how": "Every stamp in town."
+    },
+    {
+      "id": "credits",
+      "name": "Roll credits",
+      "how": "Stayed on the pier for the credits."
+    },
+    {
+      "id": "summit",
+      "name": "Up the mountain",
+      "how": "Walked the trail up to the hytte."
+    },
+    {
+      "id": "wake",
+      "name": "Rise and shine",
+      "how": "Woke Thomas up."
+    },
+    {
+      "id": "cat",
+      "name": "Cat person",
+      "how": "Found the cat, and petted it."
+    },
+    {
+      "id": "edge",
+      "name": "Edge of the world",
+      "how": "Tried to walk off the map."
+    },
+    {
+      "id": "stars",
+      "name": "Stargazer",
+      "how": "Looked at the stars from the radio hill."
+    },
+    {
+      "id": "blocks",
+      "name": "High score",
+      "how": "1,000 points at falling blocks."
+    }
+  ]
+}
